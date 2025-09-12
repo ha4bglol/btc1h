@@ -1,278 +1,457 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="bg">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Mines Diamond Finder (25/16)</title>
-<style>
-  :root {
-    --bg-color: #1a1f36;
-    --panel-bg: #2a314d;
-    --cell-bg: #3d426b;
-    --cell-hover-bg: #4a517b;
-    --text-color: #e0e0e0;
-    --text-color-light: #aaa;
-    --mine-color: #ff5555;
-    --safe-color-rgba: 76, 175, 80; /* Зелен цвят за диаманти в RGBA формат */
-  }
-  body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    padding: 24px;
-    background: var(--bg-color);
-    color: var(--text-color);
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-  }
-  .container {
-    display: flex;
-    gap: 24px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .panel { 
-    background: var(--panel-bg); 
-    padding: 20px; 
-    border-radius: 12px; 
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  }
-  h1 { font-size: 22px; margin-top: 0; text-align: center; }
-  .info { font-size: 14px; color: var(--text-color-light); text-align: center; margin-top: -10px; margin-bottom: 20px; }
-  
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 8px;
-  }
-  .cell {
-    width: 52px;
-    height: 52px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    cursor: pointer;
-    user-select: none;
-    font-weight: bold;
-    font-size: 16px;
-    transition: background-color 0.2s, transform 0.1s;
-    background-color: var(--cell-bg);
-  }
-  .cell:hover { background-color: var(--cell-hover-bg); transform: scale(1.05); }
-  .cell:active { transform: scale(0.98); }
-  .cell.selected-mine { background: var(--mine-color); color: white; }
-  
-  #controls { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
-  button {
-    background-color: var(--cell-bg);
-    color: white;
-    border: none;
-    padding: 12px 18px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 15px;
-    font-weight: 500;
-    transition: background-color 0.2s;
-  }
-  button:hover { background-color: var(--cell-hover-bg); }
-  button:disabled { background-color: #333; color: #777; cursor: not-allowed; }
-
-  #stats-panel { width: 360px; }
-  #stats { line-height: 1.7; }
-  #historyList { font-size: 13px; color:var(--text-color-light); max-height: 200px; overflow-y: auto; padding-right: 10px; }
-  hr { border-color: #444; margin: 16px 0; }
-</style>
-</head>
-<body>
-
-<div class="container">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIVRA - Вашето място за социални забавления</title>
     
-    <div class="panel">
-        <h1>Търсач на диаманти (25 полета / 16 мини)</h1>
-        <p class="info">Кликнете върху 16-те полета с бомби, за да добавите рунд в историята.</p>
-        <div id="gridContainer"></div>
-        <div id="controls">
-            <span id="manualModeStatus" class="info" style="font-weight: bold; height: 20px;"></span>
-            <button id="confirmManual" disabled>Потвърди рунд (16 бомби)</button>
-            <button id="clearHistory">Изчисти историята</button>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #1a1a2e; color: #e0e0e0; }
+        .gradient-text { background: linear-gradient(90deg, #f7b733, #fc4a1a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .btn-primary { background: linear-gradient(90deg, #f7b733, #fc4a1a); transition: all 0.3s ease; }
+        .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(247, 183, 51, 0.2); }
+        .btn-primary:disabled { background: #4a4a6a; color: #8f8f8f; cursor: not-allowed; opacity: 0.7; transform: none; box-shadow: none; }
+        .btn-secondary { border: 2px solid #f7b733; color: #f7b733; transition: all 0.3s ease; }
+        .btn-secondary:hover:not(:disabled) { background-color: #f7b733; color: #1a1a2e; }
+        .tab-btn { padding: 0.75rem 1.5rem; font-weight: 600; color: #a0a0b0; border-bottom: 4px solid transparent; transition: all 0.3s ease; cursor: pointer; }
+        .tab-btn:hover { color: #f7b733; }
+        .tab-btn.active { color: #ffffff; border-bottom-color: #f7b733; }
+        
+        /* Подобрени стилове за модали и форми */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px); z-index: 50;
+            opacity: 0; transition: opacity 0.3s ease-in-out;
+            align-items: center; justify-content: center; padding: 1rem;
+        }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-content {
+            background-image: radial-gradient(circle at top left, #2a2a40, #202030);
+            border: 1px solid #4a4a6a; border-radius: 0.75rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 100%; position: relative;
+            transform: scale(0.95); transition: transform 0.3s ease-in-out;
+        }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+        .modal-overlay.shake .modal-content { animation: shake 0.5s; }
+        
+        .form-input {
+            background-color: #2c2c44; border: 1px solid #4a4a6a; color: #e0e0e0;
+            transition: all 0.2s ease-in-out; width: 100%; border-radius: 0.5rem; padding: 0.75rem 1rem;
+        }
+        .form-input:focus {
+            outline: none; border-color: #f7b733; box-shadow: 0 0 0 3px rgba(247, 183, 51, 0.4);
+        }
+        
+        /* Стилове за стъпките на регистрация */
+        .step-indicator { display: flex; justify-content: space-between; margin-bottom: 2rem; }
+        .step { display: flex; flex-direction: column; align-items: center; position: relative; width: 33.33%; }
+        .step-circle {
+            width: 32px; height: 32px; border-radius: 50%; background-color: #4a4a6a;
+            display: flex; align-items: center; justify-content: center; font-weight: bold;
+            border: 2px solid #4a4a6a; transition: all 0.3s ease; z-index: 1;
+        }
+        .step.active .step-circle { background: linear-gradient(90deg, #f7b733, #fc4a1a); border-color: #f7b733; color: #1a1a2e; }
+        .step-line { position: absolute; top: 15px; left: 50%; width: 100%; height: 2px; background-color: #4a4a6a; z-index: 0; }
+        .step:first-child .step-line { left: 50%; } .step:last-child .step-line { width: 0; }
+        .step-label { margin-top: 0.5rem; font-size: 0.75rem; color: #a0a0b0; transition: color 0.3s; }
+        .step.active .step-label { color: #f7b733; }
+        .step-content { display: none; }
+        .step-content.active { display: block; animation: fadeIn 0.5s; }
+        .spinner {
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            width: 16px; height: 16px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes shake { 10%, 90% { transform: translateX(-1px); } 20%, 80% { transform: translateX(2px); } 30%, 50%, 70% { transform: translateX(-4px); } 40%, 60% { transform: translateX(4px); } }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- ЕКРАН ЗА ВЕРИФИКАЦИЯ -->
+    <div id="verification-notice" class="modal-overlay">
+        <div class="modal-content max-w-md p-8 text-center">
+            <div class="text-6xl text-yellow-400 mb-6"><i class="fas fa-envelope-open-text"></i></div>
+            <h2 class="text-3xl font-bold text-white mb-3">Потвърдете своя имейл</h2>
+            <p class="text-gray-400 mb-6">Изпратихме верификационен линк на <strong id="verification-email" class="text-white"></strong>. Моля, проверете своята пощенска кутия (и папката със спам), за да активирате акаунта си.</p>
+            <p id="verification-error" class="text-red-500 text-sm mb-4 text-center h-5"></p>
+            <div class="space-y-4">
+                <button id="resend-verification-btn" class="w-full max-w-xs mx-auto py-3 rounded-full text-black font-semibold btn-primary">Изпрати отново</button>
+                <button id="check-verification-btn" class="w-full max-w-xs mx-auto py-3 rounded-full border-2 btn-secondary flex items-center justify-center gap-2"><span class="btn-text">Вече потвърдих</span></button>
+                <button id="logout-from-verification-btn" class="text-gray-500 hover:text-white transition mt-4">Изход</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- КОНТЕЙНЕР ЗА ГЛАВНОТО ПРИЛОЖЕНИЕ -->
+    <div id="main-app">
+        <header class="bg-gray-900/80 backdrop-blur-sm sticky top-0 z-40 shadow-lg">
+            <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+                <a href="#" class="text-3xl font-bold gradient-text">NIVRA</a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="nav-link text-gray-300 hover:text-yellow-400 transition">Начало</a>
+                    <a href="#games" class="nav-link text-gray-300 hover:text-yellow-400 transition">Игри</a>
+                    <a href="#promo" class="nav-link text-gray-300 hover:text-yellow-400 transition">Промоции</a>
+                    <a href="#about" class="nav-link text-gray-300 hover:text-yellow-400 transition">За нас</a>
+                </div>
+                <div class="hidden md:flex items-center space-x-4">
+                    <div id="logged-out-view" class="flex items-center space-x-4">
+                        <button id="login-btn-desktop" class="px-6 py-2 rounded-full border-2 btn-secondary">Вход</button>
+                        <button id="register-btn-desktop" class="px-6 py-2 rounded-full text-black font-semibold btn-primary">Регистрация</button>
+                    </div>
+                    <div id="logged-in-view" class="hidden items-center space-x-4">
+                        <div class="text-right">
+                            <span id="user-fullname" class="text-white font-semibold block text-sm truncate max-w-[150px]"></span>
+                            <span id="user-balance" class="text-yellow-400 font-bold block text-xs"><i class="fas fa-coins mr-1"></i>0</span>
+                        </div>
+                        <button id="logout-btn" class="px-4 py-2 rounded-full border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition text-sm">Изход</button>
+                    </div>
+                </div>
+                <div id="menu-btn" class="md:hidden text-3xl cursor-pointer text-white">&#9776;</div>
+            </nav>
+        </header>
+        <div id="mobile-menu" class="hidden fixed inset-0 bg-black/90 z-50">
+             <div class="relative w-full h-full flex flex-col items-center justify-center text-center">
+                <div id="close-btn" class="absolute top-6 right-6 text-4xl text-white cursor-pointer">&times;</div>
+                <ul class="space-y-6 text-2xl">
+                    <li><a href="#home" class="nav-link mobile-nav-link text-gray-300">Начало</a></li>
+                    <li><a href="#games" class="nav-link mobile-nav-link text-gray-300">Игри</a></li>
+                    <li><a href="#promo" class="nav-link mobile-nav-link text-gray-300">Промоции</a></li>
+                    <li><a href="#about" class="nav-link mobile-nav-link text-gray-300">За нас</a></li>
+                </ul>
+                <div class="mt-12 flex flex-col w-4/5 max-w-xs space-y-4">
+                    <div id="logged-out-view-mobile" class="flex flex-col space-y-4">
+                         <button id="login-btn-mobile" class="w-full px-6 py-3 rounded-full border-2 btn-secondary">Вход</button>
+                         <button id="register-btn-mobile" class="w-full px-6 py-3 rounded-full text-black font-semibold btn-primary">Регистрация</button>
+                    </div>
+                    <div id="logged-in-view-mobile" class="hidden">
+                        <button id="logout-btn-mobile" class="w-full px-6 py-3 rounded-full border-2 border-red-500 text-red-500">Изход</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <main>
+            <section id="home" class="relative min-h-screen flex items-center justify-center text-center bg-cover bg-center" style="background-image: url('https://placehold.co/1920x1080/1a1a2e/e0e0e0?text=Abstract+Lights');">
+                <div class="absolute inset-0 bg-black bg-opacity-60"></div>
+                <div class="relative z-10 px-4"><h1 class="text-5xl md:text-7xl font-bold text-white mb-4 leading-tight">Вашето Място за <span class="gradient-text">Социални Забавления</span></h1><p class="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-8">Присъединете се към хиляди играчи в най-добрата платформа за безплатни игри и забавления.</p><a href="#games" class="nav-link px-10 py-4 text-lg font-semibold rounded-full text-black btn-primary">Играй сега <i class="fas fa-arrow-right ml-2"></i></a></div>
+            </section>
+            <section id="content-tabs" class="py-20 bg-[#161625]">
+                <div class="container mx-auto px-6">
+                    <div id="tab-buttons" class="flex justify-center border-b border-gray-700 mb-12"><button class="tab-btn active" data-tab="games">Игри</button><button class="tab-btn" data-tab="promo">Промоции</button><button class="tab-btn" data-tab="about">За Нас</button></div>
+                    <div id="tab-content">
+                        <div id="tab-games" class="tab-panel"><div id="games-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"></div></div>
+                        <div id="tab-promo" class="tab-panel hidden"><h2 class="text-4xl font-bold mb-12 text-center">Специални Предложения</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-8"><div class="bg-gray-900 p-8 rounded-xl shadow-lg"><div class="text-5xl mb-4 text-yellow-400"><i class="fas fa-gift"></i></div><h3 class="text-2xl font-semibold mb-2">Ежедневни Бонуси</h3><p class="text-gray-400">Влизайте всеки ден, за да получите своите безплатни виртуални кредити и награди.</p></div><div class="bg-gray-900 p-8 rounded-xl shadow-lg"><div class="text-5xl mb-4 text-yellow-400"><i class="fas fa-trophy"></i></div><h3 class="text-2xl font-semibold mb-2">Вълнуващи Турнири</h3><p class="text-gray-400">Състезавайте се с други играчи и се изкачете в класациите.</p></div><div class="bg-gray-900 p-8 rounded-xl shadow-lg"><div class="text-5xl mb-4 text-yellow-400"><i class="fas fa-users"></i></div><h3 class="text-2xl font-semibold mb-2">Покани Приятел</h3><p class="text-gray-400">Поканете приятели и ще получите специален бонус за всеки.</p></div></div></div>
+                        <div id="tab-about" class="tab-panel hidden"><div class="flex flex-col md:flex-row items-center gap-12"><div class="md:w-1/2"><img src="https://placehold.co/600x400/1a1a2e/f7b733?text=NIVRA+Community" alt="Community" class="rounded-xl shadow-2xl"></div><div class="md:w-1/2"><h2 class="text-4xl font-bold mb-4">Защо <span class="gradient-text">NIVRA?</span></h2><p class="text-gray-400 mb-8">Ние сме повече от платформа за игри - ние сме общност.</p><ul class="space-y-4"><li class="flex items-center"><i class="fas fa-check-circle text-yellow-400 mr-3"></i> 100% Безплатно забавление</li><li class="flex items-center"><i class="fas fa-check-circle text-yellow-400 mr-3"></i> Играйте с приятели</li><li class="flex items-center"><i class="fas fa-check-circle text-yellow-400 mr-3"></i> Сигурна среда</li></ul></div></div></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <footer class="bg-gray-900 text-gray-400 py-8">
+            <div class="container mx-auto px-6 text-center text-xs text-gray-500"><p>&copy; 2024 NIVRA. Всички права запазени.</p></div>
+        </footer>
+    </div>
+    
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal-overlay">
+        <div class="modal-content max-w-md p-8">
+            <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button>
+            <h3 class="text-2xl font-bold text-center mb-6 gradient-text">Вход в NIVRA</h3>
+            <form id="login-form"><div class="mb-4"><label for="login-email" class="block text-sm font-medium text-gray-400 mb-2">Имейл</label><input type="email" id="login-email" required class="form-input"></div><div class="mb-4"><label for="login-password" class="block text-sm font-medium text-gray-400 mb-2">Парола</label><input type="password" id="login-password" required class="form-input"></div><p id="login-error" class="text-red-500 text-sm mb-4 text-center h-5"></p><button type="submit" class="w-full py-3 rounded-full text-black font-semibold btn-primary flex items-center justify-center gap-2"><span class="btn-text">Вход</span></button></form>
+            <div class="text-center mt-6"><a href="#" id="forgot-password-link" class="text-sm text-yellow-400 hover:underline">Забравена парола?</a></div>
         </div>
     </div>
 
-    <div id="stats-panel" class="panel">
-        <h2>Анализ и статистика</h2>
-        <strong>Топ кандидати за диаманти:</strong>
-        <div id="stats" style="margin-top:8px; font-size: 14px;"></div>
-        <hr>
-        <strong>История (последни <span id="baseSize">10</span> рунда):</strong>
-        <div id="historyList" style="margin-top:8px;"></div>
+    <!-- Forgot Password Modal -->
+    <div id="forgot-password-modal" class="modal-overlay">
+        <div class="modal-content max-w-md p-8">
+            <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button>
+            <h3 class="text-2xl font-bold text-center mb-6 gradient-text">Възстанови Парола</h3>
+            <p class="text-gray-400 text-center mb-6">Въведете имейла си и ще изпратим линк за възстановяване.</p>
+            <form id="forgot-password-form"><div class="mb-4"><label for="reset-email" class="block text-sm font-medium text-gray-400 mb-2">Имейл</label><input type="email" id="reset-email" required class="form-input"></div><p id="reset-error" class="text-red-500 text-sm mb-4 text-center h-5"></p><p id="reset-success" class="text-green-400 text-sm mb-4 text-center h-5"></p><button type="submit" class="w-full py-3 rounded-full text-black font-semibold btn-primary flex items-center justify-center gap-2"><span class="btn-text">Изпрати линк</span></button></form>
+            <div class="text-center mt-6"><a href="#" id="back-to-login-link" class="text-sm text-yellow-400 hover:underline">&larr; Обратно към Вход</a></div>
+        </div>
+    </div>
+    
+    <!-- Login Required Modal -->
+    <div id="login-required-modal" class="modal-overlay">
+        <div class="modal-content max-w-md p-8 text-center">
+             <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button>
+             <div class="text-5xl text-yellow-400 mb-4"><i class="fas fa-lock"></i></div>
+             <h3 class="text-2xl font-bold text-white mb-4">Достъпът е ограничен</h3>
+             <p class="text-gray-400 mb-8">За да играете, трябва да влезете в профила си.</p>
+             <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                 <button id="login-from-required-btn" class="w-full py-3 rounded-full text-black font-semibold btn-primary">Вход</button>
+                 <button id="register-from-required-btn" class="w-full py-3 rounded-full border-2 btn-secondary">Регистрация</button>
+             </div>
+        </div>
+    </div>
+    
+    <!-- Registration Success Modal -->
+    <div id="registration-success-modal" class="modal-overlay">
+        <div class="modal-content max-w-md p-8 text-center">
+             <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button>
+             <div class="text-5xl text-green-400 mb-4"><i class="fas fa-check-circle"></i></div>
+             <h3 class="text-2xl font-bold text-white mb-4">Регистрацията е Успешна!</h3>
+             <p class="text-gray-400 mb-8">Изпратихме линк за активация на вашия имейл. Моля, проверете пощата си, за да завършите процеса.</p>
+             <button id="close-success-modal-btn" class="w-full max-w-xs mx-auto py-3 rounded-full text-black font-semibold btn-primary">Добре</button>
+        </div>
     </div>
 
-</div>
-
-<script>
-(function(){
-  // --- Фиксирани параметри на играта ---
-  const T = 25; // Общо полета
-  const M = 16; // Брой бомби/мини
-  const base = 10; // База за анализ (последни 10 рунда)
-
-  let rounds = []; // Масив от рундове; всеки рунд е масив с дължина T, стойности 0/1 (1 = мина)
-  let manualSelection = new Set();
-
-  const gridContainer = document.getElementById('gridContainer');
-  const statsDiv = document.getElementById('stats');
-  const historyList = document.getElementById('historyList');
-  const statusSpan = document.getElementById('manualModeStatus');
-  const confirmBtn = document.getElementById('confirmManual');
-  const clearBtn = document.getElementById('clearHistory');
-
-  function render() {
-    gridContainer.innerHTML = '';
-    const grid = document.createElement('div');
-    grid.className = 'grid';
+    <!-- Register Modal (Multi-step) -->
+    <div id="register-modal" class="modal-overlay">
+        <div class="modal-content max-w-lg p-8 max-h-[90vh] overflow-y-auto">
+            <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button>
+            <h3 class="text-2xl font-bold text-center mb-2 gradient-text">Създай Акаунт в NIVRA</h3>
+            <div class="step-indicator"><div class="step active" id="indicator-1"><div class="step-circle">1</div><span class="step-label">Данни</span><div class="step-line"></div></div><div class="step" id="indicator-2"><div class="step-circle">2</div><span class="step-label">Профил</span><div class="step-line"></div></div><div class="step" id="indicator-3"><div class="step-circle">3</div><span class="step-label">Финал</span></div></div>
+            <div id="register-step-1" class="step-content active"><form id="register-form-step1"><div class="mb-4"><label for="register-email" class="block text-sm font-medium text-gray-400 mb-2">Имейл</label><input type="email" id="register-email" required class="form-input"></div><div class="mb-4"><label for="register-password" class="block text-sm font-medium text-gray-400 mb-2">Парола</label><input type="password" id="register-password" required class="form-input"><p class="text-xs text-gray-500 mt-1">Минимум 6 символа.</p></div><div class="mb-6"><label for="register-confirm-password" class="block text-sm font-medium text-gray-400 mb-2">Потвърди Парола</label><input type="password" id="register-confirm-password" required class="form-input"></div><p id="register-step1-error" class="text-red-500 text-sm mb-4 text-center h-5"></p><button type="submit" class="w-full py-3 rounded-full text-black font-semibold btn-primary flex items-center justify-center gap-2"><span class="btn-text">Напред</span> <i class="fas fa-arrow-right"></i></button></form></div>
+            <div id="register-step-2" class="step-content"><form id="register-form-step2"><div class="mb-4"><label for="register-fullname" class="block text-sm font-medium text-gray-400 mb-2">Пълно Име</label><input type="text" id="register-fullname" required class="form-input"></div><div class="mb-6"><label for="register-username" class="block text-sm font-medium text-gray-400 mb-2">Потребителско Име</label><input type="text" id="register-username" required class="form-input"></div><p id="register-step2-error" class="text-red-500 text-sm mb-4 text-center h-5"></p><div class="flex space-x-4"><button type="button" id="register-back-step1" class="w-1/2 py-3 rounded-full btn-secondary">Назад</button><button type="submit" class="w-1/2 py-3 rounded-full text-black font-semibold btn-primary flex items-center justify-center gap-2"><span class="btn-text">Напред</span> <i class="fas fa-arrow-right"></i></button></div></form></div>
+            <div id="register-step-3" class="step-content"><form id="register-form-step3"><div class="space-y-4 mb-6 text-left p-4 bg-gray-800/50 rounded-lg"><label class="flex items-start space-x-3"><input type="checkbox" id="terms-agree" required class="mt-1 h-5 w-5 accent-pink-500 bg-gray-700 border-gray-600 rounded focus:ring-pink-500"><span class="text-sm text-gray-300">Съгласен съм с <a href="#" class="text-yellow-400 underline">Общите условия</a>.</span></label><label class="flex items-start space-x-3"><input type="checkbox" id="age-confirm" required class="mt-1 h-5 w-5 accent-pink-500 bg-gray-700 border-gray-600 rounded focus:ring-pink-500"><span class="text-sm text-gray-300">Потвърждавам, че имам навършени 18 години.</span></label></div><p id="register-step3-error" class="text-red-500 text-sm mb-4 text-center h-5"></p><div class="flex space-x-4"><button type="button" id="register-back-step2" class="w-1/2 py-3 rounded-full btn-secondary">Назад</button><button type="submit" class="w-1/2 py-3 rounded-full text-black font-semibold btn-primary flex items-center justify-center gap-2"><span class="btn-text">Създай Акаунт</span></button></div></form></div>
+        </div>
+    </div>
     
-    // 1. Изчисляваме честотата на МИНИТЕ, за да намерим честотата на ДИАМАНТИТЕ
-    const mineCounts = new Array(T).fill(0);
-    const totalRoundsInHistory = rounds.length;
-    
-    for (const r of rounds) {
-      for (let i = 0; i < T; i++) {
-        if (r[i] === 1) mineCounts[i]++;
-      }
-    }
+    <script type="module">
+        // --- FIREBASE SDK IMPORTS ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // 2. Рендираме клетките
-    for (let i = 0; i < T; i++) {
-      const cell = document.createElement('div');
-      cell.className = 'cell';
-      cell.textContent = i;
-      
-      if (manualSelection.has(i)) {
-        cell.classList.add('selected-mine');
-      } else {
-        // Оцветяване според вероятността да е ДИАМАНТ
-        if (totalRoundsInHistory > 0) {
-          const safeCount = totalRoundsInHistory - mineCounts[i];
-          const safeProbability = safeCount / totalRoundsInHistory;
-          
-          if (safeProbability > 0) {
-            cell.title = `Диамант: ${safeCount} / ${totalRoundsInHistory} (${(safeProbability * 100).toFixed(0)}%)`;
-            const intensity = Math.min(1, safeProbability * 1.5);
-            cell.style.backgroundColor = `rgba(var(--safe-color-rgba), ${intensity})`;
-          } else {
-             cell.title = `Никога не е бил диамант досега (в текущата история)`;
-          }
+        // --- ВАШИЯТ FIREBASE CONFIG ОБЕКТ ИДВА ТУК ---
+        const firebaseConfig = {
+          apiKey: "AIzaSyAatMUa6vFu2AAe3NCWse6j2moiXmXdl0U",
+          authDomain: "nivra-casino.firebaseapp.com",
+          projectId: "nivra-casino",
+          storageBucket: "nivra-casino.firebasestorage.app",
+          messagingSenderId: "463242246264",
+          appId: "1:463242246264:web:4a6e736e5c8df3109e158d",
+          measurementId: "G-2NF3P6H9GM"
+        };
+
+        // --- ИНИЦИАЛИЗАЦИЯ НА FIREBASE ---
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- Глобално състояние и DOM елементи ---
+        const state = { 
+            registrationData: {},
+            userBalanceUnsubscribe: null,
+            isLoggedIn: false
+        };
+        const dom = {
+            verificationNotice: document.getElementById('verification-notice'),
+            loginModal: document.getElementById('login-modal'),
+            registerModal: document.getElementById('register-modal'),
+            forgotPasswordModal: document.getElementById('forgot-password-modal'),
+            loginRequiredModal: document.getElementById('login-required-modal'),
+            registrationSuccessModal: document.getElementById('registration-success-modal'),
+            
+            loggedOutView: document.getElementById('logged-out-view'),
+            loggedInView: document.getElementById('logged-in-view'),
+            loggedOutViewMobile: document.getElementById('logged-out-view-mobile'),
+            loggedInViewMobile: document.getElementById('logged-in-view-mobile'),
+            
+            loginForm: document.getElementById('login-form'),
+            loginError: document.getElementById('login-error'),
+            forgotPasswordForm: document.getElementById('forgot-password-form'),
+            resetError: document.getElementById('reset-error'),
+            resetSuccess: document.getElementById('reset-success'),
+            
+            registerForms: { step1: document.getElementById('register-form-step1'), step2: document.getElementById('register-form-step2'), step3: document.getElementById('register-form-step3') },
+            registerErrors: { step1: document.getElementById('register-step1-error'), step2: document.getElementById('register-step2-error'), step3: document.getElementById('register-step3-error') },
+            
+            userFullnameDisplay: document.getElementById('user-fullname'),
+            userBalanceDisplay: document.getElementById('user-balance'),
+            
+            verificationEmail: document.getElementById('verification-email'),
+            verificationError: document.getElementById('verification-error'),
+            resendVerificationBtn: document.getElementById('resend-verification-btn'),
+            checkVerificationBtn: document.getElementById('check-verification-btn'),
+            logoutFromVerificationBtn: document.getElementById('logout-from-verification-btn'),
+        };
+
+        // --- ЛОГИКА ЗА МОДАЛИ И ОБРАТНА ВРЪЗКА ---
+        const openModal = (modal) => modal.classList.add('active');
+        const closeModal = (modal) => modal.classList.remove('active');
+
+        function toggleLoading(button, isLoading) {
+            const btnText = button.querySelector('.btn-text');
+            if (isLoading) {
+                button.disabled = true;
+                if (btnText) btnText.style.display = 'none';
+                const spinner = document.createElement('div');
+                spinner.className = 'spinner';
+                button.prepend(spinner);
+            } else {
+                button.disabled = false;
+                if (btnText) btnText.style.display = 'inline-block';
+                const spinner = button.querySelector('.spinner');
+                if (spinner) spinner.remove();
+            }
         }
-      }
 
-      cell.onclick = () => handleCellClick(i, cell);
-      grid.appendChild(cell);
-    }
-    gridContainer.appendChild(grid);
+        function setupModalTriggers() {
+            document.getElementById('login-btn-desktop').addEventListener('click', () => openModal(dom.loginModal));
+            document.getElementById('login-btn-mobile').addEventListener('click', () => openModal(dom.loginModal));
+            document.getElementById('register-btn-desktop').addEventListener('click', () => { switchRegisterStep(1); openModal(dom.registerModal); });
+            document.getElementById('register-btn-mobile').addEventListener('click', () => { switchRegisterStep(1); openModal(dom.registerModal); });
+            document.getElementById('forgot-password-link').addEventListener('click', (e) => { e.preventDefault(); closeModal(dom.loginModal); openModal(dom.forgotPasswordModal); });
+            document.getElementById('back-to-login-link').addEventListener('click', (e) => { e.preventDefault(); closeModal(dom.forgotPasswordModal); openModal(dom.loginModal); });
+            document.getElementById('login-from-required-btn').addEventListener('click', () => { closeModal(dom.loginRequiredModal); openModal(dom.loginModal); });
+            document.getElementById('register-from-required-btn').addEventListener('click', () => { closeModal(dom.loginRequiredModal); switchRegisterStep(1); openModal(dom.registerModal); });
+            document.getElementById('close-success-modal-btn').addEventListener('click', () => closeModal(dom.registrationSuccessModal));
 
-    // 3. Обновяваме статистики и история
-    displayStats(mineCounts, totalRoundsInHistory);
-    renderHistory();
-    updateManualStatus();
-    document.getElementById('baseSize').textContent = base;
-  }
-  
-  function handleCellClick(index, cellElement) {
-    if (manualSelection.has(index)) {
-      manualSelection.delete(index);
-      cellElement.classList.remove('selected-mine');
-    } else {
-      if (manualSelection.size < M) {
-        manualSelection.add(index);
-        cellElement.classList.add('selected-mine');
-      }
-    }
-    render(); // Прерисуваме всичко, за да се обновят цветовете веднага
-  }
+            document.querySelectorAll('.modal-overlay').forEach(overlay => {
+                overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(overlay); });
+                const closeBtn = overlay.querySelector('.close-modal-btn');
+                if (closeBtn) closeBtn.addEventListener('click', () => closeModal(overlay.closest('.modal-overlay')));
+            });
+        }
 
-  function updateManualStatus() {
-    const selectedCount = manualSelection.size;
-    if (selectedCount < M) {
-        statusSpan.textContent = `Изберете още ${M - selectedCount} бомби`;
-    } else {
-        statusSpan.textContent = `Готови за потвърждение!`;
-    }
-    confirmBtn.disabled = selectedCount !== M;
-  }
-  
-  function displayStats(mineCounts, totalRounds) {
-    if (totalRounds === 0) {
-      statsDiv.innerHTML = 'Няма данни. Въведете рунд, за да започне анализът.';
-      return;
-    }
-    
-    // Преобразуваме честотата на мините в честота на диамантите
-    const safeCandidates = mineCounts.map((count, index) => ({
-      i: index,
-      safeCount: totalRounds - count,
-      safeProb: (totalRounds - count) / totalRounds
-    }));
-    
-    // Сортираме по брой пъти "диамант" (safeCount) в намаляващ ред
-    safeCandidates.sort((a, b) => b.safeCount - a.safeCount);
-    
-    const topCandidates = safeCandidates.slice(0, 9); // Показваме топ 9 (колкото са диамантите)
-    
-    statsDiv.innerHTML = '';
-    const list = document.createElement('div');
-    topCandidates.forEach(candidate => {
-      const row = document.createElement('div');
-      row.innerHTML = `<strong>Клетка ${candidate.i}</strong> &rarr; ${candidate.safeCount}/${totalRounds} пъти (${(candidate.safeProb * 100).toFixed(0)}%)`;
-      list.appendChild(row);
-    });
-    statsDiv.appendChild(list);
-  }
-  
-  function renderHistory() {
-    historyList.innerHTML = '';
-    if (rounds.length === 0) {
-        historyList.innerHTML = 'Няма въведени рундове.';
-        return;
-    }
-    [...rounds].reverse().forEach((r, idx) => {
-      const div = document.createElement('div');
-      const mines = r.map((val, i) => val ? i : null).filter(x => x !== null);
-      div.textContent = `Рунд #${rounds.length - idx}: Мини на ${mines.join(', ')}`;
-      historyList.appendChild(div);
-    });
-  }
+        function switchRegisterStep(step) {
+            document.querySelectorAll('.step-content').forEach(s => s.classList.remove('active'));
+            document.getElementById(`register-step-${step}`).classList.add('active');
+            document.querySelectorAll('.step').forEach((s, i) => s.classList.toggle('active', i < step));
+        }
+        
+        // --- ЛОГИКА ЗА АУТЕНТИКАЦИЯ ---
+        const handleRegistration = async (button) => {
+            toggleLoading(button, true);
+            Object.values(dom.registerErrors).forEach(el => el.textContent = '');
+            const { email, password, fullName, username } = state.registrationData;
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                await sendEmailVerification(userCredential.user);
+                await setDoc(doc(db, "users", userCredential.user.uid), { uid: userCredential.user.uid, email, fullName, username, chips: 1000, createdAt: new Date() });
+                await signOut(auth);
+                closeModal(dom.registerModal);
+                openModal(dom.registrationSuccessModal);
+            } catch(error) {
+                let msg = "Възникна грешка. Опитайте отново.";
+                if (error.code === 'auth/email-already-in-use') msg = "Този имейл вече е регистриран.";
+                dom.registerErrors.step1.textContent = msg;
+                switchRegisterStep(1);
+            } finally {
+                toggleLoading(button, false);
+            }
+        };
+        const handleLogin = async (e) => { e.preventDefault(); const button = e.target.querySelector('button[type="submit"]'); toggleLoading(button, true); const email = dom.loginForm['login-email'].value; const password = dom.loginForm['login-password'].value; dom.loginError.textContent = ''; try { await signInWithEmailAndPassword(auth, email, password); closeModal(dom.loginModal); } catch (error) { dom.loginError.textContent = "Грешен имейл или парола."; } finally { toggleLoading(button, false); } };
+        const handlePasswordReset = async (e) => { e.preventDefault(); const button = e.target.querySelector('button[type="submit"]'); toggleLoading(button, true); const email = dom.forgotPasswordForm['reset-email'].value; dom.resetError.textContent = ''; dom.resetSuccess.textContent = ''; try { await sendPasswordResetEmail(auth, email); dom.resetSuccess.textContent = 'Линкът е изпратен! Проверете пощата си.'; dom.forgotPasswordForm.reset(); } catch (error) { dom.resetError.textContent = 'Грешка. Проверете имейла.'; } finally { toggleLoading(button, false); } };
+        const handleLogout = () => { signOut(auth).catch(console.error); };
 
-  function pushRound(roundArray) {
-    rounds.push(roundArray);
-    if (rounds.length > base) {
-      rounds.shift(); // Поддържаме само последните 'base' рунда
-    }
-  }
+        // --- ГЛАВЕН СЛУШАТЕЛ И UI ОБНОВЯВАНЕ ---
+        onAuthStateChanged(auth, async (user) => {
+            if (state.userBalanceUnsubscribe) { state.userBalanceUnsubscribe(); state.userBalanceUnsubscribe = null; }
+            
+            if (user) {
+                await user.reload();
+                const refreshedUser = auth.currentUser;
+                
+                if (refreshedUser && refreshedUser.emailVerified) {
+                    state.isLoggedIn = true;
+                    closeModal(dom.verificationNotice);
+                    [dom.loggedOutView, dom.loggedOutViewMobile].forEach(el => el.classList.add('hidden'));
+                    [dom.loggedInView, dom.loggedInViewMobile].forEach(el => el.classList.remove('hidden'));
 
-  // --- Event Handlers ---
-  confirmBtn.onclick = () => {
-    if (manualSelection.size !== M) return;
-    
-    const newRound = new Array(T).fill(0);
-    for (const mineIndex of manualSelection) {
-      newRound[mineIndex] = 1;
-    }
-    
-    pushRound(newRound);
-    manualSelection.clear();
-    render();
-  };
-  
-  clearBtn.onclick = () => {
-    rounds = [];
-    manualSelection.clear();
-    render();
-  };
+                    const userDocRef = doc(db, 'users', refreshedUser.uid);
+                    const userDocSnap = await getDoc(userDocRef);
+                    if (userDocSnap.exists()) {
+                        dom.userFullnameDisplay.textContent = userDocSnap.data().fullName || 'User';
+                        state.userBalanceUnsubscribe = onSnapshot(userDocRef, (doc) => {
+                            dom.userBalanceDisplay.innerHTML = `<i class="fas fa-coins mr-1"></i>${doc.data().chips.toLocaleString()}`;
+                        });
+                    }
+                } else {
+                    state.isLoggedIn = false;
+                    openModal(dom.verificationNotice);
+                    dom.verificationEmail.textContent = refreshedUser.email;
+                }
+            } else {
+                state.isLoggedIn = false;
+                closeModal(dom.verificationNotice);
+                [dom.loggedOutView, dom.loggedOutViewMobile].forEach(el => el.classList.remove('hidden'));
+                [dom.loggedInView, dom.loggedInViewMobile].forEach(el => el.classList.add('hidden'));
+                dom.userFullnameDisplay.textContent = '';
+                dom.userBalanceDisplay.innerHTML = `<i class="fas fa-coins mr-1"></i>0`;
+            }
+            setupGameCardListeners(state.isLoggedIn);
+        });
+        
+        // --- ЛОГИКА ЗА ИГРИТЕ ---
+        function setupGameCardListeners(isUserLoggedIn) {
+            const gamesGrid = document.getElementById('games-grid');
+            gamesGrid.innerHTML = ''; // Clear previous cards
+            const gamesData = [ { name: 'Блекджек', image: 'https://placehold.co/300x400/34495e/ffffff?text=Blackjack', link: 'blackjack.html' }, { name: 'Мини', image: 'https://placehold.co/300x400/e74c3c/ffffff?text=Mines', link: 'mini.html' }, { name: 'Рулетка', image: 'https://placehold.co/300x400/2c3e50/ffffff?text=Roulette', link: 'ruletka.html' }, { name: 'Война', image: 'https://placehold.co/300x400/9b59b6/ffffff?text=War', link: 'war or voina.html' } ];
+            gamesData.forEach(game => {
+                const card = document.createElement('div');
+                card.className = "game-card group cursor-pointer block bg-gray-900 rounded-lg overflow-hidden shadow-lg relative transform transition-transform duration-300 hover:-translate-y-2";
+                card.innerHTML = `<img src="${game.image}" alt="${game.name}" class="w-full h-auto aspect-[3/4] object-cover"><div class="absolute inset-0 bg-black/70 flex flex-col items-center justify-center p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300"><h4 class="text-lg font-bold text-white text-center mb-4">${game.name}</h4><div class="w-20 h-20 bg-yellow-400 rounded-full text-black text-4xl flex items-center justify-center"><i class="fas fa-play"></i></div></div><h4 class="text-center font-semibold p-3 truncate group-hover:opacity-0 transition-opacity">${game.name}</h4>`;
+                
+                card.addEventListener('click', () => {
+                    if (isUserLoggedIn) {
+                        window.location.href = game.link;
+                    } else {
+                        openModal(dom.loginRequiredModal);
+                    }
+                });
+                gamesGrid.appendChild(card);
+            });
+        }
+        
+        // --- Инициализация ---
+        function init() {
+            setupModalTriggers();
+            
+            dom.loginForm.addEventListener('submit', handleLogin);
+            dom.forgotPasswordForm.addEventListener('submit', handlePasswordReset);
+            
+            dom.registerForms.step1.addEventListener('submit', (e) => { e.preventDefault(); dom.registerErrors.step1.textContent = ''; const pass = e.target['register-password'].value; if (pass.length < 6) { dom.registerErrors.step1.textContent = "Паролата е твърде кратка."; return; } if (pass !== e.target['register-confirm-password'].value) { dom.registerErrors.step1.textContent = "Паролите не съвпадат."; return; } state.registrationData.email = e.target['register-email'].value; state.registrationData.password = pass; switchRegisterStep(2); });
+            dom.registerForms.step2.addEventListener('submit', (e) => { e.preventDefault(); state.registrationData.fullName = e.target['register-fullname'].value; state.registrationData.username = e.target['register-username'].value; switchRegisterStep(3); });
+            dom.registerForms.step3.addEventListener('submit', (e) => { e.preventDefault(); handleRegistration(e.target.querySelector('button[type="submit"]')); });
+            document.getElementById('register-back-step1').addEventListener('click', () => switchRegisterStep(1));
+            document.getElementById('register-back-step2').addEventListener('click', () => switchRegisterStep(2));
+            
+            document.getElementById('logout-btn').addEventListener('click', handleLogout);
+            document.getElementById('logout-btn-mobile').addEventListener('click', handleLogout);
+            dom.logoutFromVerificationBtn.addEventListener('click', handleLogout);
 
-  // Initial render on page load
-  render();
+            dom.resendVerificationBtn.addEventListener('click', async () => { if (auth.currentUser) { try { await sendEmailVerification(auth.currentUser); alert('Изпратен е нов имейл!'); } catch { alert('Грешка. Опитайте по-късно.'); } } });
+            dom.checkVerificationBtn.addEventListener('click', async (e) => {
+                if (!auth.currentUser) return;
+                const button = e.currentTarget;
+                toggleLoading(button, true);
+                dom.verificationError.textContent = '';
 
-})();
-</script>
+                await auth.currentUser.reload();
+                if (!auth.currentUser.emailVerified) {
+                    dom.verificationError.textContent = 'Имейлът все още не е потвърден.';
+                    dom.verificationNotice.classList.add('shake');
+                    setTimeout(() => {
+                        dom.verificationNotice.classList.remove('shake');
+                        dom.verificationError.textContent = '';
+                    }, 2000);
+                }
+                toggleLoading(button, false);
+            });
+            
+            const tabButtons = document.querySelectorAll('.tab-btn'), tabPanels = document.querySelectorAll('.tab-panel'), navLinks = document.querySelectorAll('.nav-link'), contentTabsSection = document.getElementById('content-tabs');
+            function activateTab(tabId) { tabButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId)); tabPanels.forEach(panel => panel.classList.toggle('hidden', panel.id !== `tab-${tabId}`)); }
+            tabButtons.forEach(button => button.addEventListener('click', () => activateTab(button.dataset.tab)));
+            navLinks.forEach(link => { link.addEventListener('click', (e) => { const href = link.getAttribute('href'); if (href.startsWith('#') && href !== '#home') { e.preventDefault(); const tabId = href.substring(1); activateTab(tabId); contentTabsSection.scrollIntoView({ behavior: 'smooth' }); if(mobileMenu.classList.contains('flex')) mobileMenu.classList.add('hidden'); } else if(href==='#home'){ e.preventDefault(); window.scrollTo({top:0, behavior:'smooth'}); if(mobileMenu.classList.contains('flex')) mobileMenu.classList.add('hidden');} }); });
+            const menuBtn = document.getElementById('menu-btn'), closeBtn = document.getElementById('close-btn'), mobileMenu = document.getElementById('mobile-menu');
+            menuBtn.addEventListener('click', () => mobileMenu.classList.remove('hidden')); closeBtn.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+        }
+
+        init();
+    </script>
 </body>
 </html>
