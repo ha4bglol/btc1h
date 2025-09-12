@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIVRA - Блекджек</title>
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* Custom styles from original file */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #1a1a2e;
+            color: #e0e0e0;
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #f7b733, #fc4a1a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #f7b733, #fc4a1a);
+            transition: all 0.2s ease-out;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(247, 183, 51, 0.2);
+        }
+        .btn-primary:active {
+            transform: translateY(0) scale(0.98);
+            box-shadow: none;
+        }
+        .btn-primary:disabled {
+            background: #4a4a6a;
+            cursor: not-allowed;
+            transform: translateY(0);
+            box-shadow: none;
+        }
+        
+        /* Custom styles for Blackjack (IMPROVED) */
+        .btn-secondary {
+            background-color: #4a4a6a;
+            transition: all 0.2s ease-out;
+        }
+        .btn-secondary:hover:not(:disabled) {
+            background-color: #5a5a7a;
+            transform: translateY(-2px);
+        }
+        .btn-secondary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* IMPROVEMENT: Green Felt Table */
+        .game-board {
+            background-color: #064e3b; /* A nice dark green */
+            background-image: radial-gradient(ellipse at center, #108a44 0%, #064e3b 80%);
+            border: 1px solid #f7b733; /* Gold border */
+            position: relative; /* Needed for the pseudo-element */
+            overflow: hidden; /* To contain the branded text */
+        }
+        
+        /* IMPROVEMENT: Faint Branding on Table */
+        .game-board::before {
+            content: 'NIVRA';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.05); /* Very faint white */
+            pointer-events: none; /* Make it unclickable */
+            z-index: 0;
+        }
+        
+        .card {
+            width: 110px;
+            height: 160px;
+            background-color: #f8f9fa;
+            color: #1a1a2e;
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            font-weight: 600;
+            position: relative;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            border: 1px solid #aaa;
+            transform: scale(0);
+            animation-name: deal-card;
+            animation-duration: 0.5s;
+            animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes deal-card {
+            from { opacity: 0; transform: translateY(60px) rotateX(-30deg) rotateZ(15deg) scale(0.7); }
+            to { opacity: 1; transform: translateY(0) rotateX(0) rotateZ(0) scale(1); }
+        }
+        
+        .card.red { color: #c0392b; }
+        .card-rank { font-size: 1.75rem; font-weight: 700; }
+        .card-suit { font-size: 1.5rem; }
+        .card-suit-center { font-size: 3.5rem; }
+        
+        .card .top-left { position: absolute; top: 8px; left: 10px; text-align: center; line-height: 1; }
+        .card .bottom-right { position: absolute; bottom: 8px; right: 10px; transform: rotate(180deg); text-align: center; line-height: 1; }
+        
+        /* IMPROVEMENT: Branded Card Back */
+        .card.facedown {
+            background: linear-gradient(135deg, #fc4a1a, #f7b733);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        .card.facedown::before {
+            content: 'NIVRA';
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: rgba(255, 255, 255, 0.85);
+            transform: rotate(-45deg);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+        .card.facedown > div { display: none; }
+        
+        input[type="number"] { -moz-appearance: textfield; }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Simple Header -->
+    <header class="bg-gray-900 shadow-lg">
+        <nav class="container mx-auto px-6 py-4 flex justify-center md:justify-start">
+            <a href="#" class="text-3xl font-bold gradient-text">NIVRA CASINO</a>
+        </nav>
+    </header>
+
+    <main class="min-h-[calc(100vh-160px)] flex items-center justify-center py-12 px-4">
+        <!-- Blackjack Game Section -->
+        <section id="blackjack-game-container" class="w-full max-w-6xl">
+            <div class="bg-gray-900 rounded-2xl shadow-2xl p-6 md:p-8 flex flex-col md:flex-row gap-8">
+                
+                <!-- Left Panel - Controls -->
+                <div class="w-full md:w-1/3 lg:w-1/4 bg-gray-800 p-6 rounded-xl flex flex-col z-10">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-2xl font-bold">Блекджек</h3>
+                        <div class="text-lg font-semibold">
+                            <i class="fas fa-wallet text-yellow-400"></i>
+                            <span id="balance-display">1000.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Bet Amount -->
+                    <div class="mb-4">
+                        <label for="bet-amount" class="block text-sm font-medium text-gray-400 mb-1">Залог</label>
+                        <input type="number" id="bet-amount" value="10" class="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all">
+                    </div>
+
+                    <!-- Game Status -->
+                    <div class="bg-gray-700 rounded-lg p-4 mb-6 text-center h-24 flex items-center justify-center">
+                        <p id="game-status-display" class="text-xl font-bold text-yellow-400">Направете залог</p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="mt-auto space-y-3">
+                        <button id="deal-btn" class="w-full py-4 rounded-lg text-black font-bold text-xl btn-primary">
+                            Раздай
+                        </button>
+                        <div id="player-actions" class="grid grid-cols-2 gap-3 hidden">
+                             <button id="hit-btn" class="w-full py-3 rounded-lg text-white font-bold text-lg btn-secondary">Удари</button>
+                             <button id="stand-btn" class="w-full py-3 rounded-lg text-white font-bold text-lg btn-secondary">Пасувай</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Panel - Game Board -->
+                <div class="w-full md:w-2/3 lg:w-3/4 flex items-center justify-center">
+                    <div class="game-board w-full rounded-xl p-4 md:p-6 flex flex-col justify-between gap-8 min-h-[450px]">
+                        <!-- Dealer's Hand -->
+                        <div>
+                            <div class="flex justify-between items-center mb-4">
+                                <h4 class="text-xl font-semibold">Ръка на Дилъра</h4>
+                                <p class="text-2xl font-bold bg-black bg-opacity-30 px-3 py-1 rounded-md" id="dealer-score"></p>
+                            </div>
+                            <div id="dealer-cards" class="flex justify-center items-center gap-4 min-h-[180px]">
+                                <!-- Dealer cards appear here -->
+                            </div>
+                        </div>
+
+                        <!-- Player's Hand -->
+                        <div>
+                            <div id="player-cards" class="flex justify-center items-center gap-4 min-h-[180px] mb-4">
+                                <!-- Player cards appear here -->
+                            </div>
+                             <div class="flex justify-between items-center">
+                                <h4 class="text-xl font-semibold">Твоята Ръка</h4>
+                                <p class="text-2xl font-bold bg-black bg-opacity-30 px-3 py-1 rounded-md" id="player-score"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Simple Footer -->
+    <footer class="bg-gray-900 text-gray-500 text-center py-6">
+        <p class="text-xs">Играта е предназначена само за забавление за лица над 18 години. Използват се виртуални кредити без реална стойност.</p>
+        <p class="text-sm mt-2">&copy; 2024 NIVRA. Всички права запазени.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // ======================= BLACKJACK GAME LOGIC (No changes needed here) =======================
+            
+            // DOM Elements
+            const balanceDisplay = document.getElementById('balance-display');
+            const betAmountInput = document.getElementById('bet-amount');
+            const gameStatusDisplay = document.getElementById('game-status-display');
+            const dealBtn = document.getElementById('deal-btn');
+            const playerActions = document.getElementById('player-actions');
+            const hitBtn = document.getElementById('hit-btn');
+            const standBtn = document.getElementById('stand-btn');
+            const dealerScoreDisplay = document.getElementById('dealer-score');
+            const playerScoreDisplay = document.getElementById('player-score');
+            const dealerCardsContainer = document.getElementById('dealer-cards');
+            const playerCardsContainer = document.getElementById('player-cards');
+            
+            // Game State
+            let balance = 1000.00;
+            let deck = [];
+            let playerHand = [], dealerHand = [];
+            let playerScore = 0, dealerScore = 0;
+
+            // --- Game Setup ---
+            
+            function createDeck() {
+                const suits = ['♥', '♦', '♣', '♠'];
+                const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+                let newDeck = [];
+                for (const suit of suits) {
+                    for (const rank of ranks) {
+                        let value = ['J', 'Q', 'K'].includes(rank) ? 10 : rank === 'A' ? 11 : parseInt(rank);
+                        newDeck.push({ suit, rank, value });
+                    }
+                }
+                // Shuffle Deck
+                for (let i = newDeck.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [newDeck[i], newDeck[j]] = [newDeck[j], newDeck[i]];
+                }
+                return newDeck;
+            }
+
+            // --- UI Functions ---
+
+            function updateBalanceDisplay() {
+                balanceDisplay.textContent = balance.toFixed(2);
+            }
+
+            function renderCard(card, container, delay, isFaceDown = false) {
+                const cardEl = document.createElement('div');
+                cardEl.classList.add('card');
+                cardEl.style.animationDelay = `${delay}ms`;
+
+                if (isFaceDown) {
+                    cardEl.classList.add('facedown');
+                } else {
+                    cardEl.innerHTML = `
+                        <div class="top-left">
+                            <div class="card-rank">${card.rank}</div>
+                            <div class="card-suit">${card.suit}</div>
+                        </div>
+                        <div class="card-suit-center flex-grow flex items-center justify-center">${card.suit}</div>
+                        <div class="bottom-right">
+                            <div class="card-rank">${card.rank}</div>
+                            <div class="card-suit">${card.suit}</div>
+                        </div>
+                    `;
+                    if (['♥', '♦'].includes(card.suit)) cardEl.classList.add('red');
+                }
+                container.appendChild(cardEl);
+                return cardEl;
+            }
+            
+            function updateScores() {
+                playerScore = calculateScore(playerHand);
+                dealerScore = calculateScore(dealerHand.slice(0, 1)); // Show score of only the first card initially
+                
+                playerScoreDisplay.textContent = playerScore;
+                dealerScoreDisplay.textContent = dealerScore > 0 ? `${dealerScore} + ?` : '';
+            }
+            
+            function setStatus(message, colorClass = 'text-yellow-400') {
+                gameStatusDisplay.textContent = message;
+                gameStatusDisplay.className = `text-xl font-bold transition-colors duration-300 ${colorClass}`;
+            }
+
+            // IMPROVED: Centralized UI state management
+            function setUiState(state) {
+                betAmountInput.disabled = (state !== 'pre-game');
+                dealBtn.classList.toggle('hidden', state !== 'pre-game');
+                playerActions.classList.toggle('hidden', state !== 'player-turn');
+            }
+
+            function flashInputBorder(inputElement) {
+                inputElement.classList.add('border-red-500', 'ring-red-500');
+                setTimeout(() => inputElement.classList.remove('border-red-500', 'ring-red-500'), 1000);
+            }
+            
+            // --- Game Logic Functions ---
+
+            function calculateScore(hand) {
+                let score = hand.reduce((sum, card) => sum + card.value, 0);
+                let aceCount = hand.filter(card => card.rank === 'A').length;
+                while (score > 21 && aceCount > 0) {
+                    score -= 10;
+                    aceCount--;
+                }
+                return score;
+            }
+
+            function dealCard(hand, container, isFaceDown = false) {
+                const card = deck.pop();
+                hand.push(card);
+                // Staggered animation delay
+                const delay = (hand.length - 1) * 150 + (container === dealerCardsContainer ? 50 : 0);
+                renderCard(card, container, delay, isFaceDown);
+            }
+
+            function startGame() {
+                const bet = parseFloat(betAmountInput.value);
+                if (isNaN(bet) || bet <= 0 || bet > balance) {
+                    flashInputBorder(betAmountInput);
+                    setStatus('Невалиден залог!', 'text-red-400');
+                    return;
+                }
+
+                balance -= bet;
+                updateBalanceDisplay();
+
+                // Reset board
+                playerCardsContainer.innerHTML = '';
+                dealerCardsContainer.innerHTML = '';
+                playerHand = [];
+                dealerHand = [];
+                deck = createDeck();
+                
+                setStatus('Раздаване...', 'text-white');
+                setUiState('dealing'); // Hide all buttons during deal
+
+                // Deal initial cards with staggered animation
+                dealCard(playerHand, playerCardsContainer);
+                dealCard(dealerHand, dealerCardsContainer);
+                dealCard(playerHand, playerCardsContainer);
+                dealCard(dealerHand, dealerCardsContainer, true); // Dealer's second card is face down
+                
+                updateScores();
+                
+                // Wait for animations to finish
+                setTimeout(() => {
+                    // Check for player blackjack
+                    if (calculateScore(playerHand) === 21) {
+                        playerStand(true); // Player stands automatically on blackjack
+                    } else {
+                        setStatus('Твой ред...', 'text-white');
+                        setUiState('player-turn');
+                    }
+                }, 800); // Should be longer than total animation delay
+            }
+
+            function playerHit() {
+                dealCard(playerHand, playerCardsContainer);
+                updateScores();
+                
+                if (playerScore > 21) {
+                    setStatus('Бюст!', 'text-red-400');
+                    endGame(0); // Player loses, no payout
+                }
+            }
+
+            function playerStand(isBlackjack = false) {
+                setUiState('dealer-turn'); // Hide player buttons
+                setStatus('Ред на дилъра...', 'text-white');
+                setTimeout(() => dealerTurn(isBlackjack), 800);
+            }
+
+            function dealerTurn(playerHasBlackjack) {
+                // Reveal hidden card
+                dealerCardsContainer.children[1].remove();
+                renderCard(dealerHand[1], dealerCardsContainer, 0);
+                
+                const drawLoop = setInterval(() => {
+                    let currentDealerScore = calculateScore(dealerHand);
+                    dealerScoreDisplay.textContent = currentDealerScore;
+
+                    if (currentDealerScore >= 17) {
+                        clearInterval(drawLoop);
+                        determineWinner(playerHasBlackjack);
+                    } else {
+                        dealCard(dealerHand, dealerCardsContainer);
+                    }
+                }, 800);
+            }
+
+            function determineWinner(playerHasBlackjack) {
+                const finalPlayerScore = calculateScore(playerHand);
+                const finalDealerScore = calculateScore(dealerHand);
+
+                if (playerHasBlackjack && finalDealerScore !== 21) {
+                    setStatus('Блекджек! 3:2', 'text-green-400');
+                    endGame(2.5); // 3:2 payout
+                } else if (finalPlayerScore > 21) {
+                    setStatus('Дилърът печели!', 'text-red-400');
+                    endGame(0);
+                } else if (finalDealerScore > 21 || finalPlayerScore > finalDealerScore) {
+                    setStatus('Ти печелиш!', 'text-green-400');
+                    endGame(2); // 1:1 payout
+                } else if (finalDealerScore > finalPlayerScore) {
+                    setStatus('Дилърът печели!', 'text-red-400');
+                    endGame(0);
+                } else {
+                    setStatus('Равенство', 'text-gray-400');
+                    endGame(1); // Push, bet returned
+                }
+            }
+            
+            function endGame(payoutMultiplier) {
+                const bet = parseFloat(betAmountInput.value);
+                balance += bet * payoutMultiplier;
+                updateBalanceDisplay();
+                setUiState('pre-game');
+            }
+
+            // --- Initial Setup ---
+            function init() {
+                updateBalanceDisplay();
+                dealBtn.addEventListener('click', startGame);
+                hitBtn.addEventListener('click', playerHit);
+                standBtn.addEventListener('click', () => playerStand(false));
+            }
+
+            init();
+        });
+    </script>
+</body>
+</html>
