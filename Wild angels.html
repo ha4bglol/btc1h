@@ -462,16 +462,16 @@
         .bonus-transition-content p { font-size: clamp(1rem, 3vmin, 2rem); color: #fff; margin-top: 2vmin; text-shadow: 0 0 10px #000; }
         @keyframes bonus-pulse { 0%, 100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.05); opacity: 1; } }
 
-        @media (max-aspect-ratio: 5/6) {
-            
+        /* --- MOBILE/PORTRAIT LAYOUT --- */
+        @media (orientation: portrait) {
             #game-area {
                 flex-direction: column;
                 justify-content: center;
-                padding-top: 12vmin;
-                padding-bottom: 38vmin;
+                padding-top: 10vmin; /* Reduced */
+                padding-bottom: 30vmin; /* Reduced */
                 gap: 2vh;
             }
-            .game-title { font-size: 8vmin; }
+            .game-title { font-size: 8vmin; top: 2vmin; }
             .reels-container {
                 order: 1;
                 width: 95vw;
@@ -496,12 +496,34 @@
                 padding: 1.5vmin;
                 gap: 1vmin;
                 justify-content: flex-end;
-                height: 38vmin;
+                height: 30vmin; /* Reduced */
             }
             .info-bar { font-size: clamp(0.8rem, 2.8vmin, 1.1rem); }
             #bet-selection-bar { flex-wrap: wrap; gap: 1.5vmin; }
             .bet-select-btn { padding: 1.5vmin 2.5vmin; }
         }
+
+        /* --- FIX FOR LANDSCAPE ON SMALL HEIGHT DEVICES (PHONES) --- */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .game-title { font-size: 5vh; top: 1vh; }
+            #mute-button { width: 6vh; height: 6vh; font-size: 2.5vh; }
+            .side-panel { width: 15vw; padding: 0 2vw; }
+            #spinButton { width: 18vh; height: 18vh; }
+            #autoSpinButton, #buyBonusButton { padding: 1vh 2vh; font-size: 2vh; }
+            
+            #game-area { padding-top: 8vh; padding-bottom: 25vh; }
+
+            .reels-container { gap: 1vh; padding: 1.5vh; }
+            .reel { width: 15vh; height: 45vh; }
+            .symbol { height: 15vh; }
+            
+            #ui-panel { height: 25vh; padding: 1vh; gap: 1vh;}
+            .info-bar { font-size: 2vh; }
+            .info-box span { font-size: 2.5vh; }
+            #bet-selection-bar { gap: 1vh; }
+            .bet-select-btn { padding: 1vh 1.5vh; font-size: 1.8vh; }
+        }
+
     </style>
 </head>
 <body>
@@ -524,7 +546,7 @@
             <i class="fas fa-lock"></i>
             <h2>Достъпът е ограничен</h2>
             <p>Трябва да сте влезли в профила си, за да играете.</p>
-            <a href="index (5).html">Към лобито / Вход</a>
+            <a href="index.html">Към лобито / Вход</a>
         </div>
     </div>
 
@@ -643,6 +665,7 @@
     async function updateBalanceInFirestore(newBalance) {
         if (!userDocRef) return;
         try {
+            // We use Math.round to avoid floating point issues in Firestore
             await updateDoc(userDocRef, { chips: Math.round(newBalance) });
         } catch (error) {
             console.error("Грешка при обновяване на баланса:", error);
@@ -662,20 +685,21 @@
                         updateExternalBalanceChange(newBalance);
                     }
                 } else {
-                    showLoginRequired();
+                    showLoginRequired("Не е намерен документ за потребителя!");
                 }
             }, (error) => {
-                 showLoginRequired();
+                 showLoginRequired("Грешка при зареждане на потребителски данни.");
             });
         } else {
             showLoginRequired();
         }
     });
     
-    function showLoginRequired() {
+    function showLoginRequired(message = "Трябва да сте влезли в профила си, за да играете.") {
         loadingScreen.style.opacity = '0';
         setTimeout(() => {
             loadingScreen.style.display = 'none';
+            loginRequiredContainer.querySelector('p').textContent = message;
             loginRequiredContainer.style.display = 'flex';
             gameContainer.style.display = 'none';
         }, 500);
@@ -925,9 +949,9 @@
             } else if (!isFreeSpin) {
                 balance -= bet;
                 await updateBalanceInFirestore(balance);
+                updateBalanceDisplay(); // Update UI immediately after bet
             }
-            updateBalanceDisplay();
-
+            
             let results = [];
             const finalIndexes = [];
             
@@ -1091,7 +1115,7 @@
         
         async function checkWin(results, finalIndexes) {
             let totalWin = 0; const winningLines = []; const winningPositions = new Set();
-            let scatterCount = 0; const scatterPositions = []; let currentBalance = balance;
+            let scatterCount = 0; const scatterPositions = [];
             let firstWinningSymbol = null;
 
             results.forEach((reelResult, reelIndex) => {
@@ -1185,7 +1209,14 @@
                 }
             }
             
+            const maxWin = bet * MAX_WIN_MULTIPLIER;
+            if (totalWin > maxWin) totalWin = maxWin;
+
             if (totalWin > 0) {
+                balance += totalWin; // Add win to local balance
+                await updateBalanceInFirestore(balance); // Sync with Firestore
+                updateBalanceDisplay(); // Update UI
+                
                 if(freeSpinsRemaining === 0 && !hasExpansionWin) {
                     manageBackgroundMusic(false);
                     winSound.play();
@@ -1196,15 +1227,6 @@
                 await updateWin(totalWin, true);
                 flashWinningSymbols(winningPositions, finalIndexes);
                 drawWinningLines(winningLines);
-            }
-
-            const maxWin = bet * MAX_WIN_MULTIPLIER;
-            if (totalWin > maxWin) totalWin = maxWin;
-
-            if (totalWin > 0) {
-                balance = currentBalance + totalWin;
-                await updateBalanceInFirestore(balance);
-                updateBalanceDisplay();
             }
             
             let bonusTriggered = false;
@@ -1382,14 +1404,16 @@
         initializeReels();
         initializeUI();
         
+        // Return the function to handle external balance updates
         return function(newBalance) {
             if (!isSpinning) {
                 balance = newBalance;
                 updateBalanceDisplay();
+            } else {
+                 console.log("Балансът е променен външно, но ще се синхронизира след края на завъртането.");
             }
         };
     }
     </script>
 </body>
 </html>
-
