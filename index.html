@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="bg">
 <head>
@@ -390,7 +389,17 @@
         function setupGameCardListeners(isUserLoggedIn) {
             const gamesGrid = document.getElementById('games-grid');
             gamesGrid.innerHTML = ''; // Clear previous cards
-            const gamesData = [ { name: 'Блекджек', image: 'https://placehold.co/300x400/34495e/ffffff?text=Blackjack', link: 'blackjack.html' }, { name: 'Мини', image: 'https://placehold.co/300x400/e74c3c/ffffff?text=Mines', link: 'mini.html' }, { name: 'Рулетка', image: 'https://placehold.co/300x400/2c3e50/ffffff?text=Roulette', link: 'ruletka.html' }, { name: 'Война', image: 'https://placehold.co/300x400/9b59b6/ffffff?text=War', link: 'war or voina.html' } ];
+            
+            // --- START OF CHANGE ---
+            const gamesData = [ 
+                { name: 'Wild Angels', image: 'https://placehold.co/300x400/2e005e/00ffc3?text=Wild+Angels', link: 'Wild angels.html' },
+                { name: 'Блекджек', image: 'https://placehold.co/300x400/34495e/ffffff?text=Blackjack', link: 'blackjack.html' }, 
+                { name: 'Мини', image: 'https://placehold.co/300x400/e74c3c/ffffff?text=Mines', link: 'mini.html' }, 
+                { name: 'Рулетка', image: 'https://placehold.co/300x400/2c3e50/ffffff?text=Roulette', link: 'ruletka.html' }, 
+                { name: 'Война', image: 'https://placehold.co/300x400/9b59b6/ffffff?text=War', link: 'war or voina.html' } 
+            ];
+            // --- END OF CHANGE ---
+
             gamesData.forEach(game => {
                 const card = document.createElement('div');
                 card.className = "game-card group cursor-pointer block bg-gray-900 rounded-lg overflow-hidden shadow-lg relative transform transition-transform duration-300 hover:-translate-y-2";
