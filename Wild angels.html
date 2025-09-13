@@ -316,6 +316,7 @@
             width: 100%;
             max-width: 1200px;
             font-size: clamp(0.9rem, 2vmin, 1.2rem);
+            gap: 1.5vmin;
         }
         
         .info-box { 
@@ -380,6 +381,30 @@
         #buyBonusButton:disabled {
             filter: grayscale(1) brightness(0.7);
             cursor: not-allowed;
+        }
+
+        #mute-button {
+            position: absolute;
+            left: 3vmin;
+            bottom: 3vmin;
+            background: rgba(0,0,0,0.4);
+            border: 2px solid rgba(0, 255, 195, 0.5);
+            color: #fff;
+            width: clamp(40px, 7vmin, 55px);
+            height: clamp(40px, 7vmin, 55px);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: clamp(1.1rem, 2.8vmin, 1.6rem);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+        }
+        #mute-button:hover {
+            border-color: var(--glow-color);
+            background: rgba(0, 255, 195, 0.2);
+            box-shadow: 0 0 10px var(--glow-color);
         }
         
         .video-animation-container {
@@ -544,6 +569,7 @@
         </div>
 
         <div id="ui-panel">
+            <button id="mute-button"><i class="fas fa-volume-high"></i></button>
             <div class="info-bar">
                 <div class="info-box" id="balance-box">Баланс:<span id="balance">0</span></div>
                 <div class="info-box" id="message-box">ИЗБЕРЕТЕ ЗАЛОГ</div>
@@ -601,8 +627,6 @@
     const progressBar = document.getElementById('progress-bar');
     const loadingPercentage = document.getElementById('loading-percentage');
 
-    // --- START OF CORRECTION ---
-    // Декларираме SYMBOLS тук, за да е достъпен глобално в модула
     const SYMBOLS = {
         'angel1': { weight: 20, src: 'angel1.png', videos: 6, payout: { '3': 5,  '4': 10,  '5': 20  }},
         'angel2': { weight: 18, src: 'angel2.png', videos: 6, payout: { '3': 10, '4': 20,  '5': 40  }},
@@ -618,32 +642,38 @@
     };
 
     async function updateBalanceInFirestore(newBalance) {
-        if (!userDocRef) return;
+        if (!userDocRef || newBalance < 0) return;
         try {
-            await updateDoc(userDocRef, { chips: newBalance });
+            await updateDoc(userDocRef, { chips: Math.round(newBalance) });
         } catch (error) {
             console.error("Грешка при обновяване на баланса:", error);
         }
     }
     
     onAuthStateChanged(auth, async (user) => {
-        if (user && user.emailVerified) {
-            userDocRef = doc(db, 'users', user.uid);
-            onSnapshot(userDocRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    const newBalance = docSnap.data().chips;
-                    if (!isGameInitialized) {
-                        preloadAssetsAndStartGame(newBalance);
-                        isGameInitialized = true;
-                    } else if (updateExternalBalanceChange) {
-                        updateExternalBalanceChange(newBalance);
+        if (user) {
+            await user.reload();
+            const refreshedUser = auth.currentUser;
+            if (refreshedUser && refreshedUser.emailVerified) {
+                userDocRef = doc(db, 'users', refreshedUser.uid);
+                onSnapshot(userDocRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        const newBalance = docSnap.data().chips;
+                        if (!isGameInitialized) {
+                            preloadAssetsAndStartGame(newBalance);
+                            isGameInitialized = true;
+                        } else if (updateExternalBalanceChange) {
+                            updateExternalBalanceChange(newBalance);
+                        }
+                    } else {
+                        showLoginRequired();
                     }
-                } else {
-                    showLoginRequired();
-                }
-            }, (error) => {
+                }, (error) => {
+                     showLoginRequired();
+                });
+            } else {
                  showLoginRequired();
-            });
+            }
         } else {
             showLoginRequired();
         }
@@ -689,7 +719,7 @@
                 
                 const onAssetError = () => {
                     console.error(`Failed to load asset: ${asset.src}`);
-                    onAssetLoaded(); // Продължаваме, дори ако един файл липсва
+                    onAssetLoaded();
                 };
 
                 if (asset.type === 'image') {
@@ -699,12 +729,12 @@
                     img.onerror = onAssetError;
                 } else if (asset.type === 'audio') {
                     const audio = new Audio();
-                    audio.addEventListener('loadeddata', onAssetLoaded, { once: true });
+                    audio.addEventListener('canplaythrough', onAssetLoaded, { once: true });
                     audio.addEventListener('error', onAssetError, { once: true });
                     audio.src = asset.src;
                 } else if (asset.type === 'video') {
                      const video = document.createElement('video');
-                     video.addEventListener('loadeddata', onAssetLoaded, { once: true });
+                     video.addEventListener('canplaythrough', onAssetLoaded, { once: true });
                      video.addEventListener('error', onAssetError, { once: true });
                      video.src = asset.src;
                 }
@@ -719,6 +749,29 @@
                 loadingScreen.style.display = 'none';
                 gameContainer.style.display = 'flex';
                 updateExternalBalanceChange = initializeGameLogic(initialBalance);
+
+                function goFullscreen() {
+                    const elem = document.documentElement;
+                    if (elem.requestFullscreen) {
+                        elem.requestFullscreen().catch(err => console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`));
+                    } else if (elem.mozRequestFullScreen) { /* Firefox */
+                        elem.mozRequestFullScreen();
+                    } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+                        elem.webkitRequestFullscreen();
+                    } else if (elem.msRequestFullscreen) { /* IE/Edge */
+                        elem.msRequestFullscreen();
+                    }
+                }
+                
+                const startInteractionHandler = () => {
+                    goFullscreen();
+                    document.body.removeEventListener('click', startInteractionHandler);
+                    document.body.removeEventListener('touchend', startInteractionHandler);
+                };
+                
+                document.body.addEventListener('click', startInteractionHandler);
+                document.body.addEventListener('touchend', startInteractionHandler);
+
             }, 500);
         }, 500);
     }
@@ -743,7 +796,7 @@
         let isAutoSpinning = false;
         let freeSpinsRemaining = 0;
         let expandingSymbol = null;
-        let isFirstSpin = true;
+        let isMuted = false;
 
         const backgroundMusicFiles = ['bg_music_1.mp3', 'bg_music_2.mp3', 'bg_music_3.mp3'];
         let currentTrackIndex = 0;
@@ -752,6 +805,7 @@
         const winSound = new Audio('win_sound.mp3');
         const anticipationSound = new Audio('anticipation.mp3');
         const expandSound = new Audio('expand.mp3');
+        const allAudio = [bgMusicPlayer, winSound, anticipationSound, expandSound];
 
         const spinButton = document.getElementById('spinButton');
         const autoSpinButton = document.getElementById('autoSpinButton');
@@ -763,6 +817,7 @@
         const winLinesSvg = document.getElementById('win-lines-svg');
         const betSelectionBar = document.getElementById('bet-selection-bar');
         const messageBox = document.getElementById('message-box');
+        const muteButton = document.getElementById('mute-button');
         
         const reelStrips = [];
         
@@ -774,22 +829,21 @@
             right1: document.getElementById('videoRight1'),
             right2: document.getElementById('videoRight2')
         };
-        let activeVideoSet = { left: videoPlayers.left1, right: videoPlayers.right1 };
-        let nextVideoSet = { left: videoPlayers.left2, right: videoPlayers.right2 };
         let isWinVideoPlaying = false;
         
         function playNextTrack() {
             if (backgroundMusicFiles.length === 0) return;
             currentTrackIndex = (currentTrackIndex + 1) % backgroundMusicFiles.length;
             bgMusicPlayer.src = backgroundMusicFiles[currentTrackIndex];
-            bgMusicPlayer.play().catch(e => console.warn("Background music play failed. User interaction might be needed."));
+            bgMusicPlayer.play().catch(e => {});
         }
         
         bgMusicPlayer.addEventListener('ended', playNextTrack);
 
         function startBackgroundMusic() {
+            if (bgMusicPlayer.src) return; // already started
             bgMusicPlayer.src = backgroundMusicFiles[currentTrackIndex];
-            bgMusicPlayer.play().catch(e => { /* Autoplay blocked */ });
+            bgMusicPlayer.play().catch(e => { /* Autoplay often blocked until user interaction */ });
         }
         
         function manageBackgroundMusic(shouldPlay) {
@@ -799,6 +853,15 @@
                 bgMusicPlayer.pause();
             }
         }
+        
+        function setMuteState(muted) {
+            isMuted = muted;
+            allAudio.forEach(audio => audio.muted = isMuted);
+            Object.values(videoPlayers).forEach(video => video.muted = true); // Videos are always muted
+            muteButton.innerHTML = isMuted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-high"></i>';
+        }
+        muteButton.addEventListener('click', () => setMuteState(!isMuted));
+
 
         function createWeightedStrip() {
             const strip = [];
@@ -855,11 +918,7 @@
 
         async function spin(isFreeSpin = false) {
             if (isSpinning) return;
-            
-            if (isFirstSpin) {
-                startBackgroundMusic();
-                isFirstSpin = false;
-            }
+            startBackgroundMusic();
 
             if (!isFreeSpin && freeSpinsRemaining === 0 && balance < bet) {
                 if(isAutoSpinning) toggleAutoSpin();
@@ -878,11 +937,9 @@
                 freeSpinsRemaining--;
                 updateSpinButtonText();
             } else if (!isFreeSpin) {
-                balance -= bet;
-                updateBalanceInFirestore(balance);
+                updateBalanceInFirestore(balance - bet);
             }
-            updateBalanceDisplay();
-
+            
             let results = [];
             const finalIndexes = [];
             
@@ -923,7 +980,7 @@
                         if (!anticipationSoundPlayed) {
                             manageBackgroundMusic(false);
                             anticipationSound.loop = true;
-                            anticipationSound.play();
+                            anticipationSound.play().catch(()=>{});
                             anticipationSoundPlayed = true;
                         }
                     }
@@ -1046,7 +1103,7 @@
         
         async function checkWin(results, finalIndexes) {
             let totalWin = 0; const winningLines = []; const winningPositions = new Set();
-            let scatterCount = 0; const scatterPositions = []; let currentBalance = balance;
+            let scatterCount = 0; const scatterPositions = [];
             let firstWinningSymbol = null;
 
             results.forEach((reelResult, reelIndex) => {
@@ -1108,7 +1165,7 @@
                 if (expandingReelsIndices.size >= 3) {
                     hasExpansionWin = true;
                     manageBackgroundMusic(false);
-                    expandSound.play();
+                    expandSound.play().catch(()=>{});
                     expandSound.onended = () => manageBackgroundMusic(true);
 
                     await new Promise(res => setTimeout(res, 500)); 
@@ -1143,7 +1200,7 @@
             if (totalWin > 0) {
                 if(freeSpinsRemaining === 0 && !hasExpansionWin) {
                     manageBackgroundMusic(false);
-                    winSound.play();
+                    winSound.play().catch(()=>{});
                     winSound.onended = () => manageBackgroundMusic(true);
                 }
                 
@@ -1157,9 +1214,7 @@
             if (totalWin > maxWin) totalWin = maxWin;
 
             if (totalWin > 0) {
-                balance = currentBalance + totalWin;
-                updateBalanceInFirestore(balance);
-                updateBalanceDisplay();
+                updateBalanceInFirestore(balance + totalWin);
             }
             
             let bonusTriggered = false;
@@ -1190,6 +1245,9 @@
             const videoSrc = `${symbolKey}_v${videoIndex}.webm`; 
             leftVideoContainer.style.display = 'flex';
             rightVideoContainer.style.display = 'flex';
+            
+            activeVideoSet = { left: videoPlayers.left1, right: videoPlayers.right1 };
+
             Object.values(videoPlayers).forEach(video => {
                 video.src = videoSrc;
                 video.currentTime = 0;
@@ -1198,43 +1256,26 @@
             activeVideoSet.left.addEventListener('canplay', () => {
                 activeVideoSet.left.style.opacity = 1;
                 activeVideoSet.right.style.opacity = 1;
+                activeVideoSet.left.play().catch(()=>{});
+                activeVideoSet.right.play().catch(()=>{});
             }, { once: true });
-            activeVideoSet.left.play();
-            activeVideoSet.right.play();
         }
 
         function stopWinVideo() {
             if (!isWinVideoPlaying) return;
+            isWinVideoPlaying = false;
             leftVideoContainer.style.display = 'none';
             rightVideoContainer.style.display = 'none';
             Object.values(videoPlayers).forEach(video => {
                 video.pause();
                 video.src = "";
             });
-            isWinVideoPlaying = false;
-        }
-
-        function seamlessLoop() {
-            if (!isWinVideoPlaying) return;
-            const activeVideo = activeVideoSet.left;
-            if (activeVideo.currentTime > activeVideo.duration - 0.4) {
-                nextVideoSet.left.play();
-                nextVideoSet.right.play();
-                activeVideoSet.left.style.opacity = 0;
-                activeVideoSet.right.style.opacity = 0;
-                nextVideoSet.left.style.opacity = 1;
-                nextVideoSet.right.style.opacity = 1;
-                const finishedSet = activeVideoSet;
-                activeVideoSet = nextVideoSet;
-                nextVideoSet = finishedSet;
-                nextVideoSet.left.currentTime = 0;
-                nextVideoSet.right.currentTime = 0;
-            }
         }
         
         Object.values(videoPlayers).forEach(video => {
-            video.addEventListener('timeupdate', seamlessLoop);
+            video.addEventListener('ended', stopWinVideo);
         });
+
 
         function startBonus() {
             freeSpinsRemaining = SYMBOLS.scatter.spins;
@@ -1259,9 +1300,7 @@
                 messageBox.textContent = "Недостатъчен Баланс";
                 return;
             }
-            balance -= cost;
-            updateBalanceInFirestore(balance);
-            updateBalanceDisplay();
+            updateBalanceInFirestore(balance - cost);
             setControlsDisabled(true);
             const bonusTransitionScreen = document.getElementById('bonus-transition-screen');
             bonusTransitionScreen.style.display = 'flex';
@@ -1361,15 +1400,19 @@
         
         initializeReels();
         initializeUI();
+        setMuteState(false);
         
         return function(newBalance) {
+            // Update balance only if not in the middle of a spin animation to avoid visual jumps
             if (!isSpinning) {
                 balance = newBalance;
                 updateBalanceDisplay();
+            } else {
+                // If spinning, just update the backend value, the display will catch up
+                balance = newBalance;
             }
         };
     }
-    // --- END OF CORRECTION ---
     </script>
 </body>
 </html>
