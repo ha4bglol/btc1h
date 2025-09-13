@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIVRA - Рулетка</title>
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* Custom styles from original file */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #1a1a2e;
+            color: #e0e0e0;
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #f7b733, #fc4a1a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #f7b733, #fc4a1a);
+            transition: all 0.2s ease-out;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(247, 183, 51, 0.2);
+        }
+        .btn-primary:active {
+            transform: translateY(0) scale(0.98);
+            box-shadow: none;
+        }
+        .btn-primary:disabled {
+            background: #4a4a6a;
+            color: #888;
+            cursor: not-allowed;
+            transform: translateY(0);
+            box-shadow: none;
+        }
+        
+        /* Styles for Roulette Game */
+        .roulette-wheel-container {
+            width: 150px;
+            height: 150px;
+            background: #111;
+            border-radius: 50%;
+            border: 8px solid #333;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5), inset 0 0 15px rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .roulette-result {
+            font-size: 3.5rem;
+            font-weight: 700;
+            text-shadow: 0 0 10px white;
+            transition: transform 0.1s linear;
+        }
+        .roulette-result.red { color: #c0392b; }
+        .roulette-result.black { color: #e0e0e0; }
+        .roulette-result.green { color: #27ae60; }
+
+        .betting-table .bet-spot {
+            background-color: #2c2c44;
+            border: 2px solid #4a4a6a;
+            transition: all 0.15s ease;
+            position: relative;
+            cursor: pointer;
+        }
+        .betting-table .bet-spot:hover {
+            background-color: #3a3a5a;
+            border-color: #f7b733;
+        }
+        .bet-spot.red-spot { background-color: #9c2d22; }
+        .bet-spot.black-spot { background-color: #222; }
+        .bet-spot.green-spot { background-color: #1e8449; }
+        .bet-spot.red-spot:hover { background-color: #c0392b; }
+        .bet-spot.black-spot:hover { background-color: #333; }
+        .bet-spot.green-spot:hover { background-color: #27ae60; }
+        
+        /* Highlight winning spots */
+        .bet-spot.winner {
+            animation: pulse-winner 2s infinite;
+        }
+        @keyframes pulse-winner {
+            0% { box-shadow: 0 0 0 0 rgba(247, 183, 51, 0.7); }
+            70% { box-shadow: 0 0 10px 15px rgba(247, 183, 51, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(247, 183, 51, 0); }
+        }
+
+        /* Chips */
+        .chip {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+            border: 3px solid #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            transition: all 0.2s ease;
+            color: black;
+        }
+        .chip.selected {
+            transform: scale(1.15) translateY(-5px);
+            box-shadow: 0 8px 15px rgba(255,255,255,0.2);
+        }
+        .chip-placed {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70%;
+            height: 70%;
+            font-size: 0.7em;
+            z-index: 10;
+        }
+
+        .history-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin: 0 2px;
+        }
+        .history-number.red { background-color: #c0392b; color: white; }
+        .history-number.black { background-color: #e0e0e0; color: black; }
+        .history-number.green { background-color: #27ae60; color: white; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Simple Header -->
+    <header class="bg-gray-900 shadow-lg">
+        <nav class="container mx-auto px-6 py-4 flex justify-center md:justify-start">
+            <!-- START OF CHANGE -->
+            <a href="nivracasino.html" class="text-2xl font-bold text-gray-300 hover:text-yellow-400 transition">
+                <i class="fas fa-arrow-left mr-2"></i> Обратно към лобито
+            </a>
+            <!-- END OF CHANGE -->
+        </nav>
+    </header>
+
+    <main class="min-h-[calc(100vh-160px)] flex items-center justify-center py-12 px-4">
+        <!-- Roulette Game Section - Hidden by default -->
+        <section id="roulette-game-container" class="w-full max-w-7xl hidden">
+            <div class="bg-gray-900 rounded-2xl shadow-2xl p-4 md:p-6 flex flex-col xl:flex-row gap-6">
+                
+                <!-- Left Panel - Controls & Info -->
+                <div class="w-full xl:w-1/4 bg-gray-800 p-4 rounded-xl flex flex-col">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-2xl font-bold">Рулетка</h3>
+                        <div class="text-lg font-semibold">
+                            <i class="fas fa-wallet text-yellow-400"></i>
+                            <span id="balance-display">0.00</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Wheel & Info -->
+                    <div class="flex flex-col items-center bg-gray-700 rounded-lg p-4 mb-4">
+                        <div class="roulette-wheel-container mb-4">
+                             <div id="roulette-result-display" class="roulette-result green">0</div>
+                        </div>
+                         <div class="text-center w-full grid grid-cols-2 gap-2">
+                             <div>
+                                 <p class="text-sm text-gray-400">Общ залог</p>
+                                 <p id="total-bet-display" class="text-xl font-bold text-yellow-400">0.00</p>
+                             </div>
+                             <div>
+                                 <p class="text-sm text-gray-400">Последна печалба</p>
+                                 <p id="last-win-display" class="text-xl font-bold text-green-400">0.00</p>
+                             </div>
+                         </div>
+                    </div>
+
+                    <!-- History -->
+                    <div class="mb-4">
+                         <p class="text-sm text-gray-400 mb-2 text-center">Последни числа</p>
+                         <div id="history-container" class="bg-gray-700 rounded-lg p-2 flex justify-center flex-wrap-reverse">
+                             <span class="text-gray-500">Завъртете, за да започнете...</span>
+                         </div>
+                    </div>
+
+                    <!-- Chips -->
+                    <div class="mb-4">
+                        <p class="text-sm text-gray-400 mb-2 text-center">Изберете чип</p>
+                        <div id="chips-container" class="flex justify-around items-center">
+                            <button class="chip" data-value="1" style="background-color: #4a90e2;">1</button>
+                            <button class="chip" data-value="5" style="background-color: #d0021b;">5</button>
+                            <button class="chip" data-value="10" style="background-color: #50e3c2;">10</button>
+                            <button class="chip" data-value="25" style="background-color: #27ae60;">25</button>
+                            <button class="chip" data-value="100" style="background-color: #111; color: white;">100</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="mt-auto space-y-3">
+                         <div class="grid grid-cols-2 gap-3">
+                              <button id="clear-btn" class="w-full py-3 rounded-lg bg-gray-600 hover:bg-gray-500 text-white font-bold transition">Изчисти</button>
+                              <button id="rebet-btn" class="w-full py-3 rounded-lg bg-gray-600 hover:bg-gray-500 text-white font-bold transition">Повтори</button>
+                         </div>
+                         <button id="spin-btn" class="w-full py-4 rounded-lg text-black font-bold text-xl btn-primary">
+                            Завърти
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Panel - Game Board -->
+                <div id="roulette-board" class="w-full xl:w-3/4 flex items-center justify-center">
+                    <div id="betting-table" class="betting-table w-full grid gap-1 text-white font-bold">
+                        <!-- Table will be generated by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Login Required Message - Hidden by default -->
+        <section id="login-required-container" class="w-full max-w-2xl hidden">
+            <div class="bg-gray-900 rounded-2xl shadow-2xl p-8 text-center flex flex-col items-center gap-6">
+                <i class="fas fa-lock text-7xl text-yellow-400"></i>
+                <h2 class="text-4xl font-bold gradient-text">Достъпът е ограничен</h2>
+                <p class="text-gray-300 text-lg max-w-md">
+                    Трябва да сте влезли в профила си и да имате потвърден имейл, за да играете Рулетка.
+                </p>
+                <a href="nivracasino.html" class="mt-4 px-8 py-4 rounded-lg text-black font-bold text-xl btn-primary inline-block">
+                    Към лобито / Вход
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Simple Footer -->
+    <footer class="bg-gray-900 text-gray-500 text-center py-6">
+        <p class="text-xs">Играта е предназначена само за забавление за лица над 18 години. Използват се виртуални кредити без реална стойност.</p>
+        <p class="text-sm mt-2">&copy; 2024 NIVRA. Всички права запазени.</p>
+    </footer>
+
+    <!-- START OF SCRIPT CHANGE -->
+    <script type="module">
+        // --- FIREBASE SDK IMPORTS ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // --- ВАШИЯТ FIREBASE CONFIG ОБЕКТ ---
+        const firebaseConfig = {
+          apiKey: "AIzaSyAatMUa6vFu2AAe3NCWse6j2moiXmXdl0U",
+          authDomain: "nivra-casino.firebaseapp.com",
+          projectId: "nivra-casino",
+          storageBucket: "nivra-casino.firebasestorage.app",
+          messagingSenderId: "463242246264",
+          appId: "1:463242246264:web:4a6e736e5c8df3109e158d",
+          measurementId: "G-2NF3P6H9GM"
+        };
+        
+        // --- ИНИЦИАЛИЗАЦИЯ НА FIREBASE ---
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- Глобални променливи ---
+        let currentUser = null;
+        let userDocRef = null;
+        const gameContainer = document.getElementById('roulette-game-container');
+        const loginRequiredContainer = document.getElementById('login-required-container');
+
+        // --- Функция за обновяване на баланса в Firestore ---
+        async function updateBalanceInFirestore(newBalance) {
+            if (!userDocRef) return;
+            try {
+                await updateDoc(userDocRef, { chips: newBalance });
+            } catch (error) {
+                console.error("Грешка при обновяване на баланса:", error);
+            }
+        }
+        
+        // --- Проверка на състоянието на аутентикация ---
+        let isGameInitialized = false;
+        let updateExternalBalanceChange = null;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user && user.emailVerified) {
+                gameContainer.classList.remove('hidden');
+                loginRequiredContainer.classList.add('hidden');
+                
+                currentUser = user;
+                userDocRef = doc(db, 'users', user.uid);
+
+                const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        const newBalance = docSnap.data().chips;
+                        
+                        if (!isGameInitialized) {
+                            updateExternalBalanceChange = initializeRouletteGame(newBalance);
+                            isGameInitialized = true;
+                        } else if (updateExternalBalanceChange) {
+                            updateExternalBalanceChange(newBalance);
+                        }
+                    } else {
+                        console.error("Не е намерен документ за потребителя!");
+                        loginRequiredContainer.querySelector('p').textContent = "Възникна грешка с профила ви.";
+                        gameContainer.classList.add('hidden');
+                        loginRequiredContainer.classList.remove('hidden');
+                    }
+                }, (error) => {
+                    console.error("Грешка при зареждане на потребителски данни:", error);
+                    loginRequiredContainer.querySelector('p').textContent = "Не можахме да заредим данните ви.";
+                    gameContainer.classList.add('hidden');
+                    loginRequiredContainer.classList.remove('hidden');
+                });
+            } else {
+                gameContainer.classList.add('hidden');
+                loginRequiredContainer.classList.remove('hidden');
+            }
+        });
+
+        // --- Логиката на играта, обвита във функция ---
+        function initializeRouletteGame(initialBalance) {
+            // ======================= ROULETTE GAME LOGIC =======================
+            
+            // --- DOM Elements ---
+            const balanceDisplay = document.getElementById('balance-display');
+            const totalBetDisplay = document.getElementById('total-bet-display');
+            const lastWinDisplay = document.getElementById('last-win-display');
+            const resultDisplay = document.getElementById('roulette-result-display');
+            const historyContainer = document.getElementById('history-container');
+            const chipsContainer = document.getElementById('chips-container');
+            const bettingTable = document.getElementById('betting-table');
+            const spinBtn = document.getElementById('spin-btn');
+            const clearBtn = document.getElementById('clear-btn');
+            const rebetBtn = document.getElementById('rebet-btn');
+
+            // --- Game Constants ---
+            const ROULETTE_NUMBERS = [
+                { num: 0, color: 'green' }, { num: 32, color: 'red' }, { num: 15, color: 'black' },
+                { num: 19, color: 'red' }, { num: 4, color: 'black' }, { num: 21, color: 'red' },
+                { num: 2, color: 'black' }, { num: 25, color: 'red' }, { num: 17, color: 'black' },
+                { num: 34, color: 'red' }, { num: 6, color: 'black' }, { num: 27, color: 'red' },
+                { num: 13, color: 'black' }, { num: 36, color: 'red' }, { num: 11, color: 'black' },
+                { num: 30, color: 'red' }, { num: 8, color: 'black' }, { num: 23, color: 'red' },
+                { num: 10, color: 'black' }, { num: 5, color: 'red' }, { num: 24, color: 'black' },
+                { num: 16, color: 'red' }, { num: 33, color: 'black' }, { num: 1, color: 'red' },
+                { num: 20, color: 'black' }, { num: 14, color: 'red' }, { num: 31, color: 'black' },
+                { num: 9, color: 'red' }, { num: 22, color: 'black' }, { num: 18, color: 'red' },
+                { num: 29, color: 'black' }, { num: 7, color: 'red' }, { num: 28, color: 'black' },
+                { num: 12, color: 'red' }, { num: 35, color: 'black' }, { num: 3, color: 'red' },
+                { num: 26, color: 'black' }
+            ];
+
+            const PAYOUTS = {
+                straight: 35, dozen: 2, column: 2,
+                even: 1, odd: 1, red: 1, black: 1, low: 1, high: 1
+            };
+
+            // --- Game State ---
+            let balance = initialBalance; // ПРОМЯНА
+            let selectedChip = { value: 1, element: chipsContainer.children[0] };
+            let currentBets = {};
+            let lastBets = {};
+            let isSpinning = false;
+            let history = [];
+
+            // --- Initialization ---
+            function initGame() {
+                updateBalanceDisplay();
+                generateBettingTable();
+                setupEventListeners();
+                selectChip(1, chipsContainer.children[0]);
+            }
+
+            function generateBettingTable() {
+                bettingTable.style.gridTemplateColumns = '80px repeat(12, 1fr)';
+                bettingTable.style.gridTemplateRows = 'repeat(5, 50px)';
+                
+                const zero = createBetSpot('0', 'green-spot');
+                zero.style.gridColumn = '1 / 2'; zero.style.gridRow = '1 / 4';
+                bettingTable.appendChild(zero);
+
+                for (let i = 1; i <= 36; i++) {
+                    const numInfo = ROULETTE_NUMBERS.find(n => n.num === i);
+                    const spot = createBetSpot(i, `${numInfo.color}-spot`);
+                    const col = 1 + Math.ceil(i / 3);
+                    const row = 4 - (i % 3 || 3);
+                    spot.style.gridColumn = `${col} / ${col + 1}`; spot.style.gridRow = `${row} / ${row + 1}`;
+                    bettingTable.appendChild(spot);
+                }
+                
+                const outsideBets = [
+                    { name: '1st 12', data: 'dozen1', grid: '2 / 6' }, { name: '2nd 12', data: 'dozen2', grid: '6 / 10' },
+                    { name: '3rd 12', data: 'dozen3', grid: '10 / 14' }, { name: '1-18', data: 'low', grid: '2 / 4' },
+                    { name: 'EVEN', data: 'even', grid: '4 / 6' }, { name: '', data: 'red', grid: '6 / 8', class: 'red-spot' },
+                    { name: '', data: 'black', grid: '8 / 10', class: 'black-spot' }, { name: 'ODD', data: 'odd', grid: '10 / 12' },
+                    { name: '19-36', data: 'high', grid: '12 / 14' }
+                ];
+                
+                outsideBets.forEach((bet, i) => {
+                    const spot = createBetSpot(bet.name, bet.class || '');
+                    spot.dataset.bet = bet.data;
+                    spot.style.gridColumn = bet.grid;
+                    spot.style.gridRow = i < 3 ? '4 / 5' : '5 / 6';
+                    bettingTable.appendChild(spot);
+                });
+
+                for(let i = 0; i < 3; i++) {
+                    const spot = createBetSpot('2 to 1');
+                    spot.dataset.bet = `column${3 - i}`;
+                    spot.style.gridColumn = '14 / 15'; spot.style.gridRow = `${i + 1} / ${i + 2}`;
+                    bettingTable.appendChild(spot);
+                }
+            }
+
+            function createBetSpot(text, extraClass = '') {
+                const spot = document.createElement('div');
+                spot.className = `bet-spot flex items-center justify-center rounded-md ${extraClass}`;
+                spot.textContent = text;
+                if (!isNaN(parseInt(text))) spot.dataset.bet = text;
+                const chipHolder = document.createElement('div');
+                chipHolder.className = 'chip-holder absolute inset-0 flex items-center justify-center';
+                spot.appendChild(chipHolder);
+                return spot;
+            }
+
+            // --- Event Listeners ---
+            function setupEventListeners() {
+                chipsContainer.addEventListener('click', e => {
+                    const chip = e.target.closest('.chip');
+                    if (chip) selectChip(parseInt(chip.dataset.value), chip);
+                });
+                
+                bettingTable.addEventListener('click', e => {
+                    const spot = e.target.closest('.bet-spot');
+                    if (spot && spot.dataset.bet && !isSpinning) placeBet(spot.dataset.bet, spot);
+                });
+
+                spinBtn.addEventListener('click', spin);
+                clearBtn.addEventListener('click', clearBets);
+                rebetBtn.addEventListener('click', reBet);
+            }
+
+            // --- Core Functions ---
+            function selectChip(value, element) {
+                if (selectedChip.element) selectedChip.element.classList.remove('selected');
+                selectedChip = { value, element };
+                element.classList.add('selected');
+            }
+
+            function placeBet(betType, spotElement) {
+                if (balance < selectedChip.value) return;
+                
+                balance -= selectedChip.value;
+                currentBets[betType] = (currentBets[betType] || 0) + selectedChip.value;
+                
+                updateBalanceInFirestore(balance); // ПРОМЯНА
+                updateBalanceDisplay();
+                updateTotalBetDisplay();
+                updatePlacedChips(spotElement, betType);
+            }
+            
+            function spin() {
+                const totalBet = Object.values(currentBets).reduce((a, b) => a + b, 0);
+                if (totalBet === 0) return;
+
+                isSpinning = true;
+                setControlsDisabled(true);
+                clearWinners();
+                lastBets = { ...currentBets };
+                lastWinDisplay.textContent = '0.00';
+                
+                let spinAnimation = setInterval(() => {
+                    const randomNum = ROULETTE_NUMBERS[Math.floor(Math.random() * ROULETTE_NUMBERS.length)];
+                    updateResultDisplay(randomNum);
+                }, 75);
+
+                setTimeout(() => {
+                    clearInterval(spinAnimation);
+                    const winningNumber = ROULETTE_NUMBERS[Math.floor(Math.random() * ROULETTE_NUMBERS.length)];
+                    updateResultDisplay(winningNumber, true);
+                    calculateWinnings(winningNumber);
+                    isSpinning = false;
+                    setControlsDisabled(false);
+                    currentBets = {};
+                    updateTotalBetDisplay();
+                }, 3000);
+            }
+
+            function calculateWinnings(winner) {
+                let totalWinnings = 0;
+                let winningBets = [];
+
+                for (const [betType, betAmount] of Object.entries(currentBets)) {
+                    let win = false;
+                    if (betType == winner.num) { win = true; totalWinnings += (betAmount * PAYOUTS.straight) + betAmount; }
+                    if (betType === 'red' && winner.color === 'red') { win = true; totalWinnings += (betAmount * PAYOUTS.red) + betAmount; }
+                    if (betType === 'black' && winner.color === 'black') { win = true; totalWinnings += (betAmount * PAYOUTS.black) + betAmount; }
+                    if (betType === 'even' && winner.num !== 0 && winner.num % 2 === 0) { win = true; totalWinnings += (betAmount * PAYOUTS.even) + betAmount; }
+                    if (betType === 'odd' && winner.num !== 0 && winner.num % 2 !== 0) { win = true; totalWinnings += (betAmount * PAYOUTS.odd) + betAmount; }
+                    if (betType === 'low' && winner.num >= 1 && winner.num <= 18) { win = true; totalWinnings += (betAmount * PAYOUTS.low) + betAmount; }
+                    if (betType === 'high' && winner.num >= 19 && winner.num <= 36) { win = true; totalWinnings += (betAmount * PAYOUTS.high) + betAmount; }
+                    if (betType === 'dozen1' && winner.num >= 1 && winner.num <= 12) { win = true; totalWinnings += (betAmount * PAYOUTS.dozen) + betAmount; }
+                    if (betType === 'dozen2' && winner.num >= 13 && winner.num <= 24) { win = true; totalWinnings += (betAmount * PAYOUTS.dozen) + betAmount; }
+                    if (betType === 'dozen3' && winner.num >= 25 && winner.num <= 36) { win = true; totalWinnings += (betAmount * PAYOUTS.dozen) + betAmount; }
+                    if (betType === 'column1' && [3,6,9,12,15,18,21,24,27,30,33,36].includes(winner.num)) { win = true; totalWinnings += (betAmount * PAYOUTS.column) + betAmount; }
+                    if (betType === 'column2' && [2,5,8,11,14,17,20,23,26,29,32,35].includes(winner.num)) { win = true; totalWinnings += (betAmount * PAYOUTS.column) + betAmount; }
+                    if (betType === 'column3' && [1,4,7,10,13,16,19,22,25,28,31,34].includes(winner.num)) { win = true; totalWinnings += (betAmount * PAYOUTS.column) + betAmount; }
+                    if (win) winningBets.push(betType);
+                }
+
+                if (totalWinnings > 0) {
+                    balance += totalWinnings;
+                    lastWinDisplay.textContent = totalWinnings.toFixed(2);
+                    updateBalanceInFirestore(balance); // ПРОМЯНА
+                    updateBalanceDisplay();
+                    highlightWinners(winningBets);
+                }
+            }
+            
+            function clearBets() {
+                if(isSpinning) return;
+                const totalBet = Object.values(currentBets).reduce((a, b) => a + b, 0);
+                balance += totalBet;
+                currentBets = {};
+                if (totalBet > 0) updateBalanceInFirestore(balance); // ПРОМЯНА
+                updateBalanceDisplay();
+                updateTotalBetDisplay();
+                clearPlacedChips();
+            }
+
+            function reBet() {
+                if(isSpinning || Object.keys(currentBets).length > 0) return;
+                
+                const totalRebet = Object.values(lastBets).reduce((a, b) => a + b, 0);
+                if (balance >= totalRebet && totalRebet > 0) {
+                    balance -= totalRebet;
+                    currentBets = { ...lastBets };
+                    updateBalanceInFirestore(balance); // ПРОМЯНА
+                    updateBalanceDisplay();
+                    updateTotalBetDisplay();
+                    
+                    document.querySelectorAll('.bet-spot').forEach(spot => {
+                        const betType = spot.dataset.bet;
+                        if(currentBets[betType]) updatePlacedChips(spot, betType);
+                    });
+                }
+            }
+
+            // --- UI/Helper Functions ---
+            function updateBalanceDisplay() { balanceDisplay.textContent = balance.toFixed(2); }
+            function updateTotalBetDisplay() {
+                const totalBet = Object.values(currentBets).reduce((a, b) => a + b, 0);
+                totalBetDisplay.textContent = totalBet.toFixed(2);
+            }
+
+            function updateResultDisplay(numInfo, final = false) {
+                resultDisplay.textContent = numInfo.num;
+                resultDisplay.className = `roulette-result ${numInfo.color}`;
+                if (final) updateHistory(numInfo);
+            }
+
+            function updateHistory(numInfo) {
+                history.unshift(numInfo);
+                if (history.length > 15) history.pop();
+                historyContainer.innerHTML = '';
+                history.forEach(item => {
+                    const el = document.createElement('div');
+                    el.className = `history-number ${item.color}`;
+                    el.textContent = item.num;
+                    historyContainer.appendChild(el);
+                });
+            }
+
+            function updatePlacedChips(spotElement, betType) {
+                const chipHolder = spotElement.querySelector('.chip-holder');
+                chipHolder.innerHTML = '';
+                
+                const chipAmount = currentBets[betType];
+                const chipVisual = document.createElement('div');
+                chipVisual.className = 'chip chip-placed';
+                chipVisual.textContent = chipAmount > 999 ? '1k+' : chipAmount;
+                
+                let color = '#4a90e2';
+                if (chipAmount >= 5) color = '#d0021b';
+                if (chipAmount >= 10) color = '#50e3c2';
+                if (chipAmount >= 25) color = '#27ae60';
+                if (chipAmount >= 100) color = '#111';
+                
+                chipVisual.style.backgroundColor = color;
+                chipVisual.style.color = chipAmount >= 100 ? 'white' : 'black';
+                chipHolder.appendChild(chipVisual);
+            }
+
+            function clearPlacedChips() { document.querySelectorAll('.chip-holder').forEach(h => h.innerHTML = ''); }
+            
+            function setControlsDisabled(disabled) {
+                spinBtn.disabled = disabled;
+                clearBtn.disabled = disabled;
+                rebetBtn.disabled = disabled;
+                chipsContainer.style.opacity = disabled ? 0.5 : 1;
+            }
+
+            function highlightWinners(winningBets) {
+                winningBets.forEach(betType => {
+                    const spot = document.querySelector(`.bet-spot[data-bet="${betType}"]`);
+                    if (spot) spot.classList.add('winner');
+                });
+            }
+
+            function clearWinners() {
+                document.querySelectorAll('.winner').forEach(el => el.classList.remove('winner'));
+                setTimeout(clearPlacedChips, 500);
+            }
+
+            initGame();
+
+            // ПРОМЯНА: Връщаме функция за външно обновяване на баланса
+            return function(newBalance) {
+                if (!isSpinning) {
+                    balance = newBalance;
+                    updateBalanceDisplay();
+                } else {
+                    console.log("Балансът е променен външно, но ще се синхронизира след края на завъртането.");
+                }
+            };
+        }
+    </script>
+    <!-- END OF SCRIPT CHANGE -->
+</body>
+</html>
