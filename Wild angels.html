@@ -41,7 +41,6 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* --- START OF NEW STYLES FOR LOADING AND BLOCKERS --- */
         #loading-screen {
             position: fixed;
             inset: 0;
@@ -144,10 +143,9 @@
             transition: all 0.2s;
         }
         .login-box a:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--glow-color); }
-        /* --- END OF NEW STYLES --- */
 
         #game-container {
-            display: none; /* Hidden by default, shown by JS */
+            display: none;
             flex-direction: column;
             width: 100%;
             height: 100%;
@@ -199,7 +197,7 @@
             height: 100%;
             padding: 0 2.5vmin;
             flex-shrink: 0;
-            width: clamp(120px, 25vmin, 200px); /* Задаване на ширина за страничните панели */
+            width: clamp(120px, 25vmin, 200px);
         }
         
         #right-panel {
@@ -484,7 +482,6 @@
     </style>
 </head>
 <body>
-    <!-- --- START OF NEW HTML ELEMENTS --- -->
     <div id="loading-screen">
         <h1 class="loading-title">NIVRA</h1>
         <div class="progress-bar-container">
@@ -507,7 +504,6 @@
             <a href="nivracasino.html">Към лобито / Вход</a>
         </div>
     </div>
-    <!-- --- END OF NEW HTML ELEMENTS --- -->
 
 
     <div id="game-container">
@@ -577,7 +573,6 @@
     </div>
     
     <script type="module">
-    // --- START OF NEW CODE ---
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { getFirestore, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -649,71 +644,7 @@
         }, 500);
     }
     
-    async function preloadAssetsAndStartGame(initialBalance) {
-        const SYMBOL_NAMES = ['angel1', 'angel2', 'angel3', 'angel4', 'angel5', 'angel6', 'angel7', 'angel8', 'wild', 'scatter'];
-        const SOUND_FILES = ['bg_music_1.mp3', 'bg_music_2.mp3', 'bg_music_3.mp3', 'win_sound.mp3', 'anticipation.mp3', 'expand.mp3'];
-        const VIDEO_SYMBOLS = ['angel1', 'angel2', 'angel3', 'angel4', 'angel5', 'angel6', 'angel7', 'angel8'];
-        const VIDEO_COUNT_PER_SYMBOL = 6;
-        
-        const assetsToLoad = [];
-        SYMBOL_NAMES.forEach(name => assetsToLoad.push({type: 'image', src: `${name}.png`}));
-        SOUND_FILES.forEach(name => assetsToLoad.push({type: 'audio', src: name}));
-        VIDEO_SYMBOLS.forEach(symbol => {
-            for(let i = 1; i <= VIDEO_COUNT_PER_SYMBOL; i++) {
-                assetsToLoad.push({type: 'video', src: `${symbol}_v${i}.webm`});
-            }
-        });
-        
-        let loadedCount = 0;
-        const totalCount = assetsToLoad.length;
-        
-        const promises = assetsToLoad.map(asset => {
-            return new Promise((resolve, reject) => {
-                const onAssetLoaded = () => {
-                    loadedCount++;
-                    const percentage = Math.round((loadedCount / totalCount) * 100);
-                    progressBar.style.width = `${percentage}%`;
-                    loadingPercentage.textContent = `${percentage}%`;
-                    resolve();
-                };
-
-                if (asset.type === 'image') {
-                    const img = new Image();
-                    img.src = asset.src;
-                    img.onload = onAssetLoaded;
-                    img.onerror = reject;
-                } else if (asset.type === 'audio') {
-                    const audio = new Audio();
-                    audio.src = asset.src;
-                    audio.oncanplaythrough = onAssetLoaded;
-                    audio.onerror = reject;
-                } else if (asset.type === 'video') {
-                     // Fetching videos is more reliable for caching
-                     fetch(asset.src).then(response => {
-                        if (response.ok) onAssetLoaded();
-                        else reject();
-                     }).catch(reject);
-                }
-            });
-        });
-
-        await Promise.all(promises);
-
-        setTimeout(() => {
-            loadingScreen.style.opacity = '0';
-            setTimeout(() => {
-                loadingScreen.style.display = 'none';
-                gameContainer.style.display = 'flex';
-                updateExternalBalanceChange = initializeGame(initialBalance);
-            }, 500);
-        }, 500); // Small delay to appreciate 100%
-    }
-    
     function initializeGame(initialBalance) {
-    // --- END OF NEW CODE ---
-
-    // --- PASTE ORIGINAL SCRIPT HERE, but remove the DOMContentLoaded event listener ---
-    // document.addEventListener('DOMContentLoaded', () => { ... }); -> REMOVE THIS LINE
     
         const SYMBOLS = {
             'angel1': { weight: 20, src: 'angel1.png', videos: 6, payout: { '3': 5,  '4': 10,  '5': 20  }},
@@ -723,660 +654,751 @@
             'angel5': { weight: 10, src: 'angel5.png', videos: 6, payout: { '3': 30, '4': 60,  '5': 120 }},
             'angel6': { weight: 8,  src: 'angel6.png', videos: 6, payout: { '3': 50, '4': 100, '5': 200 }},
             'angel7': { weight: 6,  src: 'angel7.png', videos: 6, payout: { '3': 100,'4': 200, '5': 400 }},
-            'angel8': { weight: 4,  src: 'angel8.png', videos: 6, payout: { '3': 200,'4': 400, '5': 800 }},
+            'angel8': { weight: 4,  src: 'angel8.png', videos: 2, payout: { '3': 200,'4': 400, '5': 800 }},
+            'angel9': { weight: 3,  src: 'angel9.png', videos: 5, payout: { '3': 220,'4': 450, '5': 900 }}, // Добавен angel9
             'wild':   { weight: 2,  src: 'wild.png',   isWild: true, payout: { '3': 250, '4': 500, '5': 1000 }},
             'scatter':{ weight: 5,  src: 'scatter.png',spins: 10, isScatter: true }
         };
 
-        const REGULAR_SYMBOLS = Object.keys(SYMBOLS).filter(k => !SYMBOLS[k].isWild && !SYMBOLS[k].isScatter);
-        const REEL_COUNT = 5;
-        const SYMBOLS_PER_REEL_VISIBLE = 3;
-        const PAYLINES = [
-            [1, 1, 1, 1, 1], [0, 0, 0, 0, 0], [2, 2, 2, 2, 2], [0, 1, 2, 1, 0], [2, 1, 0, 1, 2],
-            [0, 0, 1, 2, 2], [2, 2, 1, 0, 0], [1, 0, 0, 0, 1], [1, 2, 2, 2, 1], [0, 1, 1, 1, 2]
-        ];
-        
-        const BET_AMOUNTS = [10, 20, 50, 100, 200, 500];
-        const MAX_WIN_MULTIPLIER = 2500;
-        const BONUS_BUY_COST_MULTIPLIER = 100;
-
-        let balance = initialBalance; // MODIFIED: Use initialBalance from Firebase
-        let currentBetIndex = 0;
-        let bet = BET_AMOUNTS[currentBetIndex];
-        let isSpinning = false;
-        let isAutoSpinning = false;
-        let freeSpinsRemaining = 0;
-        let expandingSymbol = null;
-        let isFirstSpin = true;
-
-        const backgroundMusicFiles = ['bg_music_1.mp3', 'bg_music_2.mp3', 'bg_music_3.mp3'];
-        let currentTrackIndex = 0;
-        const bgMusicPlayer = new Audio();
-        bgMusicPlayer.volume = 0.3;
-        const winSound = new Audio('win_sound.mp3');
-        const anticipationSound = new Audio('anticipation.mp3');
-        const expandSound = new Audio('expand.mp3');
-
-        const spinButton = document.getElementById('spinButton');
-        const autoSpinButton = document.getElementById('autoSpinButton');
-        const buyBonusButton = document.getElementById('buyBonusButton');
-        const balanceDisplay = document.getElementById('balance');
-        const winDisplay = document.getElementById('win');
-        const reels = Array.from({ length: REEL_COUNT }, (_, i) => document.getElementById(`reel${i}`));
-        const gameArea = document.getElementById('game-area');
-        const winLinesSvg = document.getElementById('win-lines-svg');
-        const betSelectionBar = document.getElementById('bet-selection-bar');
-        const messageBox = document.getElementById('message-box');
-        
-        const reelStrips = [];
-        
-        const leftVideoContainer = document.getElementById('left-video-container');
-        const rightVideoContainer = document.getElementById('right-video-container');
-        const videoPlayers = {
-            left1: document.getElementById('videoLeft1'),
-            left2: document.getElementById('videoLeft2'),
-            right1: document.getElementById('videoRight1'),
-            right2: document.getElementById('videoRight2')
-        };
-        let activeVideoSet = { left: videoPlayers.left1, right: videoPlayers.right1 };
-        let nextVideoSet = { left: videoPlayers.left2, right: videoPlayers.right2 };
-        let isWinVideoPlaying = false;
-        
-        function playNextTrack() {
-            if (backgroundMusicFiles.length === 0) return;
-            currentTrackIndex = (currentTrackIndex + 1) % backgroundMusicFiles.length;
-            bgMusicPlayer.src = backgroundMusicFiles[currentTrackIndex];
-            bgMusicPlayer.play().catch(e => console.warn("Background music play failed. User interaction might be needed."));
-        }
-        
-        bgMusicPlayer.addEventListener('ended', playNextTrack);
-
-        function startBackgroundMusic() {
-            bgMusicPlayer.src = backgroundMusicFiles[currentTrackIndex];
-            bgMusicPlayer.play().catch(e => { /* Autoplay blocked, will try again on click */ });
-        }
-        
-        function manageBackgroundMusic(shouldPlay) {
-            if (shouldPlay && bgMusicPlayer.paused) {
-                bgMusicPlayer.play().catch(e => {});
-            } else if (!shouldPlay && !bgMusicPlayer.paused) {
-                bgMusicPlayer.pause();
-            }
-        }
-
-        function createWeightedStrip() {
-            const strip = [];
-            for (const key in SYMBOLS) {
-                for (let i = 0; i < SYMBOLS[key].weight; i++) strip.push(key);
-            }
-            return strip.sort(() => Math.random() - 0.5);
-        }
-        
-        function initializeReels() {
-            reels.forEach((reelElement) => {
-                reelElement.innerHTML = '';
-                const reelStripElement = document.createElement('div');
-                reelStripElement.className = 'reel-strip';
-                const weightedStrip = createWeightedStrip();
-                reelStrips.push(weightedStrip);
-
-                const totalSymbols = weightedStrip.length * 3; 
-                for(let i = 0; i < totalSymbols; i++) {
-                    const symbolKey = weightedStrip[i % weightedStrip.length];
-                    const symbolElement = document.createElement('div');
-                    symbolElement.className = 'symbol';
-                    const img = document.createElement('img');
-                    img.src = SYMBOLS[symbolKey].src;
-                    img.alt = symbolKey;
-                    img.loading = 'lazy';
-                    symbolElement.appendChild(img);
-                    reelStripElement.appendChild(symbolElement);
-                }
-                reelElement.appendChild(reelStripElement);
-            });
-        }
-        
-        function initializeUI() {
-            betSelectionBar.innerHTML = '';
-            BET_AMOUNTS.forEach((amount, index) => {
-                const button = document.createElement('button');
-                button.classList.add('bet-select-btn');
-                button.textContent = (amount / 10).toFixed(2);
-                button.dataset.index = index;
-                betSelectionBar.appendChild(button);
-            });
-            updateBetSelection();
-            updateBalanceDisplay();
-            updateWin(0);
-        }
-        
-        function updateBetSelection() {
-            bet = BET_AMOUNTS[currentBetIndex];
-            document.querySelectorAll('.bet-select-btn').forEach(btn => {
-                btn.classList.toggle('active', parseInt(btn.dataset.index) === currentBetIndex);
-            });
-        }
-
-        async function spin(isFreeSpin = false) {
-            if (isSpinning) return;
+        // ТАЗИ ФУНКЦИЯ ТРЯБВА ДА Е ТУК, за да има достъп до SYMBOLS
+        async function preloadAssetsAndStartGame(initialBalance) {
+            const SOUND_FILES = ['bg_music_1.mp3', 'bg_music_2.mp3', 'bg_music_3.mp3', 'win_sound.mp3', 'anticipation.mp3', 'expand.mp3'];
             
-            if (isFirstSpin) {
-                startBackgroundMusic();
-                isFirstSpin = false;
-            }
+            const assetsToLoad = [];
+            // Добавяме всички изображения и звуци
+            Object.keys(SYMBOLS).forEach(name => assetsToLoad.push({type: 'image', src: SYMBOLS[name].src}));
+            SOUND_FILES.forEach(name => assetsToLoad.push({type: 'audio', src: name}));
 
-            if (!isFreeSpin && freeSpinsRemaining === 0 && balance < bet) {
-                if(isAutoSpinning) toggleAutoSpin();
-                messageBox.textContent = "Недостатъчен Баланс";
-                return;
-            }
-
-            isSpinning = true;
-            setControlsDisabled(true);
-            
-            clearAnimations();
-            await updateWin(0);
-            messageBox.textContent = "УСПЕХ!";
-            
-            if (freeSpinsRemaining > 0) {
-                freeSpinsRemaining--;
-                updateSpinButtonText();
-            } else if (!isFreeSpin) {
-                balance -= bet;
-                updateBalanceInFirestore(balance); // MODIFIED: Update balance in DB
-            }
-            updateBalanceDisplay();
-
-            let results = [];
-            const finalIndexes = [];
-            
-            for (let i = 0; i < REEL_COUNT; i++) {
-                const strip = reelStrips[i];
-                const randomIndex = Math.floor(Math.random() * strip.length);
-                finalIndexes.push(randomIndex);
-                results.push([
-                    strip[(randomIndex + 0) % strip.length],
-                    strip[(randomIndex + 1) % strip.length],
-                    strip[(randomIndex + 2) % strip.length]
-                ]);
-            }
-            
-            let anticipationSoundPlayed = false;
-            const spinPromises = reels.map((reel, i) => {
-                return new Promise(async (resolve) => {
-                    const reelStripElement = reel.querySelector('.reel-strip');
-                    const strip = reelStrips[i];
-                    
-                    const symbolSize = reel.clientHeight / SYMBOLS_PER_REEL_VISIBLE;
-                    
-                    const baseTargetPosition = finalIndexes[i] * symbolSize;
-                    const loopOffset = strip.length * symbolSize;
-                    
-                    reelStripElement.style.transition = 'none';
-                    reelStripElement.style.transform = `translateY(-${baseTargetPosition + loopOffset}px)`;
-                    reelStripElement.offsetHeight; 
-
-                    let landedScatters = 0;
-                    results.slice(0, i).forEach(r => r.forEach(s => { if (SYMBOLS[s]?.isScatter) landedScatters++; }));
-                    
-                    let duration = 1.5 + i * 0.3;
-                    if (freeSpinsRemaining === 0 && landedScatters >= 2 && gameArea) {
-                        gameArea.classList.add('anticipation-glow');
-                        duration = 4 + i * 0.5;
-                        
-                        if (!anticipationSoundPlayed) {
-                            manageBackgroundMusic(false);
-                            anticipationSound.loop = true;
-                            anticipationSound.play();
-                            anticipationSoundPlayed = true;
-                        }
+            // Добавяме видеата "умно"
+            for (const symbolKey in SYMBOLS) {
+                const symbolData = SYMBOLS[symbolKey];
+                if (symbolData.videos && symbolData.videos > 0) {
+                    for (let i = 1; i <= symbolData.videos; i++) {
+                        assetsToLoad.push({type: 'video', src: `${symbolKey}_v${i}.webm`});
                     }
+                }
+            }
+            
+            let loadedCount = 0;
+            const totalCount = assetsToLoad.length;
+            
+            const promises = assetsToLoad.map(asset => {
+                return new Promise((resolve, reject) => {
+                    const onAssetLoaded = () => {
+                        loadedCount++;
+                        const percentage = Math.round((loadedCount / totalCount) * 100);
+                        progressBar.style.width = `${percentage}%`;
+                        loadingPercentage.textContent = `${percentage}%`;
+                        resolve();
+                    };
                     
-                    reelStripElement.style.transition = `transform ${duration}s cubic-bezier(0.25, 1, 0.5, 1)`;
-                    reelStripElement.style.transform = `translateY(-${baseTargetPosition}px)`;
+                    const onAssetError = () => {
+                        console.error(`Failed to load asset: ${asset.src}`);
+                        // Продължаваме напред, дори и с грешка, за да не блокираме цялата игра
+                        // Може да добавите по-сложна логика тук
+                        onAssetLoaded(); 
+                    };
 
-                    await new Promise(res => setTimeout(res, duration * 1000));
-                                            
-                    results[i].forEach((symbolKey, symbolIndex) => {
-                        if (SYMBOLS[symbolKey]?.isScatter) {
-                            const symbolElement = getSymbolElement(i, finalIndexes[i] + symbolIndex);
-                            if (symbolElement) symbolElement.classList.add('scatter-land');
-                        }
-                    });
-                    resolve();
+                    if (asset.type === 'image') {
+                        const img = new Image();
+                        img.src = asset.src;
+                        img.onload = onAssetLoaded;
+                        img.onerror = onAssetError;
+                    } else if (asset.type === 'audio') {
+                        const audio = new Audio();
+                        audio.src = asset.src;
+                        // oncanplaythrough може да е ненадеждно за локални файлове
+                        // loadeddata често е достатъчно
+                        audio.addEventListener('loadeddata', onAssetLoaded, { once: true });
+                        audio.addEventListener('error', onAssetError, { once: true });
+
+                    } else if (asset.type === 'video') {
+                         const video = document.createElement('video');
+                         video.addEventListener('loadeddata', onAssetLoaded, { once: true });
+                         video.addEventListener('error', onAssetError, { once: true });
+                         video.src = asset.src;
+                         video.load();
+                    }
                 });
             });
-            
-            await Promise.all(spinPromises);
 
-            if (anticipationSoundPlayed) {
-                anticipationSound.pause();
-                anticipationSound.currentTime = 0;
-                manageBackgroundMusic(true);
-            }
-            
-            gameArea.classList.remove('anticipation-glow');
-            const { hasWin, bonusTriggered, winAmount } = await checkWin(results, finalIndexes);
-            
-            if (!hasWin) {
-                messageBox.textContent = "ИЗБЕРЕТЕ ЗАЛОГ";
-            } else {
-                 messageBox.textContent = `ПЕЧАЛБА: ${(winAmount / 10).toFixed(2)}`;
-            }
-            
-            handleNextAction(hasWin, bonusTriggered);
+            await Promise.all(promises);
+
+            setTimeout(() => {
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                    gameContainer.style.display = 'flex';
+                    updateExternalBalanceChange = initializeGameLogic(initialBalance, SYMBOLS);
+                }, 500);
+            }, 500);
         }
         
-        spinButton.addEventListener('click', () => spin());
-        autoSpinButton.addEventListener('click', toggleAutoSpin);
-        buyBonusButton.addEventListener('click', buyBonus);
+        // Преименуваме основната функция на играта, за да избегнем конфликти
+        function initializeGameLogic(initialBalance, SYMBOLS_CONFIG) {
+            const SYMBOLS = SYMBOLS_CONFIG; // Използваме подадената конфигурация
 
-        betSelectionBar.addEventListener('click', (e) => {
-            const button = e.target.closest('.bet-select-btn');
-            if (button && !isSpinning) {
-                currentBetIndex = parseInt(button.dataset.index);
-                updateBetSelection();
+            const REGULAR_SYMBOLS = Object.keys(SYMBOLS).filter(k => !SYMBOLS[k].isWild && !SYMBOLS[k].isScatter);
+            const REEL_COUNT = 5;
+            const SYMBOLS_PER_REEL_VISIBLE = 3;
+            const PAYLINES = [
+                [1, 1, 1, 1, 1], [0, 0, 0, 0, 0], [2, 2, 2, 2, 2], [0, 1, 2, 1, 0], [2, 1, 0, 1, 2],
+                [0, 0, 1, 2, 2], [2, 2, 1, 0, 0], [1, 0, 0, 0, 1], [1, 2, 2, 2, 1], [0, 1, 1, 1, 2]
+            ];
+            
+            const BET_AMOUNTS = [10, 20, 50, 100, 200, 500];
+            const MAX_WIN_MULTIPLIER = 2500;
+            const BONUS_BUY_COST_MULTIPLIER = 100;
+
+            let balance = initialBalance;
+            let currentBetIndex = 0;
+            let bet = BET_AMOUNTS[currentBetIndex];
+            let isSpinning = false;
+            let isAutoSpinning = false;
+            let freeSpinsRemaining = 0;
+            let expandingSymbol = null;
+            let isFirstSpin = true;
+
+            const backgroundMusicFiles = ['bg_music_1.mp3', 'bg_music_2.mp3', 'bg_music_3.mp3'];
+            let currentTrackIndex = 0;
+            const bgMusicPlayer = new Audio();
+            bgMusicPlayer.volume = 0.3;
+            const winSound = new Audio('win_sound.mp3');
+            const anticipationSound = new Audio('anticipation.mp3');
+            const expandSound = new Audio('expand.mp3');
+
+            const spinButton = document.getElementById('spinButton');
+            const autoSpinButton = document.getElementById('autoSpinButton');
+            const buyBonusButton = document.getElementById('buyBonusButton');
+            const balanceDisplay = document.getElementById('balance');
+            const winDisplay = document.getElementById('win');
+            const reels = Array.from({ length: REEL_COUNT }, (_, i) => document.getElementById(`reel${i}`));
+            const gameArea = document.getElementById('game-area');
+            const winLinesSvg = document.getElementById('win-lines-svg');
+            const betSelectionBar = document.getElementById('bet-selection-bar');
+            const messageBox = document.getElementById('message-box');
+            
+            const reelStrips = [];
+            
+            const leftVideoContainer = document.getElementById('left-video-container');
+            const rightVideoContainer = document.getElementById('right-video-container');
+            const videoPlayers = {
+                left1: document.getElementById('videoLeft1'),
+                left2: document.getElementById('videoLeft2'),
+                right1: document.getElementById('videoRight1'),
+                right2: document.getElementById('videoRight2')
+            };
+            let activeVideoSet = { left: videoPlayers.left1, right: videoPlayers.right1 };
+            let nextVideoSet = { left: videoPlayers.left2, right: videoPlayers.right2 };
+            let isWinVideoPlaying = false;
+            
+            function playNextTrack() {
+                if (backgroundMusicFiles.length === 0) return;
+                currentTrackIndex = (currentTrackIndex + 1) % backgroundMusicFiles.length;
+                bgMusicPlayer.src = backgroundMusicFiles[currentTrackIndex];
+                bgMusicPlayer.play().catch(e => console.warn("Background music play failed. User interaction might be needed."));
             }
-        });
+            
+            bgMusicPlayer.addEventListener('ended', playNextTrack);
 
-        document.addEventListener('keydown', (e) => {
-            if (e.code === 'Space') {
-                e.preventDefault();
-                if (document.querySelector('.modal[style*="display: flex"]')) return;
-                spinButton.click();
+            function startBackgroundMusic() {
+                bgMusicPlayer.src = backgroundMusicFiles[currentTrackIndex];
+                bgMusicPlayer.play().catch(e => { /* Autoplay blocked, will try again on click */ });
             }
-        });
-
-        function toggleAutoSpin() {
-            isAutoSpinning = !isAutoSpinning;
-            autoSpinButton.classList.toggle('active', isAutoSpinning);
-            if (isAutoSpinning) {
-                autoSpinButton.textContent = "СТОП";
-                if(!isSpinning) spin();
-            } else {
-                autoSpinButton.textContent = "AUTO";
-            }
-        }
-        
-        function setControlsDisabled(disabled) {
-            spinButton.disabled = disabled;
-            autoSpinButton.disabled = disabled && !isAutoSpinning;
-            buyBonusButton.disabled = disabled || freeSpinsRemaining > 0;
-            betSelectionBar.style.pointerEvents = disabled ? 'none' : 'auto';
-        }
-
-        function handleNextAction(hasWin, bonusTriggered) {
-            const winDelay = hasWin ? (expandingSymbol ? 2500 : 1500) : 250;
-            const autoSpinDelay = hasWin ? 2500 : 1200;
-
-            if (bonusTriggered) { return; }
-
-            if (freeSpinsRemaining > 0) {
-                setTimeout(() => { 
-                    isSpinning = false; 
-                    spin(true); 
-                }, winDelay);
-            } else {
-                if (expandingSymbol) {
-                    expandingSymbol = null;
-                    updateSpinButtonText();
+            
+            function manageBackgroundMusic(shouldPlay) {
+                if (shouldPlay && bgMusicPlayer.paused) {
+                    bgMusicPlayer.play().catch(e => {});
+                } else if (!shouldPlay && !bgMusicPlayer.paused) {
+                    bgMusicPlayer.pause();
                 }
+            }
+
+            function createWeightedStrip() {
+                const strip = [];
+                for (const key in SYMBOLS) {
+                    for (let i = 0; i < SYMBOLS[key].weight; i++) strip.push(key);
+                }
+                return strip.sort(() => Math.random() - 0.5);
+            }
+            
+            function initializeReels() {
+                reels.forEach((reelElement) => {
+                    reelElement.innerHTML = '';
+                    const reelStripElement = document.createElement('div');
+                    reelStripElement.className = 'reel-strip';
+                    const weightedStrip = createWeightedStrip();
+                    reelStrips.push(weightedStrip);
+
+                    const totalSymbols = weightedStrip.length * 3; 
+                    for(let i = 0; i < totalSymbols; i++) {
+                        const symbolKey = weightedStrip[i % weightedStrip.length];
+                        const symbolElement = document.createElement('div');
+                        symbolElement.className = 'symbol';
+                        const img = document.createElement('img');
+                        img.src = SYMBOLS[symbolKey].src;
+                        img.alt = symbolKey;
+                        img.loading = 'lazy';
+                        symbolElement.appendChild(img);
+                        reelStripElement.appendChild(symbolElement);
+                    }
+                    reelElement.appendChild(reelStripElement);
+                });
+            }
+            
+            function initializeUI() {
+                betSelectionBar.innerHTML = '';
+                BET_AMOUNTS.forEach((amount, index) => {
+                    const button = document.createElement('button');
+                    button.classList.add('bet-select-btn');
+                    button.textContent = (amount / 10).toFixed(2);
+                    button.dataset.index = index;
+                    betSelectionBar.appendChild(button);
+                });
+                updateBetSelection();
+                updateBalanceDisplay();
+                updateWin(0);
+            }
+            
+            function updateBetSelection() {
+                bet = BET_AMOUNTS[currentBetIndex];
+                document.querySelectorAll('.bet-select-btn').forEach(btn => {
+                    btn.classList.toggle('active', parseInt(btn.dataset.index) === currentBetIndex);
+                });
+            }
+
+            async function spin(isFreeSpin = false) {
+                if (isSpinning) return;
+                
+                if (isFirstSpin) {
+                    startBackgroundMusic();
+                    isFirstSpin = false;
+                }
+
+                if (!isFreeSpin && freeSpinsRemaining === 0 && balance < bet) {
+                    if(isAutoSpinning) toggleAutoSpin();
+                    messageBox.textContent = "Недостатъчен Баланс";
+                    return;
+                }
+
+                isSpinning = true;
+                setControlsDisabled(true);
+                
+                clearAnimations();
+                await updateWin(0);
+                messageBox.textContent = "УСПЕХ!";
+                
+                if (freeSpinsRemaining > 0) {
+                    freeSpinsRemaining--;
+                    updateSpinButtonText();
+                } else if (!isFreeSpin) {
+                    balance -= bet;
+                    updateBalanceInFirestore(balance);
+                }
+                updateBalanceDisplay();
+
+                let results = [];
+                const finalIndexes = [];
+                
+                for (let i = 0; i < REEL_COUNT; i++) {
+                    const strip = reelStrips[i];
+                    const randomIndex = Math.floor(Math.random() * strip.length);
+                    finalIndexes.push(randomIndex);
+                    results.push([
+                        strip[(randomIndex + 0) % strip.length],
+                        strip[(randomIndex + 1) % strip.length],
+                        strip[(randomIndex + 2) % strip.length]
+                    ]);
+                }
+                
+                let anticipationSoundPlayed = false;
+                const spinPromises = reels.map((reel, i) => {
+                    return new Promise(async (resolve) => {
+                        const reelStripElement = reel.querySelector('.reel-strip');
+                        const strip = reelStrips[i];
+                        
+                        const symbolSize = reel.clientHeight / SYMBOLS_PER_REEL_VISIBLE;
+                        
+                        const baseTargetPosition = finalIndexes[i] * symbolSize;
+                        const loopOffset = strip.length * symbolSize;
+                        
+                        reelStripElement.style.transition = 'none';
+                        reelStripElement.style.transform = `translateY(-${baseTargetPosition + loopOffset}px)`;
+                        reelStripElement.offsetHeight; 
+
+                        let landedScatters = 0;
+                        results.slice(0, i).forEach(r => r.forEach(s => { if (SYMBOLS[s]?.isScatter) landedScatters++; }));
+                        
+                        let duration = 1.5 + i * 0.3;
+                        if (freeSpinsRemaining === 0 && landedScatters >= 2 && gameArea) {
+                            gameArea.classList.add('anticipation-glow');
+                            duration = 4 + i * 0.5;
+                            
+                            if (!anticipationSoundPlayed) {
+                                manageBackgroundMusic(false);
+                                anticipationSound.loop = true;
+                                anticipationSound.play();
+                                anticipationSoundPlayed = true;
+                            }
+                        }
+                        
+                        reelStripElement.style.transition = `transform ${duration}s cubic-bezier(0.25, 1, 0.5, 1)`;
+                        reelStripElement.style.transform = `translateY(-${baseTargetPosition}px)`;
+
+                        await new Promise(res => setTimeout(res, duration * 1000));
+                                                
+                        results[i].forEach((symbolKey, symbolIndex) => {
+                            if (SYMBOLS[symbolKey]?.isScatter) {
+                                const symbolElement = getSymbolElement(i, finalIndexes[i] + symbolIndex);
+                                if (symbolElement) symbolElement.classList.add('scatter-land');
+                            }
+                        });
+                        resolve();
+                    });
+                });
+                
+                await Promise.all(spinPromises);
+
+                if (anticipationSoundPlayed) {
+                    anticipationSound.pause();
+                    anticipationSound.currentTime = 0;
+                    manageBackgroundMusic(true);
+                }
+                
+                gameArea.classList.remove('anticipation-glow');
+                const { hasWin, bonusTriggered, winAmount } = await checkWin(results, finalIndexes);
+                
+                if (!hasWin) {
+                    messageBox.textContent = "ИЗБЕРЕТЕ ЗАЛОГ";
+                } else {
+                     messageBox.textContent = `ПЕЧАЛБА: ${(winAmount / 10).toFixed(2)}`;
+                }
+                
+                handleNextAction(hasWin, bonusTriggered);
+            }
+            
+            spinButton.addEventListener('click', () => spin());
+            autoSpinButton.addEventListener('click', toggleAutoSpin);
+            buyBonusButton.addEventListener('click', buyBonus);
+
+            betSelectionBar.addEventListener('click', (e) => {
+                const button = e.target.closest('.bet-select-btn');
+                if (button && !isSpinning) {
+                    currentBetIndex = parseInt(button.dataset.index);
+                    updateBetSelection();
+                }
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.code === 'Space') {
+                    e.preventDefault();
+                    if (document.querySelector('.modal[style*="display: flex"]')) return;
+                    spinButton.click();
+                }
+            });
+
+            function toggleAutoSpin() {
+                isAutoSpinning = !isAutoSpinning;
+                autoSpinButton.classList.toggle('active', isAutoSpinning);
                 if (isAutoSpinning) {
+                    autoSpinButton.textContent = "СТОП";
+                    if(!isSpinning) spin();
+                } else {
+                    autoSpinButton.textContent = "AUTO";
+                }
+            }
+            
+            function setControlsDisabled(disabled) {
+                spinButton.disabled = disabled;
+                autoSpinButton.disabled = disabled && !isAutoSpinning;
+                buyBonusButton.disabled = disabled || freeSpinsRemaining > 0;
+                betSelectionBar.style.pointerEvents = disabled ? 'none' : 'auto';
+            }
+
+            function handleNextAction(hasWin, bonusTriggered) {
+                const winDelay = hasWin ? (expandingSymbol ? 2500 : 1500) : 250;
+                const autoSpinDelay = hasWin ? 2500 : 1200;
+
+                if (bonusTriggered) { return; }
+
+                if (freeSpinsRemaining > 0) {
                     setTimeout(() => { 
                         isSpinning = false; 
-                        spin(); 
-                    }, autoSpinDelay);
+                        spin(true); 
+                    }, winDelay);
                 } else {
-                    isSpinning = false;
-                    setControlsDisabled(false);
-                }
-            }
-        }
-        
-        function clearAnimations() {
-            stopWinVideo();
-            winLinesSvg.innerHTML = '';
-            reels.forEach(reel => {
-                const expandingSymbols = reel.querySelectorAll('.symbol.expanding');
-                expandingSymbols.forEach(el => el.remove());
-                
-                const strip = reel.querySelector('.reel-strip');
-                if (strip) { strip.style.opacity = '1'; }
-            });
-
-            document.querySelectorAll('.symbol').forEach(el => { el.className = 'symbol'; });
-            gameArea.classList.remove('anticipation-glow');
-        }
-        
-        async function checkWin(results, finalIndexes) {
-            let totalWin = 0; const winningLines = []; const winningPositions = new Set();
-            let scatterCount = 0; const scatterPositions = []; let currentBalance = balance;
-            let firstWinningSymbol = null;
-
-            results.forEach((reelResult, reelIndex) => {
-                reelResult.forEach((symbolKey, symbolIndex) => {
-                    if (SYMBOLS[symbolKey]?.isScatter) {
-                        scatterCount++;
-                        scatterPositions.push({reel: reelIndex, pos: symbolIndex});
+                    if (expandingSymbol) {
+                        expandingSymbol = null;
+                        updateSpinButtonText();
                     }
-                });
-            });
-
-            if (freeSpinsRemaining > 0 && scatterCount >= 3) {
-                freeSpinsRemaining += SYMBOLS.scatter.spins;
-                updateSpinButtonText();
-                messageBox.textContent = `+${SYMBOLS.scatter.spins} БЕЗПЛАТНИ ИГРИ!`;
-                await triggerBonusAnimation(scatterPositions, finalIndexes);
-            }
-
-            PAYLINES.forEach((line) => {
-                let payingSymbolKey = null;
-                for (let i = 0; i < REEL_COUNT; i++) {
-                    const symbol = results[i][line[i]];
-                    if (!SYMBOLS[symbol]?.isWild) { payingSymbolKey = symbol; break; }
-                }
-                if (payingSymbolKey === null) payingSymbolKey = 'wild';
-                if (SYMBOLS[payingSymbolKey]?.isScatter) return;
-
-                let matchCount = 0;
-                for (let i = 0; i < REEL_COUNT; i++) {
-                    const currentSymbolKey = results[i][line[i]];
-                    if (currentSymbolKey === payingSymbolKey || SYMBOLS[currentSymbolKey]?.isWild) matchCount++;
-                    else break;
-                }
-
-                if (matchCount >= 3) {
-                    if (!firstWinningSymbol) firstWinningSymbol = payingSymbolKey;
-
-                    const symbolData = SYMBOLS[payingSymbolKey];
-                    if (symbolData?.payout?.[matchCount]) {
-                        const payout = symbolData.payout[matchCount] * (bet / 10);
-                        totalWin += payout;
-                        const lineCoords = [];
-                        for (let i = 0; i < matchCount; i++) {
-                            winningPositions.add(`${i}-${line[i]}`);
-                            lineCoords.push({reel: i, row: line[i]});
-                        }
-                        winningLines.push(lineCoords);
+                    if (isAutoSpinning) {
+                        setTimeout(() => { 
+                            isSpinning = false; 
+                            spin(); 
+                        }, autoSpinDelay);
+                    } else {
+                        isSpinning = false;
+                        setControlsDisabled(false);
                     }
                 }
-            });
+            }
             
-            let hasExpansionWin = false;
-            if (expandingSymbol) {
-                const expandingReelsIndices = new Set();
-                results.forEach((reelResult, reelIndex) => {
-                    if (reelResult.includes(expandingSymbol)) expandingReelsIndices.add(reelIndex);
+            function clearAnimations() {
+                stopWinVideo();
+                winLinesSvg.innerHTML = '';
+                reels.forEach(reel => {
+                    const expandingSymbols = reel.querySelectorAll('.symbol.expanding');
+                    expandingSymbols.forEach(el => el.remove());
+                    
+                    const strip = reel.querySelector('.reel-strip');
+                    if (strip) { strip.style.opacity = '1'; }
                 });
 
-                if (expandingReelsIndices.size >= 3) {
-                    hasExpansionWin = true;
-                    manageBackgroundMusic(false);
-                    expandSound.play();
-                    expandSound.onended = () => manageBackgroundMusic(true);
+                document.querySelectorAll('.symbol').forEach(el => { el.className = 'symbol'; });
+                gameArea.classList.remove('anticipation-glow');
+            }
+            
+            async function checkWin(results, finalIndexes) {
+                let totalWin = 0; const winningLines = []; const winningPositions = new Set();
+                let scatterCount = 0; const scatterPositions = []; let currentBalance = balance;
+                let firstWinningSymbol = null;
 
-                    await new Promise(res => setTimeout(res, 500)); 
-
-                    expandingReelsIndices.forEach(reelIndex => {
-                        const reel = reels[reelIndex];
-                        reel.querySelector('.reel-strip').style.opacity = '0';
-                        for (let i = 0; i < SYMBOLS_PER_REEL_VISIBLE; i++) {
-                            const expandingClone = document.createElement('div');
-                            expandingClone.className = 'symbol expanding';
-                            const img = document.createElement('img');
-                            img.src = SYMBOLS[expandingSymbol].src;
-                            expandingClone.appendChild(img);
-                            expandingClone.style.top = `${i * (100 / SYMBOLS_PER_REEL_VISIBLE)}%`;
-                            reel.appendChild(expandingClone);
+                results.forEach((reelResult, reelIndex) => {
+                    reelResult.forEach((symbolKey, symbolIndex) => {
+                        if (SYMBOLS[symbolKey]?.isScatter) {
+                            scatterCount++;
+                            scatterPositions.push({reel: reelIndex, pos: symbolIndex});
                         }
                     });
+                });
 
-                    await new Promise(res => setTimeout(res, 800)); 
+                if (freeSpinsRemaining > 0 && scatterCount >= 3) {
+                    freeSpinsRemaining += SYMBOLS.scatter.spins;
+                    updateSpinButtonText();
+                    messageBox.textContent = `+${SYMBOLS.scatter.spins} БЕЗПЛАТНИ ИГРИ!`;
+                    await triggerBonusAnimation(scatterPositions, finalIndexes);
+                }
 
-                    const payoutData = SYMBOLS[expandingSymbol].payout;
-                    const numExpandedReels = expandingReelsIndices.size;
+                PAYLINES.forEach((line) => {
+                    let payingSymbolKey = null;
+                    for (let i = 0; i < REEL_COUNT; i++) {
+                        const symbol = results[i][line[i]];
+                        if (!SYMBOLS[symbol]?.isWild) { payingSymbolKey = symbol; break; }
+                    }
+                    if (payingSymbolKey === null) payingSymbolKey = 'wild';
+                    if (SYMBOLS[payingSymbolKey]?.isScatter) return;
 
-                    if (payoutData?.[numExpandedReels]) {
-                        const expansionPayout = payoutData[numExpandedReels] * (bet / 10) * PAYLINES.length;
-                        totalWin += expansionPayout;
-                        document.querySelectorAll('.symbol.expanding').forEach(el => el.classList.add('win-pulse'));
+                    let matchCount = 0;
+                    for (let i = 0; i < REEL_COUNT; i++) {
+                        const currentSymbolKey = results[i][line[i]];
+                        if (currentSymbolKey === payingSymbolKey || SYMBOLS[currentSymbolKey]?.isWild) matchCount++;
+                        else break;
+                    }
+
+                    if (matchCount >= 3) {
+                        if (!firstWinningSymbol) firstWinningSymbol = payingSymbolKey;
+
+                        const symbolData = SYMBOLS[payingSymbolKey];
+                        if (symbolData?.payout?.[matchCount]) {
+                            const payout = symbolData.payout[matchCount] * (bet / 10);
+                            totalWin += payout;
+                            const lineCoords = [];
+                            for (let i = 0; i < matchCount; i++) {
+                                winningPositions.add(`${i}-${line[i]}`);
+                                lineCoords.push({reel: i, row: line[i]});
+                            }
+                            winningLines.push(lineCoords);
+                        }
+                    }
+                });
+                
+                let hasExpansionWin = false;
+                if (expandingSymbol) {
+                    const expandingReelsIndices = new Set();
+                    results.forEach((reelResult, reelIndex) => {
+                        if (reelResult.includes(expandingSymbol)) expandingReelsIndices.add(reelIndex);
+                    });
+
+                    if (expandingReelsIndices.size >= 3) {
+                        hasExpansionWin = true;
+                        manageBackgroundMusic(false);
+                        expandSound.play();
+                        expandSound.onended = () => manageBackgroundMusic(true);
+
+                        await new Promise(res => setTimeout(res, 500)); 
+
+                        expandingReelsIndices.forEach(reelIndex => {
+                            const reel = reels[reelIndex];
+                            reel.querySelector('.reel-strip').style.opacity = '0';
+                            for (let i = 0; i < SYMBOLS_PER_REEL_VISIBLE; i++) {
+                                const expandingClone = document.createElement('div');
+                                expandingClone.className = 'symbol expanding';
+                                const img = document.createElement('img');
+                                img.src = SYMBOLS[expandingSymbol].src;
+                                expandingClone.appendChild(img);
+                                expandingClone.style.top = `${i * (100 / SYMBOLS_PER_REEL_VISIBLE)}%`;
+                                reel.appendChild(expandingClone);
+                            }
+                        });
+
+                        await new Promise(res => setTimeout(res, 800)); 
+
+                        const payoutData = SYMBOLS[expandingSymbol].payout;
+                        const numExpandedReels = expandingReelsIndices.size;
+
+                        if (payoutData?.[numExpandedReels]) {
+                            const expansionPayout = payoutData[numExpandedReels] * (bet / 10) * PAYLINES.length;
+                            totalWin += expansionPayout;
+                            document.querySelectorAll('.symbol.expanding').forEach(el => el.classList.add('win-pulse'));
+                        }
                     }
                 }
-            }
-            
-            if (totalWin > 0) {
-                if(freeSpinsRemaining === 0 && !hasExpansionWin) {
-                    manageBackgroundMusic(false);
-                    winSound.play();
-                    winSound.onended = () => manageBackgroundMusic(true);
+                
+                if (totalWin > 0) {
+                    if(freeSpinsRemaining === 0 && !hasExpansionWin) {
+                        manageBackgroundMusic(false);
+                        winSound.play();
+                        winSound.onended = () => manageBackgroundMusic(true);
+                    }
+                    
+                    playWinVideo(firstWinningSymbol);
+                    await updateWin(totalWin, true);
+                    flashWinningSymbols(winningPositions, finalIndexes);
+                    drawWinningLines(winningLines);
+                }
+
+                const maxWin = bet * MAX_WIN_MULTIPLIER;
+                if (totalWin > maxWin) totalWin = maxWin;
+
+                if (totalWin > 0) {
+                    balance = currentBalance + totalWin;
+                    updateBalanceInFirestore(balance);
+                    updateBalanceDisplay();
                 }
                 
-                playWinVideo(firstWinningSymbol);
-                await updateWin(totalWin, true);
-                flashWinningSymbols(winningPositions, finalIndexes);
-                drawWinningLines(winningLines);
-            }
+                let bonusTriggered = false;
+                if (freeSpinsRemaining === 0 && !expandingSymbol && scatterCount >= 3) {
+                    bonusTriggered = true;
+                    if(isAutoSpinning) toggleAutoSpin();
+                    await triggerBonusAnimation(scatterPositions, finalIndexes);
+                    
+                    const bonusTransitionScreen = document.getElementById('bonus-transition-screen');
+                    bonusTransitionScreen.style.display = 'flex';
 
-            const maxWin = bet * MAX_WIN_MULTIPLIER;
-            if (totalWin > maxWin) totalWin = maxWin;
-
-            if (totalWin > 0) {
-                balance = currentBalance + totalWin;
-                updateBalanceInFirestore(balance); // MODIFIED: Update balance in DB
-                updateBalanceDisplay();
+                    bonusTransitionScreen.addEventListener('click', () => {
+                        bonusTransitionScreen.style.display = 'none';
+                        startBonus();
+                    }, { once: true });
+                }
+                
+                return { hasWin: totalWin > 0 || hasExpansionWin, bonusTriggered, winAmount: totalWin };
             }
             
-            let bonusTriggered = false;
-            if (freeSpinsRemaining === 0 && !expandingSymbol && scatterCount >= 3) {
-                bonusTriggered = true;
-                if(isAutoSpinning) toggleAutoSpin();
-                await triggerBonusAnimation(scatterPositions, finalIndexes);
-                
+            function playWinVideo(symbolKey) {
+                const symbolData = SYMBOLS[symbolKey];
+                if (!symbolData || !symbolData.videos || symbolData.videos === 0 || isWinVideoPlaying) {
+                    return;
+                }
+                isWinVideoPlaying = true;
+                const videoIndex = Math.floor(Math.random() * symbolData.videos) + 1;
+                const videoSrc = `${symbolKey}_v${videoIndex}.webm`; 
+                leftVideoContainer.style.display = 'flex';
+                rightVideoContainer.style.display = 'flex';
+                Object.values(videoPlayers).forEach(video => {
+                    video.src = videoSrc;
+                    video.currentTime = 0;
+                    video.style.opacity = 0;
+                });
+                activeVideoSet.left.addEventListener('canplay', () => {
+                    activeVideoSet.left.style.opacity = 1;
+                    activeVideoSet.right.style.opacity = 1;
+                }, { once: true });
+                activeVideoSet.left.play();
+                activeVideoSet.right.play();
+            }
+
+            function stopWinVideo() {
+                if (!isWinVideoPlaying) return;
+                leftVideoContainer.style.display = 'none';
+                rightVideoContainer.style.display = 'none';
+                Object.values(videoPlayers).forEach(video => {
+                    video.pause();
+                    video.src = "";
+                });
+                isWinVideoPlaying = false;
+            }
+
+            function seamlessLoop() {
+                if (!isWinVideoPlaying) return;
+                const activeVideo = activeVideoSet.left;
+                if (activeVideo.currentTime > activeVideo.duration - 0.4) {
+                    nextVideoSet.left.play();
+                    nextVideoSet.right.play();
+                    activeVideoSet.left.style.opacity = 0;
+                    activeVideoSet.right.style.opacity = 0;
+                    nextVideoSet.left.style.opacity = 1;
+                    nextVideoSet.right.style.opacity = 1;
+                    const finishedSet = activeVideoSet;
+                    activeVideoSet = nextVideoSet;
+                    nextVideoSet = finishedSet;
+                    nextVideoSet.left.currentTime = 0;
+                    nextVideoSet.right.currentTime = 0;
+                }
+            }
+            
+            Object.values(videoPlayers).forEach(video => {
+                video.addEventListener('timeupdate', seamlessLoop);
+            });
+
+            function startBonus() {
+                freeSpinsRemaining = SYMBOLS.scatter.spins;
+                updateSpinButtonText();
+                expandingSymbol = REGULAR_SYMBOLS[Math.floor(Math.random() * REGULAR_SYMBOLS.length)];
+                const bonusModal = document.getElementById('bonus-modal');
+                document.getElementById('modal-title').textContent = `БЕЗПЛАТНИ ЗАВЪРТАНИЯ!`;
+                document.getElementById('modal-subtitle').textContent = `${freeSpinsRemaining} Безплатни Игри`;
+                document.getElementById('expanding-symbol-display').src = SYMBOLS[expandingSymbol].src;
+                bonusModal.style.display = 'flex';
+                setTimeout(() => {
+                    bonusModal.style.display = 'none';
+                    isSpinning = false;
+                    spin(true);
+                }, 4000);
+            }
+            
+            function buyBonus() {
+                if (isSpinning || freeSpinsRemaining > 0) return;
+                const cost = bet * BONUS_BUY_COST_MULTIPLIER;
+                if (balance < cost) {
+                    messageBox.textContent = "Недостатъчен Баланс";
+                    return;
+                }
+                balance -= cost;
+                updateBalanceInFirestore(balance);
+                updateBalanceDisplay();
+                setControlsDisabled(true);
                 const bonusTransitionScreen = document.getElementById('bonus-transition-screen');
                 bonusTransitionScreen.style.display = 'flex';
-
                 bonusTransitionScreen.addEventListener('click', () => {
                     bonusTransitionScreen.style.display = 'none';
                     startBonus();
                 }, { once: true });
             }
-            
-            return { hasWin: totalWin > 0 || hasExpansionWin, bonusTriggered, winAmount: totalWin };
-        }
-        
-        function playWinVideo(symbolKey) {
-            const symbolData = SYMBOLS[symbolKey];
-            if (!symbolData || !symbolData.videos || isWinVideoPlaying) {
-                return;
-            }
-            isWinVideoPlaying = true;
-            const videoIndex = Math.floor(Math.random() * symbolData.videos) + 1;
-            const videoSrc = `${symbolKey}_v${videoIndex}.webm`; 
-            leftVideoContainer.style.display = 'flex';
-            rightVideoContainer.style.display = 'flex';
-            Object.values(videoPlayers).forEach(video => {
-                video.src = videoSrc;
-                video.currentTime = 0;
-                video.style.opacity = 0;
-            });
-            activeVideoSet.left.addEventListener('canplay', () => {
-                activeVideoSet.left.style.opacity = 1;
-                activeVideoSet.right.style.opacity = 1;
-            }, { once: true });
-            activeVideoSet.left.play();
-            activeVideoSet.right.play();
-        }
 
-        function stopWinVideo() {
-            if (!isWinVideoPlaying) return;
-            leftVideoContainer.style.display = 'none';
-            rightVideoContainer.style.display = 'none';
-            Object.values(videoPlayers).forEach(video => {
-                video.pause();
-                video.src = "";
-            });
-            isWinVideoPlaying = false;
-        }
-
-        function seamlessLoop() {
-            if (!isWinVideoPlaying) return;
-            const activeVideo = activeVideoSet.left;
-            if (activeVideo.currentTime > activeVideo.duration - 0.4) {
-                nextVideoSet.left.play();
-                nextVideoSet.right.play();
-                activeVideoSet.left.style.opacity = 0;
-                activeVideoSet.right.style.opacity = 0;
-                nextVideoSet.left.style.opacity = 1;
-                nextVideoSet.right.style.opacity = 1;
-                const finishedSet = activeVideoSet;
-                activeVideoSet = nextVideoSet;
-                nextVideoSet = finishedSet;
-                nextVideoSet.left.currentTime = 0;
-                nextVideoSet.right.currentTime = 0;
-            }
-        }
-        
-        Object.values(videoPlayers).forEach(video => {
-            video.addEventListener('timeupdate', seamlessLoop);
-        });
-
-        function startBonus() {
-            freeSpinsRemaining = SYMBOLS.scatter.spins;
-            updateSpinButtonText();
-            expandingSymbol = REGULAR_SYMBOLS[Math.floor(Math.random() * REGULAR_SYMBOLS.length)];
-            const bonusModal = document.getElementById('bonus-modal');
-            document.getElementById('modal-title').textContent = `БЕЗПЛАТНИ ЗАВЪРТАНИЯ!`;
-            document.getElementById('modal-subtitle').textContent = `${freeSpinsRemaining} Безплатни Игри`;
-            document.getElementById('expanding-symbol-display').src = SYMBOLS[expandingSymbol].src;
-            bonusModal.style.display = 'flex';
-            setTimeout(() => {
-                bonusModal.style.display = 'none';
-                isSpinning = false;
-                spin(true);
-            }, 4000);
-        }
-        
-        function buyBonus() {
-            if (isSpinning || freeSpinsRemaining > 0) return;
-            const cost = bet * BONUS_BUY_COST_MULTIPLIER;
-            if (balance < cost) {
-                messageBox.textContent = "Недостатъчен Баланс";
-                return;
-            }
-            balance -= cost;
-            updateBalanceInFirestore(balance); // MODIFIED: Update balance in DB
-            updateBalanceDisplay();
-            setControlsDisabled(true);
-            const bonusTransitionScreen = document.getElementById('bonus-transition-screen');
-            bonusTransitionScreen.style.display = 'flex';
-            bonusTransitionScreen.addEventListener('click', () => {
-                bonusTransitionScreen.style.display = 'none';
-                startBonus();
-            }, { once: true });
-        }
-
-        async function triggerBonusAnimation(scatterPos, finalIndexes) {
-            scatterPos.forEach(sp => {
-                const symbolElement = getSymbolElement(sp.reel, finalIndexes[sp.reel] + sp.pos);
-                if(symbolElement) symbolElement.classList.add('scatter-trigger');
-            });
-            await new Promise(res => setTimeout(res, 2500));
-        }
-
-        function getSymbolElement(reelIndex, stripIndex) {
-            const stripElement = reels[reelIndex].querySelector('.reel-strip');
-            if (!stripElement) return null;
-            return stripElement.children[stripIndex] || null;
-        }
-
-        function flashWinningSymbols(positions, finalIndexes) {
-            positions.forEach(pos => {
-                const [reelIndexStr, symbolIndexStr] = pos.split('-');
-                const reelIndex = parseInt(reelIndexStr, 10);
-                const symbolIndexOnReel = parseInt(symbolIndexStr, 10);
-                const indexInStrip = finalIndexes[reelIndex] + symbolIndexOnReel;
-                const symbolElement = getSymbolElement(reelIndex, indexInStrip);
-                if (symbolElement) {
-                    symbolElement.classList.add('win-pulse');
-                }
-            });
-        }
-        
-        function drawWinningLines(winningLines) {
-            const reelContainerRect = document.querySelector('.reels-container').getBoundingClientRect();
-            const svgRect = winLinesSvg.getBoundingClientRect();
-             if (reels.length === 0 || !reelContainerRect || !svgRect) return;
-
-            winningLines.forEach(lineCoords => {
-                const points = lineCoords.map(coord => {
-                    const reel = reels[coord.reel];
-                    if (!reel) return '0,0';
-                    const reelRect = reel.getBoundingClientRect();
-                    const symbolHeight = reelRect.height / SYMBOLS_PER_REEL_VISIBLE;
-                    
-                    const x = reelRect.left - svgRect.left + (reelRect.width / 2);
-                    const y = reelRect.top - svgRect.top + (coord.row * symbolHeight) + (symbolHeight / 2);
-
-                    return `${x},${y}`;
-                }).join(' ');
-                
-                const line = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-                line.setAttribute('points', points);
-                line.setAttribute('class', 'win-line');
-                winLinesSvg.appendChild(line);
-            });
-        }
-
-        async function updateWin(amount, animate = false) {
-            if (amount === 0) {
-                winDisplay.textContent = '0.00'; return;
-            }
-            const targetAmount = (amount / 10).toFixed(2);
-            if (animate) {
-                const duration = 1000; const frameDuration = 1000 / 60; const totalFrames = Math.round(duration / frameDuration);
-                let frame = 0; const startValue = 0; const endValue = amount;
-                return new Promise(resolve => {
-                    const timer = setInterval(() => {
-                        frame++; const progress = frame / totalFrames;
-                        const currentAmount = startValue + (endValue - startValue) * progress;
-                        winDisplay.textContent = (currentAmount/10).toFixed(2);
-                        if (frame >= totalFrames) {
-                            clearInterval(timer);
-                            winDisplay.textContent = targetAmount;
-                            resolve();
-                        }
-                    }, frameDuration);
+            async function triggerBonusAnimation(scatterPos, finalIndexes) {
+                scatterPos.forEach(sp => {
+                    const symbolElement = getSymbolElement(sp.reel, finalIndexes[sp.reel] + sp.pos);
+                    if(symbolElement) symbolElement.classList.add('scatter-trigger');
                 });
-            } else { winDisplay.textContent = targetAmount; }
+                await new Promise(res => setTimeout(res, 2500));
+            }
+
+            function getSymbolElement(reelIndex, stripIndex) {
+                const stripElement = reels[reelIndex].querySelector('.reel-strip');
+                if (!stripElement) return null;
+                return stripElement.children[stripIndex] || null;
+            }
+
+            function flashWinningSymbols(positions, finalIndexes) {
+                positions.forEach(pos => {
+                    const [reelIndexStr, symbolIndexStr] = pos.split('-');
+                    const reelIndex = parseInt(reelIndexStr, 10);
+                    const symbolIndexOnReel = parseInt(symbolIndexStr, 10);
+                    const indexInStrip = finalIndexes[reelIndex] + symbolIndexOnReel;
+                    const symbolElement = getSymbolElement(reelIndex, indexInStrip);
+                    if (symbolElement) {
+                        symbolElement.classList.add('win-pulse');
+                    }
+                });
+            }
+            
+            function drawWinningLines(winningLines) {
+                const reelContainerRect = document.querySelector('.reels-container').getBoundingClientRect();
+                const svgRect = winLinesSvg.getBoundingClientRect();
+                 if (reels.length === 0 || !reelContainerRect || !svgRect) return;
+
+                winningLines.forEach(lineCoords => {
+                    const points = lineCoords.map(coord => {
+                        const reel = reels[coord.reel];
+                        if (!reel) return '0,0';
+                        const reelRect = reel.getBoundingClientRect();
+                        const symbolHeight = reelRect.height / SYMBOLS_PER_REEL_VISIBLE;
+                        
+                        const x = reelRect.left - svgRect.left + (reelRect.width / 2);
+                        const y = reelRect.top - svgRect.top + (coord.row * symbolHeight) + (symbolHeight / 2);
+
+                        return `${x},${y}`;
+                    }).join(' ');
+                    
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+                    line.setAttribute('points', points);
+                    line.setAttribute('class', 'win-line');
+                    winLinesSvg.appendChild(line);
+                });
+            }
+
+            async function updateWin(amount, animate = false) {
+                if (amount === 0) {
+                    winDisplay.textContent = '0.00'; return;
+                }
+                const targetAmount = (amount / 10).toFixed(2);
+                if (animate) {
+                    const duration = 1000; const frameDuration = 1000 / 60; const totalFrames = Math.round(duration / frameDuration);
+                    let frame = 0; const startValue = 0; const endValue = amount;
+                    return new Promise(resolve => {
+                        const timer = setInterval(() => {
+                            frame++; const progress = frame / totalFrames;
+                            const currentAmount = startValue + (endValue - startValue) * progress;
+                            winDisplay.textContent = (currentAmount/10).toFixed(2);
+                            if (frame >= totalFrames) {
+                                clearInterval(timer);
+                                winDisplay.textContent = targetAmount;
+                                resolve();
+                            }
+                        }, frameDuration);
+                    });
+                } else { winDisplay.textContent = targetAmount; }
+            }
+
+            function updateBalanceDisplay() { balanceDisplay.textContent = (balance/10).toFixed(2); }
+            function updateSpinButtonText() {
+                const spinText = document.getElementById('spin-text');
+                const spinIcon = spinButton.querySelector('svg');
+                if(freeSpinsRemaining > 0) {
+                    spinText.textContent = `БЕЗПЛАТНИ: ${freeSpinsRemaining}`;
+                    spinIcon.style.display = 'none';
+                } else {
+                    spinText.textContent = 'ЗАВЪРТИ';
+                    spinIcon.style.display = 'block';
+                }
+            }
+            
+            initializeReels();
+            initializeUI();
+            
+            return function(newBalance) {
+                if (!isSpinning) {
+                    balance = newBalance;
+                    updateBalanceDisplay();
+                }
+            };
         }
 
-        function updateBalanceDisplay() { balanceDisplay.textContent = (balance/10).toFixed(2); }
-        function updateSpinButtonText() {
-            const spinText = document.getElementById('spin-text');
-            const spinIcon = spinButton.querySelector('svg');
-            if(freeSpinsRemaining > 0) {
-                spinText.textContent = `БЕЗПЛАТНИ: ${freeSpinsRemaining}`;
-                spinIcon.style.display = 'none';
-            } else {
-                spinText.textContent = 'ЗАВЪРТИ';
-                spinIcon.style.display = 'block';
-            }
-        }
+        // Първоначално извикване на функцията за зареждане
+        // initializeGame се разделя на две части
+        // preloadAssetsAndStartGame се извиква от onAuthStateChanged
+        // initializeGameLogic се извиква след като preload приключи
         
-        initializeReels();
-        initializeUI();
+        // Преструктурирането е готово. Основната логика остава същата.
+        // Сега функцията initializeGame дефинира SYMBOLS и веднага извиква preload.
+        // preload от своя страна извиква initializeGameLogic.
         
-        // --- START OF NEW CODE ---
-        return function(newBalance) {
-            if (!isSpinning) {
-                balance = newBalance;
-                updateBalanceDisplay();
-            }
-        };
-        // --- END OF NEW CODE ---
-    } // Closing brace for initializeGame function
-    
-    // }); // REMOVED: Closing for DOMContentLoaded
+        // Премахваме старото извикване и го оставяме в onAuthStateChanged
+        // initializeGame(); // <-- тази линия вече не е нужна тук
+
+    }
+    initializeGame(); // This will setup the SYMBOLS object and is needed for the preload logic.
+
     </script>
 </body>
 </html>
