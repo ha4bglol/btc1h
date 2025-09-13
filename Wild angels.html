@@ -1260,6 +1260,7 @@
             Object.values(videoPlayers).forEach(video => {
                 video.src = videoSrc;
                 video.currentTime = 0;
+                video.loop = true; // <-- ДОБАВЕТЕ ТОЗИ РЕД
             });
             videoPlayers.left1.play();
             videoPlayers.right1.play();
@@ -1273,6 +1274,8 @@
             rightVideoContainer.style.display = 'none';
             Object.values(videoPlayers).forEach(video => {
                 video.pause();
+                video.loop = false; // <-- ДОБАВЕТЕ ТОЗИ РЕД
+
                 video.src = "";
             });
             isWinVideoPlaying = false;
