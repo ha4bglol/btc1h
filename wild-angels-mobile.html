@@ -2,7 +2,7 @@
 <html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <title>Wild Angels - Vertical Edition</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -142,7 +142,7 @@
         }
         .game-header h1 {
             font-family: var(--font-title);
-            font-size: clamp(2rem, 9vw, 2.8rem);
+            font-size: clamp(1.5rem, 7vw, 2.2rem); /* Reduced Size */
             margin: 0;
             animation: rgb-text-glow 5s linear infinite;
         }
@@ -166,11 +166,12 @@
             position: relative;
             display: flex;
             padding: 10px;
+            box-sizing: border-box; /* Added for correct calculation */
             background: rgba(0, 0, 0, 0.4);
             border: 2px solid var(--glow-color);
             border-radius: 10px;
             gap: 10px;
-            height: calc(var(--symbol-size) * 3 + 12px);
+            height: calc(var(--symbol-size) * 3 + 20px); /* Corrected Height */
             box-shadow: 0 0 15px var(--glow-color), inset 0 0 10px rgba(0, 255, 195, 0.5);
             margin-bottom: 20px;
             backdrop-filter: blur(8px);
@@ -246,7 +247,7 @@
             background: rgba(0,0,0,0.3);
             border: 1px solid var(--glow-color);
             border-radius: 8px;
-            padding: 5px 8px;
+            padding: 4px 6px; /* Reduced Padding */
             backdrop-filter: blur(5px);
         }
         .info-box .label {
@@ -265,13 +266,17 @@
             font-size: clamp(1rem, 4.5vw, 1.5rem);
             color: var(--win-glow-color);
             text-shadow: 0 0 10px var(--win-glow-color);
-            text-align: center;
             font-weight: bold;
+            display: flex; /* Centering */
+            align-items: center; /* Centering */
+            justify-content: center; /* Centering */
+            text-align: center;
+            padding: 2px 0;
         }
         
         #bet-selection-bar {
             display: flex;
-            gap: 8px;
+            gap: 5px; /* Reduced Gap */
             align-items: center;
             justify-content: center;
             width: 100%;
@@ -282,11 +287,11 @@
             background: rgba(0,0,0,0.4);
             border: 1px solid rgba(0, 255, 195, 0.5);
             color: #fff;
-            padding: 8px 12px;
+            padding: 6px 8px; /* Reduced Padding */
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s ease;
-            font-size: clamp(0.9rem, 3.5vw, 1.1rem);
+            font-size: clamp(0.75rem, 3vw, 0.9rem); /* Reduced Font Size */
             flex-grow: 1;
         }
          .bet-select-btn:hover {
@@ -311,12 +316,12 @@
         }
         .control-btn {
             font-family: var(--font-title);
-            font-size: clamp(0.9rem, 3.5vw, 1.2rem);
-            padding: 12px;
+            font-size: clamp(0.8rem, 3.2vw, 1rem); /* Reduced Font Size */
+            padding: 10px; /* Reduced Padding */
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.2s;
-            flex-basis: 120px;
+            flex-basis: 100px; /* Reduced Basis */
             text-align: center;
             border: none;
             color: #fff;
@@ -347,8 +352,8 @@
         }
 
         #spinButton {
-            width: clamp(80px, 22vw, 100px);
-            height: clamp(80px, 22vw, 100px);
+            width: clamp(90px, 25vw, 120px); /* Increased Size */
+            height: clamp(90px, 25vw, 120px); /* Increased Size */
             border: 2px solid var(--glow-color);
             border-radius: 50%;
             background: rgba(0, 255, 195, 0.15);
@@ -503,17 +508,17 @@
         const loadingPercentage = document.getElementById('loading-percentage');
 
         const SYMBOLS = {
-            'angel1': { weight: 20, src: 'images/angel1.png', payout: { '3': 5,  '4': 10,  '5': 20  }},
-            'angel2': { weight: 18, src: 'images/angel2.png', payout: { '3': 10, '4': 20,  '5': 40  }},
-            'angel3': { weight: 15, src: 'images/angel3.png', payout: { '3': 15, '4': 30,  '5': 60  }},
-            'angel4': { weight: 12, src: 'images/angel4.png', payout: { '3': 20, '4': 40,  '5': 80  }},
-            'angel5': { weight: 10, src: 'images/angel5.png', payout: { '3': 30, '4': 60,  '5': 120 }},
-            'angel6': { weight: 8,  src: 'images/angel6.png', payout: { '3': 50, '4': 100, '5': 200 }},
-            'angel7': { weight: 6,  src: 'images/angel7.png', payout: { '3': 100,'4': 200, '5': 400 }},
-            'angel8': { weight: 4,  src: 'images/angel8.png', payout: { '3': 200,'4': 400, '5': 800 }},
-            'angel9': { weight: 3,  src: 'images/angel9.png', payout: { '3': 220,'4': 450, '5': 900 }},
-            'wild':   { weight: 2,  src: 'images/wild.png',   isWild: true, payout: { '3': 250, '4': 500, '5': 1000 }},
-            'scatter':{ weight: 5,  src: 'images/scatter.png',spins: 10, isScatter: true }
+            'angel1': { weight: 20, src: 'angel1.png', payout: { '3': 5,  '4': 10,  '5': 20  }},
+            'angel2': { weight: 18, src: 'angel2.png', payout: { '3': 10, '4': 20,  '5': 40  }},
+            'angel3': { weight: 15, src: 'angel3.png', payout: { '3': 15, '4': 30,  '5': 60  }},
+            'angel4': { weight: 12, src: 'angel4.png', payout: { '3': 20, '4': 40,  '5': 80  }},
+            'angel5': { weight: 10, src: 'angel5.png', payout: { '3': 30, '4': 60,  '5': 120 }},
+            'angel6': { weight: 8,  src: 'angel6.png', payout: { '3': 50, '4': 100, '5': 200 }},
+            'angel7': { weight: 6,  src: 'angel7.png', payout: { '3': 100,'4': 200, '5': 400 }},
+            'angel8': { weight: 4,  src: 'angel8.png', payout: { '3': 200,'4': 400, '5': 800 }},
+            'angel9': { weight: 3,  src: 'angel9.png', payout: { '3': 220,'4': 450, '5': 900 }},
+            'wild':   { weight: 2,  src: 'wild.png',   isWild: true, payout: { '3': 250, '4': 500, '5': 1000 }},
+            'scatter':{ weight: 5,  src: 'scatter.png',spins: 10, isScatter: true }
         };
 
         async function updateBalanceInFirestore(newBalance) {
@@ -559,7 +564,7 @@
         }
         
         async function preloadAssetsAndStartGame(initialBalance) {
-            const SOUND_FILES = ['sounds/win_sound.mp3', 'sounds/anticipation.mp3', 'sounds/expand.mp3'];
+            const SOUND_FILES = ['win_sound.mp3', 'anticipation.mp3', 'expand.mp3'];
             
             const assetsToLoad = [];
             Object.keys(SYMBOLS).forEach(name => assetsToLoad.push({type: 'image', src: SYMBOLS[name].src}));
@@ -631,9 +636,9 @@
             let expandingSymbol = null;
 
             // Audio Elements
-            const winSound = new Audio('sounds/win_sound.mp3');
-            const anticipationSound = new Audio('sounds/anticipation.mp3');
-            const expandSound = new Audio('sounds/expand.mp3');
+            const winSound = new Audio('win_sound.mp3');
+            const anticipationSound = new Audio('anticipation.mp3');
+            const expandSound = new Audio('expand.mp3');
 
             // DOM Elements
             const spinButton = document.getElementById('spinButton');
@@ -760,7 +765,7 @@
                             
                             if (!anticipationSoundPlayed) {
                                 anticipationSound.loop = true;
-                                anticipationSound.play();
+                                anticipationSound.play().catch(e => {});
                                 anticipationSoundPlayed = true;
                             }
                         }
@@ -768,15 +773,15 @@
                         reelStripElement.style.transition = `transform ${duration}s cubic-bezier(0.25, 1, 0.5, 1)`;
                         reelStripElement.style.transform = `translateY(-${baseTargetPosition}px)`;
 
-                        await new Promise(res => setTimeout(res, duration * 1000));
-                                                
-                        results[i].forEach((symbolKey, symbolIndex) => {
-                            if (SYMBOLS[symbolKey]?.isScatter) {
-                                const symbolElement = getSymbolElement(i, finalIndexes[i] + symbolIndex);
-                                if (symbolElement) symbolElement.classList.add('scatter-land');
-                            }
-                        });
-                        resolve();
+                        reelStripElement.addEventListener('transitionend', () => {
+                            results[i].forEach((symbolKey, symbolIndex) => {
+                                if (SYMBOLS[symbolKey]?.isScatter) {
+                                    const symbolElement = getSymbolElement(i, finalIndexes[i] + symbolIndex);
+                                    if (symbolElement) symbolElement.classList.add('scatter-land');
+                                }
+                            });
+                            resolve();
+                        }, { once: true });
                     });
                 });
                 
@@ -938,7 +943,7 @@
 
                     if (expandingReelsIndices.size >= 3) {
                         hasExpansionWin = true;
-                        expandSound.play();
+                        expandSound.play().catch(e => {});
                         
                         await new Promise(res => setTimeout(res, 500)); 
 
@@ -980,7 +985,7 @@
                     updateBalanceDisplay();
                     
                     if(freeSpinsRemaining === 0 && !hasExpansionWin) {
-                        winSound.play();
+                        winSound.play().catch(e => {});
                     }
                     
                     await updateWin(totalWin, true);
@@ -1143,11 +1148,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
