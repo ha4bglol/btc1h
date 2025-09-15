@@ -2,7 +2,7 @@
 <html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NIVRA - Вашето място за социални забавления</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -439,37 +439,34 @@
             setupGameCardListeners(state.isLoggedIn);
         });
         
-        // --- НАЧАЛО НА ПРОМЕНЕНАТА ЛОГИКА ---
-        // Тази функция вече е универсална и работи за всички игри, като следва новата конвенция за именуване.
+        // --- ПРОМЕНЕНА ЛОГИКА ЗА ПРЕНАСОЧВАНЕ ---
         function redirectToGame(game, version) {
-            let targetUrl = game.link; // Взимаме базовия URL, напр. "wild angels.html"
+            let targetUrl = game.link; 
 
             if (version === 'mobile') {
-                // Ако версията е мобилна, заменяме ".html" с " mobile.html"
                 if (targetUrl.includes('.html')) {
-                    targetUrl = targetUrl.replace('.html', ' mobile.html');
+                    // Замества ".html" с "-mobile.html" за да избегнем проблеми
+                    targetUrl = targetUrl.replace('.html', '-mobile.html');
                 }
             }
-            // Ако версията е 'full', targetUrl остава непроменен (оригиналният game.link)
             
             window.location.href = targetUrl;
         }
-        // --- КРАЙ НА ПРОМЕНЕНАТА ЛОГИКА ---
-
 
         // --- ЛОГИКА ЗА ИГРИТЕ ---
         function setupGameCardListeners(isUserLoggedIn) {
             const gamesGrid = document.getElementById('games-grid');
             gamesGrid.innerHTML = ''; 
             
-            // Уверете се, че имената на файловете в 'link' са точни.
+            // --- НАЧАЛО НА ПРОМЯНАТА: Актуализирани имена на файлове ---
             const gamesData = [ 
-                { name: 'Wild Angels', image: 'https://i.imgur.com/dhiFRpC.jpeg', link: 'wild angels.html' },
+                { name: 'Wild Angels', image: 'https://i.imgur.com/dhiFRpC.jpeg', link: 'wild-angels.html' },
                 { name: 'Блекджек', image: 'https://i.imgur.com/S02AkzL.jpeg', link: 'blackjack.html' }, 
                 { name: 'Мини', image: 'https://i.imgur.com/dyT0wi7.jpeg', link: 'mini.html' }, 
                 { name: 'Рулетка', image: 'https://i.imgur.com/BE0XYZa.jpeg', link: 'ruletka.html' }, 
-                { name: 'Война', image: 'https://i.imgur.com/TQBASik.jpeg', link: 'war or voina.html' } 
+                { name: 'Война', image: 'https://i.imgur.com/TQBASik.jpeg', link: 'war-or-voina.html' } 
             ];
+            // --- КРАЙ НА ПРОМЯНАТА ---
 
             gamesData.forEach(game => {
                 const card = document.createElement('div');
@@ -556,5 +553,414 @@
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
