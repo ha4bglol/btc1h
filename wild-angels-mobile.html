@@ -29,6 +29,7 @@
             overflow: hidden;
             font-family: var(--font-main);
             color: #fff;
+            background-color: #100a1c;
         }
 
         body {
@@ -465,6 +466,28 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // --- FULLSCREEN LOGIC ---
+        let isFullscreenRequested = false;
+        function enterFullscreen() {
+            if (isFullscreenRequested) return;
+            const element = document.documentElement;
+            if (element.requestFullscreen) {
+                element.requestFullscreen().catch(err => console.warn(`Fullscreen request failed: ${err.message}`));
+            } else if (element.mozRequestFullScreen) { // Firefox
+                element.mozRequestFullScreen();
+            } else if (element.webkitRequestFullscreen) { // Chrome, Safari, Opera
+                element.webkitRequestFullscreen();
+            } else if (element.msRequestFullscreen) { // IE/Edge
+                element.msRequestFullscreen();
+            }
+            isFullscreenRequested = true;
+            document.removeEventListener('click', enterFullscreen);
+            document.removeEventListener('touchstart', enterFullscreen);
+        }
+        document.addEventListener('click', enterFullscreen);
+        document.addEventListener('touchstart', enterFullscreen);
+        // --- END FULLSCREEN LOGIC ---
+
         let userDocRef = null;
         let isGameInitialized = false;
         let updateExternalBalanceChange = null;
@@ -602,7 +625,7 @@
             let isAutoSpinning = false;
             let freeSpinsRemaining = 0;
             let expandingSymbol = null;
-            let symbolSize = 0; // Will be calculated once the DOM is ready
+            let symbolSize = 0;
 
             const winSound = new Audio('win_sound.mp3');
             const anticipationSound = new Audio('anticipation.mp3');
@@ -635,14 +658,14 @@
                     const weightedStrip = createWeightedStrip();
                     reelStrips.push(weightedStrip);
                     const fragment = document.createDocumentFragment();
-                    for(let i = 0; i < 60; i++) { // More symbols for smoother looping
+                    for(let i = 0; i < 60; i++) {
                         const symbolKey = weightedStrip[i % weightedStrip.length];
                         const symbolElement = document.createElement('div');
                         symbolElement.className = 'symbol';
                         const img = document.createElement('img');
                         img.src = SYMBOLS[symbolKey].src;
                         img.alt = symbolKey;
-                        img.loading = 'eager'; // Load first view eagerly
+                        img.loading = 'eager';
                         symbolElement.appendChild(img);
                         fragment.appendChild(symbolElement);
                     }
@@ -660,8 +683,6 @@
                     betSelectionBar.appendChild(button);
                 });
                 
-                // *** CRITICAL FIX FOR ALIGNMENT ***
-                // Calculate symbol size after the DOM has been rendered
                 symbolSize = document.querySelector('.symbol').offsetHeight;
                 
                 updateBetSelection();
@@ -705,7 +726,6 @@
                 
                 for (let i = 0; i < REEL_COUNT; i++) {
                     const strip = reelStrips[i];
-                    // Pick a random index, ensuring it's not too close to the end for the loop animation
                     const randomIndex = Math.floor(Math.random() * (strip.length - SYMBOLS_PER_REEL_VISIBLE));
                     finalIndexes.push(randomIndex);
                     results.push([
@@ -718,15 +738,12 @@
                 let anticipationSoundPlayed = false;
                 const spinPromises = reelsElements.map((reelStripElement, i) => {
                     return new Promise((resolve) => {
-                        const strip = reelStrips[i];
                         const targetSymbolIndex = finalIndexes[i];
-                        
-                        // Use the pre-calculated, integer-based symbolSize for perfect alignment
                         const finalPosition = targetSymbolIndex * symbolSize;
-                        const loopPosition = (strip.length) * symbolSize;
+                        const loopPosition = (reelStrips[i].length * symbolSize) + finalPosition;
                         
                         reelStripElement.style.transition = 'none';
-                        reelStripElement.style.transform = `translateY(-${loopPosition}px)`;
+                        reelStripElement.style.transform = `translateY(0px)`;
                         reelStripElement.offsetHeight; 
 
                         let landedScatters = 0;
@@ -757,7 +774,6 @@
                     anticipationSound.currentTime = 0;
                 }
                 
-                // Animate scatter symbols on land
                 results.forEach((reelResult, reelIndex) => {
                     reelResult.forEach((symbolKey, symbolIndex) => {
                          if (SYMBOLS[symbolKey]?.isScatter) {
