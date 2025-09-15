@@ -84,7 +84,7 @@
         }
 
         #orientation-blocker {
-            display: none; /* Hide by default, show for landscape */
+            display: none;
             position: fixed;
             inset: 0;
             background: rgba(0,0,0,0.9);
@@ -95,7 +95,10 @@
             text-align: center;
             padding: 2rem;
         }
-        
+        @media (orientation: portrait) {
+            #orientation-blocker { display: flex; }
+            #game-container { display: none !important; }
+        }
         #orientation-blocker i {
             font-size: 5rem;
             margin-bottom: 2rem;
@@ -409,7 +412,7 @@
             width: clamp(150px, 30vw, 400px);
             z-index: 5;
             pointer-events: none;
-            display: none; /* Hidden by default */
+            display: none;
             justify-content: center;
             align-items: center;
         }
@@ -459,96 +462,105 @@
         .bonus-transition-content p { font-size: clamp(1rem, 3vmin, 2rem); color: #fff; margin-top: 2vmin; text-shadow: 0 0 10px #000; }
         @keyframes bonus-pulse { 0%, 100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.05); opacity: 1; } }
 
-        
-        /* --- LANDSCAPE LAYOUT (Default Desktop & Tablet) --- */
-        @media (orientation: landscape) {
-             .video-animation-container {
-                display: flex; /* Show videos only on landscape */
-            }
-        }
-
-
         /* --- MOBILE/PORTRAIT LAYOUT --- */
         @media (orientation: portrait) {
-            /* Show blocker only on landscape for mobile */
-            @media (max-width: 1024px) {
-                #orientation-blocker { 
-                    display: none;
-                }
-                body:not(.portrait-mode) #orientation-blocker {
-                    display: flex;
-                }
-                body.portrait-mode #game-container {
-                    display: flex;
-                }
-            }
-             
             #game-area {
                 flex-direction: column;
-                justify-content: flex-start; /* Align items to the top */
-                padding-top: 15vh; /* Space for the title */
-                padding-bottom: 25vh; /* Space for the bottom UI */
-                box-sizing: border-box;
-                gap: 3vh; /* Space between reels and controls */
+                justify-content: center;
+                padding-top: 10vmin; /* Reduced */
+                padding-bottom: 30vmin; /* Reduced */
+                gap: 2vh;
             }
-            .game-title {
-                font-size: 8vmin;
-                top: 5vh;
-            }
+            .game-title { font-size: 8vmin; top: 2vmin; }
             .reels-container {
-                order: 1; /* Reels first */
+                order: 1;
                 width: 95vw;
-                /* Aspect ratio 5 reels, 3 rows high -> 5:3. Width is 95vw, so height is (95/5)*3 = 57vw */
                 height: 57vw;
                 padding: 1.5vw;
                 gap: 1vw;
             }
-            .reel {
-                width: 100%; /* Take up 1/5 of the container width */
-                height: 100%;
-            }
-            .symbol {
-                height: 33.333%; /* 3 symbols per reel */
-            }
-            .symbol img {
-                max-width: 80%;
-                max-height: 80%;
-            }
-            /* Hide elements not needed in portrait */
-            #left-video-container, 
-            #right-video-container,
-            .side-panel:not(#right-panel) {
-                display: none;
-            }
-
-            #right-panel { /* This panel holds the spin buttons */
-                order: 2; /* Buttons after reels */
-                width: 100%;
+            .reel { width: 100%; height: 100%; }
+            .symbol { height: 33.333%; }
+            .symbol img { max-width: 80%; max-height: 80%; }
+            #left-video-container, #right-video-container { display: none; }
+            #right-panel {
+                order: 2;
                 height: auto;
                 padding: 0;
-                flex-direction: row; /* Buttons side-by-side */
-                gap: 5vw;
+                flex-direction: row;
+                gap: 4vw;
                 justify-content: center;
                 align-items: center;
             }
+            #ui-panel {
+                padding: 1.5vmin;
+                gap: 1vmin;
+                justify-content: flex-end;
+                height: 30vmin; /* Reduced */
+            }
+            .info-bar { font-size: clamp(0.8rem, 2.8vmin, 1.1rem); }
+            #bet-selection-bar { flex-wrap: wrap; gap: 1.5vmin; }
+            .bet-select-btn { padding: 1.5vmin 2.5vmin; }
 
-            #ui-panel { /* Bottom info bar */
-                height: 25vh; /* Fixed height for the bottom area */
-                padding: 2vmin;
-                gap: 1.5vmin;
-                justify-content: flex-end; /* Push content to the bottom of the panel */
+            /* --- NEW MODAL STYLES FOR PORTRAIT MODE --- */
+            .modal-content {
+                background: linear-gradient(180deg, #4d2020, #2c1212); /* Dark reddish-brown gradient */
+                border: 2px solid #bda05d; /* Gold-like border */
+                box-shadow: 0 0 20px rgba(0,0,0,0.7), inset 0 0 15px rgba(0,0,0,0.5); /* Outer shadow and inner bevel */
+                font-family: 'Poppins', sans-serif; /* Use a more standard font */
+                animation: none; /* Disable the rotate/appear animation for a simpler look */
+                opacity: 1;
+                transform: scale(1);
+                border-radius: 10px;
             }
 
-            .info-bar {
-                font-size: clamp(0.8rem, 2.8vmin, 1.1rem);
+            .modal-title, .modal-subtitle, #expanding-symbol-info h3 {
+                font-family: 'Poppins', sans-serif; /* Override Orbitron */
+                color: #f0f0f0; /* Off-white text */
+                text-shadow: 1px 1px 3px #000; /* Simple drop shadow */
             }
-            #bet-selection-bar {
-                flex-wrap: wrap; /* Allow bet buttons to wrap */
-                justify-content: center;
-                gap: 1.5vmin;
+            
+            .modal-title {
+                color: #fdd835; /* Make the main title yellow/gold */
+                font-size: 7vmin;
             }
-            .bet-select-btn {
-                padding: 1.5vmin 2.5vmin;
+
+            .modal-subtitle {
+                font-size: 5vmin;
+            }
+            
+            #expanding-symbol-info {
+                flex-direction: column;
+            }
+
+            #expanding-symbol-display {
+                width: 20vmin;
+                height: 20vmin;
+                border: 2px solid #bda05d;
+                border-radius: 5px;
+                background: rgba(0,0,0,0.3);
+                padding: 1vmin;
+            }
+
+            /* Transition Screen styles */
+            #bonus-transition-screen {
+                background: rgba(0,0,0,0.85);
+            }
+
+            .bonus-transition-content h1, .bonus-transition-content p {
+                 font-family: 'Poppins', sans-serif; /* Override Orbitron */
+                 text-shadow: 2px 2px 5px #000; /* Simple drop shadow */
+                 animation: none; /* Disable the pulse animation */
+            }
+
+            .bonus-transition-content h1 {
+                font-size: 10vmin;
+                color: #fdd835; /* Gold color */
+            }
+
+            .bonus-transition-content p {
+                font-size: 4vmin;
+                color: #ffffff;
             }
         }
 
@@ -1297,10 +1309,6 @@
         }
         
         function playWinVideo(symbolKey) {
-            // Video playback is disabled in portrait mode, so we just return
-            if (window.innerHeight > window.innerWidth) {
-                return;
-            }
             const symbolData = SYMBOLS[symbolKey];
             if (!symbolData || !symbolData.videos || symbolData.videos === 0 || isWinVideoPlaying) {
                 return;
@@ -1313,7 +1321,7 @@
             Object.values(videoPlayers).forEach(video => {
                 video.src = videoSrc;
                 video.currentTime = 0;
-                video.loop = true;
+                video.loop = true; // <-- ДОБАВЕТЕ ТОЗИ РЕД
             });
             videoPlayers.left1.play();
             videoPlayers.right1.play();
@@ -1327,7 +1335,8 @@
             rightVideoContainer.style.display = 'none';
             Object.values(videoPlayers).forEach(video => {
                 video.pause();
-                video.loop = false;
+                video.loop = false; // <-- ДОБАВЕТЕ ТОЗИ РЕД
+
                 video.src = "";
             });
             isWinVideoPlaying = false;
@@ -1472,6 +1481,7 @@
     </script>
 </body>
 </html>
+
 
 
 
