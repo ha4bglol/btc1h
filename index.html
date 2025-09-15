@@ -109,6 +109,10 @@
                         <button id="register-btn-desktop" class="px-6 py-2 rounded-full text-black font-semibold btn-primary">Регистрация</button>
                     </div>
                     <div id="logged-in-view" class="hidden items-center space-x-4">
+                        <div id="platform-preference-display" class="cursor-pointer text-center group">
+                            <span id="platform-text" class="text-white font-semibold block text-xs truncate max-w-[150px] group-hover:text-yellow-400 transition"></span>
+                            <span class="text-gray-500 text-[10px] group-hover:text-yellow-400 transition">Промяна</span>
+                        </div>
                         <div class="text-right">
                             <span id="user-fullname" class="text-white font-semibold block text-sm truncate max-w-[150px]"></span>
                             <span id="user-balance" class="text-yellow-400 font-bold block text-xs"><i class="fas fa-coins mr-1"></i>0</span>
@@ -205,6 +209,28 @@
              <button id="close-success-modal-btn" class="w-full max-w-xs mx-auto py-3 rounded-full text-black font-semibold btn-primary">Добре</button>
         </div>
     </div>
+    
+    <!-- Platform Choice Modal -->
+    <div id="platform-choice-modal" class="modal-overlay">
+        <div class="modal-content max-w-md p-8 text-center">
+            <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button>
+            <div class="text-5xl text-yellow-400 mb-4"><i class="fas fa-gamepad"></i></div>
+            <h3 class="text-2xl font-bold text-white mb-4">Изберете версия на играта</h3>
+            <p class="text-gray-400 mb-8">Изберете най-подходящата версия за вашето устройство.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <button data-version="mobile" class="platform-btn w-full py-4 rounded-lg text-black font-semibold btn-primary flex flex-col items-center justify-center"><i class="fab fa-apple text-2xl mb-1"></i><span>iOS</span></button>
+                <button data-version="mobile" class="platform-btn w-full py-4 rounded-lg text-black font-semibold btn-primary flex flex-col items-center justify-center"><i class="fab fa-android text-2xl mb-1"></i><span>Android</span></button>
+                <button data-version="full" class="platform-btn w-full py-4 rounded-lg border-2 btn-secondary flex flex-col items-center justify-center"><i class="fab fa-android text-2xl mb-1"></i><span>Android (Full)</span></button>
+                <button data-version="full" class="platform-btn w-full py-4 rounded-lg border-2 btn-secondary flex flex-col items-center justify-center"><i class="fas fa-desktop text-2xl mb-1"></i><span>PC (Win/Mac)</span></button>
+            </div>
+            <div class="mt-6">
+                <label class="flex items-center justify-center space-x-3">
+                    <input type="checkbox" id="remember-platform-choice" class="h-5 w-5 accent-pink-500 bg-gray-700 border-gray-600 rounded focus:ring-pink-500">
+                    <span class="text-sm text-gray-300">Запомни избора ми</span>
+                </label>
+            </div>
+        </div>
+    </div>
 
     <!-- Register Modal (Multi-step) -->
     <div id="register-modal" class="modal-overlay">
@@ -244,7 +270,8 @@
         const state = { 
             registrationData: {},
             userBalanceUnsubscribe: null,
-            isLoggedIn: false
+            isLoggedIn: false,
+            selectedGame: null 
         };
         const dom = {
             verificationNotice: document.getElementById('verification-notice'),
@@ -253,6 +280,7 @@
             forgotPasswordModal: document.getElementById('forgot-password-modal'),
             loginRequiredModal: document.getElementById('login-required-modal'),
             registrationSuccessModal: document.getElementById('registration-success-modal'),
+            platformChoiceModal: document.getElementById('platform-choice-modal'),
             
             loggedOutView: document.getElementById('logged-out-view'),
             loggedInView: document.getElementById('logged-in-view'),
@@ -276,6 +304,9 @@
             resendVerificationBtn: document.getElementById('resend-verification-btn'),
             checkVerificationBtn: document.getElementById('check-verification-btn'),
             logoutFromVerificationBtn: document.getElementById('logout-from-verification-btn'),
+
+            platformPreferenceDisplay: document.getElementById('platform-preference-display'),
+            platformText: document.getElementById('platform-text'),
         };
 
         // --- ЛОГИКА ЗА МОДАЛИ И ОБРАТНА ВРЪЗКА ---
@@ -314,6 +345,13 @@
                 const closeBtn = overlay.querySelector('.close-modal-btn');
                 if (closeBtn) closeBtn.addEventListener('click', () => closeModal(overlay.closest('.modal-overlay')));
             });
+
+            dom.platformPreferenceDisplay.addEventListener('click', () => {
+                if (confirm("Искате ли да изчистите запазения избор на версия? Ще трябва да избирате отново при всяко стартиране на игра.")) {
+                    localStorage.removeItem('platformPreference');
+                    updatePlatformPreferenceDisplay();
+                }
+            });
         }
 
         function switchRegisterStep(step) {
@@ -347,6 +385,20 @@
         const handlePasswordReset = async (e) => { e.preventDefault(); const button = e.target.querySelector('button[type="submit"]'); toggleLoading(button, true); const email = dom.forgotPasswordForm['reset-email'].value; dom.resetError.textContent = ''; dom.resetSuccess.textContent = ''; try { await sendPasswordResetEmail(auth, email); dom.resetSuccess.textContent = 'Линкът е изпратен! Проверете пощата си.'; dom.forgotPasswordForm.reset(); } catch (error) { dom.resetError.textContent = 'Грешка. Проверете имейла.'; } finally { toggleLoading(button, false); } };
         const handleLogout = () => { signOut(auth).catch(console.error); };
 
+        function updatePlatformPreferenceDisplay() {
+            const preference = localStorage.getItem('platformPreference');
+            if (preference) {
+                dom.platformPreferenceDisplay.style.display = 'block';
+                if (preference === 'full') {
+                    dom.platformText.textContent = 'PC / Full Версия';
+                } else {
+                    dom.platformText.textContent = 'Мобилна Версия';
+                }
+            } else {
+                dom.platformPreferenceDisplay.style.display = 'none';
+            }
+        }
+
         // --- ГЛАВЕН СЛУШАТЕЛ И UI ОБНОВЯВАНЕ ---
         onAuthStateChanged(auth, async (user) => {
             if (state.userBalanceUnsubscribe) { state.userBalanceUnsubscribe(); state.userBalanceUnsubscribe = null; }
@@ -360,6 +412,7 @@
                     closeModal(dom.verificationNotice);
                     [dom.loggedOutView, dom.loggedOutViewMobile].forEach(el => el.classList.add('hidden'));
                     [dom.loggedInView, dom.loggedInViewMobile].forEach(el => el.classList.remove('hidden'));
+                    updatePlatformPreferenceDisplay();
 
                     const userDocRef = doc(db, 'users', refreshedUser.uid);
                     const userDocSnap = await getDoc(userDocRef);
@@ -381,24 +434,42 @@
                 [dom.loggedInView, dom.loggedInViewMobile].forEach(el => el.classList.add('hidden'));
                 dom.userFullnameDisplay.textContent = '';
                 dom.userBalanceDisplay.innerHTML = `<i class="fas fa-coins mr-1"></i>0`;
+                dom.platformPreferenceDisplay.style.display = 'none';
             }
             setupGameCardListeners(state.isLoggedIn);
         });
         
+        // --- НАЧАЛО НА ПРОМЕНЕНАТА ЛОГИКА ---
+        // Тази функция вече е универсална и работи за всички игри.
+        function redirectToGame(game, version) {
+            let targetUrl = game.link; // Взимаме базовия URL, напр. "mini.html"
+
+            if (version === 'mobile') {
+                // Ако версията е мобилна, заменяме ".html" с " 2.html"
+                if (targetUrl.includes('.html')) {
+                    targetUrl = targetUrl.replace('.html', ' 2.html');
+                }
+            }
+            // Ако версията е 'full', targetUrl остава непроменен (оригиналният game.link)
+            
+            window.location.href = targetUrl;
+        }
+        // --- КРАЙ НА ПРОМЕНЕНАТА ЛОГИКА ---
+
+
         // --- ЛОГИКА ЗА ИГРИТЕ ---
         function setupGameCardListeners(isUserLoggedIn) {
             const gamesGrid = document.getElementById('games-grid');
-            gamesGrid.innerHTML = ''; // Clear previous cards
+            gamesGrid.innerHTML = ''; 
             
-            // --- START OF CHANGE ---
+            // --- Обновете този масив с правилните имена на файловете за вашите игри ---
             const gamesData = [ 
-                { name: 'Wild Angels', image: 'https://i.imgur.com/dhiFRpC.jpeg', link: 'Wild angels.html' },
+                { name: 'Wild Angels', image: 'https://i.imgur.com/dhiFRpC.jpeg', link: 'wild angels.html' },
                 { name: 'Блекджек', image: 'https://i.imgur.com/S02AkzL.jpeg', link: 'blackjack.html' }, 
                 { name: 'Мини', image: 'https://i.imgur.com/dyT0wi7.jpeg', link: 'mini.html' }, 
                 { name: 'Рулетка', image: 'https://i.imgur.com/BE0XYZa.jpeg', link: 'ruletka.html' }, 
                 { name: 'Война', image: 'https://i.imgur.com/TQBASik.jpeg', link: 'war or voina.html' } 
             ];
-            // --- END OF CHANGE ---
 
             gamesData.forEach(game => {
                 const card = document.createElement('div');
@@ -407,7 +478,13 @@
                 
                 card.addEventListener('click', () => {
                     if (isUserLoggedIn) {
-                        window.location.href = game.link;
+                        const preference = localStorage.getItem('platformPreference');
+                        if (preference) {
+                            redirectToGame(game, preference);
+                        } else {
+                            state.selectedGame = game; 
+                            openModal(dom.platformChoiceModal);
+                        }
                     } else {
                         openModal(dom.loginRequiredModal);
                     }
@@ -452,6 +529,21 @@
                 toggleLoading(button, false);
             });
             
+            dom.platformChoiceModal.querySelectorAll('.platform-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const version = button.dataset.version; 
+                    const remember = document.getElementById('remember-platform-choice').checked;
+
+                    if (remember) {
+                        localStorage.setItem('platformPreference', version);
+                        updatePlatformPreferenceDisplay();
+                    }
+                    
+                    closeModal(dom.platformChoiceModal);
+                    redirectToGame(state.selectedGame, version);
+                });
+            });
+
             const tabButtons = document.querySelectorAll('.tab-btn'), tabPanels = document.querySelectorAll('.tab-panel'), navLinks = document.querySelectorAll('.nav-link'), contentTabsSection = document.getElementById('content-tabs');
             function activateTab(tabId) { tabButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId)); tabPanels.forEach(panel => panel.classList.toggle('hidden', panel.id !== `tab-${tabId}`)); }
             tabButtons.forEach(button => button.addEventListener('click', () => activateTab(button.dataset.tab)));
@@ -465,5 +557,4 @@
 </body>
 </html>
 
-</html>
 
