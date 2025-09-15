@@ -3,586 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Wild Angels - Neon Dream</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>Wild Angels - Neon Dream (Portrait)</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap');
-
         :root {
-            --glow-color: #00ffc3; /* Светло зелено/тюркоаз */
-            --secondary-glow: #f900ff; /* Ярко розово/магента */
+            --glow-color: #00ffc3;
+            --secondary-glow: #f900ff;
             --win-glow-color: #ffee00;
             --anticipation-glow-color: #ffc400;
-            --scatter-glow-color: #f900ff; /* Розово за скатер */
+            --scatter-glow-color: #f900ff;
         }
+        html,body{height:100%;width:100%;margin:0;padding:0;overflow:hidden;font-family:'Poppins',sans-serif;color:#fff;}
+        body{background:linear-gradient(135deg,#f900ff,#00ffc3,#2e005e,#100a1c);background-size:400% 400%;animation:color-shift 15s ease-in-out infinite;}
+        @keyframes color-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 
-        html, body {
-            height: 100%;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            font-family: 'Poppins', sans-serif;
-            color: #fff;
-        }
+        /* Loading */
+        #loading-screen{position:fixed;inset:0;background-color:#100a1c;z-index:10000;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2rem;transition:opacity .5s}
+        .loading-title{font-family:'Orbitron',sans-serif;font-size:clamp(3rem,10vmin,6rem);background:linear-gradient(90deg,var(--secondary-glow),var(--glow-color));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .progress-bar-container{width:80%;max-width:500px;height:20px;background:rgba(255,255,255,0.08);border-radius:10px;overflow:hidden;border:2px solid var(--glow-color)}
+        .progress-bar{width:0;height:100%;background:linear-gradient(90deg,var(--secondary-glow),var(--glow-color));background-size:200% 200%;animation:color-shift 5s ease-in-out infinite;transition:width .3s}
+        #loading-percentage{font-family:'Orbitron',sans-serif;font-size:1.5rem;margin-top:1rem}
 
-        body {
-            background: linear-gradient(135deg, #f900ff, #00ffc3, #2e005e, #100a1c);
-            background-size: 400% 400%;
-            animation: color-shift 15s ease-in-out infinite;
-        }
-
-        @keyframes color-shift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        #loading-screen {
-            position: fixed;
-            inset: 0;
-            background-color: #100a1c;
-            z-index: 10000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 2rem;
-            transition: opacity 0.5s ease-out;
-        }
-        .loading-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(3rem, 10vmin, 6rem);
-            background: linear-gradient(90deg, var(--secondary-glow), var(--glow-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .progress-bar-container {
-            width: 80%;
-            max-width: 500px;
-            height: 20px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
-            border: 2px solid var(--glow-color);
-        }
-        .progress-bar {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, var(--secondary-glow), var(--glow-color));
-            background-size: 200% 200%;
-            animation: color-shift 5s ease-in-out infinite;
-            transition: width 0.3s ease-out;
-        }
-        #loading-percentage {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.5rem;
-            margin-top: 1rem;
-        }
-
-        #orientation-blocker {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.9);
-            z-index: 9000;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 2rem;
-        }
-        @media (orientation: portrait) {
+        /* Orientation blocker: show on landscape only to force portrait experience */
+        #orientation-blocker{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:9000;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2rem}
+        #orientation-blocker i{font-size:5rem;margin-bottom:2rem;color:var(--glow-color);animation:rotate-anim 2s infinite}
+        @keyframes rotate-anim{0%{transform:rotate(0)}50%{transform:rotate(90deg)}100%{transform:rotate(0)}}
+        /* Landscape shows the blocker (invert from original) */
+        @media (orientation: landscape) {
             #orientation-blocker { display: flex; }
             #game-container { display: none !important; }
         }
-        #orientation-blocker i {
-            font-size: 5rem;
-            margin-bottom: 2rem;
-            color: var(--glow-color);
-            animation: rotate-anim 2s infinite ease-in-out;
-        }
-        @keyframes rotate-anim {
-            0% { transform: rotate(0deg); }
-            50% { transform: rotate(90deg); }
-            100% { transform: rotate(0deg); }
-        }
 
-        #login-required-container {
-            width: 100%;
-            height: 100%;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 2rem;
-            background-color: #100a1c;
-        }
-        .login-box {
-            background: rgba(0,0,0,0.4);
-            border: 2px solid var(--glow-color);
-            border-radius: 2vmin;
-            padding: 3rem;
-            max-width: 500px;
-        }
-        .login-box i { font-size: 5rem; margin-bottom: 2rem; color: var(--glow-color); }
-        .login-box a {
-            display: inline-block;
-            margin-top: 2rem;
-            padding: 1rem 2rem;
-            font-family: 'Orbitron', sans-serif;
-            background: var(--glow-color);
-            color: #100a1c;
-            border-radius: 1rem;
-            text-decoration: none;
-            font-weight: bold;
-            transition: all 0.2s;
-        }
-        .login-box a:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--glow-color); }
+        /* Main game container (portrait-first) */
+        #game-container{display:none;flex-direction:column;width:100%;height:100%;position:relative}
+        #top-symbol { position: absolute; top: 3vmin; left: 50%; transform: translateX(-50%); z-index: 50; pointer-events: none; width: 18vmin; height: 18vmin; display:flex; justify-content:center; align-items:center; }
+        #top-symbol img { max-width:100%; max-height:100%; filter: drop-shadow(0 0 12px rgba(255,255,255,0.08)); }
 
-        #game-container {
-            display: none;
-            flex-direction: column;
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-        
-        #mute-button {
-            position: absolute;
-            top: 2vmin;
-            right: 2vmin;
-            width: clamp(40px, 8vmin, 60px);
-            height: clamp(40px, 8vmin, 60px);
-            background: rgba(0,0,0,0.4);
-            border: 2px solid var(--glow-color);
-            color: var(--glow-color);
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 100;
-            font-size: clamp(1.2rem, 3vmin, 1.8rem);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.2s;
-        }
-        #mute-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 15px var(--glow-color);
-        }
+        .game-title{position:absolute;top:10vmin;left:50%;transform:translateX(-50%);font-family:'Orbitron',sans-serif;font-size:clamp(2.2rem,6vmin,4rem);z-index:10;animation:rgb-text-glow 5s linear infinite}
+        @keyframes rgb-text-glow{0%{color:var(--glow-color);text-shadow:0 0 10px var(--glow-color),0 0 20px var(--glow-color),0 0 30px #fff}50%{color:var(--secondary-glow);text-shadow:0 0 10px var(--secondary-glow),0 0 20px var(--secondary-glow),0 0 30px #fff}100%{color:var(--glow-color);text-shadow:0 0 10px var(--glow-color),0 0 20px var(--glow-color),0 0 30px #fff}}
 
-        .game-title {
-            position: absolute;
-            top: 7vmin;
-            left: 50%;
-            transform: translateX(-50%);
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(2.5rem, 7vmin, 5rem);
-            z-index: 10;
-            animation: rgb-text-glow 5s linear infinite;
-        }
-        
-        @keyframes rgb-text-glow {
-            0% {
-                color: var(--glow-color);
-                text-shadow: 0 0 10px var(--glow-color), 0 0 20px var(--glow-color), 0 0 30px #fff;
-            }
-            50% {
-                color: var(--secondary-glow);
-                text-shadow: 0 0 10px var(--secondary-glow), 0 0 20px var(--secondary-glow), 0 0 30px #fff;
-            }
-            100% {
-                color: var(--glow-color);
-                text-shadow: 0 0 10px var(--glow-color), 0 0 20px var(--glow-color), 0 0 30px #fff;
-            }
-        }
+        #mute-button{position:absolute;top:2vmin;right:2vmin;width:clamp(40px,8vmin,60px);height:clamp(40px,8vmin,60px);background:rgba(0,0,0,0.4);border:2px solid var(--glow-color);color:var(--glow-color);border-radius:50%;cursor:pointer;z-index:100;font-size:clamp(1.2rem,3vmin,1.8rem);display:flex;justify-content:center;align-items:center;transition:all .2s}
+        #mute-button:hover{transform:scale(1.05);box-shadow:0 0 15px var(--glow-color)}
 
-        #game-area {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 2vmin;
-            box-sizing: border-box;
-            width: 100%;
-            height: 100%;
-        }
-        
-        .side-panel {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            padding: 0 2.5vmin;
-            flex-shrink: 0;
-            width: clamp(120px, 25vmin, 200px);
-        }
-        
-        #right-panel {
-            gap: 2vmin;
-        }
+        #game-area{flex-grow:1;display:flex;justify-content:center;align-items:center;padding:2vmin;box-sizing:border-box;width:100%;height:100%}
+        .side-panel{display:flex;flex-direction:column;justify-content:center;align-items:center;height:100%;padding:0 2.5vmin;flex-shrink:0;width:clamp(80px,20vmin,150px)}
+        #right-panel{gap:2vmin}
 
-        #spinButton {
-            font-family: 'Orbitron', sans-serif;
-            width: clamp(90px, 20vmin, 160px);
-            height: clamp(90px, 20vmin, 160px);
-            border: 3px solid var(--glow-color);
-            border-radius: 50%;
-            background-image: linear-gradient(to bottom, rgba(0, 255, 195, 0.3), rgba(0, 255, 195, 0.1));
-            color: #fff;
-            cursor: pointer;
-            text-shadow: 0 0 1vmin var(--glow-color);
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: clamp(0.8rem, 2.5vmin, 1.4rem);
-            flex-direction: column;
-            line-height: 1.2;
-        }
-        #spinButton:not(:disabled):hover {
-            background-color: rgba(0, 255, 195, 0.4);
-            box-shadow: 0 0 2vmin var(--glow-color);
-            transform: scale(1.05);
-        }
-        #spinButton:disabled {
-            filter: grayscale(1) brightness(0.7);
-            cursor: not-allowed;
-        }
-        #spinButton svg {
-            width: 40%;
-            height: 40%;
-            fill: currentColor;
-            transition: transform 0.5s;
-        }
-        #spinButton:not(:disabled):hover svg {
-            transform: rotate(180deg);
-        }
+        #spinButton{font-family:'Orbitron',sans-serif;width:clamp(90px,20vmin,140px);height:clamp(90px,20vmin,140px);border:3px solid var(--glow-color);border-radius:50%;background-image:linear-gradient(to bottom,rgba(0,255,195,0.3),rgba(0,255,195,0.1));color:#fff;cursor:pointer;text-shadow:0 0 1vmin var(--glow-color);transition:all .2s;display:flex;align-items:center;justify-content:center;font-size:clamp(0.8rem,2.5vmin,1.4rem);flex-direction:column;line-height:1.2}
+        #autoSpinButton{font-family:'Orbitron',sans-serif;font-size:clamp(1rem,2vmin,1.5rem);padding:1.5vmin 3vmin;border:2px solid var(--glow-color);border-radius:1.5vmin;background-image:linear-gradient(to bottom,rgba(0,255,195,0.3),rgba(0,255,195,0.1));color:#fff;cursor:pointer;text-shadow:0 0 1vmin var(--glow-color);transition:all .2s}
+        #buyBonusButton{font-family:'Orbitron',sans-serif;font-size:clamp(1rem,2vmin,1.5rem);padding:1.5vmin 3vmin;border:2px solid var(--secondary-glow);border-radius:1.5vmin;background-image:linear-gradient(to bottom,rgba(249,0,255,0.3),rgba(249,0,255,0.1));color:#fff;cursor:pointer;text-shadow:0 0 1vmin var(--secondary-glow);transition:all .2s}
 
-        #autoSpinButton {
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(1rem, 2vmin, 1.5rem); 
-            padding: 1.5vmin 3vmin; 
-            border: 2px solid var(--glow-color);
-            border-radius: 1.5vmin;
-            background-image: linear-gradient(to bottom, rgba(0, 255, 195, 0.3), rgba(0, 255, 195, 0.1));
-            color: #fff;
-            cursor: pointer;
-            text-shadow: 0 0 1vmin var(--glow-color);
-            transition: all 0.2s;
-        }
-        #autoSpinButton:not(.active):hover, #buyBonusButton:not(:disabled):hover {
-            background-color: rgba(0, 255, 195, 0.4);
-            box-shadow: 0 0 2vmin var(--glow-color);
-            transform: translateY(-2px);
-        }
-        #autoSpinButton.active { 
-            background: var(--secondary-glow); 
-            border-color: var(--secondary-glow); 
-            box-shadow: 0 0 2vmin var(--secondary-glow); 
-        }
+        .reels-container{display:flex;gap:1vmin;padding:1.5vmin;background:rgba(0,0,0,0.4);border:2px solid var(--glow-color);border-radius:2vmin;box-shadow:0 0 3vmin var(--glow-color), inset 0 0 2vmin rgba(0,255,195,0.5);backdrop-filter:blur(8px);position:relative;width:95vw;height:57vw}
+        .reel{width:100%;height:100%;overflow:hidden;background:linear-gradient(135deg,rgba(249,0,255,0.1),rgba(0,255,195,0.1));border-radius:1vmin;position:relative;box-shadow:inset 0 0 10px #000}
+        .reel-strip{position:absolute;top:0;left:0;width:100%;transition:opacity .3s}
+        .symbol{width:100%;height:33.333%;display:flex;justify-content:center;align-items:center;box-sizing:border-box;position:relative}
+        .symbol img{max-width:85%;max-height:85%;object-fit:contain;filter:drop-shadow(0 0 8px rgba(0,0,0,0.7));transition:transform .3s,filter .3s}
 
-        .reels-container {
-            display: flex;
-            gap: 1vmin;
-            padding: 1.5vmin;
-            background: rgba(0, 0, 0, 0.4);
-            border: 2px solid var(--glow-color);
-            border-radius: 2vmin;
-            box-shadow: 0 0 3vmin var(--glow-color), inset 0 0 2vmin rgba(0, 255, 195, 0.5);
-            backdrop-filter: blur(8px);
-            position: relative;
-        }
+        #ui-panel{position:absolute;bottom:0;left:0;width:100%;padding:2vmin;display:flex;flex-direction:column;align-items:center;gap:1.5vmin;box-sizing:border-box}
+        .info-bar{display:flex;justify-content:space-around;align-items:center;width:100%;max-width:1200px;font-size:clamp(.9rem,2vmin,1.2rem)}
+        .info-box{ text-align:center; }
+        #balance-box,#win-box{background:rgba(0,0,0,0.3);border:2px solid var(--glow-color);border-radius:1.5vmin;padding:1vmin 2vmin;box-shadow:0 0 1.5vmin var(--glow-color);backdrop-filter:blur(5px)}
+        .info-box span{font-family:'Orbitron',sans-serif;display:block;font-size:clamp(1rem,2.5vmin,1.5rem);color:var(--glow-color)}
+        #message-box{font-family:'Orbitron',sans-serif;font-size:clamp(1.1rem,3vmin,1.8rem);color:var(--win-glow-color);text-shadow:0 0 10px var(--win-glow-color);padding:1vmin}
 
-        .reel {
-            width: clamp(80px, 16vmin, 220px);
-            height: clamp(240px, 48vmin, 660px);
-            overflow: hidden;
-            background: linear-gradient(135deg, rgba(249, 0, 255, 0.1), rgba(0, 255, 195, 0.1));
-            border-radius: 1vmin;
-            position: relative;
-            box-shadow: inset 0 0 10px #000;
-        }
-        
-        .reel-strip { position: absolute; top: 0; left: 0; width: 100%; transition: opacity 0.3s ease-out; }
-        .symbol {
-            width: 100%;
-            height: clamp(80px, 16vmin, 220px);
-            display: flex; justify-content: center; align-items: center; box-sizing: border-box; position: relative;
-        }
-        .symbol img {
-            max-width: 85%; max-height: 85%; object-fit: contain; filter: drop-shadow(0 0 8px rgba(0,0,0,0.7)); transition: transform 0.3s, filter 0.3s;
-        }
+        #bet-selection-bar{display:flex;gap:1.5vmin;align-items:center;justify-content:center;width:100%;padding:1vmin 0}
+        .bet-select-btn{font-family:'Orbitron',sans-serif;background:rgba(0,0,0,0.4);border:2px solid rgba(0,255,195,0.5);color:#fff;padding:1vmin 2vmin;border-radius:1vmin;cursor:pointer;transition:all .2s ease;font-size:clamp(.9rem,2vmin,1.3rem)}
+        .bet-select-btn.active{background:var(--glow-color);color:#000;border-color:var(--glow-color);box-shadow:0 0 15px var(--glow-color);transform:scale(1.05)}
 
-        #ui-panel {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            padding: 2vmin;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.5vmin;
-            box-sizing: border-box;
-        }
+        /* Win lines & pulses */
+        #win-lines-container{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:100}
+        #win-lines-svg{overflow:visible;width:100%;height:100%}
+        .win-line{fill:none;stroke:var(--secondary-glow);stroke-width:5px;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 5px var(--secondary-glow)) drop-shadow(0 0 15px var(--secondary-glow));stroke-dasharray:1000;stroke-dashoffset:1000;animation:draw-line .8s ease-out forwards,blink-line 1s linear infinite .8s}
+        @keyframes draw-line{to{stroke-dashoffset:0}}
+        @keyframes blink-line{0%,100%{opacity:1}50%{opacity:.3}}
+        .symbol.win-pulse img{animation:win-pulse-anim 1s ease-out infinite}
+        @keyframes win-pulse-anim{0%,100%{transform:scale(1);filter:drop-shadow(0 0 10px var(--win-glow-color)) brightness(1.2)}50%{transform:scale(1.25);filter:drop-shadow(0 0 25px var(--win-glow-color)) drop-shadow(0 0 10px #fff) brightness(1.8)}}
+        .symbol.scatter-land img{animation:scatter-land-anim .8s cubic-bezier(.175,.885,.32,1.275)}
+        @keyframes scatter-land-anim{0%{transform:scale(.2) rotate(-360deg);opacity:0}60%{transform:scale(1.3)}100%{transform:scale(1);opacity:1}}
+        .symbol.scatter-trigger{z-index:10}
+        .symbol.scatter-trigger img{animation:scatter-trigger-anim 1.5s ease-in-out infinite}
+        @keyframes scatter-trigger-anim{0%,100%{transform:scale(1.1) translateY(-5%);filter:drop-shadow(0 0 15px var(--scatter-glow-color)) drop-shadow(0 0 25px var(--scatter-glow-color)) brightness(1.5)}50%{transform:scale(1.3) translateY(-10%);filter:drop-shadow(0 0 30px var(--scatter-glow-color)) drop-shadow(0 0 50px #fff) brightness(2)}}
+        .symbol.expanding{position:absolute;left:0;width:100%;z-index:50;animation:expand-symbol .7s forwards}
+        @keyframes expand-symbol{0%{transform:scale(.8);opacity:0}60%{transform:scale(1.1);opacity:1;filter:drop-shadow(0 0 35px var(--win-glow-color))}100%{transform:scale(1);opacity:1}}
 
-        .info-bar {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            width: 100%;
-            max-width: 1200px;
-            font-size: clamp(0.9rem, 2vmin, 1.2rem);
-        }
-        
-        .info-box { 
-            text-align: center; 
-        }
+        /* modal & bonus */
+        .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:none;justify-content:center;align-items:center;text-align:center;color:#fff;z-index:1000}
+        .modal-content{font-family:'Orbitron',sans-serif;animation:modal-appear 1s forwards;background:rgba(10,0,20,0.95);border:2px solid var(--glow-color);border-radius:2vmin;padding:3vmin;max-width:90vw;max-height:90vh;overflow-y:auto;box-shadow:0 0 50px var(--secondary-glow)}
+        @keyframes modal-appear{0%{transform:scale(.5) rotate(-15deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+        .modal-title{font-size:5vmin;color:var(--glow-color);text-shadow:0 0 2vmin var(--glow-color)}
+        .bonus-transition-content h1{font-size:clamp(3rem,10vmin,8rem);color:var(--win-glow-color);text-shadow:0 0 10px var(--win-glow-color),0 0 30px var(--win-glow-color),0 0 60px var(--secondary-glow);margin:0}
+        .bonus-transition-content p{font-size:clamp(1rem,3vmin,2rem);color:#fff;margin-top:2vmin;text-shadow:0 0 10px #000}
 
-        #balance-box, #win-box {
-            background: rgba(0,0,0,0.3);
-            border: 2px solid var(--glow-color);
-            border-radius: 1.5vmin;
-            padding: 1vmin 2vmin;
-            box-shadow: 0 0 1.5vmin var(--glow-color);
-            backdrop-filter: blur(5px);
-        }
-
-        .info-box span { font-family: 'Orbitron', sans-serif; display: block; font-size: clamp(1rem, 2.5vmin, 1.5rem); color: var(--glow-color);}
-        #message-box { font-family: 'Orbitron', sans-serif; font-size: clamp(1.1rem, 3vmin, 1.8rem); color: var(--win-glow-color); text-shadow: 0 0 10px var(--win-glow-color); padding: 1vmin; }
-        
-        #bet-selection-bar {
-            display: flex;
-            gap: 1.5vmin;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            padding: 1vmin 0;
-        }
-        .bet-select-btn {
-            font-family: 'Orbitron', sans-serif;
-            background: rgba(0,0,0,0.4);
-            border: 2px solid rgba(0, 255, 195, 0.5);
-            color: #fff;
-            padding: 1vmin 2vmin;
-            border-radius: 1vmin;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: clamp(0.9rem, 2vmin, 1.3rem);
-        }
-        .bet-select-btn:hover {
-            border-color: var(--glow-color);
-            background: rgba(0, 255, 195, 0.2);
-        }
-        .bet-select-btn.active {
-            background: var(--glow-color);
-            color: #000;
-            border-color: var(--glow-color);
-            box-shadow: 0 0 15px var(--glow-color);
-            transform: scale(1.05);
-        }
-        
-        #buyBonusButton {
-             font-family: 'Orbitron', sans-serif;
-            font-size: clamp(1rem, 2vmin, 1.5rem); 
-            padding: 1.5vmin 3vmin; 
-            border: 2px solid var(--secondary-glow);
-            border-radius: 1.5vmin;
-            background-image: linear-gradient(to bottom, rgba(249, 0, 255, 0.3), rgba(249, 0, 255, 0.1));
-            color: #fff;
-            cursor: pointer;
-            text-shadow: 0 0 1vmin var(--secondary-glow);
-            transition: all 0.2s;
-        }
-        #buyBonusButton:disabled {
-            filter: grayscale(1) brightness(0.7);
-            cursor: not-allowed;
-        }
-        
-        .video-animation-container {
-            position: absolute;
-            top: 0;
-            height: 100%;
-            width: clamp(150px, 30vw, 400px);
-            z-index: 5;
-            pointer-events: none;
-            display: none;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #left-video-container { left: 0; }
-        #right-video-container { right: 0; transform: scaleX(-1); }
-
-        .video-player {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: auto;
-            height: 80%;
-            max-width: 100%;
-            transition: opacity 0.2s ease-in-out;
-            opacity: 0;
-        }
-
-        #win-lines-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
-        #win-lines-svg { overflow: visible; width: 100%; height: 100%; }
-        .win-line { fill: none; stroke: var(--secondary-glow); stroke-width: 5px; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 5px var(--secondary-glow)) drop-shadow(0 0 15px var(--secondary-glow)); stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: draw-line 0.8s ease-out forwards, blink-line 1s linear infinite 0.8s; }
-        @keyframes draw-line { to { stroke-dashoffset: 0; } }
-        @keyframes blink-line { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        .symbol.win-pulse img { animation: win-pulse-anim 1s ease-out infinite; }
-        @keyframes win-pulse-anim { 0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px var(--win-glow-color)) brightness(1.2); } 50% { transform: scale(1.25); filter: drop-shadow(0 0 25px var(--win-glow-color)) drop-shadow(0 0 10px #fff) brightness(1.8); } }
-        .symbol.scatter-land img { animation: scatter-land-anim 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes scatter-land-anim { 0% { transform: scale(0.2) rotate(-360deg); opacity: 0; } 60% { transform: scale(1.3); } 100% { transform: scale(1); opacity: 1; } }
-        .symbol.scatter-trigger { z-index: 10; }
-        .symbol.scatter-trigger img { animation: scatter-trigger-anim 1.5s ease-in-out infinite; }
-        @keyframes scatter-trigger-anim { 0%, 100% { transform: scale(1.1) translateY(-5%); filter: drop-shadow(0 0 15px var(--scatter-glow-color)) drop-shadow(0 0 25px var(--scatter-glow-color)) brightness(1.5); } 50% { transform: scale(1.3) translateY(-10%); filter: drop-shadow(0 0 30px var(--scatter-glow-color)) drop-shadow(0 0 50px #fff) brightness(2.0); } }
-        .symbol.expanding { position: absolute; left: 0; width: 100%; z-index: 50; animation: expand-symbol 0.7s forwards; }
-        @keyframes expand-symbol { 0% { transform: scale(0.8); opacity: 0; } 60% { transform: scale(1.1); opacity: 1; filter: drop-shadow(0 0 35px var(--win-glow-color)); } 100% { transform: scale(1); opacity: 1; } }
-        #game-area.anticipation-glow .reels-container { animation: anticipation-pulse 1.2s infinite; }
-        @keyframes anticipation-pulse { 0%, 100% { box-shadow: 0 0 3vmin var(--glow-color), inset 0 0 2vmin rgba(0, 255, 195, 0.5); } 50% { box-shadow: 0 0 8vmin var(--anticipation-glow-color), inset 0 0 4vmin var(--anticipation-glow-color); } }
-
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; text-align: center; color: #fff; z-index: 1000; }
-        .modal-content { font-family: 'Orbitron', sans-serif; animation: modal-appear 1s forwards; background: rgba(10, 0, 20, 0.95); border: 2px solid var(--glow-color); border-radius: 2vmin; padding: 3vmin; max-width: 90vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 0 50px var(--secondary-glow); }
-        @keyframes modal-appear { 0% { transform: scale(0.5) rotate(-15deg); opacity: 0; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
-        .modal-title { font-size: 5vmin; color: var(--glow-color); text-shadow: 0 0 2vmin var(--glow-color); }
-        .modal-subtitle { font-size: 4vmin; margin-top: 2vmin; }
-        #expanding-symbol-info { display: flex; align-items: center; justify-content: center; gap: 2vmin; margin-top: 1vmin; }
-        #expanding-symbol-display { width: 10vmin; height: 10vmin; }
-        #bonus-transition-screen { cursor: pointer; z-index: 2000; flex-direction: column; }
-        .bonus-transition-content { font-family: 'Orbitron', sans-serif; text-align: center; animation: bonus-pulse 1.5s infinite; }
-        .bonus-transition-content h1 { font-size: clamp(3rem, 10vmin, 8rem); color: var(--win-glow-color); text-shadow: 0 0 10px var(--win-glow-color), 0 0 30px var(--win-glow-color), 0 0 60px var(--secondary-glow); margin: 0; }
-        .bonus-transition-content p { font-size: clamp(1rem, 3vmin, 2rem); color: #fff; margin-top: 2vmin; text-shadow: 0 0 10px #000; }
-        @keyframes bonus-pulse { 0%, 100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.05); opacity: 1; } }
-
-        /* --- MOBILE/PORTRAIT LAYOUT --- */
+        /* Portrait tweaks */
         @media (orientation: portrait) {
-            #game-area {
-                flex-direction: column;
-                justify-content: center;
-                padding-top: 10vmin; /* Reduced */
-                padding-bottom: 30vmin; /* Reduced */
-                gap: 2vh;
-            }
-            .game-title { font-size: 8vmin; top: 2vmin; }
-            .reels-container {
-                order: 1;
-                width: 95vw;
-                height: 57vw;
-                padding: 1.5vw;
-                gap: 1vw;
-            }
-            .reel { width: 100%; height: 100%; }
-            .symbol { height: 33.333%; }
-            .symbol img { max-width: 80%; max-height: 80%; }
-            #left-video-container, #right-video-container { display: none; }
-            #right-panel {
-                order: 2;
-                height: auto;
-                padding: 0;
-                flex-direction: row;
-                gap: 4vw;
-                justify-content: center;
-                align-items: center;
-            }
-            #ui-panel {
-                padding: 1.5vmin;
-                gap: 1vmin;
-                justify-content: flex-end;
-                height: 30vmin; /* Reduced */
-            }
-            .info-bar { font-size: clamp(0.8rem, 2.8vmin, 1.1rem); }
-            #bet-selection-bar { flex-wrap: wrap; gap: 1.5vmin; }
-            .bet-select-btn { padding: 1.5vmin 2.5vmin; }
-
-            /* --- NEW MODAL STYLES FOR PORTRAIT MODE --- */
-            .modal-content {
-                background: linear-gradient(180deg, #4d2020, #2c1212); /* Dark reddish-brown gradient */
-                border: 2px solid #bda05d; /* Gold-like border */
-                box-shadow: 0 0 20px rgba(0,0,0,0.7), inset 0 0 15px rgba(0,0,0,0.5); /* Outer shadow and inner bevel */
-                font-family: 'Poppins', sans-serif; /* Use a more standard font */
-                animation: none; /* Disable the rotate/appear animation for a simpler look */
-                opacity: 1;
-                transform: scale(1);
-                border-radius: 10px;
-            }
-
-            .modal-title, .modal-subtitle, #expanding-symbol-info h3 {
-                font-family: 'Poppins', sans-serif; /* Override Orbitron */
-                color: #f0f0f0; /* Off-white text */
-                text-shadow: 1px 1px 3px #000; /* Simple drop shadow */
-            }
-            
-            .modal-title {
-                color: #fdd835; /* Make the main title yellow/gold */
-                font-size: 7vmin;
-            }
-
-            .modal-subtitle {
-                font-size: 5vmin;
-            }
-            
-            #expanding-symbol-info {
-                flex-direction: column;
-            }
-
-            #expanding-symbol-display {
-                width: 20vmin;
-                height: 20vmin;
-                border: 2px solid #bda05d;
-                border-radius: 5px;
-                background: rgba(0,0,0,0.3);
-                padding: 1vmin;
-            }
-
-            /* Transition Screen styles */
-            #bonus-transition-screen {
-                background: rgba(0,0,0,0.85);
-            }
-
-            .bonus-transition-content h1, .bonus-transition-content p {
-                 font-family: 'Poppins', sans-serif; /* Override Orbitron */
-                 text-shadow: 2px 2px 5px #000; /* Simple drop shadow */
-                 animation: none; /* Disable the pulse animation */
-            }
-
-            .bonus-transition-content h1 {
-                font-size: 10vmin;
-                color: #fdd835; /* Gold color */
-            }
-
-            .bonus-transition-content p {
-                font-size: 4vmin;
-                color: #ffffff;
-            }
-        }
-
-        /* --- FIX FOR LANDSCAPE ON SMALL HEIGHT DEVICES (PHONES) --- */
-        @media (max-height: 500px) and (orientation: landscape) {
-            .game-title { font-size: 5vh; top: 1vh; }
-            #mute-button { width: 6vh; height: 6vh; font-size: 2.5vh; }
-            .side-panel { width: 15vw; padding: 0 2vw; }
-            #spinButton { width: 18vh; height: 18vh; }
-            #autoSpinButton, #buyBonusButton { padding: 1vh 2vh; font-size: 2vh; }
-            
-            #game-area { padding-top: 8vh; padding-bottom: 25vh; }
-
-            .reels-container { gap: 1vh; padding: 1.5vh; }
-            .reel { width: 15vh; height: 45vh; }
-            .symbol { height: 15vh; }
-            
-            #ui-panel { height: 25vh; padding: 1vh; gap: 1vh;}
-            .info-bar { font-size: 2vh; }
-            .info-box span { font-size: 2.5vh; }
-            #bet-selection-bar { gap: 1vh; }
-            .bet-select-btn { padding: 1vh 1.5vh; font-size: 1.8vh; }
+            #game-area{flex-direction:column;justify-content:center;padding-top:12vmin;padding-bottom:28vmin;gap:2vh}
+            .game-title{font-size:8vmin;top:6vmin}
+            .reels-container{order:1;width:95vw;height:57vw;padding:1.5vw;gap:1vw}
+            .reel{width:100%;height:100%}
+            .symbol{height:33.333%}
+            #right-panel{order:2;height:auto;padding:0;flex-direction:row;gap:4vw;justify-content:center;align-items:center}
+            #ui-panel{padding:1.5vmin;gap:1vmin;justify-content:flex-end;height:30vmin}
+            .info-bar{font-size:clamp(.8rem,2.8vmin,1.1rem)}
+            #bet-selection-bar{flex-wrap:wrap;gap:1.5vmin}
         }
 
     </style>
@@ -590,64 +113,42 @@
 <body>
     <div id="loading-screen">
         <h1 class="loading-title">NIVRA</h1>
-        <div class="progress-bar-container">
-            <div id="progress-bar" class="progress-bar"></div>
-        </div>
+        <div class="progress-bar-container"><div id="progress-bar" class="progress-bar"></div></div>
         <p id="loading-percentage">0%</p>
     </div>
 
     <div id="orientation-blocker">
-        <i class="fas fa-mobile-screen"></i>
+        <i class="fas fa-arrows-rotate"></i>
         <h2>Моля, завъртете устройството си</h2>
-        <p>Тази игра е оптимизирана за пейзажен (хоризонтален) режим.</p>
+        <p>Играта работи най-добре в ПОРТРЕТ (вертикален) режим.</p>
     </div>
-
-    <div id="login-required-container">
-        <div class="login-box">
-            <i class="fas fa-lock"></i>
-            <h2>Достъпът е ограничен</h2>
-            <p>Трябва да сте влезли в профила си, за да играете.</p>
-            <a href="index.html">Към лобито / Вход</a>
-        </div>
-    </div>
-
 
     <div id="game-container">
-        
-        <h1 class="game-title">Wild Angels</h1>
-        
-        <button id="mute-button"><i class="fas fa-volume-high"></i></button>
+        <!-- Random top symbol (angel1..angel9) -->
+        <div id="top-symbol" aria-hidden="true"><img id="random-top-img" src="" alt=""></div>
 
-        <div id="left-video-container" class="video-animation-container">
-            <video id="videoLeft1" class="video-player" src="" muted playsinline></video>
-            <video id="videoLeft2" class="video-player" src="" muted playsinline></video>
-        </div>
-        <div id="right-video-container" class="video-animation-container">
-            <video id="videoRight1" class="video-player" src="" muted playsinline></video>
-            <video id="videoRight2" class="video-player" src="" muted playsinline></video>
-        </div>
+        <h1 class="game-title">Wild Angels</h1>
+        <button id="mute-button"><i class="fas fa-volume-high"></i></button>
 
         <div id="game-area">
             <div class="side-panel"></div>
-            
+
             <div class="reels-container">
                 <div class="reel" id="reel0"></div>
                 <div class="reel" id="reel1"></div>
                 <div class="reel" id="reel2"></div>
                 <div class="reel" id="reel3"></div>
                 <div class="reel" id="reel4"></div>
-                 <div id="win-lines-container">
-                    <svg id="win-lines-svg"></svg>
-                </div>
+                <div id="win-lines-container"><svg id="win-lines-svg"></svg></div>
             </div>
-            
+
             <div id="right-panel" class="side-panel">
                 <button id="spinButton">
                     <svg viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"></path></svg>
                     <span id="spin-text">ЗАВЪРТИ</span>
                 </button>
                 <button id="autoSpinButton">AUTO</button>
-                 <button id="buyBonusButton">КУПИ БОНУС</button>
+                <button id="buyBonusButton">КУПИ БОНУС</button>
             </div>
         </div>
 
@@ -657,18 +158,17 @@
                 <div class="info-box" id="message-box">ИЗБЕРЕТЕ ЗАЛОГ</div>
                 <div class="info-box" id="win-box">Печалба:<span id="win">0</span></div>
             </div>
-            <div id="bet-selection-bar">
-            </div>
+            <div id="bet-selection-bar"></div>
         </div>
     </div>
-    
+
     <div class="modal" id="bonus-modal">
         <div class="modal-content">
             <h2 id="modal-title" class="modal-title">БОНУС ИГРА!</h2>
             <p id="modal-subtitle" class="modal-subtitle"></p>
             <div id="expanding-symbol-info">
                 <h3>Специален Символ:</h3>
-                <img id="expanding-symbol-display" src="" alt="Expanding Symbol">
+                <img id="expanding-symbol-display" src="" alt="Expanding Symbol" style="width:10vmin;height:10vmin">
             </div>
         </div>
     </div>
@@ -679,8 +179,9 @@
             <p>НАТИСНЕТЕ, ЗА ДА ПРОДЪЛЖИТЕ</p>
         </div>
     </div>
-    
+
     <script type="module">
+    // Firebase imports (kept as in оригинала)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { getFirestore, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -708,7 +209,8 @@
     const loadingScreen = document.getElementById('loading-screen');
     const progressBar = document.getElementById('progress-bar');
     const loadingPercentage = document.getElementById('loading-percentage');
-    
+
+    // SYMBOLS (same as оригинала)
     const SYMBOLS = {
         'angel1': { weight: 20, src: 'angel1.png', videos: 6, payout: { '3': 5,  '4': 10,  '5': 20  }},
         'angel2': { weight: 18, src: 'angel2.png', videos: 6, payout: { '3': 10, '4': 20,  '5': 40  }},
@@ -725,122 +227,79 @@
 
     async function updateBalanceInFirestore(newBalance) {
         if (!userDocRef) return;
-        try {
-            // We use Math.round to avoid floating point issues in Firestore
-            await updateDoc(userDocRef, { chips: Math.round(newBalance) });
-        } catch (error) {
-            console.error("Грешка при обновяване на баланса:", error);
-        }
+        try { await updateDoc(userDocRef, { chips: Math.round(newBalance) }); }
+        catch (error) { console.error("Грешка при обновяване на баланса:", error); }
     }
-    
+
     onAuthStateChanged(auth, async (user) => {
         if (user && user.emailVerified) {
             userDocRef = doc(db, 'users', user.uid);
             onSnapshot(userDocRef, (docSnap) => {
                 if (docSnap.exists()) {
                     const newBalance = docSnap.data().chips;
-                    if (!isGameInitialized) {
-                        preloadAssetsAndStartGame(newBalance);
-                        isGameInitialized = true;
-                    } else if (updateExternalBalanceChange) {
-                        updateExternalBalanceChange(newBalance);
-                    }
-                } else {
-                    showLoginRequired("Не е намерен документ за потребителя!");
-                }
-            }, (error) => {
-                 showLoginRequired("Грешка при зареждане на потребителски данни.");
-            });
-        } else {
-            showLoginRequired();
-        }
+                    if (!isGameInitialized) { preloadAssetsAndStartGame(newBalance); isGameInitialized = true; }
+                    else if (updateExternalBalanceChange) updateExternalBalanceChange(newBalance);
+                } else showLoginRequired("Не е намерен документ за потребителя!");
+            }, (error) => { showLoginRequired("Грешка при зареждане на потребителски данни."); });
+        } else showLoginRequired();
     });
-    
+
     function showLoginRequired(message = "Трябва да сте влезли в профила си, за да играете.") {
         loadingScreen.style.opacity = '0';
         setTimeout(() => {
             loadingScreen.style.display = 'none';
-            loginRequiredContainer.querySelector('p').textContent = message;
-            loginRequiredContainer.style.display = 'flex';
+            // create loginRequiredContainer if needed (kept hidden in this file)
+            let box = document.createElement('div');
+            box.style.display = 'flex';
+            box.style.position = 'fixed';
+            box.style.inset = '0';
+            box.style.justifyContent = 'center';
+            box.style.alignItems = 'center';
+            box.style.background = '#100a1c';
+            box.style.zIndex = 9999;
+            box.innerHTML = '<div style="background:rgba(0,0,0,0.4);border:2px solid var(--glow-color);padding:3rem;border-radius:12px;text-align:center;"><h2>Достъпът е ограничен</h2><p>'+message+'</p></div>';
+            document.body.appendChild(box);
             gameContainer.style.display = 'none';
         }, 500);
     }
-    
-    async function preloadAssetsAndStartGame(initialBalance) {
-        const SOUND_FILES = ['bg_music_1.mp3', 'bg_music_2.mp3', 'bg_music_3.mp3', 'win_sound.mp3', 'anticipation.mp3', 'expand.mp3'];
-        
-        const assetsToLoad = [];
-        Object.keys(SYMBOLS).forEach(name => assetsToLoad.push({type: 'image', src: SYMBOLS[name].src}));
-        SOUND_FILES.forEach(name => assetsToLoad.push({type: 'audio', src: name}));
 
-        for (const symbolKey in SYMBOLS) {
-            const symbolData = SYMBOLS[symbolKey];
-            if (symbolData.videos && symbolData.videos > 0) {
-                for (let i = 1; i <= symbolData.videos; i++) {
-                    assetsToLoad.push({type: 'video', src: `${symbolKey}_v${i}.webm`});
-                }
-            }
-        }
-        
+    async function preloadAssetsAndStartGame(initialBalance) {
+        // Keep loading images & audio but DO NOT load webm videos (user asked to remove win webm)
+        const SOUND_FILES = ['bg_music_1.mp3', 'bg_music_2.mp3', 'bg_music_3.mp3', 'win_sound.mp3', 'anticipation.mp3', 'expand.mp3'];
+        const assetsToLoad = [];
+
+        Object.keys(SYMBOLS).forEach(name => assetsToLoad.push({type:'image',src:SYMBOLS[name].src}));
+        SOUND_FILES.forEach(name => assetsToLoad.push({type:'audio',src:name}));
+
         let loadedCount = 0;
         const totalCount = assetsToLoad.length;
-        
-        const promises = assetsToLoad.map(asset => {
-            return new Promise((resolve) => {
-                const onAssetLoaded = () => {
-                    loadedCount++;
-                    const percentage = Math.round((loadedCount / totalCount) * 100);
-                    progressBar.style.width = `${percentage}%`;
-                    loadingPercentage.textContent = `${percentage}%`;
-                    resolve();
-                };
-                
-                const onAssetError = () => {
-                    console.error(`Failed to load asset: ${asset.src}`);
-                    onAssetLoaded(); 
-                };
 
-                if (asset.type === 'image') {
-                    const img = new Image();
-                    img.src = asset.src;
-                    img.onload = onAssetLoaded;
-                    img.onerror = onAssetError;
-                } else if (asset.type === 'audio') {
-                    const audio = new Audio();
-                    audio.addEventListener('canplaythrough', onAssetLoaded, { once: true });
-                    audio.addEventListener('error', onAssetError, { once: true });
-                    audio.src = asset.src;
-                } else if (asset.type === 'video') {
-                     const video = document.createElement('video');
-                     video.addEventListener('canplaythrough', onAssetLoaded, { once: true });
-                     video.addEventListener('error', onAssetError, { once: true });
-                     video.src = asset.src;
-                }
-            });
-        });
+        const promises = assetsToLoad.map(asset => new Promise(resolve => {
+            const onAssetLoaded = () => { loadedCount++; const percentage = Math.round((loadedCount/totalCount)*100); progressBar.style.width = `${percentage}%`; loadingPercentage.textContent = `${percentage}%`; resolve(); };
+            const onAssetError = () => { console.error(`Failed to load asset: ${asset.src}`); onAssetLoaded(); };
+
+            if (asset.type === 'image') { const img = new Image(); img.src = asset.src; img.onload = onAssetLoaded; img.onerror = onAssetError; }
+            else if (asset.type === 'audio') { const audio = new Audio(); audio.addEventListener('canplaythrough', onAssetLoaded, {once:true}); audio.addEventListener('error', onAssetError, {once:true}); audio.src = asset.src; }
+        }));
 
         await Promise.all(promises);
 
+        // small delay then show game
         setTimeout(() => {
             loadingScreen.style.opacity = '0';
-            setTimeout(() => {
-                loadingScreen.style.display = 'none';
-                gameContainer.style.display = 'flex';
-                updateExternalBalanceChange = initializeGameLogic(initialBalance);
-            }, 500);
-        }, 500);
+            setTimeout(() => { loadingScreen.style.display = 'none'; gameContainer.style.display = 'flex'; updateExternalBalanceChange = initializeGameLogic(initialBalance); }, 500);
+        }, 300);
     }
-    
+
     function initializeGameLogic(initialBalance) {
         const REGULAR_SYMBOLS = Object.keys(SYMBOLS).filter(k => !SYMBOLS[k].isWild && !SYMBOLS[k].isScatter);
         const REEL_COUNT = 5;
         const SYMBOLS_PER_REEL_VISIBLE = 3;
         const PAYLINES = [
-            [1, 1, 1, 1, 1], [0, 0, 0, 0, 0], [2, 2, 2, 2, 2], [0, 1, 2, 1, 0], [2, 1, 0, 1, 2],
-            [0, 0, 1, 2, 2], [2, 2, 1, 0, 0], [1, 0, 0, 0, 1], [1, 2, 2, 2, 1], [0, 1, 1, 1, 2]
+            [1,1,1,1,1],[0,0,0,0,0],[2,2,2,2,2],[0,1,2,1,0],[2,1,0,1,2],
+            [0,0,1,2,2],[2,2,1,0,0],[1,0,0,0,1],[1,2,2,2,1],[0,1,1,1,2]
         ];
-        
-        const BET_AMOUNTS = [10, 20, 50, 100, 200, 500];
+        const BET_AMOUNTS = [10,20,50,100,200,500];
         const MAX_WIN_MULTIPLIER = 2500;
         const BONUS_BUY_COST_MULTIPLIER = 100;
 
@@ -854,277 +313,162 @@
         let isMuted = false;
         let hasRequestedFullscreen = false;
 
-        // Audio Elements
-        const backgroundMusicFiles = ['bg_music_1.mp3', 'bg_music_2.mp3', 'bg_music_3.mp3'];
+        // Audio elements
+        const backgroundMusicFiles = ['bg_music_1.mp3','bg_music_2.mp3','bg_music_3.mp3'];
         let currentTrackIndex = 0;
-        const bgMusicPlayer = new Audio();
-        bgMusicPlayer.volume = 0.3;
+        const bgMusicPlayer = new Audio(); bgMusicPlayer.volume = 0.3;
         const winSound = new Audio('win_sound.mp3');
         const anticipationSound = new Audio('anticipation.mp3');
         const expandSound = new Audio('expand.mp3');
         const allSounds = [bgMusicPlayer, winSound, anticipationSound, expandSound];
 
-        // DOM Elements
+        // DOM
         const spinButton = document.getElementById('spinButton');
         const autoSpinButton = document.getElementById('autoSpinButton');
         const buyBonusButton = document.getElementById('buyBonusButton');
         const balanceDisplay = document.getElementById('balance');
         const winDisplay = document.getElementById('win');
-        const reels = Array.from({ length: REEL_COUNT }, (_, i) => document.getElementById(`reel${i}`));
+        const reels = Array.from({length:REEL_COUNT},(_,i)=>document.getElementById(`reel${i}`));
         const gameArea = document.getElementById('game-area');
         const winLinesSvg = document.getElementById('win-lines-svg');
         const betSelectionBar = document.getElementById('bet-selection-bar');
         const messageBox = document.getElementById('message-box');
         const muteButton = document.getElementById('mute-button');
-        
+
         const reelStrips = [];
-        
-        const leftVideoContainer = document.getElementById('left-video-container');
-        const rightVideoContainer = document.getElementById('right-video-container');
-        const videoPlayers = {
-            left1: document.getElementById('videoLeft1'),
-            left2: document.getElementById('videoLeft2'),
-            right1: document.getElementById('videoRight1'),
-            right2: document.getElementById('videoRight2')
-        };
-        let isWinVideoPlaying = false;
-        
+
         function goFullscreen() {
             const elem = document.documentElement;
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen().catch(err => console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`));
-            } else if (elem.mozRequestFullScreen) { /* Firefox */
-                elem.mozRequestFullScreen();
-            } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
-                elem.webkitRequestFullscreen();
-            } else if (elem.msRequestFullscreen) { /* IE/Edge */
-                elem.msRequestFullscreen();
-            }
+            if (elem.requestFullscreen) elem.requestFullscreen().catch(()=>{});
         }
-
-        function playNextTrack() {
-            if (backgroundMusicFiles.length === 0) return;
-            currentTrackIndex = (currentTrackIndex + 1) % backgroundMusicFiles.length;
-            bgMusicPlayer.src = backgroundMusicFiles[currentTrackIndex];
-            bgMusicPlayer.play().catch(e => console.warn("Music play failed."));
-        }
-        
+        function playNextTrack(){ if(backgroundMusicFiles.length===0) return; currentTrackIndex=(currentTrackIndex+1)%backgroundMusicFiles.length; bgMusicPlayer.src=backgroundMusicFiles[currentTrackIndex]; bgMusicPlayer.play().catch(()=>{}); }
         bgMusicPlayer.addEventListener('ended', playNextTrack);
 
         function manageBackgroundMusic(shouldPlay) {
-            if (shouldPlay && bgMusicPlayer.paused) {
-                bgMusicPlayer.play().catch(e => {});
-            } else if (!shouldPlay && !bgMusicPlayer.paused) {
-                bgMusicPlayer.pause();
-            }
+            if (shouldPlay && bgMusicPlayer.paused) bgMusicPlayer.play().catch(()=>{});
+            else if (!shouldPlay && !bgMusicPlayer.paused) bgMusicPlayer.pause();
         }
-        
-        function toggleMute() {
-            isMuted = !isMuted;
-            allSounds.forEach(sound => sound.muted = isMuted);
-            muteButton.innerHTML = `<i class="fas ${isMuted ? 'fa-volume-xmark' : 'fa-volume-high'}"></i>`;
-        }
+        function toggleMute(){ isMuted=!isMuted; allSounds.forEach(s=>s.muted=isMuted); muteButton.innerHTML=`<i class="fas ${isMuted?'fa-volume-xmark':'fa-volume-high'}"></i>`; }
         muteButton.addEventListener('click', toggleMute);
 
-        function createWeightedStrip() {
-            const strip = [];
-            for (const key in SYMBOLS) {
-                for (let i = 0; i < SYMBOLS[key].weight; i++) strip.push(key);
-            }
-            return strip.sort(() => Math.random() - 0.5);
+        function createWeightedStrip(){
+            const strip=[];
+            for(const key in SYMBOLS) for(let i=0;i<SYMBOLS[key].weight;i++) strip.push(key);
+            return strip.sort(()=>Math.random()-0.5);
         }
-        
-        function initializeReels() {
-            reels.forEach((reelElement) => {
-                reelElement.innerHTML = '';
-                const reelStripElement = document.createElement('div');
-                reelStripElement.className = 'reel-strip';
-                const weightedStrip = createWeightedStrip();
-                reelStrips.push(weightedStrip);
 
-                const totalSymbols = weightedStrip.length * 3; 
-                for(let i = 0; i < totalSymbols; i++) {
-                    const symbolKey = weightedStrip[i % weightedStrip.length];
-                    const symbolElement = document.createElement('div');
-                    symbolElement.className = 'symbol';
-                    const img = document.createElement('img');
-                    img.src = SYMBOLS[symbolKey].src;
-                    img.alt = symbolKey;
-                    img.loading = 'lazy';
+        function initializeReels(){
+            reels.forEach((reelElement)=>{
+                reelElement.innerHTML='';
+                const reelStripElement=document.createElement('div');
+                reelStripElement.className='reel-strip';
+                const weightedStrip=createWeightedStrip();
+                reelStrips.push(weightedStrip);
+                const totalSymbols=weightedStrip.length*3;
+                for(let i=0;i<totalSymbols;i++){
+                    const symbolKey=weightedStrip[i%weightedStrip.length];
+                    const symbolElement=document.createElement('div');
+                    symbolElement.className='symbol';
+                    const img=document.createElement('img');
+                    img.src=SYMBOLS[symbolKey].src;
+                    img.alt=symbolKey;
+                    img.loading='lazy';
                     symbolElement.appendChild(img);
                     reelStripElement.appendChild(symbolElement);
                 }
                 reelElement.appendChild(reelStripElement);
             });
         }
-        
-        function initializeUI() {
-            betSelectionBar.innerHTML = '';
-            BET_AMOUNTS.forEach((amount, index) => {
-                const button = document.createElement('button');
+
+        function initializeUI(){
+            betSelectionBar.innerHTML='';
+            BET_AMOUNTS.forEach((amount,index)=>{
+                const button=document.createElement('button');
                 button.classList.add('bet-select-btn');
-                button.textContent = (amount / 10).toFixed(2);
-                button.dataset.index = index;
+                button.textContent=(amount/10).toFixed(2);
+                button.dataset.index=index;
                 betSelectionBar.appendChild(button);
             });
             updateBetSelection();
             updateBalanceDisplay();
             updateWin(0);
         }
-        
-        function updateBetSelection() {
-            bet = BET_AMOUNTS[currentBetIndex];
-            document.querySelectorAll('.bet-select-btn').forEach(btn => {
-                btn.classList.toggle('active', parseInt(btn.dataset.index) === currentBetIndex);
-            });
-        }
 
-        async function spin(isFreeSpin = false) {
+        function updateBetSelection(){ bet=BET_AMOUNTS[currentBetIndex]; document.querySelectorAll('.bet-select-btn').forEach(btn=>btn.classList.toggle('active',parseInt(btn.dataset.index)===currentBetIndex)); }
+
+        async function spin(isFreeSpin=false){
             if (isSpinning) return;
+            if (!hasRequestedFullscreen) { goFullscreen(); hasRequestedFullscreen=true; }
+            if (bgMusicPlayer.paused){ bgMusicPlayer.src=backgroundMusicFiles[currentTrackIndex]; bgMusicPlayer.play().catch(()=>{}); }
 
-            if (!hasRequestedFullscreen) {
-                goFullscreen();
-                hasRequestedFullscreen = true;
-            }
-            if (bgMusicPlayer.paused) {
-                 bgMusicPlayer.src = backgroundMusicFiles[currentTrackIndex];
-                 bgMusicPlayer.play().catch(e => { /* Autoplay blocked */ });
-            }
-
-            if (!isFreeSpin && freeSpinsRemaining === 0 && balance < bet) {
-                if(isAutoSpinning) toggleAutoSpin();
-                messageBox.textContent = "Недостатъчен Баланс";
-                return;
-            }
+            if (!isFreeSpin && freeSpinsRemaining===0 && balance < bet) { if(isAutoSpinning) toggleAutoSpin(); messageBox.textContent = "Недостатъчен Баланс"; return; }
 
             isSpinning = true;
             setControlsDisabled(true);
-            
             clearAnimations();
             await updateWin(0);
             messageBox.textContent = "УСПЕХ!";
-            
-            if (freeSpinsRemaining > 0) {
-                freeSpinsRemaining--;
-                updateSpinButtonText();
-            } else if (!isFreeSpin) {
-                balance -= bet;
-                await updateBalanceInFirestore(balance);
-                updateBalanceDisplay(); // Update UI immediately after bet
-            }
-            
+
+            if (freeSpinsRemaining > 0) { freeSpinsRemaining--; updateSpinButtonText(); }
+            else if (!isFreeSpin) { balance -= bet; await updateBalanceInFirestore(balance); updateBalanceDisplay(); }
+
             let results = [];
             const finalIndexes = [];
-            
-            for (let i = 0; i < REEL_COUNT; i++) {
+            for (let i=0;i<REEL_COUNT;i++){
                 const strip = reelStrips[i];
-                const randomIndex = Math.floor(Math.random() * strip.length);
+                const randomIndex = Math.floor(Math.random()*strip.length);
                 finalIndexes.push(randomIndex);
-                results.push([
-                    strip[(randomIndex + 0) % strip.length],
-                    strip[(randomIndex + 1) % strip.length],
-                    strip[(randomIndex + 2) % strip.length]
-                ]);
+                results.push([ strip[(randomIndex+0)%strip.length], strip[(randomIndex+1)%strip.length], strip[(randomIndex+2)%strip.length] ]);
             }
-            
+
             let anticipationSoundPlayed = false;
-            const spinPromises = reels.map((reel, i) => {
-                return new Promise(async (resolve) => {
+            const spinPromises = reels.map((reel,i)=>{
+                return new Promise(async (resolve)=>{
                     const reelStripElement = reel.querySelector('.reel-strip');
                     const strip = reelStrips[i];
-                    
                     const symbolSize = reel.clientHeight / SYMBOLS_PER_REEL_VISIBLE;
-                    
-                    const baseTargetPosition = finalIndexes[i] * symbolSize;
-                    const loopOffset = strip.length * symbolSize;
-                    
+                    const baseTargetPosition = finalIndexes[i]*symbolSize;
+                    const loopOffset = strip.length*symbolSize;
                     reelStripElement.style.transition = 'none';
                     reelStripElement.style.transform = `translateY(-${baseTargetPosition + loopOffset}px)`;
-                    reelStripElement.offsetHeight; 
-
+                    reelStripElement.offsetHeight;
                     let landedScatters = 0;
-                    results.slice(0, i).forEach(r => r.forEach(s => { if (SYMBOLS[s]?.isScatter) landedScatters++; }));
-                    
-                    let duration = 1.5 + i * 0.3;
+                    results.slice(0,i).forEach(r=>r.forEach(s=>{ if (SYMBOLS[s]?.isScatter) landedScatters++; }));
+                    let duration = 1.5 + i*0.3;
                     if (freeSpinsRemaining === 0 && landedScatters >= 2 && gameArea) {
                         gameArea.classList.add('anticipation-glow');
-                        duration = 4 + i * 0.5;
-                        
-                        if (!anticipationSoundPlayed) {
-                            manageBackgroundMusic(false);
-                            anticipationSound.loop = true;
-                            anticipationSound.play();
-                            anticipationSoundPlayed = true;
-                        }
+                        duration = 4 + i*0.5;
+                        if (!anticipationSoundPlayed) { manageBackgroundMusic(false); anticipationSound.loop = true; anticipationSound.play(); anticipationSoundPlayed = true; }
                     }
-                    
                     reelStripElement.style.transition = `transform ${duration}s cubic-bezier(0.25, 1, 0.5, 1)`;
                     reelStripElement.style.transform = `translateY(-${baseTargetPosition}px)`;
-
-                    await new Promise(res => setTimeout(res, duration * 1000));
-                                            
-                    results[i].forEach((symbolKey, symbolIndex) => {
-                        if (SYMBOLS[symbolKey]?.isScatter) {
-                            const symbolElement = getSymbolElement(i, finalIndexes[i] + symbolIndex);
-                            if (symbolElement) symbolElement.classList.add('scatter-land');
-                        }
-                    });
+                    await new Promise(res=>setTimeout(res, duration*1000));
+                    results[i].forEach((symbolKey,symbolIndex)=>{ if (SYMBOLS[symbolKey]?.isScatter) { const symbolElement = getSymbolElement(i, finalIndexes[i]+symbolIndex); if(symbolElement) symbolElement.classList.add('scatter-land'); } });
                     resolve();
                 });
             });
-            
+
             await Promise.all(spinPromises);
 
-            if (anticipationSoundPlayed) {
-                anticipationSound.pause();
-                anticipationSound.currentTime = 0;
-                manageBackgroundMusic(true);
-            }
-            
+            if (anticipationSoundPlayed) { anticipationSound.pause(); anticipationSound.currentTime = 0; manageBackgroundMusic(true); }
             gameArea.classList.remove('anticipation-glow');
             const { hasWin, bonusTriggered, winAmount } = await checkWin(results, finalIndexes);
-            
-            if (!hasWin) {
-                messageBox.textContent = "ИЗБЕРЕТЕ ЗАЛОГ";
-            } else {
-                 messageBox.textContent = `ПЕЧАЛБА: ${(winAmount / 10).toFixed(2)}`;
-            }
-            
+
+            if (!hasWin) messageBox.textContent = "ИЗБЕРЕТЕ ЗАЛОГ";
+            else messageBox.textContent = `ПЕЧАЛБА: ${(winAmount/10).toFixed(2)}`;
+
             handleNextAction(hasWin, bonusTriggered);
         }
-        
-        spinButton.addEventListener('click', () => spin());
+
+        spinButton.addEventListener('click', ()=>spin());
         autoSpinButton.addEventListener('click', toggleAutoSpin);
         buyBonusButton.addEventListener('click', buyBonus);
 
-        betSelectionBar.addEventListener('click', (e) => {
-            const button = e.target.closest('.bet-select-btn');
-            if (button && !isSpinning) {
-                currentBetIndex = parseInt(button.dataset.index);
-                updateBetSelection();
-            }
-        });
+        document.addEventListener('keydown',(e)=>{ if(e.code==='Space'){ e.preventDefault(); if(document.querySelector('.modal[style*="display: flex"]')) return; spinButton.click(); } });
 
-        document.addEventListener('keydown', (e) => {
-            if (e.code === 'Space') {
-                e.preventDefault();
-                if (document.querySelector('.modal[style*="display: flex"]')) return;
-                spinButton.click();
-            }
-        });
+        function toggleAutoSpin(){ isAutoSpinning=!isAutoSpinning; autoSpinButton.classList.toggle('active',isAutoSpinning); if(isAutoSpinning){ autoSpinButton.textContent='СТОП'; if(!isSpinning) spin(); } else autoSpinButton.textContent='AUTO'; }
 
-        function toggleAutoSpin() {
-            isAutoSpinning = !isAutoSpinning;
-            autoSpinButton.classList.toggle('active', isAutoSpinning);
-            if (isAutoSpinning) {
-                autoSpinButton.textContent = "СТОП";
-                if(!isSpinning) spin();
-            } else {
-                autoSpinButton.textContent = "AUTO";
-            }
-        }
-        
-        function setControlsDisabled(disabled) {
+        function setControlsDisabled(disabled){
             spinButton.disabled = disabled;
             autoSpinButton.disabled = disabled && !isAutoSpinning;
             buyBonusButton.disabled = disabled || freeSpinsRemaining > 0;
@@ -1134,59 +478,32 @@
         function handleNextAction(hasWin, bonusTriggered) {
             const winDelay = hasWin ? (expandingSymbol ? 2500 : 1500) : 250;
             const autoSpinDelay = hasWin ? 2500 : 1200;
-
-            if (bonusTriggered) { return; }
-
+            if (bonusTriggered) return;
             if (freeSpinsRemaining > 0) {
-                setTimeout(() => { 
-                    isSpinning = false; 
-                    spin(true); 
-                }, winDelay);
+                setTimeout(()=>{ isSpinning=false; spin(true); }, winDelay);
             } else {
-                if (expandingSymbol) {
-                    expandingSymbol = null;
-                    updateSpinButtonText();
-                }
-                if (isAutoSpinning) {
-                    setTimeout(() => { 
-                        isSpinning = false; 
-                        spin(); 
-                    }, autoSpinDelay);
-                } else {
-                    isSpinning = false;
-                    setControlsDisabled(false);
-                }
+                if (expandingSymbol) { expandingSymbol=null; updateSpinButtonText(); }
+                if (isAutoSpinning) setTimeout(()=>{ isSpinning=false; spin(); }, autoSpinDelay);
+                else { isSpinning=false; setControlsDisabled(false); }
             }
         }
-        
-        function clearAnimations() {
-            stopWinVideo();
-            winLinesSvg.innerHTML = '';
-            reels.forEach(reel => {
-                const expandingSymbols = reel.querySelectorAll('.symbol.expanding');
-                expandingSymbols.forEach(el => el.remove());
-                
-                const strip = reel.querySelector('.reel-strip');
-                if (strip) { strip.style.opacity = '1'; }
-            });
 
-            document.querySelectorAll('.symbol').forEach(el => { el.className = 'symbol'; });
+        function clearAnimations(){
+            winLinesSvg.innerHTML='';
+            reels.forEach(reel=>{
+                const expandingSymbols = reel.querySelectorAll('.symbol.expanding'); expandingSymbols.forEach(el=>el.remove());
+                const strip = reel.querySelector('.reel-strip'); if (strip) strip.style.opacity='1';
+            });
+            document.querySelectorAll('.symbol').forEach(el=>{ el.className='symbol'; });
             gameArea.classList.remove('anticipation-glow');
         }
-        
+
         async function checkWin(results, finalIndexes) {
             let totalWin = 0; const winningLines = []; const winningPositions = new Set();
             let scatterCount = 0; const scatterPositions = [];
             let firstWinningSymbol = null;
 
-            results.forEach((reelResult, reelIndex) => {
-                reelResult.forEach((symbolKey, symbolIndex) => {
-                    if (SYMBOLS[symbolKey]?.isScatter) {
-                        scatterCount++;
-                        scatterPositions.push({reel: reelIndex, pos: symbolIndex});
-                    }
-                });
-            });
+            results.forEach((reelResult,reelIndex)=>{ reelResult.forEach((symbolKey,symbolIndex)=>{ if (SYMBOLS[symbolKey]?.isScatter){ scatterCount++; scatterPositions.push({reel:reelIndex,pos:symbolIndex}); } }); });
 
             if (freeSpinsRemaining > 0 && scatterCount >= 3) {
                 freeSpinsRemaining += SYMBOLS.scatter.spins;
@@ -1195,45 +512,34 @@
                 await triggerBonusAnimation(scatterPositions, finalIndexes);
             }
 
-            PAYLINES.forEach((line) => {
+            PAYLINES.forEach(line=>{
                 let payingSymbolKey = null;
-                for (let i = 0; i < REEL_COUNT; i++) {
-                    const symbol = results[i][line[i]];
-                    if (!SYMBOLS[symbol]?.isWild) { payingSymbolKey = symbol; break; }
-                }
+                for (let i=0;i<REEL_COUNT;i++){ const symbol = results[i][line[i]]; if (!SYMBOLS[symbol]?.isWild) { payingSymbolKey = symbol; break; } }
                 if (payingSymbolKey === null) payingSymbolKey = 'wild';
                 if (SYMBOLS[payingSymbolKey]?.isScatter) return;
 
                 let matchCount = 0;
-                for (let i = 0; i < REEL_COUNT; i++) {
+                for (let i=0;i<REEL_COUNT;i++){
                     const currentSymbolKey = results[i][line[i]];
-                    if (currentSymbolKey === payingSymbolKey || SYMBOLS[currentSymbolKey]?.isWild) matchCount++;
-                    else break;
+                    if (currentSymbolKey === payingSymbolKey || SYMBOLS[currentSymbolKey]?.isWild) matchCount++; else break;
                 }
-
                 if (matchCount >= 3) {
                     if (!firstWinningSymbol) firstWinningSymbol = payingSymbolKey;
-
                     const symbolData = SYMBOLS[payingSymbolKey];
                     if (symbolData?.payout?.[matchCount]) {
-                        const payout = symbolData.payout[matchCount] * (bet / 10);
+                        const payout = symbolData.payout[matchCount] * (bet/10);
                         totalWin += payout;
                         const lineCoords = [];
-                        for (let i = 0; i < matchCount; i++) {
-                            winningPositions.add(`${i}-${line[i]}`);
-                            lineCoords.push({reel: i, row: line[i]});
-                        }
+                        for (let i=0;i<matchCount;i++){ winningPositions.add(`${i}-${line[i]}`); lineCoords.push({reel:i,row:line[i]}); }
                         winningLines.push(lineCoords);
                     }
                 }
             });
-            
+
             let hasExpansionWin = false;
             if (expandingSymbol) {
                 const expandingReelsIndices = new Set();
-                results.forEach((reelResult, reelIndex) => {
-                    if (reelResult.includes(expandingSymbol)) expandingReelsIndices.add(reelIndex);
-                });
+                results.forEach((reelResult,reelIndex)=>{ if (reelResult.includes(expandingSymbol)) expandingReelsIndices.add(reelIndex); });
 
                 if (expandingReelsIndices.size >= 3) {
                     hasExpansionWin = true;
@@ -1241,187 +547,126 @@
                     expandSound.play();
                     expandSound.onended = () => manageBackgroundMusic(true);
 
-                    await new Promise(res => setTimeout(res, 500)); 
-
-                    expandingReelsIndices.forEach(reelIndex => {
+                    await new Promise(res=>setTimeout(res,500));
+                    expandingReelsIndices.forEach(reelIndex=>{
                         const reel = reels[reelIndex];
                         reel.querySelector('.reel-strip').style.opacity = '0';
-                        for (let i = 0; i < SYMBOLS_PER_REEL_VISIBLE; i++) {
+                        for (let i=0;i<SYMBOLS_PER_REEL_VISIBLE;i++){
                             const expandingClone = document.createElement('div');
                             expandingClone.className = 'symbol expanding';
                             const img = document.createElement('img');
                             img.src = SYMBOLS[expandingSymbol].src;
                             expandingClone.appendChild(img);
-                            expandingClone.style.top = `${i * (100 / SYMBOLS_PER_REEL_VISIBLE)}%`;
+                            expandingClone.style.top = `${i*(100/SYMBOLS_PER_REEL_VISIBLE)}%`;
                             reel.appendChild(expandingClone);
                         }
                     });
 
-                    await new Promise(res => setTimeout(res, 800)); 
+                    await new Promise(res=>setTimeout(res,800));
 
                     const payoutData = SYMBOLS[expandingSymbol].payout;
                     const numExpandedReels = expandingReelsIndices.size;
-
                     if (payoutData?.[numExpandedReels]) {
-                        const expansionPayout = payoutData[numExpandedReels] * (bet / 10) * PAYLINES.length;
+                        const expansionPayout = payoutData[numExpandedReels] * (bet/10) * PAYLINES.length;
                         totalWin += expansionPayout;
-                        document.querySelectorAll('.symbol.expanding').forEach(el => el.classList.add('win-pulse'));
+                        document.querySelectorAll('.symbol.expanding').forEach(el=>el.classList.add('win-pulse'));
                     }
                 }
             }
-            
+
             const maxWin = bet * MAX_WIN_MULTIPLIER;
             if (totalWin > maxWin) totalWin = maxWin;
 
             if (totalWin > 0) {
-                balance += totalWin; // Add win to local balance
-                await updateBalanceInFirestore(balance); // Sync with Firestore
-                updateBalanceDisplay(); // Update UI
-                
-                if(freeSpinsRemaining === 0 && !hasExpansionWin) {
+                balance += totalWin;
+                await updateBalanceInFirestore(balance);
+                updateBalanceDisplay();
+                if (freeSpinsRemaining === 0 && !hasExpansionWin) {
                     manageBackgroundMusic(false);
                     winSound.play();
                     winSound.onended = () => manageBackgroundMusic(true);
                 }
-                
-                playWinVideo(firstWinningSymbol);
+                // IMPORTANT: user requested absolutely NO webm win videos — so we DO NOT play any win videos here.
                 await updateWin(totalWin, true);
                 flashWinningSymbols(winningPositions, finalIndexes);
                 drawWinningLines(winningLines);
             }
-            
+
             let bonusTriggered = false;
             if (freeSpinsRemaining === 0 && !expandingSymbol && scatterCount >= 3) {
                 bonusTriggered = true;
-                if(isAutoSpinning) toggleAutoSpin();
+                if (isAutoSpinning) toggleAutoSpin();
                 await triggerBonusAnimation(scatterPositions, finalIndexes);
-                
                 const bonusTransitionScreen = document.getElementById('bonus-transition-screen');
                 bonusTransitionScreen.style.display = 'flex';
-
-                bonusTransitionScreen.addEventListener('click', () => {
-                    bonusTransitionScreen.style.display = 'none';
-                    startBonus();
-                }, { once: true });
+                bonusTransitionScreen.addEventListener('click', ()=>{ bonusTransitionScreen.style.display = 'none'; startBonus(); }, { once: true });
             }
-            
+
             return { hasWin: totalWin > 0 || hasExpansionWin, bonusTriggered, winAmount: totalWin };
         }
-        
-        function playWinVideo(symbolKey) {
-            const symbolData = SYMBOLS[symbolKey];
-            if (!symbolData || !symbolData.videos || symbolData.videos === 0 || isWinVideoPlaying) {
-                return;
-            }
-            isWinVideoPlaying = true;
-            const videoIndex = Math.floor(Math.random() * symbolData.videos) + 1;
-            const videoSrc = `${symbolKey}_v${videoIndex}.webm`; 
-            leftVideoContainer.style.display = 'flex';
-            rightVideoContainer.style.display = 'flex';
-            Object.values(videoPlayers).forEach(video => {
-                video.src = videoSrc;
-                video.currentTime = 0;
-                video.loop = true; // <-- ДОБАВЕТЕ ТОЗИ РЕД
-            });
-            videoPlayers.left1.play();
-            videoPlayers.right1.play();
-            videoPlayers.left1.style.opacity = 1;
-            videoPlayers.right1.style.opacity = 1;
-        }
 
-        function stopWinVideo() {
-            if (!isWinVideoPlaying) return;
-            leftVideoContainer.style.display = 'none';
-            rightVideoContainer.style.display = 'none';
-            Object.values(videoPlayers).forEach(video => {
-                video.pause();
-                video.loop = false; // <-- ДОБАВЕТЕ ТОЗИ РЕД
-
-                video.src = "";
-            });
-            isWinVideoPlaying = false;
-        }
-
-        function startBonus() {
+        // Removed playWinVideo / stopWinVideo entirely per request (no webm videos)
+        function startBonus(){
             freeSpinsRemaining = SYMBOLS.scatter.spins;
             updateSpinButtonText();
-            expandingSymbol = REGULAR_SYMBOLS[Math.floor(Math.random() * REGULAR_SYMBOLS.length)];
+            expandingSymbol = REGULAR_SYMBOLS[Math.floor(Math.random()*REGULAR_SYMBOLS.length)];
             const bonusModal = document.getElementById('bonus-modal');
             document.getElementById('modal-title').textContent = `БЕЗПЛАТНИ ЗАВЪРТАНИЯ!`;
             document.getElementById('modal-subtitle').textContent = `${freeSpinsRemaining} Безплатни Игри`;
             document.getElementById('expanding-symbol-display').src = SYMBOLS[expandingSymbol].src;
             bonusModal.style.display = 'flex';
-            setTimeout(() => {
-                bonusModal.style.display = 'none';
-                isSpinning = false;
-                spin(true);
-            }, 4000);
+            setTimeout(()=>{ bonusModal.style.display='none'; isSpinning=false; spin(true); }, 4000);
         }
-        
-        async function buyBonus() {
+
+        async function buyBonus(){
             if (isSpinning || freeSpinsRemaining > 0) return;
             const cost = bet * BONUS_BUY_COST_MULTIPLIER;
-            if (balance < cost) {
-                messageBox.textContent = "Недостатъчен Баланс";
-                return;
-            }
-            balance -= cost;
-            await updateBalanceInFirestore(balance);
-            updateBalanceDisplay();
+            if (balance < cost){ messageBox.textContent = "Недостатъчен Баланс"; return; }
+            balance -= cost; await updateBalanceInFirestore(balance); updateBalanceDisplay();
             setControlsDisabled(true);
             const bonusTransitionScreen = document.getElementById('bonus-transition-screen');
             bonusTransitionScreen.style.display = 'flex';
-            bonusTransitionScreen.addEventListener('click', () => {
-                bonusTransitionScreen.style.display = 'none';
-                startBonus();
-            }, { once: true });
+            bonusTransitionScreen.addEventListener('click', ()=>{ bonusTransitionScreen.style.display='none'; startBonus(); }, { once: true });
         }
 
-        async function triggerBonusAnimation(scatterPos, finalIndexes) {
+        async function triggerBonusAnimation(scatterPos, finalIndexes){
             scatterPos.forEach(sp => {
                 const symbolElement = getSymbolElement(sp.reel, finalIndexes[sp.reel] + sp.pos);
-                if(symbolElement) symbolElement.classList.add('scatter-trigger');
+                if (symbolElement) symbolElement.classList.add('scatter-trigger');
             });
             await new Promise(res => setTimeout(res, 2500));
         }
 
-        function getSymbolElement(reelIndex, stripIndex) {
+        function getSymbolElement(reelIndex, stripIndex){
             const stripElement = reels[reelIndex].querySelector('.reel-strip');
             if (!stripElement) return null;
             return stripElement.children[stripIndex] || null;
         }
 
-        function flashWinningSymbols(positions, finalIndexes) {
-            positions.forEach(pos => {
+        function flashWinningSymbols(positions, finalIndexes){
+            positions.forEach(pos=> {
                 const [reelIndexStr, symbolIndexStr] = pos.split('-');
                 const reelIndex = parseInt(reelIndexStr, 10);
                 const symbolIndexOnReel = parseInt(symbolIndexStr, 10);
                 const indexInStrip = finalIndexes[reelIndex] + symbolIndexOnReel;
                 const symbolElement = getSymbolElement(reelIndex, indexInStrip);
-                if (symbolElement) {
-                    symbolElement.classList.add('win-pulse');
-                }
+                if (symbolElement) symbolElement.classList.add('win-pulse');
             });
         }
-        
-        function drawWinningLines(winningLines) {
+
+        function drawWinningLines(winningLines){
             const reelContainerRect = document.querySelector('.reels-container').getBoundingClientRect();
             const svgRect = winLinesSvg.getBoundingClientRect();
-             if (reels.length === 0 || !reelContainerRect || !svgRect) return;
-
-            winningLines.forEach(lineCoords => {
-                const points = lineCoords.map(coord => {
-                    const reel = reels[coord.reel];
-                    if (!reel) return '0,0';
+            if (reels.length === 0 || !reelContainerRect || !svgRect) return;
+            winningLines.forEach(lineCoords=>{
+                const points = lineCoords.map(coord=>{
+                    const reel = reels[coord.reel]; if (!reel) return '0,0';
                     const reelRect = reel.getBoundingClientRect();
                     const symbolHeight = reelRect.height / SYMBOLS_PER_REEL_VISIBLE;
-                    
                     const x = reelRect.left - svgRect.left + (reelRect.width / 2);
                     const y = reelRect.top - svgRect.top + (coord.row * symbolHeight) + (symbolHeight / 2);
-
                     return `${x},${y}`;
                 }).join(' ');
-                
                 const line = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
                 line.setAttribute('points', points);
                 line.setAttribute('class', 'win-line');
@@ -1429,58 +674,49 @@
             });
         }
 
-        async function updateWin(amount, animate = false) {
-            if (amount === 0) {
-                winDisplay.textContent = '0.00'; return;
-            }
-            const targetAmount = (amount / 10).toFixed(2);
+        async function updateWin(amount, animate=false){
+            if (amount === 0) { winDisplay.textContent = '0.00'; return; }
+            const targetAmount = (amount/10).toFixed(2);
             if (animate) {
-                const duration = 1000; const frameDuration = 1000 / 60; const totalFrames = Math.round(duration / frameDuration);
+                const duration = 1000; const frameDuration = 1000/60; const totalFrames = Math.round(duration/frameDuration);
                 let frame = 0; const startValue = 0; const endValue = amount;
-                return new Promise(resolve => {
-                    const timer = setInterval(() => {
-                        frame++; const progress = frame / totalFrames;
-                        const currentAmount = startValue + (endValue - startValue) * progress;
-                        winDisplay.textContent = (currentAmount/10).toFixed(2);
-                        if (frame >= totalFrames) {
-                            clearInterval(timer);
-                            winDisplay.textContent = targetAmount;
-                            resolve();
-                        }
-                    }, frameDuration);
+                return new Promise(resolve=>{
+                    const timer = setInterval(()=>{ frame++; const progress = frame/totalFrames; const currentAmount = startValue + (endValue-startValue)*progress; winDisplay.textContent = (currentAmount/10).toFixed(2); if (frame >= totalFrames){ clearInterval(timer); winDisplay.textContent = targetAmount; resolve(); } }, frameDuration);
                 });
             } else { winDisplay.textContent = targetAmount; }
         }
 
-        function updateBalanceDisplay() { balanceDisplay.textContent = (balance/10).toFixed(2); }
-        function updateSpinButtonText() {
+        function updateBalanceDisplay(){ balanceDisplay.textContent = (balance/10).toFixed(2); }
+        function updateSpinButtonText(){
             const spinText = document.getElementById('spin-text');
             const spinIcon = spinButton.querySelector('svg');
-            if(freeSpinsRemaining > 0) {
-                spinText.textContent = `БЕЗПЛАТНИ: ${freeSpinsRemaining}`;
-                spinIcon.style.display = 'none';
-            } else {
-                spinText.textContent = 'ЗАВЪРТИ';
-                spinIcon.style.display = 'block';
-            }
+            if (freeSpinsRemaining > 0) { spinText.textContent = `БЕЗПЛАТНИ: ${freeSpinsRemaining}`; spinIcon.style.display='none'; }
+            else { spinText.textContent = 'ЗАВЪРТИ'; spinIcon.style.display='block'; }
         }
-        
+
+        // init reels & UI
         initializeReels();
         initializeUI();
-        
-        // Return the function to handle external balance updates
-        return function(newBalance) {
-            if (!isSpinning) {
-                balance = newBalance;
-                updateBalanceDisplay();
-            } else {
-                 console.log("Балансът е променен външно, но ще се синхронизира след края на завъртането.");
-            }
+
+        // choose top random symbol (angel1..angel9) and set #random-top-img
+        try {
+            const topImg = document.getElementById('random-top-img');
+            const topSymbols = ['angel1','angel2','angel3','angel4','angel5','angel6','angel7','angel8','angel9'];
+            const choice = topSymbols[Math.floor(Math.random()*topSymbols.length)];
+            topImg.src = SYMBOLS[choice].src;
+            topImg.alt = choice;
+        } catch (e){ console.warn('Top random symbol error', e); }
+
+        // Return handler for external balance updates
+        return function(newBalance){
+            if (!isSpinning){ balance = newBalance; updateBalanceDisplay(); }
+            else console.log("Балансът е променен външно, ще се синхронизира след завъртането.");
         };
     }
     </script>
 </body>
 </html>
+
 
 
 
