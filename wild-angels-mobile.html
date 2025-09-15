@@ -3,163 +3,456 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Wild Angels - Neon Dream (Portrait)</title>
+    <title>Wild Angels - Vertical Edition</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
+        /* --- ОСНОВНИ ПРОМЕНЛИВИ И СТИЛОВЕ --- */
         :root {
-            --glow-color: #00ffc3;
-            --secondary-glow: #f900ff;
+            --glow-color: #00ffc3; /* Светло зелено/тюркоаз */
+            --secondary-glow: #f900ff; /* Ярко розово/магента */
             --win-glow-color: #ffee00;
             --anticipation-glow-color: #ffc400;
-            --scatter-glow-color: #f900ff;
-        }
-        html,body{height:100%;width:100%;margin:0;padding:0;overflow:hidden;font-family:'Poppins',sans-serif;color:#fff;}
-        body{background:linear-gradient(135deg,#f900ff,#00ffc3,#2e005e,#100a1c);background-size:400% 400%;animation:color-shift 15s ease-in-out infinite;}
-        @keyframes color-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-
-        /* Loading */
-        #loading-screen{position:fixed;inset:0;background-color:#100a1c;z-index:10000;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2rem;transition:opacity .5s}
-        .loading-title{font-family:'Orbitron',sans-serif;font-size:clamp(3rem,10vmin,6rem);background:linear-gradient(90deg,var(--secondary-glow),var(--glow-color));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-        .progress-bar-container{width:80%;max-width:500px;height:20px;background:rgba(255,255,255,0.08);border-radius:10px;overflow:hidden;border:2px solid var(--glow-color)}
-        .progress-bar{width:0;height:100%;background:linear-gradient(90deg,var(--secondary-glow),var(--glow-color));background-size:200% 200%;animation:color-shift 5s ease-in-out infinite;transition:width .3s}
-        #loading-percentage{font-family:'Orbitron',sans-serif;font-size:1.5rem;margin-top:1rem}
-
-        /* Orientation blocker: show on landscape only to force portrait experience */
-        #orientation-blocker{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:9000;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2rem}
-        #orientation-blocker i{font-size:5rem;margin-bottom:2rem;color:var(--glow-color);animation:rotate-anim 2s infinite}
-        @keyframes rotate-anim{0%{transform:rotate(0)}50%{transform:rotate(90deg)}100%{transform:rotate(0)}}
-        /* Landscape shows the blocker (invert from original) */
-        @media (orientation: landscape) {
-            #orientation-blocker { display: flex; }
-            #game-container { display: none !important; }
+            --scatter-glow-color: #f900ff; /* Розово за скатер */
+            --font-main: 'Poppins', sans-serif;
+            --font-title: 'Orbitron', sans-serif;
+            --symbol-size: clamp(70px, 22vw, 100px);
         }
 
-        /* Main game container (portrait-first) */
-        #game-container{display:none;flex-direction:column;width:100%;height:100%;position:relative}
-        #top-symbol { position: absolute; top: 3vmin; left: 50%; transform: translateX(-50%); z-index: 50; pointer-events: none; width: 18vmin; height: 18vmin; display:flex; justify-content:center; align-items:center; }
-        #top-symbol img { max-width:100%; max-height:100%; filter: drop-shadow(0 0 12px rgba(255,255,255,0.08)); }
-
-        .game-title{position:absolute;top:10vmin;left:50%;transform:translateX(-50%);font-family:'Orbitron',sans-serif;font-size:clamp(2.2rem,6vmin,4rem);z-index:10;animation:rgb-text-glow 5s linear infinite}
-        @keyframes rgb-text-glow{0%{color:var(--glow-color);text-shadow:0 0 10px var(--glow-color),0 0 20px var(--glow-color),0 0 30px #fff}50%{color:var(--secondary-glow);text-shadow:0 0 10px var(--secondary-glow),0 0 20px var(--secondary-glow),0 0 30px #fff}100%{color:var(--glow-color);text-shadow:0 0 10px var(--glow-color),0 0 20px var(--glow-color),0 0 30px #fff}}
-
-        #mute-button{position:absolute;top:2vmin;right:2vmin;width:clamp(40px,8vmin,60px);height:clamp(40px,8vmin,60px);background:rgba(0,0,0,0.4);border:2px solid var(--glow-color);color:var(--glow-color);border-radius:50%;cursor:pointer;z-index:100;font-size:clamp(1.2rem,3vmin,1.8rem);display:flex;justify-content:center;align-items:center;transition:all .2s}
-        #mute-button:hover{transform:scale(1.05);box-shadow:0 0 15px var(--glow-color)}
-
-        #game-area{flex-grow:1;display:flex;justify-content:center;align-items:center;padding:2vmin;box-sizing:border-box;width:100%;height:100%}
-        .side-panel{display:flex;flex-direction:column;justify-content:center;align-items:center;height:100%;padding:0 2.5vmin;flex-shrink:0;width:clamp(80px,20vmin,150px)}
-        #right-panel{gap:2vmin}
-
-        #spinButton{font-family:'Orbitron',sans-serif;width:clamp(90px,20vmin,140px);height:clamp(90px,20vmin,140px);border:3px solid var(--glow-color);border-radius:50%;background-image:linear-gradient(to bottom,rgba(0,255,195,0.3),rgba(0,255,195,0.1));color:#fff;cursor:pointer;text-shadow:0 0 1vmin var(--glow-color);transition:all .2s;display:flex;align-items:center;justify-content:center;font-size:clamp(0.8rem,2.5vmin,1.4rem);flex-direction:column;line-height:1.2}
-        #autoSpinButton{font-family:'Orbitron',sans-serif;font-size:clamp(1rem,2vmin,1.5rem);padding:1.5vmin 3vmin;border:2px solid var(--glow-color);border-radius:1.5vmin;background-image:linear-gradient(to bottom,rgba(0,255,195,0.3),rgba(0,255,195,0.1));color:#fff;cursor:pointer;text-shadow:0 0 1vmin var(--glow-color);transition:all .2s}
-        #buyBonusButton{font-family:'Orbitron',sans-serif;font-size:clamp(1rem,2vmin,1.5rem);padding:1.5vmin 3vmin;border:2px solid var(--secondary-glow);border-radius:1.5vmin;background-image:linear-gradient(to bottom,rgba(249,0,255,0.3),rgba(249,0,255,0.1));color:#fff;cursor:pointer;text-shadow:0 0 1vmin var(--secondary-glow);transition:all .2s}
-
-        .reels-container{display:flex;gap:1vmin;padding:1.5vmin;background:rgba(0,0,0,0.4);border:2px solid var(--glow-color);border-radius:2vmin;box-shadow:0 0 3vmin var(--glow-color), inset 0 0 2vmin rgba(0,255,195,0.5);backdrop-filter:blur(8px);position:relative;width:95vw;height:57vw}
-        .reel{width:100%;height:100%;overflow:hidden;background:linear-gradient(135deg,rgba(249,0,255,0.1),rgba(0,255,195,0.1));border-radius:1vmin;position:relative;box-shadow:inset 0 0 10px #000}
-        .reel-strip{position:absolute;top:0;left:0;width:100%;transition:opacity .3s}
-        .symbol{width:100%;height:33.333%;display:flex;justify-content:center;align-items:center;box-sizing:border-box;position:relative}
-        .symbol img{max-width:85%;max-height:85%;object-fit:contain;filter:drop-shadow(0 0 8px rgba(0,0,0,0.7));transition:transform .3s,filter .3s}
-
-        #ui-panel{position:absolute;bottom:0;left:0;width:100%;padding:2vmin;display:flex;flex-direction:column;align-items:center;gap:1.5vmin;box-sizing:border-box}
-        .info-bar{display:flex;justify-content:space-around;align-items:center;width:100%;max-width:1200px;font-size:clamp(.9rem,2vmin,1.2rem)}
-        .info-box{ text-align:center; }
-        #balance-box,#win-box{background:rgba(0,0,0,0.3);border:2px solid var(--glow-color);border-radius:1.5vmin;padding:1vmin 2vmin;box-shadow:0 0 1.5vmin var(--glow-color);backdrop-filter:blur(5px)}
-        .info-box span{font-family:'Orbitron',sans-serif;display:block;font-size:clamp(1rem,2.5vmin,1.5rem);color:var(--glow-color)}
-        #message-box{font-family:'Orbitron',sans-serif;font-size:clamp(1.1rem,3vmin,1.8rem);color:var(--win-glow-color);text-shadow:0 0 10px var(--win-glow-color);padding:1vmin}
-
-        #bet-selection-bar{display:flex;gap:1.5vmin;align-items:center;justify-content:center;width:100%;padding:1vmin 0}
-        .bet-select-btn{font-family:'Orbitron',sans-serif;background:rgba(0,0,0,0.4);border:2px solid rgba(0,255,195,0.5);color:#fff;padding:1vmin 2vmin;border-radius:1vmin;cursor:pointer;transition:all .2s ease;font-size:clamp(.9rem,2vmin,1.3rem)}
-        .bet-select-btn.active{background:var(--glow-color);color:#000;border-color:var(--glow-color);box-shadow:0 0 15px var(--glow-color);transform:scale(1.05)}
-
-        /* Win lines & pulses */
-        #win-lines-container{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:100}
-        #win-lines-svg{overflow:visible;width:100%;height:100%}
-        .win-line{fill:none;stroke:var(--secondary-glow);stroke-width:5px;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 5px var(--secondary-glow)) drop-shadow(0 0 15px var(--secondary-glow));stroke-dasharray:1000;stroke-dashoffset:1000;animation:draw-line .8s ease-out forwards,blink-line 1s linear infinite .8s}
-        @keyframes draw-line{to{stroke-dashoffset:0}}
-        @keyframes blink-line{0%,100%{opacity:1}50%{opacity:.3}}
-        .symbol.win-pulse img{animation:win-pulse-anim 1s ease-out infinite}
-        @keyframes win-pulse-anim{0%,100%{transform:scale(1);filter:drop-shadow(0 0 10px var(--win-glow-color)) brightness(1.2)}50%{transform:scale(1.25);filter:drop-shadow(0 0 25px var(--win-glow-color)) drop-shadow(0 0 10px #fff) brightness(1.8)}}
-        .symbol.scatter-land img{animation:scatter-land-anim .8s cubic-bezier(.175,.885,.32,1.275)}
-        @keyframes scatter-land-anim{0%{transform:scale(.2) rotate(-360deg);opacity:0}60%{transform:scale(1.3)}100%{transform:scale(1);opacity:1}}
-        .symbol.scatter-trigger{z-index:10}
-        .symbol.scatter-trigger img{animation:scatter-trigger-anim 1.5s ease-in-out infinite}
-        @keyframes scatter-trigger-anim{0%,100%{transform:scale(1.1) translateY(-5%);filter:drop-shadow(0 0 15px var(--scatter-glow-color)) drop-shadow(0 0 25px var(--scatter-glow-color)) brightness(1.5)}50%{transform:scale(1.3) translateY(-10%);filter:drop-shadow(0 0 30px var(--scatter-glow-color)) drop-shadow(0 0 50px #fff) brightness(2)}}
-        .symbol.expanding{position:absolute;left:0;width:100%;z-index:50;animation:expand-symbol .7s forwards}
-        @keyframes expand-symbol{0%{transform:scale(.8);opacity:0}60%{transform:scale(1.1);opacity:1;filter:drop-shadow(0 0 35px var(--win-glow-color))}100%{transform:scale(1);opacity:1}}
-
-        /* modal & bonus */
-        .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:none;justify-content:center;align-items:center;text-align:center;color:#fff;z-index:1000}
-        .modal-content{font-family:'Orbitron',sans-serif;animation:modal-appear 1s forwards;background:rgba(10,0,20,0.95);border:2px solid var(--glow-color);border-radius:2vmin;padding:3vmin;max-width:90vw;max-height:90vh;overflow-y:auto;box-shadow:0 0 50px var(--secondary-glow)}
-        @keyframes modal-appear{0%{transform:scale(.5) rotate(-15deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
-        .modal-title{font-size:5vmin;color:var(--glow-color);text-shadow:0 0 2vmin var(--glow-color)}
-        .bonus-transition-content h1{font-size:clamp(3rem,10vmin,8rem);color:var(--win-glow-color);text-shadow:0 0 10px var(--win-glow-color),0 0 30px var(--win-glow-color),0 0 60px var(--secondary-glow);margin:0}
-        .bonus-transition-content p{font-size:clamp(1rem,3vmin,2rem);color:#fff;margin-top:2vmin;text-shadow:0 0 10px #000}
-
-        /* Portrait tweaks */
-        @media (orientation: portrait) {
-            #game-area{flex-direction:column;justify-content:center;padding-top:12vmin;padding-bottom:28vmin;gap:2vh}
-            .game-title{font-size:8vmin;top:6vmin}
-            .reels-container{order:1;width:95vw;height:57vw;padding:1.5vw;gap:1vw}
-            .reel{width:100%;height:100%}
-            .symbol{height:33.333%}
-            #right-panel{order:2;height:auto;padding:0;flex-direction:row;gap:4vw;justify-content:center;align-items:center}
-            #ui-panel{padding:1.5vmin;gap:1vmin;justify-content:flex-end;height:30vmin}
-            .info-bar{font-size:clamp(.8rem,2.8vmin,1.1rem)}
-            #bet-selection-bar{flex-wrap:wrap;gap:1.5vmin}
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: var(--font-main);
+            color: #fff;
         }
+
+        body {
+            background: linear-gradient(135deg, #f900ff, #00ffc3, #2e005e, #100a1c);
+            background-size: 400% 400%;
+            animation: color-shift 15s ease-in-out infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        @keyframes color-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- ЕКРАН ЗА ЗАРЕЖДАНЕ --- */
+        #loading-screen {
+            position: fixed;
+            inset: 0;
+            background-color: #100a1c;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            transition: opacity 0.5s ease-out;
+        }
+        .loading-title {
+            font-family: var(--font-title);
+            font-size: clamp(3rem, 10vmin, 6rem);
+            background: linear-gradient(90deg, var(--secondary-glow), var(--glow-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .progress-bar-container {
+            width: 80%;
+            max-width: 500px;
+            height: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid var(--glow-color);
+        }
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary-glow), var(--glow-color));
+            background-size: 200% 200%;
+            animation: color-shift 5s ease-in-out infinite;
+            transition: width 0.3s ease-out;
+        }
+        #loading-percentage {
+            font-family: var(--font-title);
+            font-size: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        #login-required-container {
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background-color: #100a1c;
+        }
+        .login-box {
+            background: rgba(0,0,0,0.4);
+            border: 2px solid var(--glow-color);
+            border-radius: 2vmin;
+            padding: 3rem;
+            max-width: 500px;
+        }
+        .login-box i { font-size: 5rem; margin-bottom: 2rem; color: var(--glow-color); }
+        .login-box a {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 1rem 2rem;
+            font-family: var(--font-title);
+            background: var(--glow-color);
+            color: #100a1c;
+            border-radius: 1rem;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .login-box a:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--glow-color); }
+
+        /* --- ИГРОВ КОНТЕЙНЕР --- */
+        .game-container {
+            width: 100%;
+            height: 100%;
+            max-width: 450px;
+            background: rgba(17, 29, 39, 0.8);
+            padding: 20px 15px;
+            box-sizing: border-box;
+            display: none; /* Initially hidden */
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* --- ЗАГЛАВНА ЧАСТ --- */
+        .game-header {
+            text-align: center;
+            padding-bottom: 20px;
+        }
+        .game-header h1 {
+            font-family: var(--font-title);
+            font-size: clamp(2rem, 9vw, 2.8rem);
+            margin: 0;
+            animation: rgb-text-glow 5s linear infinite;
+        }
+        @keyframes rgb-text-glow {
+            0% {
+                color: var(--glow-color);
+                text-shadow: 0 0 10px var(--glow-color), 0 0 20px var(--glow-color), 0 0 30px #fff;
+            }
+            50% {
+                color: var(--secondary-glow);
+                text-shadow: 0 0 10px var(--secondary-glow), 0 0 20px var(--secondary-glow), 0 0 30px #fff;
+            }
+            100% {
+                color: var(--glow-color);
+                text-shadow: 0 0 10px var(--glow-color), 0 0 20px var(--glow-color), 0 0 30px #fff;
+            }
+        }
+        
+        /* --- СЛОТ МАШИНА --- */
+        .slot-machine {
+            position: relative;
+            display: flex;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid var(--glow-color);
+            border-radius: 10px;
+            gap: 10px;
+            height: calc(var(--symbol-size) * 3 + 12px);
+            box-shadow: 0 0 15px var(--glow-color), inset 0 0 10px rgba(0, 255, 195, 0.5);
+            margin-bottom: 20px;
+            backdrop-filter: blur(8px);
+        }
+        .reel {
+            flex: 1;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(135deg, rgba(249, 0, 255, 0.1), rgba(0, 255, 195, 0.1));
+            border-radius: 5px;
+            box-shadow: inset 0 0 10px #000;
+        }
+        .reel-strip {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            transition: opacity 0.3s ease-out;
+        }
+        .symbol {
+            width: 100%;
+            height: var(--symbol-size);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+            position: relative;
+        }
+        .symbol img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 8px rgba(0,0,0,0.7));
+            transition: transform 0.3s, filter 0.3s;
+        }
+        
+        #win-lines-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
+        #win-lines-svg { overflow: visible; width: 100%; height: 100%; }
+        .win-line { fill: none; stroke: var(--secondary-glow); stroke-width: 5px; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 5px var(--secondary-glow)) drop-shadow(0 0 15px var(--secondary-glow)); stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: draw-line 0.8s ease-out forwards, blink-line 1s linear infinite 0.8s; }
+        @keyframes draw-line { to { stroke-dashoffset: 0; } }
+        @keyframes blink-line { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        .symbol.win-pulse img { animation: win-pulse-anim 1s ease-out infinite; }
+        @keyframes win-pulse-anim { 0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px var(--win-glow-color)) brightness(1.2); } 50% { transform: scale(1.25); filter: drop-shadow(0 0 25px var(--win-glow-color)) drop-shadow(0 0 10px #fff) brightness(1.8); } }
+        .symbol.scatter-land img { animation: scatter-land-anim 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes scatter-land-anim { 0% { transform: scale(0.2) rotate(-360deg); opacity: 0; } 60% { transform: scale(1.3); } 100% { transform: scale(1); opacity: 1; } }
+        .symbol.scatter-trigger { z-index: 10; }
+        .symbol.scatter-trigger img { animation: scatter-trigger-anim 1.5s ease-in-out infinite; }
+        @keyframes scatter-trigger-anim { 0%, 100% { transform: scale(1.1) translateY(-5%); filter: drop-shadow(0 0 15px var(--scatter-glow-color)) drop-shadow(0 0 25px var(--scatter-glow-color)) brightness(1.5); } 50% { transform: scale(1.3) translateY(-10%); filter: drop-shadow(0 0 30px var(--scatter-glow-color)) drop-shadow(0 0 50px #fff) brightness(2.0); } }
+        .symbol.expanding { position: absolute; left: 0; width: 100%; z-index: 50; animation: expand-symbol 0.7s forwards; }
+        @keyframes expand-symbol { 0% { transform: scale(0.8); opacity: 0; } 60% { transform: scale(1.1); opacity: 1; filter: drop-shadow(0 0 35px var(--win-glow-color)); } 100% { transform: scale(1); opacity: 1; } }
+        .slot-machine.anticipation-glow { animation: anticipation-pulse 1.2s infinite; }
+        @keyframes anticipation-pulse { 0%, 100% { box-shadow: 0 0 3vmin var(--glow-color), inset 0 0 2vmin rgba(0, 255, 195, 0.5); } 50% { box-shadow: 0 0 8vmin var(--anticipation-glow-color), inset 0 0 4vmin var(--anticipation-glow-color); } }
+
+
+        /* --- UI ПАНЕЛ --- */
+        #ui-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .info-bar {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr 1fr;
+            align-items: center;
+            width: 100%;
+            gap: 10px;
+        }
+        .info-box {
+            text-align: center;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--glow-color);
+            border-radius: 8px;
+            padding: 5px 8px;
+            backdrop-filter: blur(5px);
+        }
+        .info-box .label {
+            font-size: 0.8em;
+            color: #ccc;
+        }
+        .info-box .value {
+            font-family: var(--font-title);
+            display: block;
+            font-size: clamp(1rem, 4vw, 1.3rem);
+            color: var(--glow-color);
+            letter-spacing: 1px;
+        }
+        #message-box {
+            font-family: var(--font-title);
+            font-size: clamp(1rem, 4.5vw, 1.5rem);
+            color: var(--win-glow-color);
+            text-shadow: 0 0 10px var(--win-glow-color);
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        #bet-selection-bar {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+        .bet-select-btn {
+            font-family: var(--font-title);
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(0, 255, 195, 0.5);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: clamp(0.9rem, 3.5vw, 1.1rem);
+            flex-grow: 1;
+        }
+         .bet-select-btn:hover {
+            border-color: var(--glow-color);
+            background: rgba(0, 255, 195, 0.2);
+        }
+        .bet-select-btn.active {
+            background: var(--glow-color);
+            color: #000;
+            border-color: var(--glow-color);
+            box-shadow: 0 0 15px var(--glow-color);
+            transform: scale(1.05);
+        }
+
+        /* --- КОНТРОЛИ --- */
+        .bottom-controls {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            gap: 10px;
+            padding-top: 10px;
+        }
+        .control-btn {
+            font-family: var(--font-title);
+            font-size: clamp(0.9rem, 3.5vw, 1.2rem);
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-basis: 120px;
+            text-align: center;
+            border: none;
+            color: #fff;
+            font-weight: bold;
+        }
+        .control-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+        }
+        .control-btn:disabled {
+            filter: grayscale(1) brightness(0.7);
+            cursor: not-allowed;
+        }
+
+        #buyBonusButton {
+            background: linear-gradient(45deg, #d81b60, #f900ff);
+            box-shadow: 0 0 15px var(--secondary-glow);
+            border: 2px solid var(--secondary-glow);
+        }
+        #autoSpinButton {
+            background: linear-gradient(45deg, #007bff, #00e0ff);
+            box-shadow: 0 0 15px var(--glow-color);
+            border: 2px solid var(--glow-color);
+        }
+         #autoSpinButton.active { 
+            background: var(--secondary-glow); 
+            border-color: var(--secondary-glow); 
+            box-shadow: 0 0 2vmin var(--secondary-glow); 
+        }
+
+        #spinButton {
+            width: clamp(80px, 22vw, 100px);
+            height: clamp(80px, 22vw, 100px);
+            border: 2px solid var(--glow-color);
+            border-radius: 50%;
+            background: rgba(0, 255, 195, 0.15);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 15px var(--glow-color);
+        }
+        #spinButton:not(:disabled):hover {
+            box-shadow: 0 0 25px var(--glow-color);
+            transform: scale(1.05);
+        }
+        #spinButton:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+        #spinButton svg {
+            width: 40%;
+            height: 40%;
+            fill: currentColor;
+            transition: transform 0.5s;
+        }
+        #spin-text {
+            font-size: 0.8em;
+            margin-top: 5px;
+        }
+
+        /* --- МОДАЛНИ ПРОЗОРЦИ --- */
+         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; text-align: center; color: #fff; z-index: 1000; }
+        .modal-content { font-family: 'Orbitron', sans-serif; animation: modal-appear 1s forwards; background: rgba(10, 0, 20, 0.95); border: 2px solid var(--glow-color); border-radius: 2vmin; padding: 3vmin; max-width: 90vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 0 50px var(--secondary-glow); }
+        @keyframes modal-appear { 0% { transform: scale(0.5) rotate(-15deg); opacity: 0; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
+        .modal-title { font-size: 5vmin; color: var(--glow-color); text-shadow: 0 0 2vmin var(--glow-color); }
+        .modal-subtitle { font-size: 4vmin; margin-top: 2vmin; }
+        #expanding-symbol-info { display: flex; align-items: center; justify-content: center; gap: 2vmin; margin-top: 1vmin; }
+        #expanding-symbol-display { width: 10vmin; height: 10vmin; }
+        #bonus-transition-screen { cursor: pointer; z-index: 2000; flex-direction: column; }
+        .bonus-transition-content { font-family: 'Orbitron', sans-serif; text-align: center; animation: bonus-pulse 1.5s infinite; }
+        .bonus-transition-content h1 { font-size: clamp(3rem, 10vmin, 8rem); color: var(--win-glow-color); text-shadow: 0 0 10px var(--win-glow-color), 0 0 30px var(--win-glow-color), 0 0 60px var(--secondary-glow); margin: 0; }
+        .bonus-transition-content p { font-size: clamp(1rem, 3vmin, 2rem); color: #fff; margin-top: 2vmin; text-shadow: 0 0 10px #000; }
+        @keyframes bonus-pulse { 0%, 100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.05); opacity: 1; } }
 
     </style>
 </head>
 <body>
     <div id="loading-screen">
         <h1 class="loading-title">NIVRA</h1>
-        <div class="progress-bar-container"><div id="progress-bar" class="progress-bar"></div></div>
+        <div class="progress-bar-container">
+            <div id="progress-bar" class="progress-bar"></div>
+        </div>
         <p id="loading-percentage">0%</p>
     </div>
 
-    <div id="orientation-blocker">
-        <i class="fas fa-arrows-rotate"></i>
-        <h2>Моля, завъртете устройството си</h2>
-        <p>Играта работи най-добре в ПОРТРЕТ (вертикален) режим.</p>
-    </div>
-
-    <div id="game-container">
-        <!-- Random top symbol (angel1..angel9) -->
-        <div id="top-symbol" aria-hidden="true"><img id="random-top-img" src="" alt=""></div>
-
-        <h1 class="game-title">Wild Angels</h1>
-        <button id="mute-button"><i class="fas fa-volume-high"></i></button>
-
-        <div id="game-area">
-            <div class="side-panel"></div>
-
-            <div class="reels-container">
-                <div class="reel" id="reel0"></div>
-                <div class="reel" id="reel1"></div>
-                <div class="reel" id="reel2"></div>
-                <div class="reel" id="reel3"></div>
-                <div class="reel" id="reel4"></div>
-                <div id="win-lines-container"><svg id="win-lines-svg"></svg></div>
-            </div>
-
-            <div id="right-panel" class="side-panel">
-                <button id="spinButton">
-                    <svg viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"></path></svg>
-                    <span id="spin-text">ЗАВЪРТИ</span>
-                </button>
-                <button id="autoSpinButton">AUTO</button>
-                <button id="buyBonusButton">КУПИ БОНУС</button>
-            </div>
+    <div id="login-required-container">
+        <div class="login-box">
+            <i class="fas fa-lock"></i>
+            <h2>Достъпът е ограничен</h2>
+            <p>Трябва да сте влезли в профила си, за да играете.</p>
+            <a href="index.html">Към лобито / Вход</a>
         </div>
+    </div>
+    
+    <div class="game-container">
+        <header class="game-header">
+            <h1>WILD ANGELS</h1>
+        </header>
 
-        <div id="ui-panel">
+        <main class="slot-machine">
+            <div class="reel"><div class="reel-strip" id="reel0"></div></div>
+            <div class="reel"><div class="reel-strip" id="reel1"></div></div>
+            <div class="reel"><div class="reel-strip" id="reel2"></div></div>
+            <div class="reel"><div class="reel-strip" id="reel3"></div></div>
+            <div class="reel"><div class="reel-strip" id="reel4"></div></div>
+            <div id="win-lines-container">
+                <svg id="win-lines-svg"></svg>
+            </div>
+        </main>
+
+        <section id="ui-panel">
             <div class="info-bar">
-                <div class="info-box" id="balance-box">Баланс:<span id="balance">0</span></div>
-                <div class="info-box" id="message-box">ИЗБЕРЕТЕ ЗАЛОГ</div>
-                <div class="info-box" id="win-box">Печалба:<span id="win">0</span></div>
+                <div class="info-box">
+                    <span class="label">Баланс:</span>
+                    <span id="balance-value" class="value">0.00</span>
+                </div>
+                <div id="message-box">ИЗБЕРЕТЕ ЗАЛОГ</div>
+                <div class="info-box">
+                    <span class="label">Печалба:</span>
+                    <span id="win-value" class="value">0.00</span>
+                </div>
             </div>
             <div id="bet-selection-bar"></div>
-        </div>
+        </section>
+
+        <footer class="bottom-controls">
+            <button id="buyBonusButton" class="control-btn">КУПИ БОНУС</button>
+            <button id="spinButton">
+                <svg viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"></path></svg>
+                <span id="spin-text">ЗАВЪРТИ</span>
+            </button>
+            <button id="autoSpinButton" class="control-btn">AUTO</button>
+        </footer>
     </div>
 
     <div class="modal" id="bonus-modal">
@@ -168,7 +461,7 @@
             <p id="modal-subtitle" class="modal-subtitle"></p>
             <div id="expanding-symbol-info">
                 <h3>Специален Символ:</h3>
-                <img id="expanding-symbol-display" src="" alt="Expanding Symbol" style="width:10vmin;height:10vmin">
+                <img id="expanding-symbol-display" src="" alt="Expanding Symbol">
             </div>
         </div>
     </div>
@@ -181,538 +474,672 @@
     </div>
 
     <script type="module">
-    // Firebase imports (kept as in оригинала)
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAatMUa6vFu2AAe3NCWse6j2moiXmXdl0U",
-      authDomain: "nivra-casino.firebaseapp.com",
-      projectId: "nivra-casino",
-      storageBucket: "nivra-casino.firebasestorage.app",
-      messagingSenderId: "463242246264",
-      appId: "1:463242246264:web:4a6e736e5c8df3109e158d",
-      measurementId: "G-2NF3P6H9GM"
-    };
+        const firebaseConfig = {
+          apiKey: "AIzaSyAatMUa6vFu2AAe3NCWse6j2moiXmXdl0U",
+          authDomain: "nivra-casino.firebaseapp.com",
+          projectId: "nivra-casino",
+          storageBucket: "nivra-casino.firebasestorage.app",
+          messagingSenderId: "463242246264",
+          appId: "1:463242246264:web:4a6e736e5c8df3109e158d",
+          measurementId: "G-2NF3P6H9GM"
+        };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-    let userDocRef = null;
-    let isGameInitialized = false;
-    let updateExternalBalanceChange = null;
+        let userDocRef = null;
+        let isGameInitialized = false;
+        let updateExternalBalanceChange = null;
 
-    const gameContainer = document.getElementById('game-container');
-    const loginRequiredContainer = document.getElementById('login-required-container');
-    const loadingScreen = document.getElementById('loading-screen');
-    const progressBar = document.getElementById('progress-bar');
-    const loadingPercentage = document.getElementById('loading-percentage');
+        const gameContainer = document.querySelector('.game-container');
+        const loginRequiredContainer = document.getElementById('login-required-container');
+        const loadingScreen = document.getElementById('loading-screen');
+        const progressBar = document.getElementById('progress-bar');
+        const loadingPercentage = document.getElementById('loading-percentage');
 
-    // SYMBOLS (same as оригинала)
-    const SYMBOLS = {
-        'angel1': { weight: 20, src: 'angel1.png', videos: 6, payout: { '3': 5,  '4': 10,  '5': 20  }},
-        'angel2': { weight: 18, src: 'angel2.png', videos: 6, payout: { '3': 10, '4': 20,  '5': 40  }},
-        'angel3': { weight: 15, src: 'angel3.png', videos: 6, payout: { '3': 15, '4': 30,  '5': 60  }},
-        'angel4': { weight: 12, src: 'angel4.png', videos: 6, payout: { '3': 20, '4': 40,  '5': 80  }},
-        'angel5': { weight: 10, src: 'angel5.png', videos: 6, payout: { '3': 30, '4': 60,  '5': 120 }},
-        'angel6': { weight: 8,  src: 'angel6.png', videos: 6, payout: { '3': 50, '4': 100, '5': 200 }},
-        'angel7': { weight: 6,  src: 'angel7.png', videos: 6, payout: { '3': 100,'4': 200, '5': 400 }},
-        'angel8': { weight: 4,  src: 'angel8.png', videos: 2, payout: { '3': 200,'4': 400, '5': 800 }},
-        'angel9': { weight: 3,  src: 'angel9.png', videos: 5, payout: { '3': 220,'4': 450, '5': 900 }},
-        'wild':   { weight: 2,  src: 'wild.png',   isWild: true, payout: { '3': 250, '4': 500, '5': 1000 }},
-        'scatter':{ weight: 5,  src: 'scatter.png',spins: 10, isScatter: true }
-    };
+        const SYMBOLS = {
+            'angel1': { weight: 20, src: 'images/angel1.png', payout: { '3': 5,  '4': 10,  '5': 20  }},
+            'angel2': { weight: 18, src: 'images/angel2.png', payout: { '3': 10, '4': 20,  '5': 40  }},
+            'angel3': { weight: 15, src: 'images/angel3.png', payout: { '3': 15, '4': 30,  '5': 60  }},
+            'angel4': { weight: 12, src: 'images/angel4.png', payout: { '3': 20, '4': 40,  '5': 80  }},
+            'angel5': { weight: 10, src: 'images/angel5.png', payout: { '3': 30, '4': 60,  '5': 120 }},
+            'angel6': { weight: 8,  src: 'images/angel6.png', payout: { '3': 50, '4': 100, '5': 200 }},
+            'angel7': { weight: 6,  src: 'images/angel7.png', payout: { '3': 100,'4': 200, '5': 400 }},
+            'angel8': { weight: 4,  src: 'images/angel8.png', payout: { '3': 200,'4': 400, '5': 800 }},
+            'angel9': { weight: 3,  src: 'images/angel9.png', payout: { '3': 220,'4': 450, '5': 900 }},
+            'wild':   { weight: 2,  src: 'images/wild.png',   isWild: true, payout: { '3': 250, '4': 500, '5': 1000 }},
+            'scatter':{ weight: 5,  src: 'images/scatter.png',spins: 10, isScatter: true }
+        };
 
-    async function updateBalanceInFirestore(newBalance) {
-        if (!userDocRef) return;
-        try { await updateDoc(userDocRef, { chips: Math.round(newBalance) }); }
-        catch (error) { console.error("Грешка при обновяване на баланса:", error); }
-    }
-
-    onAuthStateChanged(auth, async (user) => {
-        if (user && user.emailVerified) {
-            userDocRef = doc(db, 'users', user.uid);
-            onSnapshot(userDocRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    const newBalance = docSnap.data().chips;
-                    if (!isGameInitialized) { preloadAssetsAndStartGame(newBalance); isGameInitialized = true; }
-                    else if (updateExternalBalanceChange) updateExternalBalanceChange(newBalance);
-                } else showLoginRequired("Не е намерен документ за потребителя!");
-            }, (error) => { showLoginRequired("Грешка при зареждане на потребителски данни."); });
-        } else showLoginRequired();
-    });
-
-    function showLoginRequired(message = "Трябва да сте влезли в профила си, за да играете.") {
-        loadingScreen.style.opacity = '0';
-        setTimeout(() => {
-            loadingScreen.style.display = 'none';
-            // create loginRequiredContainer if needed (kept hidden in this file)
-            let box = document.createElement('div');
-            box.style.display = 'flex';
-            box.style.position = 'fixed';
-            box.style.inset = '0';
-            box.style.justifyContent = 'center';
-            box.style.alignItems = 'center';
-            box.style.background = '#100a1c';
-            box.style.zIndex = 9999;
-            box.innerHTML = '<div style="background:rgba(0,0,0,0.4);border:2px solid var(--glow-color);padding:3rem;border-radius:12px;text-align:center;"><h2>Достъпът е ограничен</h2><p>'+message+'</p></div>';
-            document.body.appendChild(box);
-            gameContainer.style.display = 'none';
-        }, 500);
-    }
-
-    async function preloadAssetsAndStartGame(initialBalance) {
-        // Keep loading images & audio but DO NOT load webm videos (user asked to remove win webm)
-        const SOUND_FILES = ['bg_music_1.mp3', 'bg_music_2.mp3', 'bg_music_3.mp3', 'win_sound.mp3', 'anticipation.mp3', 'expand.mp3'];
-        const assetsToLoad = [];
-
-        Object.keys(SYMBOLS).forEach(name => assetsToLoad.push({type:'image',src:SYMBOLS[name].src}));
-        SOUND_FILES.forEach(name => assetsToLoad.push({type:'audio',src:name}));
-
-        let loadedCount = 0;
-        const totalCount = assetsToLoad.length;
-
-        const promises = assetsToLoad.map(asset => new Promise(resolve => {
-            const onAssetLoaded = () => { loadedCount++; const percentage = Math.round((loadedCount/totalCount)*100); progressBar.style.width = `${percentage}%`; loadingPercentage.textContent = `${percentage}%`; resolve(); };
-            const onAssetError = () => { console.error(`Failed to load asset: ${asset.src}`); onAssetLoaded(); };
-
-            if (asset.type === 'image') { const img = new Image(); img.src = asset.src; img.onload = onAssetLoaded; img.onerror = onAssetError; }
-            else if (asset.type === 'audio') { const audio = new Audio(); audio.addEventListener('canplaythrough', onAssetLoaded, {once:true}); audio.addEventListener('error', onAssetError, {once:true}); audio.src = asset.src; }
-        }));
-
-        await Promise.all(promises);
-
-        // small delay then show game
-        setTimeout(() => {
-            loadingScreen.style.opacity = '0';
-            setTimeout(() => { loadingScreen.style.display = 'none'; gameContainer.style.display = 'flex'; updateExternalBalanceChange = initializeGameLogic(initialBalance); }, 500);
-        }, 300);
-    }
-
-    function initializeGameLogic(initialBalance) {
-        const REGULAR_SYMBOLS = Object.keys(SYMBOLS).filter(k => !SYMBOLS[k].isWild && !SYMBOLS[k].isScatter);
-        const REEL_COUNT = 5;
-        const SYMBOLS_PER_REEL_VISIBLE = 3;
-        const PAYLINES = [
-            [1,1,1,1,1],[0,0,0,0,0],[2,2,2,2,2],[0,1,2,1,0],[2,1,0,1,2],
-            [0,0,1,2,2],[2,2,1,0,0],[1,0,0,0,1],[1,2,2,2,1],[0,1,1,1,2]
-        ];
-        const BET_AMOUNTS = [10,20,50,100,200,500];
-        const MAX_WIN_MULTIPLIER = 2500;
-        const BONUS_BUY_COST_MULTIPLIER = 100;
-
-        let balance = initialBalance;
-        let currentBetIndex = 0;
-        let bet = BET_AMOUNTS[currentBetIndex];
-        let isSpinning = false;
-        let isAutoSpinning = false;
-        let freeSpinsRemaining = 0;
-        let expandingSymbol = null;
-        let isMuted = false;
-        let hasRequestedFullscreen = false;
-
-        // Audio elements
-        const backgroundMusicFiles = ['bg_music_1.mp3','bg_music_2.mp3','bg_music_3.mp3'];
-        let currentTrackIndex = 0;
-        const bgMusicPlayer = new Audio(); bgMusicPlayer.volume = 0.3;
-        const winSound = new Audio('win_sound.mp3');
-        const anticipationSound = new Audio('anticipation.mp3');
-        const expandSound = new Audio('expand.mp3');
-        const allSounds = [bgMusicPlayer, winSound, anticipationSound, expandSound];
-
-        // DOM
-        const spinButton = document.getElementById('spinButton');
-        const autoSpinButton = document.getElementById('autoSpinButton');
-        const buyBonusButton = document.getElementById('buyBonusButton');
-        const balanceDisplay = document.getElementById('balance');
-        const winDisplay = document.getElementById('win');
-        const reels = Array.from({length:REEL_COUNT},(_,i)=>document.getElementById(`reel${i}`));
-        const gameArea = document.getElementById('game-area');
-        const winLinesSvg = document.getElementById('win-lines-svg');
-        const betSelectionBar = document.getElementById('bet-selection-bar');
-        const messageBox = document.getElementById('message-box');
-        const muteButton = document.getElementById('mute-button');
-
-        const reelStrips = [];
-
-        function goFullscreen() {
-            const elem = document.documentElement;
-            if (elem.requestFullscreen) elem.requestFullscreen().catch(()=>{});
-        }
-        function playNextTrack(){ if(backgroundMusicFiles.length===0) return; currentTrackIndex=(currentTrackIndex+1)%backgroundMusicFiles.length; bgMusicPlayer.src=backgroundMusicFiles[currentTrackIndex]; bgMusicPlayer.play().catch(()=>{}); }
-        bgMusicPlayer.addEventListener('ended', playNextTrack);
-
-        function manageBackgroundMusic(shouldPlay) {
-            if (shouldPlay && bgMusicPlayer.paused) bgMusicPlayer.play().catch(()=>{});
-            else if (!shouldPlay && !bgMusicPlayer.paused) bgMusicPlayer.pause();
-        }
-        function toggleMute(){ isMuted=!isMuted; allSounds.forEach(s=>s.muted=isMuted); muteButton.innerHTML=`<i class="fas ${isMuted?'fa-volume-xmark':'fa-volume-high'}"></i>`; }
-        muteButton.addEventListener('click', toggleMute);
-
-        function createWeightedStrip(){
-            const strip=[];
-            for(const key in SYMBOLS) for(let i=0;i<SYMBOLS[key].weight;i++) strip.push(key);
-            return strip.sort(()=>Math.random()-0.5);
-        }
-
-        function initializeReels(){
-            reels.forEach((reelElement)=>{
-                reelElement.innerHTML='';
-                const reelStripElement=document.createElement('div');
-                reelStripElement.className='reel-strip';
-                const weightedStrip=createWeightedStrip();
-                reelStrips.push(weightedStrip);
-                const totalSymbols=weightedStrip.length*3;
-                for(let i=0;i<totalSymbols;i++){
-                    const symbolKey=weightedStrip[i%weightedStrip.length];
-                    const symbolElement=document.createElement('div');
-                    symbolElement.className='symbol';
-                    const img=document.createElement('img');
-                    img.src=SYMBOLS[symbolKey].src;
-                    img.alt=symbolKey;
-                    img.loading='lazy';
-                    symbolElement.appendChild(img);
-                    reelStripElement.appendChild(symbolElement);
-                }
-                reelElement.appendChild(reelStripElement);
-            });
-        }
-
-        function initializeUI(){
-            betSelectionBar.innerHTML='';
-            BET_AMOUNTS.forEach((amount,index)=>{
-                const button=document.createElement('button');
-                button.classList.add('bet-select-btn');
-                button.textContent=(amount/10).toFixed(2);
-                button.dataset.index=index;
-                betSelectionBar.appendChild(button);
-            });
-            updateBetSelection();
-            updateBalanceDisplay();
-            updateWin(0);
-        }
-
-        function updateBetSelection(){ bet=BET_AMOUNTS[currentBetIndex]; document.querySelectorAll('.bet-select-btn').forEach(btn=>btn.classList.toggle('active',parseInt(btn.dataset.index)===currentBetIndex)); }
-
-        async function spin(isFreeSpin=false){
-            if (isSpinning) return;
-            if (!hasRequestedFullscreen) { goFullscreen(); hasRequestedFullscreen=true; }
-            if (bgMusicPlayer.paused){ bgMusicPlayer.src=backgroundMusicFiles[currentTrackIndex]; bgMusicPlayer.play().catch(()=>{}); }
-
-            if (!isFreeSpin && freeSpinsRemaining===0 && balance < bet) { if(isAutoSpinning) toggleAutoSpin(); messageBox.textContent = "Недостатъчен Баланс"; return; }
-
-            isSpinning = true;
-            setControlsDisabled(true);
-            clearAnimations();
-            await updateWin(0);
-            messageBox.textContent = "УСПЕХ!";
-
-            if (freeSpinsRemaining > 0) { freeSpinsRemaining--; updateSpinButtonText(); }
-            else if (!isFreeSpin) { balance -= bet; await updateBalanceInFirestore(balance); updateBalanceDisplay(); }
-
-            let results = [];
-            const finalIndexes = [];
-            for (let i=0;i<REEL_COUNT;i++){
-                const strip = reelStrips[i];
-                const randomIndex = Math.floor(Math.random()*strip.length);
-                finalIndexes.push(randomIndex);
-                results.push([ strip[(randomIndex+0)%strip.length], strip[(randomIndex+1)%strip.length], strip[(randomIndex+2)%strip.length] ]);
+        async function updateBalanceInFirestore(newBalance) {
+            if (!userDocRef) return;
+            try {
+                await updateDoc(userDocRef, { chips: Math.round(newBalance) });
+            } catch (error) {
+                console.error("Грешка при обновяване на баланса:", error);
             }
-
-            let anticipationSoundPlayed = false;
-            const spinPromises = reels.map((reel,i)=>{
-                return new Promise(async (resolve)=>{
-                    const reelStripElement = reel.querySelector('.reel-strip');
-                    const strip = reelStrips[i];
-                    const symbolSize = reel.clientHeight / SYMBOLS_PER_REEL_VISIBLE;
-                    const baseTargetPosition = finalIndexes[i]*symbolSize;
-                    const loopOffset = strip.length*symbolSize;
-                    reelStripElement.style.transition = 'none';
-                    reelStripElement.style.transform = `translateY(-${baseTargetPosition + loopOffset}px)`;
-                    reelStripElement.offsetHeight;
-                    let landedScatters = 0;
-                    results.slice(0,i).forEach(r=>r.forEach(s=>{ if (SYMBOLS[s]?.isScatter) landedScatters++; }));
-                    let duration = 1.5 + i*0.3;
-                    if (freeSpinsRemaining === 0 && landedScatters >= 2 && gameArea) {
-                        gameArea.classList.add('anticipation-glow');
-                        duration = 4 + i*0.5;
-                        if (!anticipationSoundPlayed) { manageBackgroundMusic(false); anticipationSound.loop = true; anticipationSound.play(); anticipationSoundPlayed = true; }
+        }
+        
+        onAuthStateChanged(auth, async (user) => {
+            if (user && user.emailVerified) {
+                userDocRef = doc(db, 'users', user.uid);
+                onSnapshot(userDocRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        const newBalance = docSnap.data().chips;
+                        if (!isGameInitialized) {
+                            preloadAssetsAndStartGame(newBalance);
+                            isGameInitialized = true;
+                        } else if (updateExternalBalanceChange) {
+                            updateExternalBalanceChange(newBalance);
+                        }
+                    } else {
+                        showLoginRequired("Не е намерен документ за потребителя!");
                     }
-                    reelStripElement.style.transition = `transform ${duration}s cubic-bezier(0.25, 1, 0.5, 1)`;
-                    reelStripElement.style.transform = `translateY(-${baseTargetPosition}px)`;
-                    await new Promise(res=>setTimeout(res, duration*1000));
-                    results[i].forEach((symbolKey,symbolIndex)=>{ if (SYMBOLS[symbolKey]?.isScatter) { const symbolElement = getSymbolElement(i, finalIndexes[i]+symbolIndex); if(symbolElement) symbolElement.classList.add('scatter-land'); } });
-                    resolve();
+                }, (error) => {
+                     showLoginRequired("Грешка при зареждане на потребителски данни.");
+                });
+            } else {
+                showLoginRequired();
+            }
+        });
+        
+        function showLoginRequired(message = "Трябва да сте влезли в профила си, за да играете.") {
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                loginRequiredContainer.querySelector('p').textContent = message;
+                loginRequiredContainer.style.display = 'flex';
+                gameContainer.style.display = 'none';
+            }, 500);
+        }
+        
+        async function preloadAssetsAndStartGame(initialBalance) {
+            const SOUND_FILES = ['sounds/win_sound.mp3', 'sounds/anticipation.mp3', 'sounds/expand.mp3'];
+            
+            const assetsToLoad = [];
+            Object.keys(SYMBOLS).forEach(name => assetsToLoad.push({type: 'image', src: SYMBOLS[name].src}));
+            SOUND_FILES.forEach(name => assetsToLoad.push({type: 'audio', src: name}));
+
+            let loadedCount = 0;
+            const totalCount = assetsToLoad.length;
+            
+            const promises = assetsToLoad.map(asset => {
+                return new Promise((resolve) => {
+                    const onAssetLoaded = () => {
+                        loadedCount++;
+                        const percentage = Math.round((loadedCount / totalCount) * 100);
+                        progressBar.style.width = `${percentage}%`;
+                        loadingPercentage.textContent = `${percentage}%`;
+                        resolve();
+                    };
+                    
+                    const onAssetError = () => {
+                        console.error(`Failed to load asset: ${asset.src}`);
+                        onAssetLoaded(); 
+                    };
+
+                    if (asset.type === 'image') {
+                        const img = new Image();
+                        img.src = asset.src;
+                        img.onload = onAssetLoaded;
+                        img.onerror = onAssetError;
+                    } else if (asset.type === 'audio') {
+                        const audio = new Audio();
+                        audio.addEventListener('canplaythrough', onAssetLoaded, { once: true });
+                        audio.addEventListener('error', onAssetError, { once: true });
+                        audio.src = asset.src;
+                    } 
                 });
             });
 
-            await Promise.all(spinPromises);
+            await Promise.all(promises);
 
-            if (anticipationSoundPlayed) { anticipationSound.pause(); anticipationSound.currentTime = 0; manageBackgroundMusic(true); }
-            gameArea.classList.remove('anticipation-glow');
-            const { hasWin, bonusTriggered, winAmount } = await checkWin(results, finalIndexes);
-
-            if (!hasWin) messageBox.textContent = "ИЗБЕРЕТЕ ЗАЛОГ";
-            else messageBox.textContent = `ПЕЧАЛБА: ${(winAmount/10).toFixed(2)}`;
-
-            handleNextAction(hasWin, bonusTriggered);
+            setTimeout(() => {
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                    gameContainer.style.display = 'flex';
+                    updateExternalBalanceChange = initializeGameLogic(initialBalance);
+                }, 500);
+            }, 500);
         }
 
-        spinButton.addEventListener('click', ()=>spin());
-        autoSpinButton.addEventListener('click', toggleAutoSpin);
-        buyBonusButton.addEventListener('click', buyBonus);
+        function initializeGameLogic(initialBalance) {
+            const REGULAR_SYMBOLS = Object.keys(SYMBOLS).filter(k => !SYMBOLS[k].isWild && !SYMBOLS[k].isScatter);
+            const REEL_COUNT = 5;
+            const SYMBOLS_PER_REEL_VISIBLE = 3;
+            const PAYLINES = [
+                [1, 1, 1, 1, 1], [0, 0, 0, 0, 0], [2, 2, 2, 2, 2], [0, 1, 2, 1, 0], [2, 1, 0, 1, 2],
+                [0, 0, 1, 2, 2], [2, 2, 1, 0, 0], [1, 0, 0, 0, 1], [1, 2, 2, 2, 1], [0, 1, 1, 1, 2]
+            ];
+            
+            const BET_AMOUNTS = [1, 2, 5, 10, 20, 50];
+            const MAX_WIN_MULTIPLIER = 2500;
+            const BONUS_BUY_COST_MULTIPLIER = 100;
 
-        document.addEventListener('keydown',(e)=>{ if(e.code==='Space'){ e.preventDefault(); if(document.querySelector('.modal[style*="display: flex"]')) return; spinButton.click(); } });
+            let balance = initialBalance;
+            let currentBetIndex = 2; // Default to 5
+            let bet = BET_AMOUNTS[currentBetIndex];
+            let isSpinning = false;
+            let isAutoSpinning = false;
+            let freeSpinsRemaining = 0;
+            let expandingSymbol = null;
 
-        function toggleAutoSpin(){ isAutoSpinning=!isAutoSpinning; autoSpinButton.classList.toggle('active',isAutoSpinning); if(isAutoSpinning){ autoSpinButton.textContent='СТОП'; if(!isSpinning) spin(); } else autoSpinButton.textContent='AUTO'; }
+            // Audio Elements
+            const winSound = new Audio('sounds/win_sound.mp3');
+            const anticipationSound = new Audio('sounds/anticipation.mp3');
+            const expandSound = new Audio('sounds/expand.mp3');
 
-        function setControlsDisabled(disabled){
-            spinButton.disabled = disabled;
-            autoSpinButton.disabled = disabled && !isAutoSpinning;
-            buyBonusButton.disabled = disabled || freeSpinsRemaining > 0;
-            betSelectionBar.style.pointerEvents = disabled ? 'none' : 'auto';
-        }
-
-        function handleNextAction(hasWin, bonusTriggered) {
-            const winDelay = hasWin ? (expandingSymbol ? 2500 : 1500) : 250;
-            const autoSpinDelay = hasWin ? 2500 : 1200;
-            if (bonusTriggered) return;
-            if (freeSpinsRemaining > 0) {
-                setTimeout(()=>{ isSpinning=false; spin(true); }, winDelay);
-            } else {
-                if (expandingSymbol) { expandingSymbol=null; updateSpinButtonText(); }
-                if (isAutoSpinning) setTimeout(()=>{ isSpinning=false; spin(); }, autoSpinDelay);
-                else { isSpinning=false; setControlsDisabled(false); }
-            }
-        }
-
-        function clearAnimations(){
-            winLinesSvg.innerHTML='';
-            reels.forEach(reel=>{
-                const expandingSymbols = reel.querySelectorAll('.symbol.expanding'); expandingSymbols.forEach(el=>el.remove());
-                const strip = reel.querySelector('.reel-strip'); if (strip) strip.style.opacity='1';
-            });
-            document.querySelectorAll('.symbol').forEach(el=>{ el.className='symbol'; });
-            gameArea.classList.remove('anticipation-glow');
-        }
-
-        async function checkWin(results, finalIndexes) {
-            let totalWin = 0; const winningLines = []; const winningPositions = new Set();
-            let scatterCount = 0; const scatterPositions = [];
-            let firstWinningSymbol = null;
-
-            results.forEach((reelResult,reelIndex)=>{ reelResult.forEach((symbolKey,symbolIndex)=>{ if (SYMBOLS[symbolKey]?.isScatter){ scatterCount++; scatterPositions.push({reel:reelIndex,pos:symbolIndex}); } }); });
-
-            if (freeSpinsRemaining > 0 && scatterCount >= 3) {
-                freeSpinsRemaining += SYMBOLS.scatter.spins;
-                updateSpinButtonText();
-                messageBox.textContent = `+${SYMBOLS.scatter.spins} БЕЗПЛАТНИ ИГРИ!`;
-                await triggerBonusAnimation(scatterPositions, finalIndexes);
-            }
-
-            PAYLINES.forEach(line=>{
-                let payingSymbolKey = null;
-                for (let i=0;i<REEL_COUNT;i++){ const symbol = results[i][line[i]]; if (!SYMBOLS[symbol]?.isWild) { payingSymbolKey = symbol; break; } }
-                if (payingSymbolKey === null) payingSymbolKey = 'wild';
-                if (SYMBOLS[payingSymbolKey]?.isScatter) return;
-
-                let matchCount = 0;
-                for (let i=0;i<REEL_COUNT;i++){
-                    const currentSymbolKey = results[i][line[i]];
-                    if (currentSymbolKey === payingSymbolKey || SYMBOLS[currentSymbolKey]?.isWild) matchCount++; else break;
+            // DOM Elements
+            const spinButton = document.getElementById('spinButton');
+            const autoSpinButton = document.getElementById('autoSpinButton');
+            const buyBonusButton = document.getElementById('buyBonusButton');
+            const balanceDisplay = document.getElementById('balance-value');
+            const winDisplay = document.getElementById('win-value');
+            const reelsElements = Array.from({ length: REEL_COUNT }, (_, i) => document.getElementById(`reel${i}`));
+            const slotMachine = document.querySelector('.slot-machine');
+            const winLinesSvg = document.getElementById('win-lines-svg');
+            const betSelectionBar = document.getElementById('bet-selection-bar');
+            const messageBox = document.getElementById('message-box');
+            
+            const reelStrips = [];
+            
+            function createWeightedStrip() {
+                const strip = [];
+                for (const key in SYMBOLS) {
+                    for (let i = 0; i < SYMBOLS[key].weight; i++) strip.push(key);
                 }
-                if (matchCount >= 3) {
-                    if (!firstWinningSymbol) firstWinningSymbol = payingSymbolKey;
-                    const symbolData = SYMBOLS[payingSymbolKey];
-                    if (symbolData?.payout?.[matchCount]) {
-                        const payout = symbolData.payout[matchCount] * (bet/10);
-                        totalWin += payout;
-                        const lineCoords = [];
-                        for (let i=0;i<matchCount;i++){ winningPositions.add(`${i}-${line[i]}`); lineCoords.push({reel:i,row:line[i]}); }
-                        winningLines.push(lineCoords);
+                return strip.sort(() => Math.random() - 0.5);
+            }
+            
+            function initializeReels() {
+                reelsElements.forEach((reelStripElement) => {
+                    reelStripElement.innerHTML = '';
+                    const weightedStrip = createWeightedStrip();
+                    reelStrips.push(weightedStrip);
+
+                    const totalSymbols = weightedStrip.length * 3; 
+                    for(let i = 0; i < totalSymbols; i++) {
+                        const symbolKey = weightedStrip[i % weightedStrip.length];
+                        const symbolElement = document.createElement('div');
+                        symbolElement.className = 'symbol';
+                        const img = document.createElement('img');
+                        img.src = SYMBOLS[symbolKey].src;
+                        img.alt = symbolKey;
+                        img.loading = 'lazy';
+                        symbolElement.appendChild(img);
+                        reelStripElement.appendChild(symbolElement);
+                    }
+                });
+            }
+            
+            function initializeUI() {
+                betSelectionBar.innerHTML = '';
+                BET_AMOUNTS.forEach((amount, index) => {
+                    const button = document.createElement('button');
+                    button.classList.add('bet-select-btn');
+                    button.textContent = amount.toFixed(2);
+                    button.dataset.index = index;
+                    betSelectionBar.appendChild(button);
+                });
+                updateBetSelection();
+                updateBalanceDisplay();
+                updateWin(0);
+            }
+            
+            function updateBetSelection() {
+                bet = BET_AMOUNTS[currentBetIndex];
+                document.querySelectorAll('.bet-select-btn').forEach(btn => {
+                    btn.classList.toggle('active', parseInt(btn.dataset.index) === currentBetIndex);
+                });
+            }
+
+            async function spin(isFreeSpin = false) {
+                if (isSpinning) return;
+
+                if (!isFreeSpin && freeSpinsRemaining === 0 && balance < bet) {
+                    if(isAutoSpinning) toggleAutoSpin();
+                    messageBox.textContent = "НЯМАТЕ КРЕДИТ";
+                    return;
+                }
+
+                isSpinning = true;
+                setControlsDisabled(true);
+                
+                clearAnimations();
+                await updateWin(0);
+                messageBox.textContent = "КЪСМЕТ!";
+                
+                if (freeSpinsRemaining > 0) {
+                    freeSpinsRemaining--;
+                    updateSpinButtonText();
+                } else if (!isFreeSpin) {
+                    balance -= bet;
+                    await updateBalanceInFirestore(balance);
+                    updateBalanceDisplay();
+                }
+                
+                let results = [];
+                const finalIndexes = [];
+                
+                for (let i = 0; i < REEL_COUNT; i++) {
+                    const strip = reelStrips[i];
+                    const randomIndex = Math.floor(Math.random() * strip.length);
+                    finalIndexes.push(randomIndex);
+                    results.push([
+                        strip[(randomIndex + 0) % strip.length],
+                        strip[(randomIndex + 1) % strip.length],
+                        strip[(randomIndex + 2) % strip.length]
+                    ]);
+                }
+                
+                let anticipationSoundPlayed = false;
+                const spinPromises = reelsElements.map((reelStripElement, i) => {
+                    return new Promise(async (resolve) => {
+                        const strip = reelStrips[i];
+                        const symbolSize = reelStripElement.parentElement.clientHeight / SYMBOLS_PER_REEL_VISIBLE;
+                        const baseTargetPosition = finalIndexes[i] * symbolSize;
+                        const loopOffset = strip.length * symbolSize;
+                        
+                        reelStripElement.style.transition = 'none';
+                        reelStripElement.style.transform = `translateY(-${baseTargetPosition + loopOffset}px)`;
+                        reelStripElement.offsetHeight; 
+
+                        let landedScatters = 0;
+                        results.slice(0, i).forEach(r => r.forEach(s => { if (SYMBOLS[s]?.isScatter) landedScatters++; }));
+                        
+                        let duration = 1.5 + i * 0.3;
+                        if (freeSpinsRemaining === 0 && landedScatters >= 2 && slotMachine) {
+                            slotMachine.classList.add('anticipation-glow');
+                            duration = 4 + i * 0.5;
+                            
+                            if (!anticipationSoundPlayed) {
+                                anticipationSound.loop = true;
+                                anticipationSound.play();
+                                anticipationSoundPlayed = true;
+                            }
+                        }
+                        
+                        reelStripElement.style.transition = `transform ${duration}s cubic-bezier(0.25, 1, 0.5, 1)`;
+                        reelStripElement.style.transform = `translateY(-${baseTargetPosition}px)`;
+
+                        await new Promise(res => setTimeout(res, duration * 1000));
+                                                
+                        results[i].forEach((symbolKey, symbolIndex) => {
+                            if (SYMBOLS[symbolKey]?.isScatter) {
+                                const symbolElement = getSymbolElement(i, finalIndexes[i] + symbolIndex);
+                                if (symbolElement) symbolElement.classList.add('scatter-land');
+                            }
+                        });
+                        resolve();
+                    });
+                });
+                
+                await Promise.all(spinPromises);
+
+                if (anticipationSoundPlayed) {
+                    anticipationSound.pause();
+                    anticipationSound.currentTime = 0;
+                }
+                
+                slotMachine.classList.remove('anticipation-glow');
+                const { hasWin, bonusTriggered, winAmount } = await checkWin(results, finalIndexes);
+                
+                if (!hasWin) {
+                    messageBox.textContent = "ИЗБЕРЕТЕ ЗАЛОГ";
+                } else {
+                     messageBox.textContent = `ПЕЧАЛБА: ${winAmount.toFixed(2)}`;
+                }
+                
+                handleNextAction(hasWin, bonusTriggered);
+            }
+            
+            spinButton.addEventListener('click', () => spin());
+            autoSpinButton.addEventListener('click', toggleAutoSpin);
+            buyBonusButton.addEventListener('click', buyBonus);
+
+            betSelectionBar.addEventListener('click', (e) => {
+                const button = e.target.closest('.bet-select-btn');
+                if (button && !isSpinning) {
+                    currentBetIndex = parseInt(button.dataset.index);
+                    updateBetSelection();
+                }
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.code === 'Space') {
+                    e.preventDefault();
+                    if (document.querySelector('.modal[style*="display: flex"]')) return;
+                    spinButton.click();
+                }
+            });
+
+            function toggleAutoSpin() {
+                isAutoSpinning = !isAutoSpinning;
+                autoSpinButton.classList.toggle('active', isAutoSpinning);
+                if (isAutoSpinning) {
+                    autoSpinButton.textContent = "СТОП";
+                    if(!isSpinning) spin();
+                } else {
+                    autoSpinButton.textContent = "AUTO";
+                }
+            }
+            
+            function setControlsDisabled(disabled) {
+                spinButton.disabled = disabled;
+                autoSpinButton.disabled = disabled && !isAutoSpinning;
+                buyBonusButton.disabled = disabled || freeSpinsRemaining > 0;
+                betSelectionBar.style.pointerEvents = disabled ? 'none' : 'auto';
+            }
+
+            function handleNextAction(hasWin, bonusTriggered) {
+                const winDelay = hasWin ? (expandingSymbol ? 2500 : 1500) : 250;
+                const autoSpinDelay = hasWin ? 2500 : 1200;
+
+                if (bonusTriggered) { return; }
+
+                if (freeSpinsRemaining > 0) {
+                    setTimeout(() => { 
+                        isSpinning = false; 
+                        spin(true); 
+                    }, winDelay);
+                } else {
+                    if (expandingSymbol) {
+                        expandingSymbol = null;
+                        updateSpinButtonText();
+                    }
+                    if (isAutoSpinning) {
+                        setTimeout(() => { 
+                            isSpinning = false; 
+                            spin(); 
+                        }, autoSpinDelay);
+                    } else {
+                        isSpinning = false;
+                        setControlsDisabled(false);
                     }
                 }
-            });
+            }
+            
+            function clearAnimations() {
+                winLinesSvg.innerHTML = '';
+                reelsElements.forEach(reelStrip => {
+                    const parentReel = reelStrip.parentElement;
+                    const expandingSymbols = parentReel.querySelectorAll('.symbol.expanding');
+                    expandingSymbols.forEach(el => el.remove());
+                    reelStrip.style.opacity = '1';
+                });
 
-            let hasExpansionWin = false;
-            if (expandingSymbol) {
-                const expandingReelsIndices = new Set();
-                results.forEach((reelResult,reelIndex)=>{ if (reelResult.includes(expandingSymbol)) expandingReelsIndices.add(reelIndex); });
-
-                if (expandingReelsIndices.size >= 3) {
-                    hasExpansionWin = true;
-                    manageBackgroundMusic(false);
-                    expandSound.play();
-                    expandSound.onended = () => manageBackgroundMusic(true);
-
-                    await new Promise(res=>setTimeout(res,500));
-                    expandingReelsIndices.forEach(reelIndex=>{
-                        const reel = reels[reelIndex];
-                        reel.querySelector('.reel-strip').style.opacity = '0';
-                        for (let i=0;i<SYMBOLS_PER_REEL_VISIBLE;i++){
-                            const expandingClone = document.createElement('div');
-                            expandingClone.className = 'symbol expanding';
-                            const img = document.createElement('img');
-                            img.src = SYMBOLS[expandingSymbol].src;
-                            expandingClone.appendChild(img);
-                            expandingClone.style.top = `${i*(100/SYMBOLS_PER_REEL_VISIBLE)}%`;
-                            reel.appendChild(expandingClone);
+                document.querySelectorAll('.symbol').forEach(el => { el.className = 'symbol'; });
+                slotMachine.classList.remove('anticipation-glow');
+            }
+            
+            async function checkWin(results, finalIndexes) {
+                let totalWin = 0; const winningLines = []; const winningPositions = new Set();
+                let scatterCount = 0; const scatterPositions = [];
+                
+                results.forEach((reelResult, reelIndex) => {
+                    reelResult.forEach((symbolKey, symbolIndex) => {
+                        if (SYMBOLS[symbolKey]?.isScatter) {
+                            scatterCount++;
+                            scatterPositions.push({reel: reelIndex, pos: symbolIndex});
                         }
                     });
+                });
 
-                    await new Promise(res=>setTimeout(res,800));
+                if (freeSpinsRemaining > 0 && scatterCount >= 3) {
+                    freeSpinsRemaining += SYMBOLS.scatter.spins;
+                    updateSpinButtonText();
+                    messageBox.textContent = `+${SYMBOLS.scatter.spins} БЕЗПЛАТНИ ИГРИ!`;
+                    await triggerBonusAnimation(scatterPositions, finalIndexes);
+                }
 
-                    const payoutData = SYMBOLS[expandingSymbol].payout;
-                    const numExpandedReels = expandingReelsIndices.size;
-                    if (payoutData?.[numExpandedReels]) {
-                        const expansionPayout = payoutData[numExpandedReels] * (bet/10) * PAYLINES.length;
-                        totalWin += expansionPayout;
-                        document.querySelectorAll('.symbol.expanding').forEach(el=>el.classList.add('win-pulse'));
+                PAYLINES.forEach((line) => {
+                    let payingSymbolKey = null;
+                    for (let i = 0; i < REEL_COUNT; i++) {
+                        const symbol = results[i][line[i]];
+                        if (!SYMBOLS[symbol]?.isWild) { payingSymbolKey = symbol; break; }
+                    }
+                    if (payingSymbolKey === null) payingSymbolKey = 'wild';
+                    if (SYMBOLS[payingSymbolKey]?.isScatter) return;
+
+                    let matchCount = 0;
+                    for (let i = 0; i < REEL_COUNT; i++) {
+                        const currentSymbolKey = results[i][line[i]];
+                        if (currentSymbolKey === payingSymbolKey || SYMBOLS[currentSymbolKey]?.isWild) matchCount++;
+                        else break;
+                    }
+
+                    if (matchCount >= 3) {
+                        const symbolData = SYMBOLS[payingSymbolKey];
+                        if (symbolData?.payout?.[matchCount]) {
+                            const payout = symbolData.payout[matchCount] * bet;
+                            totalWin += payout;
+                            const lineCoords = [];
+                            for (let i = 0; i < matchCount; i++) {
+                                winningPositions.add(`${i}-${line[i]}`);
+                                lineCoords.push({reel: i, row: line[i]});
+                            }
+                            winningLines.push(lineCoords);
+                        }
+                    }
+                });
+                
+                let hasExpansionWin = false;
+                if (expandingSymbol) {
+                    const expandingReelsIndices = new Set();
+                    results.forEach((reelResult, reelIndex) => {
+                        if (reelResult.includes(expandingSymbol)) expandingReelsIndices.add(reelIndex);
+                    });
+
+                    if (expandingReelsIndices.size >= 3) {
+                        hasExpansionWin = true;
+                        expandSound.play();
+                        
+                        await new Promise(res => setTimeout(res, 500)); 
+
+                        expandingReelsIndices.forEach(reelIndex => {
+                            const reelStrip = reelsElements[reelIndex];
+                            const parentReel = reelStrip.parentElement;
+                            reelStrip.style.opacity = '0';
+
+                            for (let i = 0; i < SYMBOLS_PER_REEL_VISIBLE; i++) {
+                                const expandingClone = document.createElement('div');
+                                expandingClone.className = 'symbol expanding';
+                                const img = document.createElement('img');
+                                img.src = SYMBOLS[expandingSymbol].src;
+                                expandingClone.appendChild(img);
+                                expandingClone.style.top = `${i * (100 / SYMBOLS_PER_REEL_VISIBLE)}%`;
+                                parentReel.appendChild(expandingClone);
+                            }
+                        });
+
+                        await new Promise(res => setTimeout(res, 800)); 
+
+                        const payoutData = SYMBOLS[expandingSymbol].payout;
+                        const numExpandedReels = expandingReelsIndices.size;
+
+                        if (payoutData?.[numExpandedReels]) {
+                            const expansionPayout = payoutData[numExpandedReels] * bet * PAYLINES.length;
+                            totalWin += expansionPayout;
+                            document.querySelectorAll('.symbol.expanding').forEach(el => el.classList.add('win-pulse'));
+                        }
                     }
                 }
+                
+                const maxWin = bet * MAX_WIN_MULTIPLIER;
+                if (totalWin > maxWin) totalWin = maxWin;
+
+                if (totalWin > 0) {
+                    balance += totalWin;
+                    await updateBalanceInFirestore(balance);
+                    updateBalanceDisplay();
+                    
+                    if(freeSpinsRemaining === 0 && !hasExpansionWin) {
+                        winSound.play();
+                    }
+                    
+                    await updateWin(totalWin, true);
+                    flashWinningSymbols(winningPositions, finalIndexes);
+                    drawWinningLines(winningLines);
+                }
+                
+                let bonusTriggered = false;
+                if (freeSpinsRemaining === 0 && !expandingSymbol && scatterCount >= 3) {
+                    bonusTriggered = true;
+                    if(isAutoSpinning) toggleAutoSpin();
+                    await triggerBonusAnimation(scatterPositions, finalIndexes);
+                    
+                    const bonusTransitionScreen = document.getElementById('bonus-transition-screen');
+                    bonusTransitionScreen.style.display = 'flex';
+
+                    bonusTransitionScreen.addEventListener('click', () => {
+                        bonusTransitionScreen.style.display = 'none';
+                        startBonus();
+                    }, { once: true });
+                }
+                
+                return { hasWin: totalWin > 0 || hasExpansionWin, bonusTriggered, winAmount: totalWin };
             }
-
-            const maxWin = bet * MAX_WIN_MULTIPLIER;
-            if (totalWin > maxWin) totalWin = maxWin;
-
-            if (totalWin > 0) {
-                balance += totalWin;
+            
+            function startBonus() {
+                freeSpinsRemaining = SYMBOLS.scatter.spins;
+                updateSpinButtonText();
+                expandingSymbol = REGULAR_SYMBOLS[Math.floor(Math.random() * REGULAR_SYMBOLS.length)];
+                const bonusModal = document.getElementById('bonus-modal');
+                document.getElementById('modal-title').textContent = `БЕЗПЛАТНИ ЗАВЪРТАНИЯ!`;
+                document.getElementById('modal-subtitle').textContent = `${freeSpinsRemaining} Безплатни Игри`;
+                document.getElementById('expanding-symbol-display').src = SYMBOLS[expandingSymbol].src;
+                bonusModal.style.display = 'flex';
+                setTimeout(() => {
+                    bonusModal.style.display = 'none';
+                    isSpinning = false;
+                    spin(true);
+                }, 4000);
+            }
+            
+            async function buyBonus() {
+                if (isSpinning || freeSpinsRemaining > 0) return;
+                const cost = bet * BONUS_BUY_COST_MULTIPLIER;
+                if (balance < cost) {
+                    messageBox.textContent = "НЯМАТЕ КРЕДИТ";
+                    return;
+                }
+                balance -= cost;
                 await updateBalanceInFirestore(balance);
                 updateBalanceDisplay();
-                if (freeSpinsRemaining === 0 && !hasExpansionWin) {
-                    manageBackgroundMusic(false);
-                    winSound.play();
-                    winSound.onended = () => manageBackgroundMusic(true);
-                }
-                // IMPORTANT: user requested absolutely NO webm win videos — so we DO NOT play any win videos here.
-                await updateWin(totalWin, true);
-                flashWinningSymbols(winningPositions, finalIndexes);
-                drawWinningLines(winningLines);
-            }
-
-            let bonusTriggered = false;
-            if (freeSpinsRemaining === 0 && !expandingSymbol && scatterCount >= 3) {
-                bonusTriggered = true;
-                if (isAutoSpinning) toggleAutoSpin();
-                await triggerBonusAnimation(scatterPositions, finalIndexes);
+                setControlsDisabled(true);
                 const bonusTransitionScreen = document.getElementById('bonus-transition-screen');
                 bonusTransitionScreen.style.display = 'flex';
-                bonusTransitionScreen.addEventListener('click', ()=>{ bonusTransitionScreen.style.display = 'none'; startBonus(); }, { once: true });
+                bonusTransitionScreen.addEventListener('click', () => {
+                    bonusTransitionScreen.style.display = 'none';
+                    startBonus();
+                }, { once: true });
             }
 
-            return { hasWin: totalWin > 0 || hasExpansionWin, bonusTriggered, winAmount: totalWin };
-        }
-
-        // Removed playWinVideo / stopWinVideo entirely per request (no webm videos)
-        function startBonus(){
-            freeSpinsRemaining = SYMBOLS.scatter.spins;
-            updateSpinButtonText();
-            expandingSymbol = REGULAR_SYMBOLS[Math.floor(Math.random()*REGULAR_SYMBOLS.length)];
-            const bonusModal = document.getElementById('bonus-modal');
-            document.getElementById('modal-title').textContent = `БЕЗПЛАТНИ ЗАВЪРТАНИЯ!`;
-            document.getElementById('modal-subtitle').textContent = `${freeSpinsRemaining} Безплатни Игри`;
-            document.getElementById('expanding-symbol-display').src = SYMBOLS[expandingSymbol].src;
-            bonusModal.style.display = 'flex';
-            setTimeout(()=>{ bonusModal.style.display='none'; isSpinning=false; spin(true); }, 4000);
-        }
-
-        async function buyBonus(){
-            if (isSpinning || freeSpinsRemaining > 0) return;
-            const cost = bet * BONUS_BUY_COST_MULTIPLIER;
-            if (balance < cost){ messageBox.textContent = "Недостатъчен Баланс"; return; }
-            balance -= cost; await updateBalanceInFirestore(balance); updateBalanceDisplay();
-            setControlsDisabled(true);
-            const bonusTransitionScreen = document.getElementById('bonus-transition-screen');
-            bonusTransitionScreen.style.display = 'flex';
-            bonusTransitionScreen.addEventListener('click', ()=>{ bonusTransitionScreen.style.display='none'; startBonus(); }, { once: true });
-        }
-
-        async function triggerBonusAnimation(scatterPos, finalIndexes){
-            scatterPos.forEach(sp => {
-                const symbolElement = getSymbolElement(sp.reel, finalIndexes[sp.reel] + sp.pos);
-                if (symbolElement) symbolElement.classList.add('scatter-trigger');
-            });
-            await new Promise(res => setTimeout(res, 2500));
-        }
-
-        function getSymbolElement(reelIndex, stripIndex){
-            const stripElement = reels[reelIndex].querySelector('.reel-strip');
-            if (!stripElement) return null;
-            return stripElement.children[stripIndex] || null;
-        }
-
-        function flashWinningSymbols(positions, finalIndexes){
-            positions.forEach(pos=> {
-                const [reelIndexStr, symbolIndexStr] = pos.split('-');
-                const reelIndex = parseInt(reelIndexStr, 10);
-                const symbolIndexOnReel = parseInt(symbolIndexStr, 10);
-                const indexInStrip = finalIndexes[reelIndex] + symbolIndexOnReel;
-                const symbolElement = getSymbolElement(reelIndex, indexInStrip);
-                if (symbolElement) symbolElement.classList.add('win-pulse');
-            });
-        }
-
-        function drawWinningLines(winningLines){
-            const reelContainerRect = document.querySelector('.reels-container').getBoundingClientRect();
-            const svgRect = winLinesSvg.getBoundingClientRect();
-            if (reels.length === 0 || !reelContainerRect || !svgRect) return;
-            winningLines.forEach(lineCoords=>{
-                const points = lineCoords.map(coord=>{
-                    const reel = reels[coord.reel]; if (!reel) return '0,0';
-                    const reelRect = reel.getBoundingClientRect();
-                    const symbolHeight = reelRect.height / SYMBOLS_PER_REEL_VISIBLE;
-                    const x = reelRect.left - svgRect.left + (reelRect.width / 2);
-                    const y = reelRect.top - svgRect.top + (coord.row * symbolHeight) + (symbolHeight / 2);
-                    return `${x},${y}`;
-                }).join(' ');
-                const line = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-                line.setAttribute('points', points);
-                line.setAttribute('class', 'win-line');
-                winLinesSvg.appendChild(line);
-            });
-        }
-
-        async function updateWin(amount, animate=false){
-            if (amount === 0) { winDisplay.textContent = '0.00'; return; }
-            const targetAmount = (amount/10).toFixed(2);
-            if (animate) {
-                const duration = 1000; const frameDuration = 1000/60; const totalFrames = Math.round(duration/frameDuration);
-                let frame = 0; const startValue = 0; const endValue = amount;
-                return new Promise(resolve=>{
-                    const timer = setInterval(()=>{ frame++; const progress = frame/totalFrames; const currentAmount = startValue + (endValue-startValue)*progress; winDisplay.textContent = (currentAmount/10).toFixed(2); if (frame >= totalFrames){ clearInterval(timer); winDisplay.textContent = targetAmount; resolve(); } }, frameDuration);
+            async function triggerBonusAnimation(scatterPos, finalIndexes) {
+                scatterPos.forEach(sp => {
+                    const symbolElement = getSymbolElement(sp.reel, finalIndexes[sp.reel] + sp.pos);
+                    if(symbolElement) symbolElement.classList.add('scatter-trigger');
                 });
-            } else { winDisplay.textContent = targetAmount; }
+                await new Promise(res => setTimeout(res, 2500));
+            }
+
+            function getSymbolElement(reelIndex, stripIndex) {
+                const stripElement = reelsElements[reelIndex];
+                if (!stripElement) return null;
+                return stripElement.children[stripIndex] || null;
+            }
+
+            function flashWinningSymbols(positions, finalIndexes) {
+                positions.forEach(pos => {
+                    const [reelIndexStr, symbolIndexStr] = pos.split('-');
+                    const reelIndex = parseInt(reelIndexStr, 10);
+                    const symbolIndexOnReel = parseInt(symbolIndexStr, 10);
+                    const indexInStrip = finalIndexes[reelIndex] + symbolIndexOnReel;
+                    const symbolElement = getSymbolElement(reelIndex, indexInStrip);
+                    if (symbolElement) {
+                        symbolElement.classList.add('win-pulse');
+                    }
+                });
+            }
+            
+            function drawWinningLines(winningLines) {
+                const svgRect = winLinesSvg.getBoundingClientRect();
+                 if (reelsElements.length === 0 || !svgRect) return;
+
+                winningLines.forEach(lineCoords => {
+                    const points = lineCoords.map(coord => {
+                        const reel = reelsElements[coord.reel].parentElement;
+                        if (!reel) return '0,0';
+                        const reelRect = reel.getBoundingClientRect();
+                        const symbolHeight = reelRect.height / SYMBOLS_PER_REEL_VISIBLE;
+                        
+                        const x = reelRect.left - svgRect.left + (reelRect.width / 2);
+                        const y = reelRect.top - svgRect.top + (coord.row * symbolHeight) + (symbolHeight / 2);
+
+                        return `${x},${y}`;
+                    }).join(' ');
+                    
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+                    line.setAttribute('points', points);
+                    line.setAttribute('class', 'win-line');
+                    winLinesSvg.appendChild(line);
+                });
+            }
+
+            async function updateWin(amount, animate = false) {
+                const targetAmount = amount.toFixed(2);
+                if (amount === 0) {
+                    winDisplay.textContent = '0.00'; return;
+                }
+                if (animate) {
+                    const duration = 1000; const frameDuration = 1000 / 60; const totalFrames = Math.round(duration / frameDuration);
+                    let frame = 0; const startValue = 0; const endValue = amount;
+                    return new Promise(resolve => {
+                        const timer = setInterval(() => {
+                            frame++; const progress = frame / totalFrames;
+                            const currentAmount = startValue + (endValue - startValue) * progress;
+                            winDisplay.textContent = currentAmount.toFixed(2);
+                            if (frame >= totalFrames) {
+                                clearInterval(timer);
+                                winDisplay.textContent = targetAmount;
+                                resolve();
+                            }
+                        }, frameDuration);
+                    });
+                } else { winDisplay.textContent = targetAmount; }
+            }
+
+            function updateBalanceDisplay() { balanceDisplay.textContent = balance.toFixed(2); }
+            function updateSpinButtonText() {
+                const spinText = document.getElementById('spin-text');
+                const spinIcon = spinButton.querySelector('svg');
+                if(freeSpinsRemaining > 0) {
+                    spinText.textContent = `SPINS: ${freeSpinsRemaining}`;
+                    spinIcon.style.display = 'none';
+                } else {
+                    spinText.textContent = 'ЗАВЪРТИ';
+                    spinIcon.style.display = 'block';
+                }
+            }
+            
+            initializeReels();
+            initializeUI();
+            
+            return function(newBalance) {
+                if (!isSpinning) {
+                    balance = newBalance;
+                    updateBalanceDisplay();
+                } else {
+                     console.log("Балансът е променен външно, но ще се синхронизира след края на завъртането.");
+                }
+            };
         }
-
-        function updateBalanceDisplay(){ balanceDisplay.textContent = (balance/10).toFixed(2); }
-        function updateSpinButtonText(){
-            const spinText = document.getElementById('spin-text');
-            const spinIcon = spinButton.querySelector('svg');
-            if (freeSpinsRemaining > 0) { spinText.textContent = `БЕЗПЛАТНИ: ${freeSpinsRemaining}`; spinIcon.style.display='none'; }
-            else { spinText.textContent = 'ЗАВЪРТИ'; spinIcon.style.display='block'; }
-        }
-
-        // init reels & UI
-        initializeReels();
-        initializeUI();
-
-        // choose top random symbol (angel1..angel9) and set #random-top-img
-        try {
-            const topImg = document.getElementById('random-top-img');
-            const topSymbols = ['angel1','angel2','angel3','angel4','angel5','angel6','angel7','angel8','angel9'];
-            const choice = topSymbols[Math.floor(Math.random()*topSymbols.length)];
-            topImg.src = SYMBOLS[choice].src;
-            topImg.alt = choice;
-        } catch (e){ console.warn('Top random symbol error', e); }
-
-        // Return handler for external balance updates
-        return function(newBalance){
-            if (!isSpinning){ balance = newBalance; updateBalanceDisplay(); }
-            else console.log("Балансът е променен външно, ще се синхронизира след завъртането.");
-        };
-    }
     </script>
 </body>
 </html>
