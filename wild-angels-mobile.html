@@ -2,8 +2,8 @@
 <html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Wild Angels - Mobile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Wild Angels - Neon Dream</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -12,11 +12,11 @@
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap');
 
         :root {
-            --glow-color: #00ffc3;
-            --secondary-glow: #f900ff;
+            --glow-color: #00ffc3; /* Светло зелено/тюркоаз */
+            --secondary-glow: #f900ff; /* Ярко розово/магента */
             --win-glow-color: #ffee00;
             --anticipation-glow-color: #ffc400;
-            --scatter-glow-color: #f900ff;
+            --scatter-glow-color: #f900ff; /* Розово за скатер */
         }
 
         html, body {
@@ -27,11 +27,10 @@
             overflow: hidden;
             font-family: 'Poppins', sans-serif;
             color: #fff;
-            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background: linear-gradient(135deg, #f900ff, #00ffc3, #2e00e, #100a1c);
+            background: linear-gradient(135deg, #f900ff, #00ffc3, #2e005e, #100a1c);
             background-size: 400% 400%;
             animation: color-shift 15s ease-in-out infinite;
         }
@@ -42,90 +41,264 @@
             100% { background-position: 0% 50%; }
         }
 
-        #loading-screen { position: fixed; inset: 0; background-color: #100a1c; z-index: 10000; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2rem; transition: opacity 0.5s ease-out; }
-        .loading-title { font-family: 'Orbitron', sans-serif; font-size: clamp(3rem, 10vmin, 6rem); background: linear-gradient(90deg, var(--secondary-glow), var(--glow-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .progress-bar-container { width: 80%; max-width: 500px; height: 20px; background-color: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; border: 2px solid var(--glow-color); }
-        .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, var(--secondary-glow), var(--glow-color)); background-size: 200% 200%; animation: color-shift 5s ease-in-out infinite; transition: width 0.3s ease-out; }
-        #loading-percentage { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; margin-top: 1rem; }
+        #loading-screen {
+            position: fixed;
+            inset: 0;
+            background-color: #100a1c;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            transition: opacity 0.5s ease-out;
+        }
+        .loading-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(3rem, 10vmin, 6rem);
+            background: linear-gradient(90deg, var(--secondary-glow), var(--glow-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .progress-bar-container {
+            width: 80%;
+            max-width: 500px;
+            height: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid var(--glow-color);
+        }
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary-glow), var(--glow-color));
+            background-size: 200% 200%;
+            animation: color-shift 5s ease-in-out infinite;
+            transition: width 0.3s ease-out;
+        }
+        #loading-percentage {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            margin-top: 1rem;
+        }
 
-        #login-required-container { width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 2rem; background-color: #100a1c; }
-        .login-box { background: rgba(0,0,0,0.4); border: 2px solid var(--glow-color); border-radius: 2vmin; padding: 3rem; max-width: 500px; }
+        #orientation-blocker {
+            display: none; /* Hide by default, show for landscape */
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 9000;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        #orientation-blocker i {
+            font-size: 5rem;
+            margin-bottom: 2rem;
+            color: var(--glow-color);
+            animation: rotate-anim 2s infinite ease-in-out;
+        }
+        @keyframes rotate-anim {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(90deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        #login-required-container {
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background-color: #100a1c;
+        }
+        .login-box {
+            background: rgba(0,0,0,0.4);
+            border: 2px solid var(--glow-color);
+            border-radius: 2vmin;
+            padding: 3rem;
+            max-width: 500px;
+        }
         .login-box i { font-size: 5rem; margin-bottom: 2rem; color: var(--glow-color); }
-        .login-box a { display: inline-block; margin-top: 2rem; padding: 1rem 2rem; font-family: 'Orbitron', sans-serif; background: var(--glow-color); color: #100a1c; border-radius: 1rem; text-decoration: none; font-weight: bold; transition: all 0.2s; }
+        .login-box a {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 1rem 2rem;
+            font-family: 'Orbitron', sans-serif;
+            background: var(--glow-color);
+            color: #100a1c;
+            border-radius: 1rem;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
         .login-box a:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--glow-color); }
 
         #game-container {
             display: none;
             flex-direction: column;
             width: 100%;
-            height: 100vh;
+            height: 100%;
             position: relative;
-            justify-content: space-between;
         }
-
-        .game-header {
-            padding-top: max(2vh, 10px);
+        
+        #mute-button {
+            position: absolute;
+            top: 2vmin;
+            right: 2vmin;
+            width: clamp(40px, 8vmin, 60px);
+            height: clamp(40px, 8vmin, 60px);
+            background: rgba(0,0,0,0.4);
+            border: 2px solid var(--glow-color);
+            color: var(--glow-color);
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 100;
+            font-size: clamp(1.2rem, 3vmin, 1.8rem);
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
+            transition: all 0.2s;
         }
-
-        #header-random-symbol {
-            height: 12vmin;
-            max-height: 70px;
-            margin-bottom: -15px;
-            filter: drop-shadow(0 0 15px #000);
+        #mute-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px var(--glow-color);
         }
 
         .game-title {
+            position: absolute;
+            top: 7vmin;
+            left: 50%;
+            transform: translateX(-50%);
             font-family: 'Orbitron', sans-serif;
-            font-size: clamp(2rem, 9vmin, 4rem);
+            font-size: clamp(2.5rem, 7vmin, 5rem);
+            z-index: 10;
             animation: rgb-text-glow 5s linear infinite;
         }
         
         @keyframes rgb-text-glow {
-            0%, 100% { color: var(--glow-color); text-shadow: 0 0 10px var(--glow-color), 0 0 20px var(--glow-color); }
-            50% { color: var(--secondary-glow); text-shadow: 0 0 10px var(--secondary-glow), 0 0 20px var(--secondary-glow); }
+            0% {
+                color: var(--glow-color);
+                text-shadow: 0 0 10px var(--glow-color), 0 0 20px var(--glow-color), 0 0 30px #fff;
+            }
+            50% {
+                color: var(--secondary-glow);
+                text-shadow: 0 0 10px var(--secondary-glow), 0 0 20px var(--secondary-glow), 0 0 30px #fff;
+            }
+            100% {
+                color: var(--glow-color);
+                text-shadow: 0 0 10px var(--glow-color), 0 0 20px var(--glow-color), 0 0 30px #fff;
+            }
         }
 
         #game-area {
             flex-grow: 1;
             display: flex;
-            flex-direction: column;
-            /* Промяна за по-добро разпределение на елементите по вертикала */
-            justify-content: space-evenly;
+            justify-content: center;
             align-items: center;
+            padding: 2vmin;
+            box-sizing: border-box;
             width: 100%;
-            /* Намаляване на разстоянието, за да се съберат повече неща */
-            gap: max(2vh, 15px);
+            height: 100%;
         }
         
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            padding: 0 2.5vmin;
+            flex-shrink: 0;
+            width: clamp(120px, 25vmin, 200px);
+        }
+        
+        #right-panel {
+            gap: 2vmin;
+        }
+
+        #spinButton {
+            font-family: 'Orbitron', sans-serif;
+            width: clamp(90px, 20vmin, 160px);
+            height: clamp(90px, 20vmin, 160px);
+            border: 3px solid var(--glow-color);
+            border-radius: 50%;
+            background-image: linear-gradient(to bottom, rgba(0, 255, 195, 0.3), rgba(0, 255, 195, 0.1));
+            color: #fff;
+            cursor: pointer;
+            text-shadow: 0 0 1vmin var(--glow-color);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(0.8rem, 2.5vmin, 1.4rem);
+            flex-direction: column;
+            line-height: 1.2;
+        }
+        #spinButton:not(:disabled):hover {
+            background-color: rgba(0, 255, 195, 0.4);
+            box-shadow: 0 0 2vmin var(--glow-color);
+            transform: scale(1.05);
+        }
+        #spinButton:disabled {
+            filter: grayscale(1) brightness(0.7);
+            cursor: not-allowed;
+        }
+        #spinButton svg {
+            width: 40%;
+            height: 40%;
+            fill: currentColor;
+            transition: transform 0.5s;
+        }
+        #spinButton:not(:disabled):hover svg {
+            transform: rotate(180deg);
+        }
+
+        #autoSpinButton {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1rem, 2vmin, 1.5rem); 
+            padding: 1.5vmin 3vmin; 
+            border: 2px solid var(--glow-color);
+            border-radius: 1.5vmin;
+            background-image: linear-gradient(to bottom, rgba(0, 255, 195, 0.3), rgba(0, 255, 195, 0.1));
+            color: #fff;
+            cursor: pointer;
+            text-shadow: 0 0 1vmin var(--glow-color);
+            transition: all 0.2s;
+        }
+        #autoSpinButton:not(.active):hover, #buyBonusButton:not(:disabled):hover {
+            background-color: rgba(0, 255, 195, 0.4);
+            box-shadow: 0 0 2vmin var(--glow-color);
+            transform: translateY(-2px);
+        }
+        #autoSpinButton.active { 
+            background: var(--secondary-glow); 
+            border-color: var(--secondary-glow); 
+            box-shadow: 0 0 2vmin var(--secondary-glow); 
+        }
+
         .reels-container {
             display: flex;
-            gap: 1.5vmin;
-            padding: 2vmin;
+            gap: 1vmin;
+            padding: 1.5vmin;
             background: rgba(0, 0, 0, 0.4);
             border: 2px solid var(--glow-color);
             border-radius: 2vmin;
             box-shadow: 0 0 3vmin var(--glow-color), inset 0 0 2vmin rgba(0, 255, 195, 0.5);
             backdrop-filter: blur(8px);
             position: relative;
-            width: 95vw;
-            max-width: 500px;
-            
-            /* --- START --- КОРЕКЦИЯ НА ВИСОЧИНАТА ЗА ВЕРТИКАЛЕН РЕЖИМ --- */
-            /* Премахнато е aspect-ratio: 5 / 3, което правеше контейнера твърде нисък. */
-            /* Новата височина е 75% от ширината, което създава по-високи, правоъгълни символи, */
-            /* които са стандартни за вертикални слот игри и запълват екрана по-добре. */
-            height: calc(95vw * 0.75);
-            /* Добавяме и max-height, за да се запази съотношението при max-width. */
-            max-height: calc(500px * 0.75);
-            /* --- END --- КОРЕКЦИЯ НА ВИСОЧИНАТА --- */
         }
 
         .reel {
-            width: 20%;
-            height: 100%;
+            width: clamp(80px, 16vmin, 220px);
+            height: clamp(240px, 48vmin, 660px);
             overflow: hidden;
             background: linear-gradient(135deg, rgba(249, 0, 255, 0.1), rgba(0, 255, 195, 0.1));
             border-radius: 1vmin;
@@ -133,95 +306,128 @@
             box-shadow: inset 0 0 10px #000;
         }
         
-        .reel-strip { position: absolute; top: 0; left: 0; width: 100%; }
+        .reel-strip { position: absolute; top: 0; left: 0; width: 100%; transition: opacity 0.3s ease-out; }
         .symbol {
             width: 100%;
-            height: 33.3333%; 
+            height: clamp(80px, 16vmin, 220px);
             display: flex; justify-content: center; align-items: center; box-sizing: border-box; position: relative;
         }
-        .symbol img { max-width: 85%; max-height: 85%; object-fit: contain; filter: drop-shadow(0 0 8px rgba(0,0,0,0.7)); }
-
-        #mobile-controls-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 5vw;
-            width: 100%;
+        .symbol img {
+            max-width: 85%; max-height: 85%; object-fit: contain; filter: drop-shadow(0 0 8px rgba(0,0,0,0.7)); transition: transform 0.3s, filter 0.3s;
         }
-        
-        #spinButton {
-            font-family: 'Orbitron', sans-serif;
-            width: 28vmin; height: 28vmin;
-            max-width: 110px; max-height: 110px;
-            border: 3px solid var(--glow-color);
-            border-radius: 50%;
-            background-image: linear-gradient(to bottom, rgba(0, 255, 195, 0.3), rgba(0, 255, 195, 0.1));
-            color: #fff; cursor: pointer;
-            text-shadow: 0 0 1vmin var(--glow-color);
-            transition: transform 0.1s;
-            display: flex; align-items: center; justify-content: center;
-            font-size: clamp(0.8rem, 3.5vmin, 1.4rem);
-            flex-direction: column; line-height: 1.2;
-            order: 2;
-        }
-        #spinButton:active { transform: scale(0.95); }
-        #spinButton:disabled { filter: grayscale(1) brightness(0.7); cursor: not-allowed; }
-        #spinButton svg { width: 40%; height: 40%; fill: currentColor; }
-
-        .side-control-btn {
-            font-family: 'Orbitron', sans-serif;
-            width: 20vmin; height: 20vmin;
-            max-width: 75px; max-height: 75px;
-            border: 2px solid var(--glow-color);
-            border-radius: 50%;
-            background: rgba(0,0,0,0.4);
-            color: var(--glow-color); cursor: pointer;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            font-size: clamp(0.6rem, 2.5vmin, 0.9rem);
-            transition: transform 0.1s;
-        }
-        .side-control-btn:active { transform: scale(0.95); }
-        .side-control-btn i { font-size: clamp(1.2rem, 5vmin, 1.8rem); margin-bottom: 0.5vmin; }
-        #autoSpinButton { order: 1; }
-        #mute-button { order: 3; }
-        #autoSpinButton.active { background: var(--secondary-glow); border-color: var(--secondary-glow); box-shadow: 0 0 2vmin var(--secondary-glow); }
 
         #ui-panel {
+            position: absolute;
+            bottom: 0;
+            left: 0;
             width: 100%;
-            padding: 1.5vh 2vw;
+            padding: 2vmin;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1vh;
+            gap: 1.5vmin;
             box-sizing: border-box;
         }
 
-        .info-bar { display: flex; justify-content: space-evenly; align-items: center; width: 100%; font-size: clamp(0.9rem, 2.5vmin, 1.2rem); gap: 1vw; }
-        .info-box { background: rgba(0,0,0,0.3); border: 2px solid var(--glow-color); border-radius: 1.5vmin; padding: 1vmin 2vmin; box-shadow: 0 0 1.5vmin var(--glow-color); backdrop-filter: blur(5px); text-align: center; }
-        .info-box span { font-family: 'Orbitron', sans-serif; display: block; font-size: clamp(1rem, 3vmin, 1.5rem); color: var(--glow-color);}
-        
-        #message-box { font-family: 'Orbitron', sans-serif; font-size: clamp(1.1rem, 3.5vmin, 1.8rem); color: var(--win-glow-color); text-shadow: 0 0 10px var(--win-glow-color); padding: 1vmin; text-align: center; }
-        
-        #bet-control-box {
-            cursor: pointer;
-            transition: transform 0.1s;
+        .info-bar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            font-size: clamp(0.9rem, 2vmin, 1.2rem);
         }
-        #bet-control-box:active {
-            transform: scale(0.95);
+        
+        .info-box { 
+            text-align: center; 
+        }
+
+        #balance-box, #win-box {
+            background: rgba(0,0,0,0.3);
+            border: 2px solid var(--glow-color);
+            border-radius: 1.5vmin;
+            padding: 1vmin 2vmin;
+            box-shadow: 0 0 1.5vmin var(--glow-color);
+            backdrop-filter: blur(5px);
+        }
+
+        .info-box span { font-family: 'Orbitron', sans-serif; display: block; font-size: clamp(1rem, 2.5vmin, 1.5rem); color: var(--glow-color);}
+        #message-box { font-family: 'Orbitron', sans-serif; font-size: clamp(1.1rem, 3vmin, 1.8rem); color: var(--win-glow-color); text-shadow: 0 0 10px var(--win-glow-color); padding: 1vmin; }
+        
+        #bet-selection-bar {
+            display: flex;
+            gap: 1.5vmin;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 1vmin 0;
+        }
+        .bet-select-btn {
+            font-family: 'Orbitron', sans-serif;
+            background: rgba(0,0,0,0.4);
+            border: 2px solid rgba(0, 255, 195, 0.5);
+            color: #fff;
+            padding: 1vmin 2vmin;
+            border-radius: 1vmin;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: clamp(0.9rem, 2vmin, 1.3rem);
+        }
+        .bet-select-btn:hover {
+            border-color: var(--glow-color);
+            background: rgba(0, 255, 195, 0.2);
+        }
+        .bet-select-btn.active {
+            background: var(--glow-color);
+            color: #000;
+            border-color: var(--glow-color);
+            box-shadow: 0 0 15px var(--glow-color);
+            transform: scale(1.05);
         }
         
         #buyBonusButton {
-            font-family: 'Orbitron', sans-serif; font-size: clamp(0.8rem, 2.5vmin, 1.2rem); 
-            padding: 1.5vmin 3vmin; border: 2px solid var(--secondary-glow);
+             font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1rem, 2vmin, 1.5rem); 
+            padding: 1.5vmin 3vmin; 
+            border: 2px solid var(--secondary-glow);
             border-radius: 1.5vmin;
             background-image: linear-gradient(to bottom, rgba(249, 0, 255, 0.3), rgba(249, 0, 255, 0.1));
-            color: #fff; cursor: pointer;
+            color: #fff;
+            cursor: pointer;
             text-shadow: 0 0 1vmin var(--secondary-glow);
             transition: all 0.2s;
-            position: absolute; top: 2vmin; right: 2vmin; z-index: 100;
         }
-        #buyBonusButton:disabled { filter: grayscale(1) brightness(0.7); cursor: not-allowed; }
+        #buyBonusButton:disabled {
+            filter: grayscale(1) brightness(0.7);
+            cursor: not-allowed;
+        }
+        
+        .video-animation-container {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: clamp(150px, 30vw, 400px);
+            z-index: 5;
+            pointer-events: none;
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+        }
+
+        #left-video-container { left: 0; }
+        #right-video-container { right: 0; transform: scaleX(-1); }
+
+        .video-player {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: auto;
+            height: 80%;
+            max-width: 100%;
+            transition: opacity 0.2s ease-in-out;
+            opacity: 0;
+        }
 
         #win-lines-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
         #win-lines-svg { overflow: visible; width: 100%; height: 100%; }
@@ -243,7 +449,7 @@
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; text-align: center; color: #fff; z-index: 1000; }
         .modal-content { font-family: 'Orbitron', sans-serif; animation: modal-appear 1s forwards; background: rgba(10, 0, 20, 0.95); border: 2px solid var(--glow-color); border-radius: 2vmin; padding: 3vmin; max-width: 90vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 0 50px var(--secondary-glow); }
         @keyframes modal-appear { 0% { transform: scale(0.5) rotate(-15deg); opacity: 0; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
-        .modal-title { font-size: 5vmin; color: var(--glow-color); text-shadow: 0 0 2vmin var(--glow-color); margin-bottom: 3vh; }
+        .modal-title { font-size: 5vmin; color: var(--glow-color); text-shadow: 0 0 2vmin var(--glow-color); }
         .modal-subtitle { font-size: 4vmin; margin-top: 2vmin; }
         #expanding-symbol-info { display: flex; align-items: center; justify-content: center; gap: 2vmin; margin-top: 1vmin; }
         #expanding-symbol-display { width: 10vmin; height: 10vmin; }
@@ -252,25 +458,119 @@
         .bonus-transition-content h1 { font-size: clamp(3rem, 10vmin, 8rem); color: var(--win-glow-color); text-shadow: 0 0 10px var(--win-glow-color), 0 0 30px var(--win-glow-color), 0 0 60px var(--secondary-glow); margin: 0; }
         .bonus-transition-content p { font-size: clamp(1rem, 3vmin, 2rem); color: #fff; margin-top: 2vmin; text-shadow: 0 0 10px #000; }
         @keyframes bonus-pulse { 0%, 100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.05); opacity: 1; } }
+
         
-        #bet-options-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 1.5vmin;
+        /* --- LANDSCAPE LAYOUT (Default Desktop & Tablet) --- */
+        @media (orientation: landscape) {
+             .video-animation-container {
+                display: flex; /* Show videos only on landscape */
+            }
         }
-        .bet-select-btn {
-            font-family: 'Orbitron', sans-serif; background: rgba(0,0,0,0.4); 
-            border: 2px solid rgba(0, 255, 195, 0.5); color: #fff; 
-            padding: 2.5vmin; border-radius: 1vmin; cursor: pointer; 
-            transition: all 0.2s ease; font-size: clamp(1rem, 3vmin, 1.4rem);
+
+
+        /* --- MOBILE/PORTRAIT LAYOUT --- */
+        @media (orientation: portrait) {
+            /* Show blocker only on landscape for mobile */
+            @media (max-width: 1024px) {
+                #orientation-blocker { 
+                    display: none;
+                }
+                body:not(.portrait-mode) #orientation-blocker {
+                    display: flex;
+                }
+                body.portrait-mode #game-container {
+                    display: flex;
+                }
+            }
+             
+            #game-area {
+                flex-direction: column;
+                justify-content: flex-start; /* Align items to the top */
+                padding-top: 15vh; /* Space for the title */
+                padding-bottom: 25vh; /* Space for the bottom UI */
+                box-sizing: border-box;
+                gap: 3vh; /* Space between reels and controls */
+            }
+            .game-title {
+                font-size: 8vmin;
+                top: 5vh;
+            }
+            .reels-container {
+                order: 1; /* Reels first */
+                width: 95vw;
+                /* Aspect ratio 5 reels, 3 rows high -> 5:3. Width is 95vw, so height is (95/5)*3 = 57vw */
+                height: 57vw;
+                padding: 1.5vw;
+                gap: 1vw;
+            }
+            .reel {
+                width: 100%; /* Take up 1/5 of the container width */
+                height: 100%;
+            }
+            .symbol {
+                height: 33.333%; /* 3 symbols per reel */
+            }
+            .symbol img {
+                max-width: 80%;
+                max-height: 80%;
+            }
+            /* Hide elements not needed in portrait */
+            #left-video-container, 
+            #right-video-container,
+            .side-panel:not(#right-panel) {
+                display: none;
+            }
+
+            #right-panel { /* This panel holds the spin buttons */
+                order: 2; /* Buttons after reels */
+                width: 100%;
+                height: auto;
+                padding: 0;
+                flex-direction: row; /* Buttons side-by-side */
+                gap: 5vw;
+                justify-content: center;
+                align-items: center;
+            }
+
+            #ui-panel { /* Bottom info bar */
+                height: 25vh; /* Fixed height for the bottom area */
+                padding: 2vmin;
+                gap: 1.5vmin;
+                justify-content: flex-end; /* Push content to the bottom of the panel */
+            }
+
+            .info-bar {
+                font-size: clamp(0.8rem, 2.8vmin, 1.1rem);
+            }
+            #bet-selection-bar {
+                flex-wrap: wrap; /* Allow bet buttons to wrap */
+                justify-content: center;
+                gap: 1.5vmin;
+            }
+            .bet-select-btn {
+                padding: 1.5vmin 2.5vmin;
+            }
         }
-        .bet-select-btn:hover, .bet-select-btn:active {
-            border-color: var(--glow-color); background: rgba(0, 255, 195, 0.2);
-        }
-        .bet-select-btn.active {
-            background: var(--glow-color); color: #000; 
-            border-color: var(--glow-color); box-shadow: 0 0 15px var(--glow-color);
-            transform: scale(1.05);
+
+        /* --- FIX FOR LANDSCAPE ON SMALL HEIGHT DEVICES (PHONES) --- */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .game-title { font-size: 5vh; top: 1vh; }
+            #mute-button { width: 6vh; height: 6vh; font-size: 2.5vh; }
+            .side-panel { width: 15vw; padding: 0 2vw; }
+            #spinButton { width: 18vh; height: 18vh; }
+            #autoSpinButton, #buyBonusButton { padding: 1vh 2vh; font-size: 2vh; }
+            
+            #game-area { padding-top: 8vh; padding-bottom: 25vh; }
+
+            .reels-container { gap: 1vh; padding: 1.5vh; }
+            .reel { width: 15vh; height: 45vh; }
+            .symbol { height: 15vh; }
+            
+            #ui-panel { height: 25vh; padding: 1vh; gap: 1vh;}
+            .info-bar { font-size: 2vh; }
+            .info-box span { font-size: 2.5vh; }
+            #bet-selection-bar { gap: 1vh; }
+            .bet-select-btn { padding: 1vh 1.5vh; font-size: 1.8vh; }
         }
 
     </style>
@@ -284,6 +584,12 @@
         <p id="loading-percentage">0%</p>
     </div>
 
+    <div id="orientation-blocker">
+        <i class="fas fa-mobile-screen"></i>
+        <h2>Моля, завъртете устройството си</h2>
+        <p>Тази игра е оптимизирана за пейзажен (хоризонтален) режим.</p>
+    </div>
+
     <div id="login-required-container">
         <div class="login-box">
             <i class="fas fa-lock"></i>
@@ -293,15 +599,25 @@
         </div>
     </div>
 
+
     <div id="game-container">
-        <div class="game-header">
-            <img id="header-random-symbol" src="" alt="Random Symbol">
-            <h1 class="game-title">Wild Angels</h1>
-        </div>
         
-        <button id="buyBonusButton">КУПИ БОНУС</button>
+        <h1 class="game-title">Wild Angels</h1>
+        
+        <button id="mute-button"><i class="fas fa-volume-high"></i></button>
+
+        <div id="left-video-container" class="video-animation-container">
+            <video id="videoLeft1" class="video-player" src="" muted playsinline></video>
+            <video id="videoLeft2" class="video-player" src="" muted playsinline></video>
+        </div>
+        <div id="right-video-container" class="video-animation-container">
+            <video id="videoRight1" class="video-player" src="" muted playsinline></video>
+            <video id="videoRight2" class="video-player" src="" muted playsinline></video>
+        </div>
 
         <div id="game-area">
+            <div class="side-panel"></div>
+            
             <div class="reels-container">
                 <div class="reel" id="reel0"></div>
                 <div class="reel" id="reel1"></div>
@@ -313,40 +629,27 @@
                 </div>
             </div>
             
-            <div id="mobile-controls-container">
-                <button id="autoSpinButton" class="side-control-btn">
-                    <i class="fas fa-play"></i>
-                    <span>AUTO</span>
-                </button>
+            <div id="right-panel" class="side-panel">
                 <button id="spinButton">
                     <svg viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"></path></svg>
                     <span id="spin-text">ЗАВЪРТИ</span>
                 </button>
-                <button id="mute-button" class="side-control-btn">
-                     <i class="fas fa-volume-high"></i>
-                     <span>ЗВУК</span>
-                </button>
+                <button id="autoSpinButton">AUTO</button>
+                 <button id="buyBonusButton">КУПИ БОНУС</button>
             </div>
         </div>
 
         <div id="ui-panel">
-            <div id="message-box">ИЗБЕРЕТЕ ЗАЛОГ</div>
             <div class="info-bar">
-                <div class="info-box" id="balance-box">Баланс<span id="balance">0.00</span></div>
-                <div class="info-box" id="bet-control-box">Залог<span id="current-bet">0.00</span></div>
-                <div class="info-box" id="win-box">Печалба<span id="win">0.00</span></div>
+                <div class="info-box" id="balance-box">Баланс:<span id="balance">0</span></div>
+                <div class="info-box" id="message-box">ИЗБЕРЕТЕ ЗАЛОГ</div>
+                <div class="info-box" id="win-box">Печалба:<span id="win">0</span></div>
+            </div>
+            <div id="bet-selection-bar">
             </div>
         </div>
     </div>
     
-    <div class="modal" id="bet-modal">
-        <div class="modal-content">
-            <h2 class="modal-title">ИЗБЕРЕТЕ ЗАЛОГ</h2>
-            <div id="bet-options-container">
-            </div>
-        </div>
-    </div>
-
     <div class="modal" id="bonus-modal">
         <div class="modal-content">
             <h2 id="modal-title" class="modal-title">БОНУС ИГРА!</h2>
@@ -411,6 +714,7 @@
     async function updateBalanceInFirestore(newBalance) {
         if (!userDocRef) return;
         try {
+            // We use Math.round to avoid floating point issues in Firestore
             await updateDoc(userDocRef, { chips: Math.round(newBalance) });
         } catch (error) {
             console.error("Грешка при обновяване на баланса:", error);
@@ -456,6 +760,15 @@
         const assetsToLoad = [];
         Object.keys(SYMBOLS).forEach(name => assetsToLoad.push({type: 'image', src: SYMBOLS[name].src}));
         SOUND_FILES.forEach(name => assetsToLoad.push({type: 'audio', src: name}));
+
+        for (const symbolKey in SYMBOLS) {
+            const symbolData = SYMBOLS[symbolKey];
+            if (symbolData.videos && symbolData.videos > 0) {
+                for (let i = 1; i <= symbolData.videos; i++) {
+                    assetsToLoad.push({type: 'video', src: `${symbolKey}_v${i}.webm`});
+                }
+            }
+        }
         
         let loadedCount = 0;
         const totalCount = assetsToLoad.length;
@@ -485,6 +798,11 @@
                     audio.addEventListener('canplaythrough', onAssetLoaded, { once: true });
                     audio.addEventListener('error', onAssetError, { once: true });
                     audio.src = asset.src;
+                } else if (asset.type === 'video') {
+                     const video = document.createElement('video');
+                     video.addEventListener('canplaythrough', onAssetLoaded, { once: true });
+                     video.addEventListener('error', onAssetError, { once: true });
+                     video.src = asset.src;
                 }
             });
         });
@@ -524,6 +842,7 @@
         let isMuted = false;
         let hasRequestedFullscreen = false;
 
+        // Audio Elements
         const backgroundMusicFiles = ['bg_music_1.mp3', 'bg_music_2.mp3', 'bg_music_3.mp3'];
         let currentTrackIndex = 0;
         const bgMusicPlayer = new Audio();
@@ -533,6 +852,7 @@
         const expandSound = new Audio('expand.mp3');
         const allSounds = [bgMusicPlayer, winSound, anticipationSound, expandSound];
 
+        // DOM Elements
         const spinButton = document.getElementById('spinButton');
         const autoSpinButton = document.getElementById('autoSpinButton');
         const buyBonusButton = document.getElementById('buyBonusButton');
@@ -541,36 +861,33 @@
         const reels = Array.from({ length: REEL_COUNT }, (_, i) => document.getElementById(`reel${i}`));
         const gameArea = document.getElementById('game-area');
         const winLinesSvg = document.getElementById('win-lines-svg');
+        const betSelectionBar = document.getElementById('bet-selection-bar');
         const messageBox = document.getElementById('message-box');
         const muteButton = document.getElementById('mute-button');
-        const headerRandomSymbol = document.getElementById('header-random-symbol');
         
-        const betControlBox = document.getElementById('bet-control-box');
-        const currentBetDisplay = document.getElementById('current-bet');
-        const betModal = document.getElementById('bet-modal');
-        const betOptionsContainer = document.getElementById('bet-options-container');
-
         const reelStrips = [];
         
-        const openModal = (modal) => modal.style.display = 'flex';
-        const closeModal = (modal) => modal.style.display = 'none';
-
+        const leftVideoContainer = document.getElementById('left-video-container');
+        const rightVideoContainer = document.getElementById('right-video-container');
+        const videoPlayers = {
+            left1: document.getElementById('videoLeft1'),
+            left2: document.getElementById('videoLeft2'),
+            right1: document.getElementById('videoRight1'),
+            right2: document.getElementById('videoRight2')
+        };
+        let isWinVideoPlaying = false;
+        
         function goFullscreen() {
             const elem = document.documentElement;
             if (elem.requestFullscreen) {
                 elem.requestFullscreen().catch(err => console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`));
-            } else if (elem.mozRequestFullScreen) {
+            } else if (elem.mozRequestFullScreen) { /* Firefox */
                 elem.mozRequestFullScreen();
-            } else if (elem.webkitRequestFullscreen) {
+            } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
                 elem.webkitRequestFullscreen();
-            } else if (elem.msRequestFullscreen) {
+            } else if (elem.msRequestFullscreen) { /* IE/Edge */
                 elem.msRequestFullscreen();
             }
-        }
-        
-        function setRandomHeaderSymbol() {
-            const randomSymbolKey = REGULAR_SYMBOLS[Math.floor(Math.random() * REGULAR_SYMBOLS.length)];
-            headerRandomSymbol.src = SYMBOLS[randomSymbolKey].src;
         }
 
         function playNextTrack() {
@@ -593,7 +910,7 @@
         function toggleMute() {
             isMuted = !isMuted;
             allSounds.forEach(sound => sound.muted = isMuted);
-            muteButton.querySelector('i').className = `fas ${isMuted ? 'fa-volume-xmark' : 'fa-volume-high'}`;
+            muteButton.innerHTML = `<i class="fas ${isMuted ? 'fa-volume-xmark' : 'fa-volume-high'}"></i>`;
         }
         muteButton.addEventListener('click', toggleMute);
 
@@ -630,36 +947,14 @@
         }
         
         function initializeUI() {
-            betOptionsContainer.innerHTML = '';
+            betSelectionBar.innerHTML = '';
             BET_AMOUNTS.forEach((amount, index) => {
                 const button = document.createElement('button');
                 button.classList.add('bet-select-btn');
                 button.textContent = (amount / 10).toFixed(2);
                 button.dataset.index = index;
-                
-                button.addEventListener('click', () => {
-                    if (!isSpinning) {
-                        currentBetIndex = index;
-                        updateBetSelection();
-                        closeModal(betModal);
-                    }
-                });
-
-                betOptionsContainer.appendChild(button);
+                betSelectionBar.appendChild(button);
             });
-
-            betControlBox.addEventListener('click', () => {
-                if (!isSpinning) {
-                    openModal(betModal);
-                }
-            });
-
-            betModal.addEventListener('click', (e) => {
-                if(e.target === betModal) {
-                    closeModal(betModal);
-                }
-            });
-
             updateBetSelection();
             updateBalanceDisplay();
             updateWin(0);
@@ -667,9 +962,7 @@
         
         function updateBetSelection() {
             bet = BET_AMOUNTS[currentBetIndex];
-            currentBetDisplay.textContent = (bet / 10).toFixed(2);
-            
-            document.querySelectorAll('#bet-options-container .bet-select-btn').forEach(btn => {
+            document.querySelectorAll('.bet-select-btn').forEach(btn => {
                 btn.classList.toggle('active', parseInt(btn.dataset.index) === currentBetIndex);
             });
         }
@@ -681,10 +974,9 @@
                 goFullscreen();
                 hasRequestedFullscreen = true;
             }
-
             if (bgMusicPlayer.paused) {
                  bgMusicPlayer.src = backgroundMusicFiles[currentTrackIndex];
-                 bgMusicPlayer.play().catch(e => {});
+                 bgMusicPlayer.play().catch(e => { /* Autoplay blocked */ });
             }
 
             if (!isFreeSpin && freeSpinsRemaining === 0 && balance < bet) {
@@ -706,7 +998,7 @@
             } else if (!isFreeSpin) {
                 balance -= bet;
                 await updateBalanceInFirestore(balance);
-                updateBalanceDisplay();
+                updateBalanceDisplay(); // Update UI immediately after bet
             }
             
             let results = [];
@@ -793,6 +1085,14 @@
         autoSpinButton.addEventListener('click', toggleAutoSpin);
         buyBonusButton.addEventListener('click', buyBonus);
 
+        betSelectionBar.addEventListener('click', (e) => {
+            const button = e.target.closest('.bet-select-btn');
+            if (button && !isSpinning) {
+                currentBetIndex = parseInt(button.dataset.index);
+                updateBetSelection();
+            }
+        });
+
         document.addEventListener('keydown', (e) => {
             if (e.code === 'Space') {
                 e.preventDefault();
@@ -805,7 +1105,10 @@
             isAutoSpinning = !isAutoSpinning;
             autoSpinButton.classList.toggle('active', isAutoSpinning);
             if (isAutoSpinning) {
+                autoSpinButton.textContent = "СТОП";
                 if(!isSpinning) spin();
+            } else {
+                autoSpinButton.textContent = "AUTO";
             }
         }
         
@@ -813,7 +1116,7 @@
             spinButton.disabled = disabled;
             autoSpinButton.disabled = disabled && !isAutoSpinning;
             buyBonusButton.disabled = disabled || freeSpinsRemaining > 0;
-            betControlBox.style.pointerEvents = disabled ? 'none' : 'auto';
+            betSelectionBar.style.pointerEvents = disabled ? 'none' : 'auto';
         }
 
         function handleNextAction(hasWin, bonusTriggered) {
@@ -845,6 +1148,7 @@
         }
         
         function clearAnimations() {
+            stopWinVideo();
             winLinesSvg.innerHTML = '';
             reels.forEach(reel => {
                 const expandingSymbols = reel.querySelectorAll('.symbol.expanding');
@@ -861,7 +1165,8 @@
         async function checkWin(results, finalIndexes) {
             let totalWin = 0; const winningLines = []; const winningPositions = new Set();
             let scatterCount = 0; const scatterPositions = [];
-            
+            let firstWinningSymbol = null;
+
             results.forEach((reelResult, reelIndex) => {
                 reelResult.forEach((symbolKey, symbolIndex) => {
                     if (SYMBOLS[symbolKey]?.isScatter) {
@@ -895,6 +1200,8 @@
                 }
 
                 if (matchCount >= 3) {
+                    if (!firstWinningSymbol) firstWinningSymbol = payingSymbolKey;
+
                     const symbolData = SYMBOLS[payingSymbolKey];
                     if (symbolData?.payout?.[matchCount]) {
                         const payout = symbolData.payout[matchCount] * (bet / 10);
@@ -955,9 +1262,9 @@
             if (totalWin > maxWin) totalWin = maxWin;
 
             if (totalWin > 0) {
-                balance += totalWin;
-                await updateBalanceInFirestore(balance);
-                updateBalanceDisplay();
+                balance += totalWin; // Add win to local balance
+                await updateBalanceInFirestore(balance); // Sync with Firestore
+                updateBalanceDisplay(); // Update UI
                 
                 if(freeSpinsRemaining === 0 && !hasExpansionWin) {
                     manageBackgroundMusic(false);
@@ -965,6 +1272,7 @@
                     winSound.onended = () => manageBackgroundMusic(true);
                 }
                 
+                playWinVideo(firstWinningSymbol);
                 await updateWin(totalWin, true);
                 flashWinningSymbols(winningPositions, finalIndexes);
                 drawWinningLines(winningLines);
@@ -988,6 +1296,43 @@
             return { hasWin: totalWin > 0 || hasExpansionWin, bonusTriggered, winAmount: totalWin };
         }
         
+        function playWinVideo(symbolKey) {
+            // Video playback is disabled in portrait mode, so we just return
+            if (window.innerHeight > window.innerWidth) {
+                return;
+            }
+            const symbolData = SYMBOLS[symbolKey];
+            if (!symbolData || !symbolData.videos || symbolData.videos === 0 || isWinVideoPlaying) {
+                return;
+            }
+            isWinVideoPlaying = true;
+            const videoIndex = Math.floor(Math.random() * symbolData.videos) + 1;
+            const videoSrc = `${symbolKey}_v${videoIndex}.webm`; 
+            leftVideoContainer.style.display = 'flex';
+            rightVideoContainer.style.display = 'flex';
+            Object.values(videoPlayers).forEach(video => {
+                video.src = videoSrc;
+                video.currentTime = 0;
+                video.loop = true;
+            });
+            videoPlayers.left1.play();
+            videoPlayers.right1.play();
+            videoPlayers.left1.style.opacity = 1;
+            videoPlayers.right1.style.opacity = 1;
+        }
+
+        function stopWinVideo() {
+            if (!isWinVideoPlaying) return;
+            leftVideoContainer.style.display = 'none';
+            rightVideoContainer.style.display = 'none';
+            Object.values(videoPlayers).forEach(video => {
+                video.pause();
+                video.loop = false;
+                video.src = "";
+            });
+            isWinVideoPlaying = false;
+        }
+
         function startBonus() {
             freeSpinsRemaining = SYMBOLS.scatter.spins;
             updateSpinButtonText();
@@ -1111,10 +1456,10 @@
             }
         }
         
-        setRandomHeaderSymbol();
         initializeReels();
         initializeUI();
         
+        // Return the function to handle external balance updates
         return function(newBalance) {
             if (!isSpinning) {
                 balance = newBalance;
