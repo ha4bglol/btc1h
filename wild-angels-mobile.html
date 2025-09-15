@@ -27,7 +27,7 @@
             overflow: hidden;
             font-family: 'Poppins', sans-serif;
             color: #fff;
-            -webkit-tap-highlight-color: transparent; /* Премахва синьото оцветяване при докосване на бутони */
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -54,24 +54,22 @@
         .login-box a { display: inline-block; margin-top: 2rem; padding: 1rem 2rem; font-family: 'Orbitron', sans-serif; background: var(--glow-color); color: #100a1c; border-radius: 1rem; text-decoration: none; font-weight: bold; transition: all 0.2s; }
         .login-box a:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--glow-color); }
 
-        /* --- НАЧАЛО НА ОСНОВНИТЕ ПРОМЕНИ В CSS ЗА МОБИЛЕН ИНТЕРФЕЙС --- */
+        /* --- НАЧАЛО НА НОВИЯ CSS ЗА МОБИЛЕН ИНТЕРФЕЙС --- */
         
         #game-container {
             display: none;
             flex-direction: column;
             width: 100%;
-            height: 100vh; /* Използваме vh за да сме сигурни, че заема целия екран */
+            height: 100vh; /* Заема цялата височина на екрана */
             position: relative;
+            justify-content: space-between; /* Разпределя елементите вертикално */
         }
 
         .game-header {
-            width: 100%;
+            padding-top: max(2vh, 10px); /* Осигурява място отгоре */
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding-top: 5vh;
-            flex-shrink: 0; /* Не позволява на хедъра да се свива */
         }
 
         #header-random-symbol {
@@ -93,14 +91,13 @@
         }
 
         #game-area {
-            flex-grow: 1; /* Основната част заема останалото пространство */
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center; /* Центрира съдържанието вертикално */
+            justify-content: center;
             align-items: center;
             width: 100%;
-            padding: 2vh 0;
-            gap: 4vh; /* Разстояние между риловете и контролите */
+            gap: max(3vh, 20px); /* Динамично разстояние между рилове и контроли */
         }
         
         .reels-container {
@@ -114,14 +111,13 @@
             backdrop-filter: blur(8px);
             position: relative;
             width: 95vw;
-            height: 65vw; /* Пропорционална височина спрямо ширината */
+            /* КЛЮЧОВА ПРОМЯНА: Задаваме съотношение 5:3.2, за да гарантираме, че 3 символа се виждат добре */
+            aspect-ratio: 5 / 3.2; 
             max-width: 500px;
-            max-height: 340px;
-            flex-shrink: 0;
         }
 
         .reel {
-            width: 20%; /* 100% / 5 рила */
+            width: 20%;
             height: 100%;
             overflow: hidden;
             background: linear-gradient(135deg, rgba(249, 0, 255, 0.1), rgba(0, 255, 195, 0.1));
@@ -131,9 +127,10 @@
         }
         
         .reel-strip { position: absolute; top: 0; left: 0; width: 100%; }
+        /* КЛЮЧОВА ПРОМЯНА: Гарантираме, че 3 символа запълват 100% от височината на рила */
         .symbol {
             width: 100%;
-            height: 33.333%; /* 3 символа на рил */
+            height: 33.3333%; 
             display: flex; justify-content: center; align-items: center; box-sizing: border-box; position: relative;
         }
         .symbol img { max-width: 85%; max-height: 85%; object-fit: contain; filter: drop-shadow(0 0 8px rgba(0,0,0,0.7)); }
@@ -144,32 +141,31 @@
             align-items: center;
             gap: 5vw;
             width: 100%;
-            flex-shrink: 0;
         }
         
         #spinButton {
             font-family: 'Orbitron', sans-serif;
             width: 28vmin; height: 28vmin;
-            max-width: 120px; max-height: 120px;
+            max-width: 110px; max-height: 110px;
             border: 3px solid var(--glow-color);
             border-radius: 50%;
             background-image: linear-gradient(to bottom, rgba(0, 255, 195, 0.3), rgba(0, 255, 195, 0.1));
             color: #fff; cursor: pointer;
             text-shadow: 0 0 1vmin var(--glow-color);
-            transition: all 0.2s;
+            transition: transform 0.1s;
             display: flex; align-items: center; justify-content: center;
             font-size: clamp(0.8rem, 3.5vmin, 1.4rem);
             flex-direction: column; line-height: 1.2;
-            order: 2; /* Централен бутон */
+            order: 2;
         }
-        #spinButton:not(:disabled):hover { transform: scale(1.05); }
+        #spinButton:active { transform: scale(0.95); }
         #spinButton:disabled { filter: grayscale(1) brightness(0.7); cursor: not-allowed; }
         #spinButton svg { width: 40%; height: 40%; fill: currentColor; }
 
         .side-control-btn {
             font-family: 'Orbitron', sans-serif;
             width: 20vmin; height: 20vmin;
-            max-width: 80px; max-height: 80px;
+            max-width: 75px; max-height: 75px;
             border: 2px solid var(--glow-color);
             border-radius: 50%;
             background: rgba(0,0,0,0.4);
@@ -177,8 +173,9 @@
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
             font-size: clamp(0.6rem, 2.5vmin, 0.9rem);
-            transition: all 0.2s;
+            transition: transform 0.1s;
         }
+        .side-control-btn:active { transform: scale(0.95); }
         .side-control-btn i { font-size: clamp(1.2rem, 5vmin, 1.8rem); margin-bottom: 0.5vmin; }
         #autoSpinButton { order: 1; }
         #mute-button { order: 3; }
@@ -186,23 +183,22 @@
 
         #ui-panel {
             width: 100%;
-            padding: 1vh 2vw;
+            padding: 1.5vh 2vw;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 1.5vmin;
             box-sizing: border-box;
-            flex-shrink: 0; /* Не позволява да се свива */
         }
 
-        .info-bar { display: flex; justify-content: space-around; align-items: center; width: 100%; max-width: 1200px; font-size: clamp(0.9rem, 2.5vmin, 1.2rem); }
+        .info-bar { display: flex; justify-content: space-around; align-items: center; width: 100%; font-size: clamp(0.9rem, 2.5vmin, 1.2rem); }
         #balance-box, #win-box { background: rgba(0,0,0,0.3); border: 2px solid var(--glow-color); border-radius: 1.5vmin; padding: 1vmin 2vmin; box-shadow: 0 0 1.5vmin var(--glow-color); backdrop-filter: blur(5px); }
         .info-box span { font-family: 'Orbitron', sans-serif; display: block; font-size: clamp(1rem, 3vmin, 1.5rem); color: var(--glow-color);}
         #message-box { font-family: 'Orbitron', sans-serif; font-size: clamp(1.1rem, 3.5vmin, 1.8rem); color: var(--win-glow-color); text-shadow: 0 0 10px var(--win-glow-color); padding: 1vmin; text-align: center; }
         
         #bet-selection-bar { display: flex; gap: 1.5vmin; align-items: center; justify-content: center; width: 100%; padding: 1vmin 0; flex-wrap: wrap; }
         .bet-select-btn { font-family: 'Orbitron', sans-serif; background: rgba(0,0,0,0.4); border: 2px solid rgba(0, 255, 195, 0.5); color: #fff; padding: 1.5vmin 2.5vmin; border-radius: 1vmin; cursor: pointer; transition: all 0.2s ease; font-size: clamp(0.8rem, 2.5vmin, 1.2rem); }
-        .bet-select-btn:hover { border-color: var(--glow-color); background: rgba(0, 255, 195, 0.2); }
+        .bet-select-btn:hover, .bet-select-btn:active { border-color: var(--glow-color); background: rgba(0, 255, 195, 0.2); }
         .bet-select-btn.active { background: var(--glow-color); color: #000; border-color: var(--glow-color); box-shadow: 0 0 15px var(--glow-color); transform: scale(1.05); }
         
         #buyBonusButton {
@@ -490,7 +486,8 @@
         let freeSpinsRemaining = 0;
         let expandingSymbol = null;
         let isMuted = false;
-        
+        let hasRequestedFullscreen = false; // НОВО: Флаг за fullscreen
+
         const backgroundMusicFiles = ['bg_music_1.mp3', 'bg_music_2.mp3', 'bg_music_3.mp3'];
         let currentTrackIndex = 0;
         const bgMusicPlayer = new Audio();
@@ -514,6 +511,20 @@
         const headerRandomSymbol = document.getElementById('header-random-symbol');
         
         const reelStrips = [];
+        
+        // НОВО: Функция за активиране на цял екран
+        function goFullscreen() {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen().catch(err => console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`));
+            } else if (elem.mozRequestFullScreen) { /* Firefox */
+                elem.mozRequestFullScreen();
+            } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { /* IE/Edge */
+                elem.msRequestFullscreen();
+            }
+        }
         
         function setRandomHeaderSymbol() {
             const randomSymbolKey = REGULAR_SYMBOLS[Math.floor(Math.random() * REGULAR_SYMBOLS.length)];
@@ -599,6 +610,12 @@
 
         async function spin(isFreeSpin = false) {
             if (isSpinning) return;
+
+            // НОВО: Проверка и активиране на цял екран при първо завъртане
+            if (!hasRequestedFullscreen) {
+                goFullscreen();
+                hasRequestedFullscreen = true;
+            }
 
             if (bgMusicPlayer.paused) {
                  bgMusicPlayer.src = backgroundMusicFiles[currentTrackIndex];
@@ -1053,4 +1070,5 @@
     </script>
 </body>
 </html>
+
 
