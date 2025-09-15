@@ -147,18 +147,9 @@
             animation: rgb-text-glow 5s linear infinite;
         }
         @keyframes rgb-text-glow {
-            0% {
-                color: var(--glow-color);
-                text-shadow: 0 0 10px var(--glow-color), 0 0 20px var(--glow-color), 0 0 30px #fff;
-            }
-            50% {
-                color: var(--secondary-glow);
-                text-shadow: 0 0 10px var(--secondary-glow), 0 0 20px var(--secondary-glow), 0 0 30px #fff;
-            }
-            100% {
-                color: var(--glow-color);
-                text-shadow: 0 0 10px var(--glow-color), 0 0 20px var(--glow-color), 0 0 30px #fff;
-            }
+            0% { color: var(--glow-color); text-shadow: 0 0 8px var(--glow-color), 0 0 15px var(--glow-color), 0 0 25px #fff; }
+            50% { color: var(--secondary-glow); text-shadow: 0 0 8px var(--secondary-glow), 0 0 15px var(--secondary-glow), 0 0 25px #fff; }
+            100% { color: var(--glow-color); text-shadow: 0 0 8px var(--glow-color), 0 0 15px var(--glow-color), 0 0 25px #fff; }
         }
         
         /* --- СЛОТ МАШИНА --- */
@@ -166,19 +157,19 @@
             position: relative;
             display: flex;
             padding: 10px;
-            box-sizing: border-box; /* Added for correct calculation */
+            box-sizing: border-box;
             background: rgba(0, 0, 0, 0.4);
             border: 2px solid var(--glow-color);
             border-radius: 10px;
             gap: 10px;
-            height: calc(var(--symbol-size) * 3 + 20px); /* Corrected Height */
+            height: calc(var(--symbol-size) * 3 + 20px);
             box-shadow: 0 0 15px var(--glow-color), inset 0 0 10px rgba(0, 255, 195, 0.5);
             margin-bottom: 20px;
             backdrop-filter: blur(8px);
         }
         .reel {
             flex: 1;
-            height: 100%;
+            height: calc(var(--symbol-size) * 3); /* Fixed height */
             overflow: hidden;
             position: relative;
             background: linear-gradient(135deg, rgba(249, 0, 255, 0.1), rgba(0, 255, 195, 0.1));
@@ -227,7 +218,6 @@
         .slot-machine.anticipation-glow { animation: anticipation-pulse 1.2s infinite; }
         @keyframes anticipation-pulse { 0%, 100% { box-shadow: 0 0 3vmin var(--glow-color), inset 0 0 2vmin rgba(0, 255, 195, 0.5); } 50% { box-shadow: 0 0 8vmin var(--anticipation-glow-color), inset 0 0 4vmin var(--anticipation-glow-color); } }
 
-
         /* --- UI ПАНЕЛ --- */
         #ui-panel {
             display: flex;
@@ -267,9 +257,9 @@
             color: var(--win-glow-color);
             text-shadow: 0 0 10px var(--win-glow-color);
             font-weight: bold;
-            display: flex; /* Centering */
-            align-items: center; /* Centering */
-            justify-content: center; /* Centering */
+            display: flex;
+            align-items: center;
+            justify-content: center;
             text-align: center;
             padding: 2px 0;
         }
@@ -327,13 +317,8 @@
             color: #fff;
             font-weight: bold;
         }
-        .control-btn:hover:not(:disabled) {
-            transform: scale(1.05);
-        }
-        .control-btn:disabled {
-            filter: grayscale(1) brightness(0.7);
-            cursor: not-allowed;
-        }
+        .control-btn:hover:not(:disabled) { transform: scale(1.05); }
+        .control-btn:disabled { filter: grayscale(1) brightness(0.7); cursor: not-allowed; }
 
         #buyBonusButton {
             background: linear-gradient(45deg, #d81b60, #f900ff);
@@ -345,11 +330,7 @@
             box-shadow: 0 0 15px var(--glow-color);
             border: 2px solid var(--glow-color);
         }
-         #autoSpinButton.active { 
-            background: var(--secondary-glow); 
-            border-color: var(--secondary-glow); 
-            box-shadow: 0 0 2vmin var(--secondary-glow); 
-        }
+        #autoSpinButton.active { background: var(--secondary-glow); border-color: var(--secondary-glow); box-shadow: 0 0 2vmin var(--secondary-glow); }
 
         #spinButton {
             width: clamp(90px, 25vw, 120px); /* Increased Size */
@@ -367,26 +348,13 @@
             backdrop-filter: blur(5px);
             box-shadow: 0 0 15px var(--glow-color);
         }
-        #spinButton:not(:disabled):hover {
-            box-shadow: 0 0 25px var(--glow-color);
-            transform: scale(1.05);
-        }
-        #spinButton:active:not(:disabled) {
-            transform: scale(0.95);
-        }
-        #spinButton svg {
-            width: 40%;
-            height: 40%;
-            fill: currentColor;
-            transition: transform 0.5s;
-        }
-        #spin-text {
-            font-size: 0.8em;
-            margin-top: 5px;
-        }
+        #spinButton:not(:disabled):hover { box-shadow: 0 0 25px var(--glow-color); transform: scale(1.05); }
+        #spinButton:active:not(:disabled) { transform: scale(0.95); }
+        #spinButton svg { width: 40%; height: 40%; fill: currentColor; transition: transform 0.5s; }
+        #spin-text { font-size: 0.8em; margin-top: 5px; }
 
         /* --- МОДАЛНИ ПРОЗОРЦИ --- */
-         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; text-align: center; color: #fff; z-index: 1000; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; text-align: center; color: #fff; z-index: 1000; }
         .modal-content { font-family: 'Orbitron', sans-serif; animation: modal-appear 1s forwards; background: rgba(10, 0, 20, 0.95); border: 2px solid var(--glow-color); border-radius: 2vmin; padding: 3vmin; max-width: 90vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 0 50px var(--secondary-glow); }
         @keyframes modal-appear { 0% { transform: scale(0.5) rotate(-15deg); opacity: 0; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
         .modal-title { font-size: 5vmin; color: var(--glow-color); text-shadow: 0 0 2vmin var(--glow-color); }
@@ -628,19 +596,18 @@
             const BONUS_BUY_COST_MULTIPLIER = 100;
 
             let balance = initialBalance;
-            let currentBetIndex = 2; // Default to 5
+            let currentBetIndex = 2;
             let bet = BET_AMOUNTS[currentBetIndex];
             let isSpinning = false;
             let isAutoSpinning = false;
             let freeSpinsRemaining = 0;
             let expandingSymbol = null;
+            let symbolSize = 0; // Will be calculated once the DOM is ready
 
-            // Audio Elements
             const winSound = new Audio('win_sound.mp3');
             const anticipationSound = new Audio('anticipation.mp3');
             const expandSound = new Audio('expand.mp3');
 
-            // DOM Elements
             const spinButton = document.getElementById('spinButton');
             const autoSpinButton = document.getElementById('autoSpinButton');
             const buyBonusButton = document.getElementById('buyBonusButton');
@@ -667,19 +634,19 @@
                     reelStripElement.innerHTML = '';
                     const weightedStrip = createWeightedStrip();
                     reelStrips.push(weightedStrip);
-
-                    const totalSymbols = weightedStrip.length * 3; 
-                    for(let i = 0; i < totalSymbols; i++) {
+                    const fragment = document.createDocumentFragment();
+                    for(let i = 0; i < 60; i++) { // More symbols for smoother looping
                         const symbolKey = weightedStrip[i % weightedStrip.length];
                         const symbolElement = document.createElement('div');
                         symbolElement.className = 'symbol';
                         const img = document.createElement('img');
                         img.src = SYMBOLS[symbolKey].src;
                         img.alt = symbolKey;
-                        img.loading = 'lazy';
+                        img.loading = 'eager'; // Load first view eagerly
                         symbolElement.appendChild(img);
-                        reelStripElement.appendChild(symbolElement);
+                        fragment.appendChild(symbolElement);
                     }
+                    reelStripElement.appendChild(fragment);
                 });
             }
             
@@ -692,6 +659,11 @@
                     button.dataset.index = index;
                     betSelectionBar.appendChild(button);
                 });
+                
+                // *** CRITICAL FIX FOR ALIGNMENT ***
+                // Calculate symbol size after the DOM has been rendered
+                symbolSize = document.querySelector('.symbol').offsetHeight;
+                
                 updateBetSelection();
                 updateBalanceDisplay();
                 updateWin(0);
@@ -705,7 +677,7 @@
             }
 
             async function spin(isFreeSpin = false) {
-                if (isSpinning) return;
+                if (isSpinning || symbolSize === 0) return;
 
                 if (!isFreeSpin && freeSpinsRemaining === 0 && balance < bet) {
                     if(isAutoSpinning) toggleAutoSpin();
@@ -715,7 +687,6 @@
 
                 isSpinning = true;
                 setControlsDisabled(true);
-                
                 clearAnimations();
                 await updateWin(0);
                 messageBox.textContent = "КЪСМЕТ!";
@@ -734,35 +705,37 @@
                 
                 for (let i = 0; i < REEL_COUNT; i++) {
                     const strip = reelStrips[i];
-                    const randomIndex = Math.floor(Math.random() * strip.length);
+                    // Pick a random index, ensuring it's not too close to the end for the loop animation
+                    const randomIndex = Math.floor(Math.random() * (strip.length - SYMBOLS_PER_REEL_VISIBLE));
                     finalIndexes.push(randomIndex);
                     results.push([
-                        strip[(randomIndex + 0) % strip.length],
-                        strip[(randomIndex + 1) % strip.length],
-                        strip[(randomIndex + 2) % strip.length]
+                        strip[randomIndex],
+                        strip[randomIndex + 1],
+                        strip[randomIndex + 2]
                     ]);
                 }
                 
                 let anticipationSoundPlayed = false;
                 const spinPromises = reelsElements.map((reelStripElement, i) => {
-                    return new Promise(async (resolve) => {
+                    return new Promise((resolve) => {
                         const strip = reelStrips[i];
-                        const symbolSize = reelStripElement.parentElement.clientHeight / SYMBOLS_PER_REEL_VISIBLE;
-                        const baseTargetPosition = finalIndexes[i] * symbolSize;
-                        const loopOffset = strip.length * symbolSize;
+                        const targetSymbolIndex = finalIndexes[i];
+                        
+                        // Use the pre-calculated, integer-based symbolSize for perfect alignment
+                        const finalPosition = targetSymbolIndex * symbolSize;
+                        const loopPosition = (strip.length) * symbolSize;
                         
                         reelStripElement.style.transition = 'none';
-                        reelStripElement.style.transform = `translateY(-${baseTargetPosition + loopOffset}px)`;
+                        reelStripElement.style.transform = `translateY(-${loopPosition}px)`;
                         reelStripElement.offsetHeight; 
 
                         let landedScatters = 0;
                         results.slice(0, i).forEach(r => r.forEach(s => { if (SYMBOLS[s]?.isScatter) landedScatters++; }));
                         
-                        let duration = 1.5 + i * 0.3;
-                        if (freeSpinsRemaining === 0 && landedScatters >= 2 && slotMachine) {
+                        let duration = 2.5 + i * 0.3;
+                        if (freeSpinsRemaining === 0 && landedScatters >= 2) {
                             slotMachine.classList.add('anticipation-glow');
                             duration = 4 + i * 0.5;
-                            
                             if (!anticipationSoundPlayed) {
                                 anticipationSound.loop = true;
                                 anticipationSound.play().catch(e => {});
@@ -771,17 +744,9 @@
                         }
                         
                         reelStripElement.style.transition = `transform ${duration}s cubic-bezier(0.25, 1, 0.5, 1)`;
-                        reelStripElement.style.transform = `translateY(-${baseTargetPosition}px)`;
+                        reelStripElement.style.transform = `translateY(-${finalPosition}px)`;
 
-                        reelStripElement.addEventListener('transitionend', () => {
-                            results[i].forEach((symbolKey, symbolIndex) => {
-                                if (SYMBOLS[symbolKey]?.isScatter) {
-                                    const symbolElement = getSymbolElement(i, finalIndexes[i] + symbolIndex);
-                                    if (symbolElement) symbolElement.classList.add('scatter-land');
-                                }
-                            });
-                            resolve();
-                        }, { once: true });
+                        reelStripElement.addEventListener('transitionend', resolve, { once: true });
                     });
                 });
                 
@@ -791,6 +756,16 @@
                     anticipationSound.pause();
                     anticipationSound.currentTime = 0;
                 }
+                
+                // Animate scatter symbols on land
+                results.forEach((reelResult, reelIndex) => {
+                    reelResult.forEach((symbolKey, symbolIndex) => {
+                         if (SYMBOLS[symbolKey]?.isScatter) {
+                            const symbolElement = getSymbolElement(reelIndex, finalIndexes[reelIndex] + symbolIndex);
+                            if (symbolElement) symbolElement.classList.add('scatter-land');
+                        }
+                    });
+                });
                 
                 slotMachine.classList.remove('anticipation-glow');
                 const { hasWin, bonusTriggered, winAmount } = await checkWin(results, finalIndexes);
@@ -817,7 +792,7 @@
             });
 
             document.addEventListener('keydown', (e) => {
-                if (e.code === 'Space') {
+                if (e.code === 'Space' && !e.repeat) {
                     e.preventDefault();
                     if (document.querySelector('.modal[style*="display: flex"]')) return;
                     spinButton.click();
@@ -878,7 +853,6 @@
                     expandingSymbols.forEach(el => el.remove());
                     reelStrip.style.opacity = '1';
                 });
-
                 document.querySelectorAll('.symbol').forEach(el => { el.className = 'symbol'; });
                 slotMachine.classList.remove('anticipation-glow');
             }
@@ -944,14 +918,11 @@
                     if (expandingReelsIndices.size >= 3) {
                         hasExpansionWin = true;
                         expandSound.play().catch(e => {});
-                        
                         await new Promise(res => setTimeout(res, 500)); 
-
                         expandingReelsIndices.forEach(reelIndex => {
                             const reelStrip = reelsElements[reelIndex];
                             const parentReel = reelStrip.parentElement;
                             reelStrip.style.opacity = '0';
-
                             for (let i = 0; i < SYMBOLS_PER_REEL_VISIBLE; i++) {
                                 const expandingClone = document.createElement('div');
                                 expandingClone.className = 'symbol expanding';
@@ -962,12 +933,9 @@
                                 parentReel.appendChild(expandingClone);
                             }
                         });
-
                         await new Promise(res => setTimeout(res, 800)); 
-
                         const payoutData = SYMBOLS[expandingSymbol].payout;
                         const numExpandedReels = expandingReelsIndices.size;
-
                         if (payoutData?.[numExpandedReels]) {
                             const expansionPayout = payoutData[numExpandedReels] * bet * PAYLINES.length;
                             totalWin += expansionPayout;
@@ -983,11 +951,9 @@
                     balance += totalWin;
                     await updateBalanceInFirestore(balance);
                     updateBalanceDisplay();
-                    
                     if(freeSpinsRemaining === 0 && !hasExpansionWin) {
                         winSound.play().catch(e => {});
                     }
-                    
                     await updateWin(totalWin, true);
                     flashWinningSymbols(winningPositions, finalIndexes);
                     drawWinningLines(winningLines);
@@ -998,10 +964,8 @@
                     bonusTriggered = true;
                     if(isAutoSpinning) toggleAutoSpin();
                     await triggerBonusAnimation(scatterPositions, finalIndexes);
-                    
                     const bonusTransitionScreen = document.getElementById('bonus-transition-screen');
                     bonusTransitionScreen.style.display = 'flex';
-
                     bonusTransitionScreen.addEventListener('click', () => {
                         bonusTransitionScreen.style.display = 'none';
                         startBonus();
@@ -1031,8 +995,7 @@
                 if (isSpinning || freeSpinsRemaining > 0) return;
                 const cost = bet * BONUS_BUY_COST_MULTIPLIER;
                 if (balance < cost) {
-                    messageBox.textContent = "НЯМАТЕ КРЕДИТ";
-                    return;
+                    messageBox.textContent = "НЯМАТЕ КРЕДИТ"; return;
                 }
                 balance -= cost;
                 await updateBalanceInFirestore(balance);
@@ -1056,8 +1019,7 @@
 
             function getSymbolElement(reelIndex, stripIndex) {
                 const stripElement = reelsElements[reelIndex];
-                if (!stripElement) return null;
-                return stripElement.children[stripIndex] || null;
+                return stripElement ? stripElement.children[stripIndex] || null : null;
             }
 
             function flashWinningSymbols(positions, finalIndexes) {
@@ -1067,15 +1029,13 @@
                     const symbolIndexOnReel = parseInt(symbolIndexStr, 10);
                     const indexInStrip = finalIndexes[reelIndex] + symbolIndexOnReel;
                     const symbolElement = getSymbolElement(reelIndex, indexInStrip);
-                    if (symbolElement) {
-                        symbolElement.classList.add('win-pulse');
-                    }
+                    if (symbolElement) symbolElement.classList.add('win-pulse');
                 });
             }
             
             function drawWinningLines(winningLines) {
                 const svgRect = winLinesSvg.getBoundingClientRect();
-                 if (reelsElements.length === 0 || !svgRect) return;
+                if (reelsElements.length === 0 || !svgRect) return;
 
                 winningLines.forEach(lineCoords => {
                     const points = lineCoords.map(coord => {
@@ -1083,13 +1043,10 @@
                         if (!reel) return '0,0';
                         const reelRect = reel.getBoundingClientRect();
                         const symbolHeight = reelRect.height / SYMBOLS_PER_REEL_VISIBLE;
-                        
                         const x = reelRect.left - svgRect.left + (reelRect.width / 2);
                         const y = reelRect.top - svgRect.top + (coord.row * symbolHeight) + (symbolHeight / 2);
-
                         return `${x},${y}`;
                     }).join(' ');
-                    
                     const line = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
                     line.setAttribute('points', points);
                     line.setAttribute('class', 'win-line');
