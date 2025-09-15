@@ -193,7 +193,6 @@
         
         #message-box { font-family: 'Orbitron', sans-serif; font-size: clamp(1.1rem, 3.5vmin, 1.8rem); color: var(--win-glow-color); text-shadow: 0 0 10px var(--win-glow-color); padding: 1vmin; text-align: center; }
         
-        /* НОВО: Стил за бутона за залози */
         #bet-control-box {
             cursor: pointer;
             transition: transform 0.1s;
@@ -244,7 +243,6 @@
         .bonus-transition-content p { font-size: clamp(1rem, 3vmin, 2rem); color: #fff; margin-top: 2vmin; text-shadow: 0 0 10px #000; }
         @keyframes bonus-pulse { 0%, 100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.05); opacity: 1; } }
         
-        /* НОВО: Стил за бутоните за залог в модала */
         #bet-options-container {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -325,19 +323,16 @@
             <div id="message-box">ИЗБЕРЕТЕ ЗАЛОГ</div>
             <div class="info-bar">
                 <div class="info-box" id="balance-box">Баланс<span id="balance">0.00</span></div>
-                <!-- НОВО: Бутон за избор на залог -->
                 <div class="info-box" id="bet-control-box">Залог<span id="current-bet">0.00</span></div>
                 <div class="info-box" id="win-box">Печалба<span id="win">0.00</span></div>
             </div>
         </div>
     </div>
     
-    <!-- НОВО: Модален прозорец за избор на залог -->
     <div class="modal" id="bet-modal">
         <div class="modal-content">
             <h2 class="modal-title">ИЗБЕРЕТЕ ЗАЛОГ</h2>
             <div id="bet-options-container">
-                <!-- Бутоните за залог ще бъдат генерирани тук от JS -->
             </div>
         </div>
     </div>
@@ -540,7 +535,6 @@
         const muteButton = document.getElementById('mute-button');
         const headerRandomSymbol = document.getElementById('header-random-symbol');
         
-        // НОВО: DOM елементи за новия избор на залог
         const betControlBox = document.getElementById('bet-control-box');
         const currentBetDisplay = document.getElementById('current-bet');
         const betModal = document.getElementById('bet-modal');
@@ -625,9 +619,8 @@
             });
         }
         
-        // ПРОМЕНЕНО: Инициализация на UI и залози
         function initializeUI() {
-            betOptionsContainer.innerHTML = ''; // Изчистваме контейнера в модала
+            betOptionsContainer.innerHTML = '';
             BET_AMOUNTS.forEach((amount, index) => {
                 const button = document.createElement('button');
                 button.classList.add('bet-select-btn');
@@ -662,7 +655,6 @@
             updateWin(0);
         }
         
-        // ПРОМЕНЕНО: Функцията обновява и бутона, и активния клас в модала
         function updateBetSelection() {
             bet = BET_AMOUNTS[currentBetIndex];
             currentBetDisplay.textContent = (bet / 10).toFixed(2);
@@ -811,7 +803,7 @@
             spinButton.disabled = disabled;
             autoSpinButton.disabled = disabled && !isAutoSpinning;
             buyBonusButton.disabled = disabled || freeSpinsRemaining > 0;
-            betControlBox.style.pointerEvents = disabled ? 'none' : 'auto'; // ПРОМЕНЕНО
+            betControlBox.style.pointerEvents = disabled ? 'none' : 'auto';
         }
 
         function handleNextAction(hasWin, bonusTriggered) {
@@ -1125,6 +1117,7 @@
     </script>
 </body>
 </html>
+
 
 
 
