@@ -2,7 +2,7 @@
 <html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
     <title>NIVRA - Вашето място за социални забавления</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -440,14 +440,14 @@
         });
         
         // --- НАЧАЛО НА ПРОМЕНЕНАТА ЛОГИКА ---
-        // Тази функция вече е универсална и работи за всички игри.
+        // Тази функция вече е универсална и работи за всички игри, като следва новата конвенция за именуване.
         function redirectToGame(game, version) {
-            let targetUrl = game.link; // Взимаме базовия URL, напр. "mini.html"
+            let targetUrl = game.link; // Взимаме базовия URL, напр. "wild angels.html"
 
             if (version === 'mobile') {
-                // Ако версията е мобилна, заменяме ".html" с " 2.html"
+                // Ако версията е мобилна, заменяме ".html" с " mobile.html"
                 if (targetUrl.includes('.html')) {
-                    targetUrl = targetUrl.replace('.html', ' 2.html');
+                    targetUrl = targetUrl.replace('.html', ' mobile.html');
                 }
             }
             // Ако версията е 'full', targetUrl остава непроменен (оригиналният game.link)
@@ -462,7 +462,7 @@
             const gamesGrid = document.getElementById('games-grid');
             gamesGrid.innerHTML = ''; 
             
-            // --- Обновете този масив с правилните имена на файловете за вашите игри ---
+            // Уверете се, че имената на файловете в 'link' са точни.
             const gamesData = [ 
                 { name: 'Wild Angels', image: 'https://i.imgur.com/dhiFRpC.jpeg', link: 'wild angels.html' },
                 { name: 'Блекджек', image: 'https://i.imgur.com/S02AkzL.jpeg', link: 'blackjack.html' }, 
