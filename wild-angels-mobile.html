@@ -394,11 +394,11 @@
         </header>
 
         <main class="slot-machine">
-            <div class="reel"><div class="reel-strip" id="reel0"></div></div>
-            <div class="reel"><div class="reel-strip" id="reel1"></div></div>
-            <div class="reel"><div class="reel-strip" id="reel2"></div></div>
-            <div class="reel"><div class="reel-strip" id="reel3"></div></div>
-            <div class="reel"><div class="reel-strip" id="reel4"></div></div>
+            <div class="reel" id="reel0"><div class="reel-strip"></div></div>
+            <div class="reel" id="reel1"><div class="reel-strip"></div></div>
+            <div class="reel" id="reel2"><div class="reel-strip"></div></div>
+            <div class="reel" id="reel3"><div class="reel-strip"></div></div>
+            <div class="reel" id="reel4"><div class="reel-strip"></div></div>
             <div id="win-lines-container">
                 <svg id="win-lines-svg"></svg>
             </div>
@@ -636,7 +636,7 @@
             const buyBonusButton = document.getElementById('buyBonusButton');
             const balanceDisplay = document.getElementById('balance-value');
             const winDisplay = document.getElementById('win-value');
-            const reelsElements = Array.from({ length: REEL_COUNT }, (_, i) => document.getElementById(`reel${i}`).querySelector('.reel-strip'));
+            const reels = Array.from({ length: REEL_COUNT }, (_, i) => document.getElementById(`reel${i}`));
             const slotMachine = document.querySelector('.slot-machine');
             const winLinesSvg = document.getElementById('win-lines-svg');
             const betSelectionBar = document.getElementById('bet-selection-bar');
@@ -653,19 +653,24 @@
             }
             
             function initializeReels() {
-                reelsElements.forEach((reelStripElement) => {
+                reels.forEach((reelElement) => {
+                    const reelStripElement = reelElement.querySelector('.reel-strip');
                     reelStripElement.innerHTML = '';
                     const weightedStrip = createWeightedStrip();
                     reelStrips.push(weightedStrip);
                     const fragment = document.createDocumentFragment();
-                    for(let i = 0; i < 60; i++) {
+                    
+                    // Create multiple copies of the strip in the DOM to ensure smooth looping animation
+                    const totalSymbolsInDom = weightedStrip.length * 3;
+
+                    for(let i = 0; i < totalSymbolsInDom; i++) {
                         const symbolKey = weightedStrip[i % weightedStrip.length];
                         const symbolElement = document.createElement('div');
                         symbolElement.className = 'symbol';
                         const img = document.createElement('img');
                         img.src = SYMBOLS[symbolKey].src;
                         img.alt = symbolKey;
-                        img.loading = 'eager';
+                        img.loading = 'lazy';
                         symbolElement.appendChild(img);
                         fragment.appendChild(symbolElement);
                     }
@@ -726,36 +731,36 @@
                 
                 for (let i = 0; i < REEL_COUNT; i++) {
                     const strip = reelStrips[i];
-                    // Ensure the random index allows for 3 visible symbols without wrapping around the data array itself
-                    const randomIndex = Math.floor(Math.random() * (strip.length - SYMBOLS_PER_REEL_VISIBLE));
+                    const randomIndex = Math.floor(Math.random() * strip.length);
                     finalIndexes.push(randomIndex);
                     results.push([
-                        strip[randomIndex],
-                        strip[randomIndex + 1],
-                        strip[randomIndex + 2]
+                        strip[(randomIndex + 0) % strip.length],
+                        strip[(randomIndex + 1) % strip.length],
+                        strip[(randomIndex + 2) % strip.length]
                     ]);
                 }
                 
                 let anticipationSoundPlayed = false;
-                const spinPromises = reelsElements.map((reelStripElement, i) => {
-                    return new Promise((resolve) => {
+                const spinPromises = reels.map((reel, i) => {
+                    return new Promise(async (resolve) => {
+                        const reelStripElement = reel.querySelector('.reel-strip');
                         const strip = reelStrips[i];
-                        const targetSymbolIndex = finalIndexes[i];
-                        const finalPosition = targetSymbolIndex * symbolSize;
                         
-                        // Logic from wild angels.html for a better spin effect
-                        const stripHeight = strip.length * symbolSize;
-                        const loopOffset = 2 * stripHeight; // Add 2 "virtual" loops for the blur effect
-                        const startPosition = finalPosition + loopOffset;
+                        // *** КОРИГИРАНА ЛОГИКА НА АНИМАЦИЯТА ***
+                        // Тази логика създава по-реалистичен ефект на въртене.
+                        const baseTargetPosition = finalIndexes[i] * symbolSize;
+                        // Задаваме целта да бъде във второто копие на символите в DOM, за да има място за "превъртане"
+                        const targetPositionInDom = baseTargetPosition + (strip.length * symbolSize);
 
+                        // 1. Моментално преместваме барабана на начална позиция, която е далеч след целта.
                         reelStripElement.style.transition = 'none';
-                        reelStripElement.style.transform = `translateY(-${startPosition}px)`;
-                        reelStripElement.offsetHeight; // Force browser reflow to apply the change instantly
+                        reelStripElement.style.transform = `translateY(-${targetPositionInDom + (strip.length * symbolSize)}px)`;
+                        reelStripElement.offsetHeight; // Форсираме браузъра да приложи стила веднага
 
                         let landedScatters = 0;
                         results.slice(0, i).forEach(r => r.forEach(s => { if (SYMBOLS[s]?.isScatter) landedScatters++; }));
                         
-                        let duration = 2.5 + i * 0.3;
+                        let duration = 1.5 + i * 0.3;
                         if (freeSpinsRemaining === 0 && landedScatters >= 2) {
                             slotMachine.classList.add('anticipation-glow');
                             duration = 4 + i * 0.5;
@@ -766,11 +771,13 @@
                             }
                         }
                         
+                        // 2. Анимираме плавно барабана до неговата финална позиция.
                         reelStripElement.style.transition = `transform ${duration}s cubic-bezier(0.25, 1, 0.5, 1)`;
-                        reelStripElement.style.transform = `translateY(-${finalPosition}px)`;
+                        reelStripElement.style.transform = `translateY(-${targetPositionInDom}px)`;
 
-                        // Use a timeout for reliability, ensuring it resolves after the animation duration
-                        setTimeout(resolve, duration * 1000);
+                        // Изчакваме анимацията да приключи
+                        await new Promise(res => setTimeout(res, duration * 1000));
+                        resolve();
                     });
                 });
                 
@@ -781,13 +788,12 @@
                     anticipationSound.currentTime = 0;
                 }
                 
-                // Animate scatter landing after the reels stop
                 results.forEach((reelResult, reelIndex) => {
                     reelResult.forEach((symbolKey, symbolIndex) => {
                          if (SYMBOLS[symbolKey]?.isScatter) {
-                            // The visible symbol index is `finalIndexes[reelIndex] + symbolIndex`
-                            const finalSymbolElement = getSymbolElement(reelIndex, finalIndexes[reelIndex] + symbolIndex);
-                            if (finalSymbolElement) finalSymbolElement.classList.add('scatter-land');
+                            const domIndex = finalIndexes[reelIndex] + symbolIndex + reelStrips[reelIndex].length;
+                            const symbolElement = getSymbolElement(reelIndex, domIndex);
+                            if (symbolElement) symbolElement.classList.add('scatter-land');
                         }
                     });
                 });
@@ -872,11 +878,11 @@
             
             function clearAnimations() {
                 winLinesSvg.innerHTML = '';
-                reelsElements.forEach(reelStrip => {
-                    const parentReel = reelStrip.parentElement;
+                reels.forEach(reel => {
+                    const parentReel = reel;
                     const expandingSymbols = parentReel.querySelectorAll('.symbol.expanding');
                     expandingSymbols.forEach(el => el.remove());
-                    reelStrip.style.opacity = '1';
+                    reel.querySelector('.reel-strip').style.opacity = '1';
                 });
                 document.querySelectorAll('.symbol').forEach(el => { el.className = 'symbol'; });
                 slotMachine.classList.remove('anticipation-glow');
@@ -945,7 +951,7 @@
                         expandSound.play().catch(e => {});
                         await new Promise(res => setTimeout(res, 500)); 
                         expandingReelsIndices.forEach(reelIndex => {
-                            const reelStrip = reelsElements[reelIndex];
+                            const reelStrip = reels[reelIndex].querySelector('.reel-strip');
                             const parentReel = reelStrip.parentElement;
                             reelStrip.style.opacity = '0';
                             for (let i = 0; i < SYMBOLS_PER_REEL_VISIBLE; i++) {
@@ -1036,16 +1042,16 @@
 
             async function triggerBonusAnimation(scatterPos, finalIndexes) {
                 scatterPos.forEach(sp => {
-                    const symbolElement = getSymbolElement(sp.reel, finalIndexes[sp.reel] + sp.pos);
+                    const domIndex = finalIndexes[sp.reel] + sp.pos + reelStrips[sp.reel].length;
+                    const symbolElement = getSymbolElement(sp.reel, domIndex);
                     if(symbolElement) symbolElement.classList.add('scatter-trigger');
                 });
                 await new Promise(res => setTimeout(res, 2500));
             }
 
             function getSymbolElement(reelIndex, stripIndex) {
-                const stripElement = reelsElements[reelIndex];
-                // The strip in the DOM has 60 symbols, so we use modulo to get the correct element
-                return stripElement ? stripElement.children[stripIndex % 60] || null : null;
+                const stripElement = reels[reelIndex].querySelector('.reel-strip');
+                return stripElement ? stripElement.children[stripIndex] || null : null;
             }
 
             function flashWinningSymbols(positions, finalIndexes) {
@@ -1053,19 +1059,19 @@
                     const [reelIndexStr, symbolIndexStr] = pos.split('-');
                     const reelIndex = parseInt(reelIndexStr, 10);
                     const symbolIndexOnReel = parseInt(symbolIndexStr, 10);
-                    const indexInStrip = finalIndexes[reelIndex] + symbolIndexOnReel;
-                    const symbolElement = getSymbolElement(reelIndex, indexInStrip);
+                    const domIndex = finalIndexes[reelIndex] + symbolIndexOnReel + reelStrips[reelIndex].length;
+                    const symbolElement = getSymbolElement(reelIndex, domIndex);
                     if (symbolElement) symbolElement.classList.add('win-pulse');
                 });
             }
             
             function drawWinningLines(winningLines) {
                 const svgRect = winLinesSvg.getBoundingClientRect();
-                if (reelsElements.length === 0 || !svgRect) return;
+                if (reels.length === 0 || !svgRect) return;
 
                 winningLines.forEach(lineCoords => {
                     const points = lineCoords.map(coord => {
-                        const reel = reelsElements[coord.reel].parentElement;
+                        const reel = reels[coord.reel];
                         if (!reel) return '0,0';
                         const reelRect = reel.getBoundingClientRect();
                         const symbolHeight = reelRect.height / SYMBOLS_PER_REEL_VISIBLE;
