@@ -17,7 +17,8 @@
             --scatter-glow-color: #f900ff;
             --font-main: 'Poppins', sans-serif;
             --font-title: 'Orbitron', sans-serif;
-            --symbol-size: clamp(70px, 22vw, 100px);
+            /* ***КОРИГИРАН РАЗМЕР НА СИМВОЛИТЕ ЗА ПО-КЪСИ БАРАБАНИ*** */
+            --symbol-size: clamp(60px, 15vh, 90px);
         }
 
         html, body {
@@ -557,7 +558,8 @@
         }
         
         async function preloadAssetsAndStartGame(initialBalance) {
-            const SOUND_FILES = ['win_sound.mp3', 'anticipation.mp3', 'expand.mp3'];
+            // ***ДОБАВЕНА ФОНОВА МУЗИКА ЗА ЗАРЕЖДАНЕ***
+            const SOUND_FILES = ['win_sound.mp3', 'anticipation.mp3', 'expand.mp3', 'bg_music_1.mp3', 'bg_music_2.mp3', 'bg_music_3.mp3'];
             
             const assetsToLoad = [];
             Object.keys(SYMBOLS).forEach(name => assetsToLoad.push({type: 'image', src: SYMBOLS[name].src}));
@@ -620,6 +622,9 @@
             const MAX_WIN_MULTIPLIER = 2500;
             const BONUS_BUY_COST_MULTIPLIER = 100;
             const HEADER_IMAGES = Array.from({length: 9}, (_, i) => `angel${i + 1}.png`);
+            // ***НОВИ ПРОМЕНЛИВИ ЗА ФОНОВА МУЗИКА***
+            const backgroundMusicFiles = ['bg_music_1.mp3', 'bg_music_2.mp3', 'bg_music_3.mp3'];
+            let currentTrackIndex = Math.floor(Math.random() * backgroundMusicFiles.length);
 
             let balance = initialBalance;
             let currentBetIndex = 2;
@@ -632,10 +637,12 @@
             let hasRequestedFullscreen = false;
             let isMuted = false;
 
+            const bgMusicPlayer = new Audio();
+            bgMusicPlayer.volume = 0.3;
             const winSound = new Audio('win_sound.mp3');
             const anticipationSound = new Audio('anticipation.mp3');
             const expandSound = new Audio('expand.mp3');
-            const allSounds = [winSound, anticipationSound, expandSound];
+            const allSounds = [winSound, anticipationSound, expandSound, bgMusicPlayer];
 
             const spinButton = document.getElementById('spinButton');
             const autoSpinButton = document.getElementById('autoSpinButton');
@@ -662,6 +669,17 @@
                 }
                 hasRequestedFullscreen = true;
             }
+
+            // ***ЛОГИКА ЗА ФОНОВА МУЗИКА***
+            function playNextTrack() {
+                if (bgMusicPlayer.paused) {
+                    currentTrackIndex = (currentTrackIndex + 1) % backgroundMusicFiles.length;
+                    bgMusicPlayer.src = backgroundMusicFiles[currentTrackIndex];
+                    bgMusicPlayer.play().catch(e => console.warn("Music play failed, user interaction needed."));
+                }
+            }
+            bgMusicPlayer.addEventListener('ended', playNextTrack);
+
 
             function toggleMute() {
                 isMuted = !isMuted;
@@ -701,12 +719,10 @@
                 });
             }
 
-            // ***НОВА ФУНКЦИЯ ЗА НАЧАЛНА ПОДРЕДБА***
             function setInitialReelPositions() {
                 reels.forEach((reel, i) => {
                     const strip = reelStrips[i];
                     const randomIndex = Math.floor(Math.random() * strip.length);
-                    // Позиционираме барабана в средната част на DOM елементите за плавен старт
                     const finalPosition = (randomIndex * symbolSize) + (strip.length * symbolSize);
                     
                     const reelStripElement = reel.querySelector('.reel-strip');
@@ -746,6 +762,7 @@
                 if (isSpinning || symbolSize === 0) return;
                 
                 goFullscreen();
+                playNextTrack(); // Пуска музиката при първото завъртане
 
                 if (!isFreeSpin && freeSpinsRemaining === 0 && balance < bet) {
                     if(isAutoSpinning) toggleAutoSpin();
@@ -792,7 +809,9 @@
                         const targetPositionInDom = baseTargetPosition + (strip.length * symbolSize);
 
                         reelStripElement.style.transition = 'none';
-                        reelStripElement.style.transform = `translateY(-${targetPositionInDom + (strip.length * symbolSize)}px)`;
+                        // Малко "отскачане" преди завъртането за по-добър ефект
+                        const currentTransform = new DOMMatrix(getComputedStyle(reelStripElement).transform);
+                        reelStripElement.style.transform = `translateY(${currentTransform.f - 15}px)`;
                         reelStripElement.offsetHeight; 
 
                         let landedScatters = 0;
@@ -812,7 +831,6 @@
                         reelStripElement.style.transition = `transform ${duration}s cubic-bezier(0.25, 1, 0.5, 1)`;
                         reelStripElement.style.transform = `translateY(-${targetPositionInDom}px)`;
                         
-                        // ***КОРИГИРАН НАЧИН НА ИЗЧАКВАНЕ***
                         reelStripElement.addEventListener('transitionend', resolve, { once: true });
                     });
                 });
@@ -1160,7 +1178,7 @@
             
             initializeReels();
             initializeUI();
-            setInitialReelPositions(); // ***ИЗВИКВАНЕ НА НОВАТА ФУНКЦИЯ***
+            setInitialReelPositions();
             
             return function(newBalance) {
                 if (!isSpinning) {
