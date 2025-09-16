@@ -18,6 +18,7 @@
             --scatter-glow-color: #f900ff; /* Розово за скатер */
             --font-main: 'Poppins', sans-serif;
             --font-title: 'Orbitron', sans-serif;
+            /* ***КОРИГИРАНИ РАЗМЕРИ ЗА ПРАВИЛНО СЪОТНОШЕНИЕ*** */
             --symbol-size: clamp(70px, 22vw, 100px);
         }
 
@@ -143,7 +144,7 @@
         }
         .game-header h1 {
             font-family: var(--font-title);
-            font-size: clamp(1.5rem, 7vw, 2.2rem); /* Reduced Size */
+            font-size: clamp(1.5rem, 7vw, 2.2rem);
             margin: 0;
             animation: rgb-text-glow 5s linear infinite;
         }
@@ -163,14 +164,16 @@
             border: 2px solid var(--glow-color);
             border-radius: 10px;
             gap: 10px;
-            height: calc(var(--symbol-size) * 3 + 20px);
+            /* ***КОРИГИРАНИ РАЗМЕРИ*** */
+            height: calc(var(--symbol-size) * 3 + 20px); 
             box-shadow: 0 0 15px var(--glow-color), inset 0 0 10px rgba(0, 255, 195, 0.5);
             margin-bottom: 20px;
             backdrop-filter: blur(8px);
         }
         .reel {
             flex: 1;
-            height: calc(var(--symbol-size) * 3); /* Fixed height */
+             /* ***КОРИГИРАНИ РАЗМЕРИ*** */
+            height: calc(var(--symbol-size) * 3);
             overflow: hidden;
             position: relative;
             background: linear-gradient(135deg, rgba(249, 0, 255, 0.1), rgba(0, 255, 195, 0.1));
@@ -186,6 +189,7 @@
         }
         .symbol {
             width: 100%;
+            /* ***КОРИГИРАНИ РАЗМЕРИ*** */
             height: var(--symbol-size);
             display: flex;
             justify-content: center;
@@ -199,6 +203,23 @@
             object-fit: contain;
             filter: drop-shadow(0 0 8px rgba(0,0,0,0.7));
             transition: transform 0.3s, filter 0.3s;
+        }
+
+        /* ***СТИЛОВЕ ЗА ИЗОБРАЖЕНИЕ ПРИ ПЕЧАЛБА*** */
+        #win-overlay-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: auto;
+            max-height: 90%;
+            object-fit: contain;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            filter: drop-shadow(0 0 25px var(--win-glow-color));
         }
         
         #win-lines-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
@@ -238,7 +259,7 @@
             background: rgba(0,0,0,0.3);
             border: 1px solid var(--glow-color);
             border-radius: 8px;
-            padding: 4px 6px; /* Reduced Padding */
+            padding: 4px 6px;
             backdrop-filter: blur(5px);
         }
         .info-box .label {
@@ -267,7 +288,7 @@
         
         #bet-selection-bar {
             display: flex;
-            gap: 5px; /* Reduced Gap */
+            gap: 5px;
             align-items: center;
             justify-content: center;
             width: 100%;
@@ -278,11 +299,11 @@
             background: rgba(0,0,0,0.4);
             border: 1px solid rgba(0, 255, 195, 0.5);
             color: #fff;
-            padding: 6px 8px; /* Reduced Padding */
+            padding: 6px 8px;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s ease;
-            font-size: clamp(0.75rem, 3vw, 0.9rem); /* Reduced Font Size */
+            font-size: clamp(0.75rem, 3vw, 0.9rem);
             flex-grow: 1;
         }
          .bet-select-btn:hover {
@@ -307,12 +328,12 @@
         }
         .control-btn {
             font-family: var(--font-title);
-            font-size: clamp(0.8rem, 3.2vw, 1rem); /* Reduced Font Size */
-            padding: 10px; /* Reduced Padding */
+            font-size: clamp(0.8rem, 3.2vw, 1rem);
+            padding: 10px;
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.2s;
-            flex-basis: 100px; /* Reduced Basis */
+            flex-basis: 100px;
             text-align: center;
             border: none;
             color: #fff;
@@ -334,8 +355,8 @@
         #autoSpinButton.active { background: var(--secondary-glow); border-color: var(--secondary-glow); box-shadow: 0 0 2vmin var(--secondary-glow); }
 
         #spinButton {
-            width: clamp(90px, 25vw, 120px); /* Increased Size */
-            height: clamp(90px, 25vw, 120px); /* Increased Size */
+            width: clamp(90px, 25vw, 120px);
+            height: clamp(90px, 25vw, 120px);
             border: 2px solid var(--glow-color);
             border-radius: 50%;
             background: rgba(0, 255, 195, 0.15);
@@ -399,6 +420,10 @@
             <div class="reel" id="reel2"><div class="reel-strip"></div></div>
             <div class="reel" id="reel3"><div class="reel-strip"></div></div>
             <div class="reel" id="reel4"><div class="reel-strip"></div></div>
+            
+            <!-- ***ДОБАВЕН ЕЛЕМЕНТ ЗА ИЗОБРАЖЕНИЕ ПРИ ПЕЧАЛБА*** -->
+            <img id="win-overlay-image" src="" alt="Winning Angel">
+
             <div id="win-lines-container">
                 <svg id="win-lines-svg"></svg>
             </div>
@@ -617,6 +642,8 @@
             const BET_AMOUNTS = [1, 2, 5, 10, 20, 50];
             const MAX_WIN_MULTIPLIER = 2500;
             const BONUS_BUY_COST_MULTIPLIER = 100;
+            // ***Списък с изображения за показване при печалба***
+            const OVERLAY_IMAGES = Array.from({length: 9}, (_, i) => `angel${i + 1}.png`);
 
             let balance = initialBalance;
             let currentBetIndex = 2;
@@ -641,6 +668,8 @@
             const winLinesSvg = document.getElementById('win-lines-svg');
             const betSelectionBar = document.getElementById('bet-selection-bar');
             const messageBox = document.getElementById('message-box');
+            // ***DOM елемент за изображението при печалба***
+            const winOverlayImage = document.getElementById('win-overlay-image');
             
             const reelStrips = [];
             
@@ -660,7 +689,6 @@
                     reelStrips.push(weightedStrip);
                     const fragment = document.createDocumentFragment();
                     
-                    // Create multiple copies of the strip in the DOM to ensure smooth looping animation
                     const totalSymbolsInDom = weightedStrip.length * 3;
 
                     for(let i = 0; i < totalSymbolsInDom; i++) {
@@ -746,16 +774,12 @@
                         const reelStripElement = reel.querySelector('.reel-strip');
                         const strip = reelStrips[i];
                         
-                        // *** КОРИГИРАНА ЛОГИКА НА АНИМАЦИЯТА ***
-                        // Тази логика създава по-реалистичен ефект на въртене.
                         const baseTargetPosition = finalIndexes[i] * symbolSize;
-                        // Задаваме целта да бъде във второто копие на символите в DOM, за да има място за "превъртане"
                         const targetPositionInDom = baseTargetPosition + (strip.length * symbolSize);
 
-                        // 1. Моментално преместваме барабана на начална позиция, която е далеч след целта.
                         reelStripElement.style.transition = 'none';
                         reelStripElement.style.transform = `translateY(-${targetPositionInDom + (strip.length * symbolSize)}px)`;
-                        reelStripElement.offsetHeight; // Форсираме браузъра да приложи стила веднага
+                        reelStripElement.offsetHeight; 
 
                         let landedScatters = 0;
                         results.slice(0, i).forEach(r => r.forEach(s => { if (SYMBOLS[s]?.isScatter) landedScatters++; }));
@@ -771,11 +795,9 @@
                             }
                         }
                         
-                        // 2. Анимираме плавно барабана до неговата финална позиция.
                         reelStripElement.style.transition = `transform ${duration}s cubic-bezier(0.25, 1, 0.5, 1)`;
                         reelStripElement.style.transform = `translateY(-${targetPositionInDom}px)`;
 
-                        // Изчакваме анимацията да приключи
                         await new Promise(res => setTimeout(res, duration * 1000));
                         resolve();
                     });
@@ -878,6 +900,10 @@
             
             function clearAnimations() {
                 winLinesSvg.innerHTML = '';
+                // ***Скриване на изображението при печалба***
+                winOverlayImage.style.opacity = '0';
+                winOverlayImage.src = '';
+
                 reels.forEach(reel => {
                     const parentReel = reel;
                     const expandingSymbols = parentReel.querySelectorAll('.symbol.expanding');
@@ -988,6 +1014,11 @@
                     await updateWin(totalWin, true);
                     flashWinningSymbols(winningPositions, finalIndexes);
                     drawWinningLines(winningLines);
+                    
+                    // ***Показване на случайно изображение при печалба***
+                    const randomImage = OVERLAY_IMAGES[Math.floor(Math.random() * OVERLAY_IMAGES.length)];
+                    winOverlayImage.src = randomImage;
+                    setTimeout(() => { winOverlayImage.style.opacity = '1'; }, 300);
                 }
                 
                 let bonusTriggered = false;
