@@ -9,16 +9,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* --- ОСНОВНИ ПРОМЕНЛИВИ И СТИЛОВЕ --- */
         :root {
-            --glow-color: #00ffc3; /* Светло зелено/тюркоаз */
-            --secondary-glow: #f900ff; /* Ярко розово/магента */
+            --glow-color: #00ffc3;
+            --secondary-glow: #f900ff;
             --win-glow-color: #ffee00;
             --anticipation-glow-color: #ffc400;
-            --scatter-glow-color: #f900ff; /* Розово за скатер */
+            --scatter-glow-color: #f900ff;
             --font-main: 'Poppins', sans-serif;
             --font-title: 'Orbitron', sans-serif;
-            /* ***КОРИГИРАНИ РАЗМЕРИ ЗА ПРАВИЛНО СЪОТНОШЕНИЕ*** */
             --symbol-size: clamp(70px, 22vw, 100px);
         }
 
@@ -48,7 +46,6 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* --- ЕКРАН ЗА ЗАРЕЖДАНЕ --- */
         #loading-screen {
             position: fixed;
             inset: 0;
@@ -124,23 +121,50 @@
         }
         .login-box a:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--glow-color); }
 
-        /* --- ИГРОВ КОНТЕЙНЕР --- */
         .game-container {
             width: 100%;
             height: 100%;
             max-width: 450px;
             background: rgba(17, 29, 39, 0.8);
-            padding: 20px 15px;
+            padding: 10px 15px;
             box-sizing: border-box;
-            display: none; /* Initially hidden */
+            display: none;
             flex-direction: column;
             justify-content: space-between;
+            position: relative;
+        }
+        
+        #mute-button {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--glow-color);
+            color: var(--glow-color);
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 1100;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        #mute-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px var(--glow-color);
         }
 
-        /* --- ЗАГЛАВНА ЧАСТ --- */
         .game-header {
             text-align: center;
-            padding-bottom: 20px;
+            padding-bottom: 10px;
+        }
+        #header-image {
+            height: 50px;
+            margin-bottom: 5px;
+            filter: drop-shadow(0 0 15px #000);
         }
         .game-header h1 {
             font-family: var(--font-title);
@@ -154,7 +178,6 @@
             100% { color: var(--glow-color); text-shadow: 0 0 8px var(--glow-color), 0 0 15px var(--glow-color), 0 0 25px #fff; }
         }
         
-        /* --- СЛОТ МАШИНА --- */
         .slot-machine {
             position: relative;
             display: flex;
@@ -164,7 +187,6 @@
             border: 2px solid var(--glow-color);
             border-radius: 10px;
             gap: 10px;
-            /* ***КОРИГИРАНИ РАЗМЕРИ*** */
             height: calc(var(--symbol-size) * 3 + 20px); 
             box-shadow: 0 0 15px var(--glow-color), inset 0 0 10px rgba(0, 255, 195, 0.5);
             margin-bottom: 20px;
@@ -172,7 +194,6 @@
         }
         .reel {
             flex: 1;
-             /* ***КОРИГИРАНИ РАЗМЕРИ*** */
             height: calc(var(--symbol-size) * 3);
             overflow: hidden;
             position: relative;
@@ -189,7 +210,6 @@
         }
         .symbol {
             width: 100%;
-            /* ***КОРИГИРАНИ РАЗМЕРИ*** */
             height: var(--symbol-size);
             display: flex;
             justify-content: center;
@@ -203,23 +223,6 @@
             object-fit: contain;
             filter: drop-shadow(0 0 8px rgba(0,0,0,0.7));
             transition: transform 0.3s, filter 0.3s;
-        }
-
-        /* ***СТИЛОВЕ ЗА ИЗОБРАЖЕНИЕ ПРИ ПЕЧАЛБА*** */
-        #win-overlay-image {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80%;
-            height: auto;
-            max-height: 90%;
-            object-fit: contain;
-            pointer-events: none;
-            z-index: 50;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-            filter: drop-shadow(0 0 25px var(--win-glow-color));
         }
         
         #win-lines-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
@@ -240,7 +243,6 @@
         .slot-machine.anticipation-glow { animation: anticipation-pulse 1.2s infinite; }
         @keyframes anticipation-pulse { 0%, 100% { box-shadow: 0 0 3vmin var(--glow-color), inset 0 0 2vmin rgba(0, 255, 195, 0.5); } 50% { box-shadow: 0 0 8vmin var(--anticipation-glow-color), inset 0 0 4vmin var(--anticipation-glow-color); } }
 
-        /* --- UI ПАНЕЛ --- */
         #ui-panel {
             display: flex;
             flex-direction: column;
@@ -318,7 +320,6 @@
             transform: scale(1.05);
         }
 
-        /* --- КОНТРОЛИ --- */
         .bottom-controls {
             display: flex;
             justify-content: space-around;
@@ -375,7 +376,6 @@
         #spinButton svg { width: 40%; height: 40%; fill: currentColor; transition: transform 0.5s; }
         #spin-text { font-size: 0.8em; margin-top: 5px; }
 
-        /* --- МОДАЛНИ ПРОЗОРЦИ --- */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; text-align: center; color: #fff; z-index: 1000; }
         .modal-content { font-family: 'Orbitron', sans-serif; animation: modal-appear 1s forwards; background: rgba(10, 0, 20, 0.95); border: 2px solid var(--glow-color); border-radius: 2vmin; padding: 3vmin; max-width: 90vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 0 50px var(--secondary-glow); }
         @keyframes modal-appear { 0% { transform: scale(0.5) rotate(-15deg); opacity: 0; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
@@ -410,7 +410,10 @@
     </div>
     
     <div class="game-container">
+        <button id="mute-button"><i class="fas fa-volume-high"></i></button>
+
         <header class="game-header">
+            <img id="header-image" src="" alt="Header Symbol">
             <h1>WILD ANGELS</h1>
         </header>
 
@@ -421,9 +424,6 @@
             <div class="reel" id="reel3"><div class="reel-strip"></div></div>
             <div class="reel" id="reel4"><div class="reel-strip"></div></div>
             
-            <!-- ***ДОБАВЕН ЕЛЕМЕНТ ЗА ИЗОБРАЖЕНИЕ ПРИ ПЕЧАЛБА*** -->
-            <img id="win-overlay-image" src="" alt="Winning Angel">
-
             <div id="win-lines-container">
                 <svg id="win-lines-svg"></svg>
             </div>
@@ -490,28 +490,6 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-
-        // --- FULLSCREEN LOGIC ---
-        let isFullscreenRequested = false;
-        function enterFullscreen() {
-            if (isFullscreenRequested) return;
-            const element = document.documentElement;
-            if (element.requestFullscreen) {
-                element.requestFullscreen().catch(err => console.warn(`Fullscreen request failed: ${err.message}`));
-            } else if (element.mozRequestFullScreen) { // Firefox
-                element.mozRequestFullScreen();
-            } else if (element.webkitRequestFullscreen) { // Chrome, Safari, Opera
-                element.webkitRequestFullscreen();
-            } else if (element.msRequestFullscreen) { // IE/Edge
-                element.msRequestFullscreen();
-            }
-            isFullscreenRequested = true;
-            document.removeEventListener('click', enterFullscreen);
-            document.removeEventListener('touchstart', enterFullscreen);
-        }
-        document.addEventListener('click', enterFullscreen);
-        document.addEventListener('touchstart', enterFullscreen);
-        // --- END FULLSCREEN LOGIC ---
 
         let userDocRef = null;
         let isGameInitialized = false;
@@ -642,8 +620,7 @@
             const BET_AMOUNTS = [1, 2, 5, 10, 20, 50];
             const MAX_WIN_MULTIPLIER = 2500;
             const BONUS_BUY_COST_MULTIPLIER = 100;
-            // ***Списък с изображения за показване при печалба***
-            const OVERLAY_IMAGES = Array.from({length: 9}, (_, i) => `angel${i + 1}.png`);
+            const HEADER_IMAGES = Array.from({length: 9}, (_, i) => `angel${i + 1}.png`);
 
             let balance = initialBalance;
             let currentBetIndex = 2;
@@ -653,10 +630,13 @@
             let freeSpinsRemaining = 0;
             let expandingSymbol = null;
             let symbolSize = 0;
+            let hasRequestedFullscreen = false;
+            let isMuted = false;
 
             const winSound = new Audio('win_sound.mp3');
             const anticipationSound = new Audio('anticipation.mp3');
             const expandSound = new Audio('expand.mp3');
+            const allSounds = [winSound, anticipationSound, expandSound];
 
             const spinButton = document.getElementById('spinButton');
             const autoSpinButton = document.getElementById('autoSpinButton');
@@ -668,10 +648,28 @@
             const winLinesSvg = document.getElementById('win-lines-svg');
             const betSelectionBar = document.getElementById('bet-selection-bar');
             const messageBox = document.getElementById('message-box');
-            // ***DOM елемент за изображението при печалба***
-            const winOverlayImage = document.getElementById('win-overlay-image');
+            const muteButton = document.getElementById('mute-button');
+            const headerImage = document.getElementById('header-image');
             
             const reelStrips = [];
+
+            function goFullscreen() {
+                if (hasRequestedFullscreen) return;
+                const elem = document.documentElement;
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen().catch(err => console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`));
+                } else if (elem.mozRequestFullScreen) { elem.mozRequestFullScreen(); } 
+                else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); } 
+                else if (elem.msRequestFullscreen) { elem.msRequestFullscreen(); }
+                hasRequestedFullscreen = true;
+            }
+
+            function toggleMute() {
+                isMuted = !isMuted;
+                allSounds.forEach(sound => sound.muted = isMuted);
+                muteButton.innerHTML = `<i class="fas ${isMuted ? 'fa-volume-xmark' : 'fa-volume-high'}"></i>`;
+            }
+            muteButton.addEventListener('click', toggleMute);
             
             function createWeightedStrip() {
                 const strip = [];
@@ -688,9 +686,7 @@
                     const weightedStrip = createWeightedStrip();
                     reelStrips.push(weightedStrip);
                     const fragment = document.createDocumentFragment();
-                    
                     const totalSymbolsInDom = weightedStrip.length * 3;
-
                     for(let i = 0; i < totalSymbolsInDom; i++) {
                         const symbolKey = weightedStrip[i % weightedStrip.length];
                         const symbolElement = document.createElement('div');
@@ -718,6 +714,9 @@
                 
                 symbolSize = document.querySelector('.symbol').offsetHeight;
                 
+                const randomHeaderImage = HEADER_IMAGES[Math.floor(Math.random() * HEADER_IMAGES.length)];
+                headerImage.src = randomHeaderImage;
+
                 updateBetSelection();
                 updateBalanceDisplay();
                 updateWin(0);
@@ -732,6 +731,8 @@
 
             async function spin(isFreeSpin = false) {
                 if (isSpinning || symbolSize === 0) return;
+                
+                goFullscreen();
 
                 if (!isFreeSpin && freeSpinsRemaining === 0 && balance < bet) {
                     if(isAutoSpinning) toggleAutoSpin();
@@ -900,10 +901,6 @@
             
             function clearAnimations() {
                 winLinesSvg.innerHTML = '';
-                // ***Скриване на изображението при печалба***
-                winOverlayImage.style.opacity = '0';
-                winOverlayImage.src = '';
-
                 reels.forEach(reel => {
                     const parentReel = reel;
                     const expandingSymbols = parentReel.querySelectorAll('.symbol.expanding');
@@ -1014,11 +1011,6 @@
                     await updateWin(totalWin, true);
                     flashWinningSymbols(winningPositions, finalIndexes);
                     drawWinningLines(winningLines);
-                    
-                    // ***Показване на случайно изображение при печалба***
-                    const randomImage = OVERLAY_IMAGES[Math.floor(Math.random() * OVERLAY_IMAGES.length)];
-                    winOverlayImage.src = randomImage;
-                    setTimeout(() => { winOverlayImage.style.opacity = '1'; }, 300);
                 }
                 
                 let bonusTriggered = false;
