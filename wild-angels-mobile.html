@@ -636,7 +636,7 @@
             const buyBonusButton = document.getElementById('buyBonusButton');
             const balanceDisplay = document.getElementById('balance-value');
             const winDisplay = document.getElementById('win-value');
-            const reelsElements = Array.from({ length: REEL_COUNT }, (_, i) => document.getElementById(`reel${i}`));
+            const reelsElements = Array.from({ length: REEL_COUNT }, (_, i) => document.getElementById(`reel${i}`).querySelector('.reel-strip'));
             const slotMachine = document.querySelector('.slot-machine');
             const winLinesSvg = document.getElementById('win-lines-svg');
             const betSelectionBar = document.getElementById('bet-selection-bar');
@@ -726,6 +726,7 @@
                 
                 for (let i = 0; i < REEL_COUNT; i++) {
                     const strip = reelStrips[i];
+                    // Ensure the random index allows for 3 visible symbols without wrapping around the data array itself
                     const randomIndex = Math.floor(Math.random() * (strip.length - SYMBOLS_PER_REEL_VISIBLE));
                     finalIndexes.push(randomIndex);
                     results.push([
@@ -738,13 +739,18 @@
                 let anticipationSoundPlayed = false;
                 const spinPromises = reelsElements.map((reelStripElement, i) => {
                     return new Promise((resolve) => {
+                        const strip = reelStrips[i];
                         const targetSymbolIndex = finalIndexes[i];
                         const finalPosition = targetSymbolIndex * symbolSize;
-                        const loopPosition = (reelStrips[i].length * symbolSize) + finalPosition;
                         
+                        // Logic from wild angels.html for a better spin effect
+                        const stripHeight = strip.length * symbolSize;
+                        const loopOffset = 2 * stripHeight; // Add 2 "virtual" loops for the blur effect
+                        const startPosition = finalPosition + loopOffset;
+
                         reelStripElement.style.transition = 'none';
-                        reelStripElement.style.transform = `translateY(0px)`;
-                        reelStripElement.offsetHeight; 
+                        reelStripElement.style.transform = `translateY(-${startPosition}px)`;
+                        reelStripElement.offsetHeight; // Force browser reflow to apply the change instantly
 
                         let landedScatters = 0;
                         results.slice(0, i).forEach(r => r.forEach(s => { if (SYMBOLS[s]?.isScatter) landedScatters++; }));
@@ -763,7 +769,8 @@
                         reelStripElement.style.transition = `transform ${duration}s cubic-bezier(0.25, 1, 0.5, 1)`;
                         reelStripElement.style.transform = `translateY(-${finalPosition}px)`;
 
-                        reelStripElement.addEventListener('transitionend', resolve, { once: true });
+                        // Use a timeout for reliability, ensuring it resolves after the animation duration
+                        setTimeout(resolve, duration * 1000);
                     });
                 });
                 
@@ -774,11 +781,13 @@
                     anticipationSound.currentTime = 0;
                 }
                 
+                // Animate scatter landing after the reels stop
                 results.forEach((reelResult, reelIndex) => {
                     reelResult.forEach((symbolKey, symbolIndex) => {
                          if (SYMBOLS[symbolKey]?.isScatter) {
-                            const symbolElement = getSymbolElement(reelIndex, finalIndexes[reelIndex] + symbolIndex);
-                            if (symbolElement) symbolElement.classList.add('scatter-land');
+                            // The visible symbol index is `finalIndexes[reelIndex] + symbolIndex`
+                            const finalSymbolElement = getSymbolElement(reelIndex, finalIndexes[reelIndex] + symbolIndex);
+                            if (finalSymbolElement) finalSymbolElement.classList.add('scatter-land');
                         }
                     });
                 });
@@ -1035,7 +1044,8 @@
 
             function getSymbolElement(reelIndex, stripIndex) {
                 const stripElement = reelsElements[reelIndex];
-                return stripElement ? stripElement.children[stripIndex] || null : null;
+                // The strip in the DOM has 60 symbols, so we use modulo to get the correct element
+                return stripElement ? stripElement.children[stripIndex % 60] || null : null;
             }
 
             function flashWinningSymbols(positions, finalIndexes) {
