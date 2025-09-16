@@ -17,7 +17,6 @@
             --scatter-glow-color: #f900ff;
             --font-main: 'Poppins', sans-serif;
             --font-title: 'Orbitron', sans-serif;
-            /* ***КОРИГИРАН РАЗМЕР НА СИМВОЛИТЕ ЗА ПО-КЪСИ БАРАБАНИ*** */
             --symbol-size: clamp(60px, 15vh, 90px);
         }
 
@@ -558,7 +557,6 @@
         }
         
         async function preloadAssetsAndStartGame(initialBalance) {
-            // ***ДОБАВЕНА ФОНОВА МУЗИКА ЗА ЗАРЕЖДАНЕ***
             const SOUND_FILES = ['win_sound.mp3', 'anticipation.mp3', 'expand.mp3', 'bg_music_1.mp3', 'bg_music_2.mp3', 'bg_music_3.mp3'];
             
             const assetsToLoad = [];
@@ -622,7 +620,6 @@
             const MAX_WIN_MULTIPLIER = 2500;
             const BONUS_BUY_COST_MULTIPLIER = 100;
             const HEADER_IMAGES = Array.from({length: 9}, (_, i) => `angel${i + 1}.png`);
-            // ***НОВИ ПРОМЕНЛИВИ ЗА ФОНОВА МУЗИКА***
             const backgroundMusicFiles = ['bg_music_1.mp3', 'bg_music_2.mp3', 'bg_music_3.mp3'];
             let currentTrackIndex = Math.floor(Math.random() * backgroundMusicFiles.length);
 
@@ -670,7 +667,6 @@
                 hasRequestedFullscreen = true;
             }
 
-            // ***ЛОГИКА ЗА ФОНОВА МУЗИКА***
             function playNextTrack() {
                 if (bgMusicPlayer.paused) {
                     currentTrackIndex = (currentTrackIndex + 1) % backgroundMusicFiles.length;
@@ -679,7 +675,6 @@
                 }
             }
             bgMusicPlayer.addEventListener('ended', playNextTrack);
-
 
             function toggleMute() {
                 isMuted = !isMuted;
@@ -762,7 +757,7 @@
                 if (isSpinning || symbolSize === 0) return;
                 
                 goFullscreen();
-                playNextTrack(); // Пуска музиката при първото завъртане
+                playNextTrack();
 
                 if (!isFreeSpin && freeSpinsRemaining === 0 && balance < bet) {
                     if(isAutoSpinning) toggleAutoSpin();
@@ -809,7 +804,6 @@
                         const targetPositionInDom = baseTargetPosition + (strip.length * symbolSize);
 
                         reelStripElement.style.transition = 'none';
-                        // Малко "отскачане" преди завъртането за по-добър ефект
                         const currentTransform = new DOMMatrix(getComputedStyle(reelStripElement).transform);
                         reelStripElement.style.transform = `translateY(${currentTransform.f - 15}px)`;
                         reelStripElement.offsetHeight; 
@@ -817,10 +811,11 @@
                         let landedScatters = 0;
                         results.slice(0, i).forEach(r => r.forEach(s => { if (SYMBOLS[s]?.isScatter) landedScatters++; }));
                         
-                        let duration = 1.5 + i * 0.3;
+                        // ***КОРИГИРАН ТАЙМИНГ НА ВЪРТЕНЕ***
+                        let duration = 2.0 + i * 0.2;
                         if (freeSpinsRemaining === 0 && landedScatters >= 2) {
                             slotMachine.classList.add('anticipation-glow');
-                            duration = 4 + i * 0.5;
+                            duration = 4 + i * 0.4;
                             if (!anticipationSoundPlayed) {
                                 anticipationSound.loop = true;
                                 anticipationSound.play().catch(e => {});
@@ -1192,3 +1187,4 @@
     </script>
 </body>
 </html>
+
