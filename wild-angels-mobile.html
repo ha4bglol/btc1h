@@ -206,7 +206,6 @@
             top: 0;
             left: 0;
             width: 100%;
-            transition: opacity 0.3s ease-out;
         }
         .symbol {
             width: 100%;
@@ -654,13 +653,13 @@
             const reelStrips = [];
 
             function goFullscreen() {
-                if (hasRequestedFullscreen) return;
+                if (hasRequestedFullscreen || document.fullscreenElement) return;
                 const elem = document.documentElement;
                 if (elem.requestFullscreen) {
-                    elem.requestFullscreen().catch(err => console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`));
-                } else if (elem.mozRequestFullScreen) { elem.mozRequestFullScreen(); } 
-                else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); } 
-                else if (elem.msRequestFullscreen) { elem.msRequestFullscreen(); }
+                    elem.requestFullscreen().catch(err => console.error(`Fullscreen request failed: ${err.message}`));
+                } else if (elem.webkitRequestFullscreen) {
+                    elem.webkitRequestFullscreen();
+                }
                 hasRequestedFullscreen = true;
             }
 
@@ -699,6 +698,20 @@
                         fragment.appendChild(symbolElement);
                     }
                     reelStripElement.appendChild(fragment);
+                });
+            }
+
+            // ***НОВА ФУНКЦИЯ ЗА НАЧАЛНА ПОДРЕДБА***
+            function setInitialReelPositions() {
+                reels.forEach((reel, i) => {
+                    const strip = reelStrips[i];
+                    const randomIndex = Math.floor(Math.random() * strip.length);
+                    // Позиционираме барабана в средната част на DOM елементите за плавен старт
+                    const finalPosition = (randomIndex * symbolSize) + (strip.length * symbolSize);
+                    
+                    const reelStripElement = reel.querySelector('.reel-strip');
+                    reelStripElement.style.transition = 'none';
+                    reelStripElement.style.transform = `translateY(-${finalPosition}px)`;
                 });
             }
             
@@ -798,9 +811,9 @@
                         
                         reelStripElement.style.transition = `transform ${duration}s cubic-bezier(0.25, 1, 0.5, 1)`;
                         reelStripElement.style.transform = `translateY(-${targetPositionInDom}px)`;
-
-                        await new Promise(res => setTimeout(res, duration * 1000));
-                        resolve();
+                        
+                        // ***КОРИГИРАН НАЧИН НА ИЗЧАКВАНЕ***
+                        reelStripElement.addEventListener('transitionend', resolve, { once: true });
                     });
                 });
                 
@@ -1147,6 +1160,7 @@
             
             initializeReels();
             initializeUI();
+            setInitialReelPositions(); // ***ИЗВИКВАНЕ НА НОВАТА ФУНКЦИЯ***
             
             return function(newBalance) {
                 if (!isSpinning) {
