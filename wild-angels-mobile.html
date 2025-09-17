@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <title>Wild Angels - Vertical Edition</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -801,47 +801,53 @@
                         const strip = reelStrips[i];
                         const stripHeight = strip.length * symbolSize;
 
-                        // *** НАЧАЛО НА КОРИГИРАНАТА ЛОГИКА ЗА ВЪРТЕНЕ ***
-
-                        // 1. Нулиране на позицията, за да не расте безкрайно
+                        // *** НАЧАЛО НА НОВАТА ЛОГИКА С "ОТСКОК" ***
+                        
+                        // 1. Нулираме позицията до еквивалентната в средната лента
                         const currentTransform = new DOMMatrix(getComputedStyle(reelStripElement).transform);
                         const currentY = Math.abs(currentTransform.f);
-                        const newStartY = (currentY % stripHeight) + stripHeight;
+                        const resetPosition = (currentY % stripHeight) + stripHeight;
                         
                         reelStripElement.style.transition = 'none';
-                        reelStripElement.style.transform = `translateY(-${newStartY}px)`;
+                        reelStripElement.style.transform = `translateY(-${resetPosition}px)`;
                         
-                        // Force reflow
-                        reelStripElement.offsetHeight; 
+                        reelStripElement.offsetHeight; // Force reflow
 
-                        // 2. Изчисляване на финална позиция и анимация
-                        let duration = 1.8 + i * 0.2; // Постепенно увеличаване на времето
-                        const rotations = 3 + i; // Увеличаване на завъртанията, за да се запази скоростта
+                        // 2. Правим "отскока" нагоре
+                        const kickbackAmount = symbolSize * 0.4; // 40% от размера на един символ
+                        reelStripElement.style.transition = 'transform 0.1s ease-out';
+                        reelStripElement.style.transform = `translateY(-${resetPosition - kickbackAmount}px)`;
 
-                        const finalSymbolPosition = finalIndexes[i] * symbolSize;
-                        const destination = finalSymbolPosition + stripHeight; // Спираме в средната лента
-                        const extraTravel = rotations * stripHeight;
-                        const targetPositionInDom = destination + extraTravel;
-                        
-                        let landedScatters = 0;
-                        results.slice(0, i).forEach(r => r.forEach(s => { if (SYMBOLS[s]?.isScatter) landedScatters++; }));
-                        
-                        if (freeSpinsRemaining === 0 && landedScatters >= 2) {
-                            slotMachine.classList.add('anticipation-glow');
-                            duration = 4.0 + i * 0.4;
-                            if (!anticipationSoundPlayed) {
-                                anticipationSound.loop = true;
-                                anticipationSound.play().catch(e => {});
-                                anticipationSoundPlayed = true;
+                        // 3. След кратка пауза, стартираме основното въртене
+                        setTimeout(() => {
+                            let duration = 1.5 + i * 0.25;
+                            const rotations = 3 + i;
+
+                            const finalSymbolPosition = finalIndexes[i] * symbolSize;
+                            const destination = finalSymbolPosition + stripHeight; // Спираме в средната лента
+                            const extraTravel = rotations * stripHeight;
+                            const targetPositionInDom = destination + extraTravel;
+                            
+                            let landedScatters = 0;
+                            results.slice(0, i).forEach(r => r.forEach(s => { if (SYMBOLS[s]?.isScatter) landedScatters++; }));
+                            
+                            if (freeSpinsRemaining === 0 && landedScatters >= 2) {
+                                slotMachine.classList.add('anticipation-glow');
+                                duration = 4.0 + i * 0.4;
+                                if (!anticipationSoundPlayed) {
+                                    anticipationSound.loop = true;
+                                    anticipationSound.play().catch(e => {});
+                                    anticipationSoundPlayed = true;
+                                }
                             }
-                        }
-                        
-                        reelStripElement.style.transition = `transform ${duration}s cubic-bezier(0.175, 0.885, 0.32, 1.275)`;
-                        reelStripElement.style.transform = `translateY(-${targetPositionInDom}px)`;
-                        
-                        // *** КРАЙ НА КОРИГИРАНАТА ЛОГИКА ***
-                        
-                        reelStripElement.addEventListener('transitionend', resolve, { once: true });
+                            
+                            // Променяме transition-а за основното въртене
+                            reelStripElement.style.transition = `transform ${duration}s cubic-bezier(0.25, 1, 0.5, 1)`;
+                            reelStripElement.style.transform = `translateY(-${targetPositionInDom}px)`;
+
+                            reelStripElement.addEventListener('transitionend', resolve, { once: true });
+                        }, 100); // 100ms = 0.1s, колкото е "отскокът"
+                        // *** КРАЙ НА НОВАТА ЛОГИКА ***
                     });
                 });
                 
@@ -852,18 +858,20 @@
                     anticipationSound.currentTime = 0;
                 }
                 
+                // Преизчисляване на финалния DOM индекс, за да се покажат анимациите за печалба
+                const finalDomIndexes = finalIndexes.map((fi, i) => fi + reelStrips[i].length);
+
                 results.forEach((reelResult, reelIndex) => {
                     reelResult.forEach((symbolKey, symbolIndex) => {
                          if (SYMBOLS[symbolKey]?.isScatter) {
-                            const domIndex = finalIndexes[reelIndex] + symbolIndex + reelStrips[reelIndex].length;
-                            const symbolElement = getSymbolElement(reelIndex, domIndex);
+                            const symbolElement = getSymbolElement(reelIndex, finalDomIndexes[reelIndex] + symbolIndex);
                             if (symbolElement) symbolElement.classList.add('scatter-land');
                         }
                     });
                 });
                 
                 slotMachine.classList.remove('anticipation-glow');
-                const { hasWin, bonusTriggered, winAmount } = await checkWin(results, finalIndexes);
+                const { hasWin, bonusTriggered, winAmount } = await checkWin(results, finalDomIndexes);
                 
                 if (!hasWin) {
                     messageBox.textContent = "ИЗБЕРЕТЕ ЗАЛОГ";
@@ -952,7 +960,7 @@
                 slotMachine.classList.remove('anticipation-glow');
             }
             
-            async function checkWin(results, finalIndexes) {
+            async function checkWin(results, finalDomIndexes) {
                 let totalWin = 0; const winningLines = []; const winningPositions = new Set();
                 let scatterCount = 0; const scatterPositions = [];
                 
@@ -969,7 +977,7 @@
                     freeSpinsRemaining += SYMBOLS.scatter.spins;
                     updateSpinButtonText();
                     messageBox.textContent = `+${SYMBOLS.scatter.spins} БЕЗПЛАТНИ ИГРИ!`;
-                    await triggerBonusAnimation(scatterPositions, finalIndexes);
+                    await triggerBonusAnimation(scatterPositions, finalDomIndexes);
                 }
 
                 PAYLINES.forEach((line) => {
@@ -1050,7 +1058,7 @@
                         winSound.play().catch(e => {});
                     }
                     await updateWin(totalWin, true);
-                    flashWinningSymbols(winningPositions, finalIndexes);
+                    flashWinningSymbols(winningPositions, finalDomIndexes);
                     drawWinningLines(winningLines);
                 }
                 
@@ -1058,7 +1066,7 @@
                 if (freeSpinsRemaining === 0 && !expandingSymbol && scatterCount >= 3) {
                     bonusTriggered = true;
                     if(isAutoSpinning) toggleAutoSpin();
-                    await triggerBonusAnimation(scatterPositions, finalIndexes);
+                    await triggerBonusAnimation(scatterPositions, finalDomIndexes);
                     const bonusTransitionScreen = document.getElementById('bonus-transition-screen');
                     bonusTransitionScreen.style.display = 'flex';
                     bonusTransitionScreen.addEventListener('click', () => {
@@ -1104,9 +1112,9 @@
                 }, { once: true });
             }
 
-            async function triggerBonusAnimation(scatterPos, finalIndexes) {
+            async function triggerBonusAnimation(scatterPos, finalDomIndexes) {
                 scatterPos.forEach(sp => {
-                    const domIndex = finalIndexes[sp.reel] + sp.pos + reelStrips[sp.reel].length;
+                    const domIndex = finalDomIndexes[sp.reel] + sp.pos;
                     const symbolElement = getSymbolElement(sp.reel, domIndex);
                     if(symbolElement) symbolElement.classList.add('scatter-trigger');
                 });
@@ -1118,12 +1126,12 @@
                 return stripElement ? stripElement.children[stripIndex] || null : null;
             }
 
-            function flashWinningSymbols(positions, finalIndexes) {
+            function flashWinningSymbols(positions, finalDomIndexes) {
                 positions.forEach(pos => {
                     const [reelIndexStr, symbolIndexStr] = pos.split('-');
                     const reelIndex = parseInt(reelIndexStr, 10);
                     const symbolIndexOnReel = parseInt(symbolIndexStr, 10);
-                    const domIndex = finalIndexes[reelIndex] + symbolIndexOnReel + reelStrips[reelIndex].length;
+                    const domIndex = finalDomIndexes[reelIndex] + symbolIndexOnReel;
                     const symbolElement = getSymbolElement(reelIndex, domIndex);
                     if (symbolElement) symbolElement.classList.add('win-pulse');
                 });
