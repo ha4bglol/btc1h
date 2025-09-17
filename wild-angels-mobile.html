@@ -1,3 +1,8 @@
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="bg">
 <head>
@@ -5,7 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <title>Wild Angels - Vertical Edition</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -799,56 +804,34 @@
                     return new Promise(async (resolve) => {
                         const reelStripElement = reel.querySelector('.reel-strip');
                         const strip = reelStrips[i];
-                        const stripHeight = strip.length * symbolSize;
+                        
+                        const baseTargetPosition = finalIndexes[i] * symbolSize;
+                        const targetPositionInDom = baseTargetPosition + (strip.length * symbolSize);
 
-                        // *** НАЧАЛО НА КОРИГИРАНАТА И РАБОТЕЩА ЛОГИКА ***
-                        
-                        // 1. Нулираме позицията до еквивалентната в средната лента
-                        const currentTransform = new DOMMatrix(getComputedStyle(reelStripElement).transform);
-                        const currentY = Math.abs(currentTransform.f);
-                        const resetPosition = (currentY % stripHeight) + stripHeight;
-                        
                         reelStripElement.style.transition = 'none';
-                        reelStripElement.style.transform = `translateY(-${resetPosition}px)`;
+                        const currentTransform = new DOMMatrix(getComputedStyle(reelStripElement).transform);
+                        reelStripElement.style.transform = `translateY(${currentTransform.f - 15}px)`;
+                        reelStripElement.offsetHeight; 
+
+                        let landedScatters = 0;
+                        results.slice(0, i).forEach(r => r.forEach(s => { if (SYMBOLS[s]?.isScatter) landedScatters++; }));
                         
-                        reelStripElement.offsetHeight; // Force reflow
-
-                        // 2. Дефинираме функцията за основно въртене
-                        const startMainSpin = () => {
-                            let duration = 1.5 + i * 0.25;
-                            const rotations = 3 + i;
-                            const finalSymbolPosition = finalIndexes[i] * symbolSize;
-                            const destination = finalSymbolPosition + stripHeight;
-                            const extraTravel = rotations * stripHeight;
-                            const targetPositionInDom = destination + extraTravel;
-
-                            let landedScatters = 0;
-                            results.slice(0, i).forEach(r => r.forEach(s => { if (SYMBOLS[s]?.isScatter) landedScatters++; }));
-
-                            if (freeSpinsRemaining === 0 && landedScatters >= 2) {
-                                slotMachine.classList.add('anticipation-glow');
-                                duration = 4.0 + i * 0.4;
-                                if (!anticipationSoundPlayed) {
-                                    anticipationSound.loop = true;
-                                    anticipationSound.play().catch(e => {});
-                                    anticipationSoundPlayed = true;
-                                }
+                        // ***КОРИГИРАН ТАЙМИНГ НА ВЪРТЕНЕ***
+                        let duration = 2.0 + i * 0.2;
+                        if (freeSpinsRemaining === 0 && landedScatters >= 2) {
+                            slotMachine.classList.add('anticipation-glow');
+                            duration = 4 + i * 0.4;
+                            if (!anticipationSoundPlayed) {
+                                anticipationSound.loop = true;
+                                anticipationSound.play().catch(e => {});
+                                anticipationSoundPlayed = true;
                             }
-                            
-                            reelStripElement.style.transition = `transform ${duration}s cubic-bezier(0.2, 0.8, 0.3, 1)`;
-                            reelStripElement.style.transform = `translateY(-${targetPositionInDom}px)`;
-
-                            reelStripElement.addEventListener('transitionend', resolve, { once: true });
-                        };
-
-                        // 3. Изпълняваме "отскока" нагоре
-                        const kickbackAmount = symbolSize * 0.4;
-                        reelStripElement.style.transition = 'transform 0.1s ease-out';
-                        reelStripElement.style.transform = `translateY(-${resetPosition - kickbackAmount}px)`;
-
-                        // 4. СЛЕД като "отскокът" приключи, стартираме основното въртене
-                        reelStripElement.addEventListener('transitionend', startMainSpin, { once: true });
-                         // *** КРАЙ НА КОРИГИРАНАТА ЛОГИКА ***
+                        }
+                        
+                        reelStripElement.style.transition = `transform ${duration}s cubic-bezier(0.25, 1, 0.5, 1)`;
+                        reelStripElement.style.transform = `translateY(-${targetPositionInDom}px)`;
+                        
+                        reelStripElement.addEventListener('transitionend', resolve, { once: true });
                     });
                 });
                 
@@ -859,19 +842,18 @@
                     anticipationSound.currentTime = 0;
                 }
                 
-                const finalDomIndexes = finalIndexes.map((fi, i) => fi + reelStrips[i].length);
-
                 results.forEach((reelResult, reelIndex) => {
                     reelResult.forEach((symbolKey, symbolIndex) => {
                          if (SYMBOLS[symbolKey]?.isScatter) {
-                            const symbolElement = getSymbolElement(reelIndex, finalDomIndexes[reelIndex] + symbolIndex);
+                            const domIndex = finalIndexes[reelIndex] + symbolIndex + reelStrips[reelIndex].length;
+                            const symbolElement = getSymbolElement(reelIndex, domIndex);
                             if (symbolElement) symbolElement.classList.add('scatter-land');
                         }
                     });
                 });
                 
                 slotMachine.classList.remove('anticipation-glow');
-                const { hasWin, bonusTriggered, winAmount } = await checkWin(results, finalDomIndexes);
+                const { hasWin, bonusTriggered, winAmount } = await checkWin(results, finalIndexes);
                 
                 if (!hasWin) {
                     messageBox.textContent = "ИЗБЕРЕТЕ ЗАЛОГ";
@@ -960,7 +942,7 @@
                 slotMachine.classList.remove('anticipation-glow');
             }
             
-            async function checkWin(results, finalDomIndexes) {
+            async function checkWin(results, finalIndexes) {
                 let totalWin = 0; const winningLines = []; const winningPositions = new Set();
                 let scatterCount = 0; const scatterPositions = [];
                 
@@ -977,7 +959,7 @@
                     freeSpinsRemaining += SYMBOLS.scatter.spins;
                     updateSpinButtonText();
                     messageBox.textContent = `+${SYMBOLS.scatter.spins} БЕЗПЛАТНИ ИГРИ!`;
-                    await triggerBonusAnimation(scatterPositions, finalDomIndexes);
+                    await triggerBonusAnimation(scatterPositions, finalIndexes);
                 }
 
                 PAYLINES.forEach((line) => {
@@ -1058,7 +1040,7 @@
                         winSound.play().catch(e => {});
                     }
                     await updateWin(totalWin, true);
-                    flashWinningSymbols(winningPositions, finalDomIndexes);
+                    flashWinningSymbols(winningPositions, finalIndexes);
                     drawWinningLines(winningLines);
                 }
                 
@@ -1066,7 +1048,7 @@
                 if (freeSpinsRemaining === 0 && !expandingSymbol && scatterCount >= 3) {
                     bonusTriggered = true;
                     if(isAutoSpinning) toggleAutoSpin();
-                    await triggerBonusAnimation(scatterPositions, finalDomIndexes);
+                    await triggerBonusAnimation(scatterPositions, finalIndexes);
                     const bonusTransitionScreen = document.getElementById('bonus-transition-screen');
                     bonusTransitionScreen.style.display = 'flex';
                     bonusTransitionScreen.addEventListener('click', () => {
@@ -1112,9 +1094,9 @@
                 }, { once: true });
             }
 
-            async function triggerBonusAnimation(scatterPos, finalDomIndexes) {
+            async function triggerBonusAnimation(scatterPos, finalIndexes) {
                 scatterPos.forEach(sp => {
-                    const domIndex = finalDomIndexes[sp.reel] + sp.pos;
+                    const domIndex = finalIndexes[sp.reel] + sp.pos + reelStrips[sp.reel].length;
                     const symbolElement = getSymbolElement(sp.reel, domIndex);
                     if(symbolElement) symbolElement.classList.add('scatter-trigger');
                 });
@@ -1126,12 +1108,12 @@
                 return stripElement ? stripElement.children[stripIndex] || null : null;
             }
 
-            function flashWinningSymbols(positions, finalDomIndexes) {
+            function flashWinningSymbols(positions, finalIndexes) {
                 positions.forEach(pos => {
                     const [reelIndexStr, symbolIndexStr] = pos.split('-');
                     const reelIndex = parseInt(reelIndexStr, 10);
                     const symbolIndexOnReel = parseInt(symbolIndexStr, 10);
-                    const domIndex = finalDomIndexes[reelIndex] + symbolIndexOnReel;
+                    const domIndex = finalIndexes[reelIndex] + symbolIndexOnReel + reelStrips[reelIndex].length;
                     const symbolElement = getSymbolElement(reelIndex, domIndex);
                     if (symbolElement) symbolElement.classList.add('win-pulse');
                 });
@@ -1210,7 +1192,4 @@
     </script>
 </body>
 </html>
-
-
-
 
