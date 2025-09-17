@@ -799,28 +799,36 @@
                     return new Promise(async (resolve) => {
                         const reelStripElement = reel.querySelector('.reel-strip');
                         const strip = reelStrips[i];
-                        
-                        // *** НАЧАЛО НА НОВАТА ЛОГИКА ЗА ВЪРТЕНЕ С ЕДНАКВА СКОРОСТ ***
-                        let duration = 2.0 + i * 0.2; // Времето за въртене се увеличава за всеки следващ барабан
-                        const baseRotations = 2; // Минимален брой пълни завъртания за blur ефект
-                        // Изчисляваме броя на завъртанията пропорционално на времето, за да запазим скоростта константна
-                        const dynamicRotations = baseRotations + Math.floor(duration); 
+                        const stripHeight = strip.length * symbolSize;
 
-                        const baseTargetPosition = finalIndexes[i] * symbolSize;
-                        const targetPositionInDom = baseTargetPosition + (strip.length * symbolSize * dynamicRotations);
-                        // *** КРАЙ НА НОВАТА ЛОГИКА ***
+                        // *** НАЧАЛО НА КОРИГИРАНАТА ЛОГИКА ЗА ВЪРТЕНЕ ***
 
-                        reelStripElement.style.transition = 'none';
+                        // 1. Нулиране на позицията, за да не расте безкрайно
                         const currentTransform = new DOMMatrix(getComputedStyle(reelStripElement).transform);
-                        reelStripElement.style.transform = `translateY(${currentTransform.f - 15}px)`;
+                        const currentY = Math.abs(currentTransform.f);
+                        const newStartY = (currentY % stripHeight) + stripHeight;
+                        
+                        reelStripElement.style.transition = 'none';
+                        reelStripElement.style.transform = `translateY(-${newStartY}px)`;
+                        
+                        // Force reflow
                         reelStripElement.offsetHeight; 
 
+                        // 2. Изчисляване на финална позиция и анимация
+                        let duration = 1.8 + i * 0.2; // Постепенно увеличаване на времето
+                        const rotations = 3 + i; // Увеличаване на завъртанията, за да се запази скоростта
+
+                        const finalSymbolPosition = finalIndexes[i] * symbolSize;
+                        const destination = finalSymbolPosition + stripHeight; // Спираме в средната лента
+                        const extraTravel = rotations * stripHeight;
+                        const targetPositionInDom = destination + extraTravel;
+                        
                         let landedScatters = 0;
                         results.slice(0, i).forEach(r => r.forEach(s => { if (SYMBOLS[s]?.isScatter) landedScatters++; }));
                         
                         if (freeSpinsRemaining === 0 && landedScatters >= 2) {
                             slotMachine.classList.add('anticipation-glow');
-                            duration = 4 + i * 0.4; // Удължаваме още повече за "anticipation" ефект
+                            duration = 4.0 + i * 0.4;
                             if (!anticipationSoundPlayed) {
                                 anticipationSound.loop = true;
                                 anticipationSound.play().catch(e => {});
@@ -830,6 +838,8 @@
                         
                         reelStripElement.style.transition = `transform ${duration}s cubic-bezier(0.175, 0.885, 0.32, 1.275)`;
                         reelStripElement.style.transform = `translateY(-${targetPositionInDom}px)`;
+                        
+                        // *** КРАЙ НА КОРИГИРАНАТА ЛОГИКА ***
                         
                         reelStripElement.addEventListener('transitionend', resolve, { once: true });
                     });
@@ -1192,5 +1202,6 @@
     </script>
 </body>
 </html>
+
 
 
