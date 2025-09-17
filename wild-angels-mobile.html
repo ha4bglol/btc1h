@@ -800,8 +800,15 @@
                         const reelStripElement = reel.querySelector('.reel-strip');
                         const strip = reelStrips[i];
                         
+                        // *** НАЧАЛО НА НОВАТА ЛОГИКА ЗА ВЪРТЕНЕ С ЕДНАКВА СКОРОСТ ***
+                        let duration = 2.0 + i * 0.2; // Времето за въртене се увеличава за всеки следващ барабан
+                        const baseRotations = 2; // Минимален брой пълни завъртания за blur ефект
+                        // Изчисляваме броя на завъртанията пропорционално на времето, за да запазим скоростта константна
+                        const dynamicRotations = baseRotations + Math.floor(duration); 
+
                         const baseTargetPosition = finalIndexes[i] * symbolSize;
-                        const targetPositionInDom = baseTargetPosition + (strip.length * symbolSize);
+                        const targetPositionInDom = baseTargetPosition + (strip.length * symbolSize * dynamicRotations);
+                        // *** КРАЙ НА НОВАТА ЛОГИКА ***
 
                         reelStripElement.style.transition = 'none';
                         const currentTransform = new DOMMatrix(getComputedStyle(reelStripElement).transform);
@@ -811,10 +818,9 @@
                         let landedScatters = 0;
                         results.slice(0, i).forEach(r => r.forEach(s => { if (SYMBOLS[s]?.isScatter) landedScatters++; }));
                         
-                        let duration = 2.0 + i * 0.2;
                         if (freeSpinsRemaining === 0 && landedScatters >= 2) {
                             slotMachine.classList.add('anticipation-glow');
-                            duration = 4 + i * 0.4;
+                            duration = 4 + i * 0.4; // Удължаваме още повече за "anticipation" ефект
                             if (!anticipationSoundPlayed) {
                                 anticipationSound.loop = true;
                                 anticipationSound.play().catch(e => {});
@@ -822,7 +828,6 @@
                             }
                         }
                         
-                        // ***КОРИГИРАН ТАЙМИНГ НА ВЪРТЕНЕ ЗА ПОСТИГАНЕ НА "BOUNCE" ЕФЕКТ ПРИ СПИРАНЕ***
                         reelStripElement.style.transition = `transform ${duration}s cubic-bezier(0.175, 0.885, 0.32, 1.275)`;
                         reelStripElement.style.transform = `translateY(-${targetPositionInDom}px)`;
                         
@@ -1187,4 +1192,5 @@
     </script>
 </body>
 </html>
+
 
