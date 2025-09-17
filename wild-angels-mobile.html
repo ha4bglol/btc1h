@@ -801,7 +801,7 @@
                         const strip = reelStrips[i];
                         const stripHeight = strip.length * symbolSize;
 
-                        // *** НАЧАЛО НА НОВАТА ЛОГИКА С "ОТСКОК" ***
+                        // *** НАЧАЛО НА КОРИГИРАНАТА И РАБОТЕЩА ЛОГИКА ***
                         
                         // 1. Нулираме позицията до еквивалентната в средната лента
                         const currentTransform = new DOMMatrix(getComputedStyle(reelStripElement).transform);
@@ -813,24 +813,18 @@
                         
                         reelStripElement.offsetHeight; // Force reflow
 
-                        // 2. Правим "отскока" нагоре
-                        const kickbackAmount = symbolSize * 0.4; // 40% от размера на един символ
-                        reelStripElement.style.transition = 'transform 0.1s ease-out';
-                        reelStripElement.style.transform = `translateY(-${resetPosition - kickbackAmount}px)`;
-
-                        // 3. След кратка пауза, стартираме основното въртене
-                        setTimeout(() => {
+                        // 2. Дефинираме функцията за основно въртене
+                        const startMainSpin = () => {
                             let duration = 1.5 + i * 0.25;
                             const rotations = 3 + i;
-
                             const finalSymbolPosition = finalIndexes[i] * symbolSize;
-                            const destination = finalSymbolPosition + stripHeight; // Спираме в средната лента
+                            const destination = finalSymbolPosition + stripHeight;
                             const extraTravel = rotations * stripHeight;
                             const targetPositionInDom = destination + extraTravel;
-                            
+
                             let landedScatters = 0;
                             results.slice(0, i).forEach(r => r.forEach(s => { if (SYMBOLS[s]?.isScatter) landedScatters++; }));
-                            
+
                             if (freeSpinsRemaining === 0 && landedScatters >= 2) {
                                 slotMachine.classList.add('anticipation-glow');
                                 duration = 4.0 + i * 0.4;
@@ -841,13 +835,20 @@
                                 }
                             }
                             
-                            // Променяме transition-а за основното въртене
-                            reelStripElement.style.transition = `transform ${duration}s cubic-bezier(0.25, 1, 0.5, 1)`;
+                            reelStripElement.style.transition = `transform ${duration}s cubic-bezier(0.2, 0.8, 0.3, 1)`;
                             reelStripElement.style.transform = `translateY(-${targetPositionInDom}px)`;
 
                             reelStripElement.addEventListener('transitionend', resolve, { once: true });
-                        }, 100); // 100ms = 0.1s, колкото е "отскокът"
-                        // *** КРАЙ НА НОВАТА ЛОГИКА ***
+                        };
+
+                        // 3. Изпълняваме "отскока" нагоре
+                        const kickbackAmount = symbolSize * 0.4;
+                        reelStripElement.style.transition = 'transform 0.1s ease-out';
+                        reelStripElement.style.transform = `translateY(-${resetPosition - kickbackAmount}px)`;
+
+                        // 4. СЛЕД като "отскокът" приключи, стартираме основното въртене
+                        reelStripElement.addEventListener('transitionend', startMainSpin, { once: true });
+                         // *** КРАЙ НА КОРИГИРАНАТА ЛОГИКА ***
                     });
                 });
                 
@@ -858,7 +859,6 @@
                     anticipationSound.currentTime = 0;
                 }
                 
-                // Преизчисляване на финалния DOM индекс, за да се покажат анимациите за печалба
                 const finalDomIndexes = finalIndexes.map((fi, i) => fi + reelStrips[i].length);
 
                 results.forEach((reelResult, reelIndex) => {
@@ -1210,6 +1210,7 @@
     </script>
 </body>
 </html>
+
 
 
 
