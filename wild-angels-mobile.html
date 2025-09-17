@@ -1,8 +1,3 @@
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="bg">
 <head>
@@ -816,16 +811,22 @@
                         let landedScatters = 0;
                         results.slice(0, i).forEach(r => r.forEach(s => { if (SYMBOLS[s]?.isScatter) landedScatters++; }));
                         
-                        // ***КОРИГИРАН ТАЙМИНГ НА ВЪРТЕНЕ***
-                        let duration = 2.0 + i * 0.2;
+                        // ***КОРИГИРАН ТАЙМИНГ НА ВЪРТЕНЕ СПОРЕД ИЗИСКВАНИЯТА***
+                        let duration;
                         if (freeSpinsRemaining === 0 && landedScatters >= 2) {
                             slotMachine.classList.add('anticipation-glow');
-                            duration = 4 + i * 0.4;
+                            // По-дълга продължителност за напрежение
+                            duration = 2.0 + i * 0.8; 
                             if (!anticipationSoundPlayed) {
                                 anticipationSound.loop = true;
                                 anticipationSound.play().catch(e => {});
                                 anticipationSoundPlayed = true;
                             }
+                        } else {
+                            // Нов стандартен тайминг: 
+                            // Първи reel (i=0) спира след 1.0 сек.
+                            // Всеки следващ спира 0.5 сек. по-късно.
+                            duration = 1.0 + i * 0.5;
                         }
                         
                         reelStripElement.style.transition = `transform ${duration}s cubic-bezier(0.25, 1, 0.5, 1)`;
