@@ -10,11 +10,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root {
-            --glow-color: #0026ff;
-            --secondary-glow: #6d116e;
-            --win-glow-color: #ffffff;
-            --anticipation-glow-color: #0099ff;
-            --scatter-glow-color: #9dff00;
+            --glow-color: #00ccff;
+            --secondary-glow: #ff0037;
+            --win-glow-color: #13aff7;
+            --anticipation-glow-color: #ff0095;
+            --scatter-glow-color: #f900ff;
             --font-main: 'Poppins', sans-serif;
             --font-title: 'Orbitron', sans-serif;
             --symbol-size: clamp(60px, 15vh, 90px);
@@ -32,7 +32,7 @@
         }
 
         body {
-            background: linear-gradient(135deg, #86c237, #8cd8c6, #2e005e, #100a1c);
+            background: linear-gradient(135deg, #074aad, #dadfde, #2e005e, #100a1c);
             background-size: 400% 400%;
             animation: color-shift 15s ease-in-out infinite;
             display: flex;
@@ -97,7 +97,7 @@
             align-items: center;
             text-align: center;
             padding: 2rem;
-            background-color: #100a1c;
+            background-color: #1bc04c;
         }
         .login-box {
             background: rgba(0,0,0,0.4);
@@ -343,12 +343,12 @@
         .control-btn:disabled { filter: grayscale(1) brightness(0.7); cursor: not-allowed; }
 
         #buyBonusButton {
-            background: linear-gradient(45deg, #d81b60, #f900ff);
+            background: linear-gradient(45deg, #3696e4, #884444);
             box-shadow: 0 0 15px var(--secondary-glow);
             border: 2px solid var(--secondary-glow);
         }
         #autoSpinButton {
-            background: linear-gradient(45deg, #007bff, #00e0ff);
+            background: linear-gradient(45deg, #007bff, #00ff55);
             box-shadow: 0 0 15px var(--glow-color);
             border: 2px solid var(--glow-color);
         }
@@ -413,7 +413,7 @@
 
         <header class="game-header">
             <img id="header-image" src="" alt="Header Symbol">
-            <h1>dirty bandit</h1>
+            <h1>Dirty Bnadit</h1>
         </header>
 
         <main class="slot-machine">
@@ -511,7 +511,7 @@
             'angel8': { weight: 4,  src: 'bandit8.png', payout: { '3': 200,'4': 400, '5': 800 }},
             'angel9': { weight: 3,  src: 'bandit9.png', payout: { '3': 220,'4': 450, '5': 900 }},
             'wild':   { weight: 2,  src: 'wild.png',   isWild: true, payout: { '3': 250, '4': 500, '5': 1000 }},
-            'scatter':{ weight: 5,  src: 'scatter.png',spins: 10, isScatter: true }
+            'scatter':{ weight: 5,  src: 'scatter2.png',spins: 10, isScatter: true }
         };
 
         async function updateBalanceInFirestore(newBalance) {
@@ -619,7 +619,7 @@
             const BET_AMOUNTS = [1, 2, 5, 10, 20, 50];
             const MAX_WIN_MULTIPLIER = 2500;
             const BONUS_BUY_COST_MULTIPLIER = 100;
-            const HEADER_IMAGES = Array.from({length: 9}, (_, i) => `angel${i + 1}.png`);
+            const HEADER_IMAGES = Array.from({length: 9}, (_, i) => `bandit${i + 1}.png`);
             const backgroundMusicFiles = ['bg_music_1.mp3', 'bg_music_2.mp3', 'bg_music_3.mp3'];
             let currentTrackIndex = Math.floor(Math.random() * backgroundMusicFiles.length);
 
@@ -811,16 +811,22 @@
                         let landedScatters = 0;
                         results.slice(0, i).forEach(r => r.forEach(s => { if (SYMBOLS[s]?.isScatter) landedScatters++; }));
                         
-                        // ***КОРИГИРАН ТАЙМИНГ НА ВЪРТЕНЕ***
-                        let duration = 2.0 + i * 0.2;
+                        // ***КОРИГИРАН ТАЙМИНГ НА ВЪРТЕНЕ СПОРЕД ИЗИСКВАНИЯТА***
+                        let duration;
                         if (freeSpinsRemaining === 0 && landedScatters >= 2) {
                             slotMachine.classList.add('anticipation-glow');
-                            duration = 4 + i * 0.4;
+                            // По-дълга продължителност за напрежение
+                            duration = 2.0 + i * 0.8; 
                             if (!anticipationSoundPlayed) {
                                 anticipationSound.loop = true;
                                 anticipationSound.play().catch(e => {});
                                 anticipationSoundPlayed = true;
                             }
+                        } else {
+                            // Нов стандартен тайминг: 
+                            // Първи reel (i=0) спира след 1.0 сек.
+                            // Всеки следващ спира 0.5 сек. по-късно.
+                            duration = 1.0 + i * 0.5;
                         }
                         
                         reelStripElement.style.transition = `transform ${duration}s cubic-bezier(0.25, 1, 0.5, 1)`;
@@ -1187,3 +1193,7 @@
     </script>
 </body>
 </html>
+
+
+</html>
+
