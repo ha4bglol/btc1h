@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>NIVRA - Crash Game</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --glow-color: #f7b733;
+            --secondary-glow: #fc4a1a;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background-color: #1a1a2e;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #e0e0e0;
+        }
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        .gradient-text {
+            background: linear-gradient(90deg, var(--glow-color), var(--secondary-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, var(--glow-color), var(--secondary-glow));
+            transition: all 0.2s ease-out;
+            color: #111;
+        }
+        .btn-primary:active:not(:disabled) {
+             transform: scale(0.95);
+        }
+        .btn-primary:disabled {
+            background: #4a4a6a; color: #888; cursor: not-allowed;
+        }
+        .btn-cashout {
+            background: linear-gradient(90deg, #28a745, #218838);
+            color: white;
+        }
+        .form-input {
+            background-color: #2c2c44; border: 2px solid #4a4a6a; color: #e0e0e0;
+        }
+        .form-input:focus {
+            background-color: #3a3a5a; border-color: var(--glow-color); outline: none;
+        }
+        .toggle-switch {
+            position: relative; display: inline-block; width: 44px; height: 24px;
+        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; inset: 0; background-color: #4a4a6a; transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #28a745; }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        /* Loading Screen */
+        #loading-screen {
+            position: fixed; inset: 0; background-color: #100a1c; z-index: 10000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2rem;
+            transition: opacity 0.5s ease-out;
+        }
+        .loading-title {
+            font-family: 'Orbitron', sans-serif; font-size: clamp(3rem, 10vmin, 6rem);
+            background: linear-gradient(90deg, #fc4a1a, #f7b733);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .progress-bar-container { width: 80%; max-width: 500px; height: 20px; background-color: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; border: 2px solid var(--glow-color); }
+        .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #fc4a1a, #f7b733); transition: width 0.3s ease-out; }
+        #loading-percentage { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; margin-top: 1rem; }
+
+        /* Game Area */
+        #game-area {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            background: #100a1c;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5), inset 0 0 15px rgba(0,0,0,0.7);
+        }
+        #multiplier-display {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); z-index: 10;
+            text-shadow: 0 0 10px #fff, 0 0 20px var(--glow-color);
+        }
+        #rocket {
+            position: absolute;
+            left: -15%; bottom: 10%;
+            width: 60px; height: 60px;
+            transform: rotate(25deg);
+            transition: all 0.2s linear; z-index: 5;
+            filter: drop-shadow(0 0 10px #fff);
+        }
+        .crashed #rocket { animation: explode 0.5s forwards; }
+        @keyframes explode {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+
+        /* History */
+        .history-item {
+            padding: 2px 6px; border-radius: 4px; font-weight: 600;
+            font-size: 0.75rem;
+        }
+        .history-low { background-color: #3a5a9a; }
+        .history-mid { background-color: #8a3a9a; }
+        .history-high { background-color: #f7b733; color: #111; }
+        .history-crash { background-color: #c0392b; }
+
+        /* Custom scrollbar for player list */
+        .players-list::-webkit-scrollbar { width: 4px; }
+        .players-list::-webkit-scrollbar-track { background: #2c2c44; }
+        .players-list::-webkit-scrollbar-thumb { background: var(--glow-color); border-radius: 4px; }
+    </style>
+</head>
+<body class="antialiased text-gray-200">
+
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <h1 class="loading-title">NIVRA</h1>
+        <div class="progress-bar-container">
+            <div id="progress-bar" class="progress-bar"></div>
+        </div>
+        <p id="loading-percentage">0%</p>
+    </div>
+
+    <!-- Login Required Message -->
+    <section id="login-required-container" class="w-full h-full hidden flex-col items-center justify-center text-center p-4">
+        <div class="bg-gray-900 rounded-2xl shadow-2xl p-6 flex flex-col items-center gap-4 max-w-md w-full">
+            <i class="fas fa-lock text-5xl text-yellow-400"></i>
+            <h2 class="text-2xl font-bold gradient-text">Достъпът е ограничен</h2>
+            <p class="text-gray-300 text-base">Трябва да сте влезли, за да играете.</p>
+            <a href="index.html" class="mt-2 px-6 py-3 rounded-lg font-bold text-lg btn-primary inline-block">Към лобито / Вход</a>
+        </div>
+    </section>
+
+    <!-- Game Container -->
+    <div id="game-container" class="w-full h-full hidden p-2 flex flex-col bg-gray-900">
+        <!-- Header -->
+        <header class="shadow-lg">
+            <nav class="px-2 py-2 flex justify-between items-center">
+                <a href="index.html" class="text-base font-bold text-gray-300 flex items-center gap-2">
+                    <i class="fas fa-arrow-left"></i> Лоби
+                </a>
+                <div class="text-base font-semibold flex items-center gap-2 bg-gray-800 px-3 py-1 rounded-full">
+                    <i class="fas fa-wallet text-yellow-400"></i>
+                    <span id="balance-display">0.00</span>
+                </div>
+            </nav>
+        </header>
+        
+        <!-- Tab navigation for history/players -->
+        <div class="flex-shrink-0 my-2">
+             <div class="flex border-b border-gray-700 text-sm font-semibold">
+                <button id="tab-history" class="tab-btn flex-1 py-2 border-b-2 border-yellow-400 text-yellow-400">История</button>
+                <button id="tab-players" class="tab-btn flex-1 py-2 border-b-2 border-transparent text-gray-500">Играчи</button>
+            </div>
+            <div id="history-bar-container" class="bg-gray-800 p-2 flex items-center gap-2 overflow-x-auto">
+                 <!-- History will be populated here -->
+            </div>
+             <div id="players-list-container" class="hidden bg-gray-800 p-2">
+                <div id="live-bets-header" class="grid grid-cols-3 text-xs text-gray-400 px-1 pb-1 border-b border-gray-700">
+                    <span>Играч</span>
+                    <span class="text-center">Залог</span>
+                    <span class="text-right">Кешаут</span>
+                </div>
+                <div id="live-bets-list" class="h-[80px] overflow-y-auto space-y-1 mt-1 pr-1 players-list">
+                    <!-- Players will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Game Area -->
+        <div id="game-area-wrapper" class="flex-grow rounded-lg overflow-hidden">
+            <div id="game-area">
+                <div id="multiplier-display" class="font-orbitron text-6xl text-white">
+                   <div id="game-status-text" class="text-xl text-center"></div>
+                </div>
+                <img src="https://i.ibb.co/L5hB6WJ/rocket.png" id="rocket" alt="Rocket">
+            </div>
+        </div>
+
+        <!-- Betting Controls -->
+        <div id="betting-controls" class="flex-shrink-0 mt-2 space-y-2">
+            <!-- Bet Panel 1 -->
+            <div class="bg-gray-800 p-3 rounded-lg" data-panel="1">
+                <div class="flex gap-2">
+                    <div class="flex-grow">
+                        <label class="text-xs text-gray-400">Сума</label>
+                        <input type="number" class="bet-amount w-full p-2 rounded form-input" value="1.00">
+                    </div>
+                    <div class="flex-grow">
+                        <label class="text-xs text-gray-400">Авто кеш</label>
+                        <input type="number" class="auto-cashout w-full p-2 rounded form-input" placeholder="1.50">
+                    </div>
+                </div>
+                <div class="flex items-center mt-2 gap-3">
+                    <div class="flex items-center gap-2 text-sm">
+                        <label class="toggle-switch">
+                            <input type="checkbox" class="auto-bet-toggle">
+                            <span class="slider"></span>
+                        </label>
+                        <span>Авто</span>
+                    </div>
+                    <button class="bet-btn btn-primary font-bold py-3 rounded-lg flex-grow text-lg">ЗАЛОЖИ</button>
+                </div>
+            </div>
+            <!-- Bet Panel 2 -->
+             <div class="bg-gray-800 p-3 rounded-lg" data-panel="2">
+                <div class="flex gap-2">
+                    <div class="flex-grow">
+                        <label class="text-xs text-gray-400">Сума</label>
+                        <input type="number" class="bet-amount w-full p-2 rounded form-input" value="1.00">
+                    </div>
+                    <div class="flex-grow">
+                        <label class="text-xs text-gray-400">Авто кеш</label>
+                        <input type="number" class="auto-cashout w-full p-2 rounded form-input" placeholder="2.00">
+                    </div>
+                </div>
+                <div class="flex items-center mt-2 gap-3">
+                    <div class="flex items-center gap-2 text-sm">
+                        <label class="toggle-switch">
+                            <input type="checkbox" class="auto-bet-toggle">
+                            <span class="slider"></span>
+                        </label>
+                        <span>Авто</span>
+                    </div>
+                    <button class="bet-btn btn-primary font-bold py-3 rounded-lg flex-grow text-lg">ЗАЛОЖИ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase and Game Logic Script -->
+    <script type="module">
+        // Firebase initialization is identical to the PC version.
+        // It's copied here for completeness.
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyAatMUa6vFu2AAe3NCWse6j2moiXmXdl0U",
+          authDomain: "nivra-casino.firebaseapp.com",
+          projectId: "nivra-casino",
+          storageBucket: "nivra-casino.firebasestorage.app",
+          messagingSenderId: "463242246264",
+          appId: "1:463242246264:web:4a6e736e5c8df3109e158d",
+          measurementId: "G-2NF3P6H9GM"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let userDocRef = null;
+        let isGameInitialized = false;
+        
+        const loadingScreen = document.getElementById('loading-screen');
+        const gameContainer = document.getElementById('game-container');
+        const loginRequiredContainer = document.getElementById('login-required-container');
+
+        onAuthStateChanged(auth, (user) => {
+            if (user && user.emailVerified) {
+                currentUser = user;
+                userDocRef = doc(db, 'users', user.uid);
+                onSnapshot(userDocRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        const balance = docSnap.data().chips;
+                        if (!isGameInitialized) {
+                            initializeGame(balance);
+                            isGameInitialized = true;
+                        }
+                        updateBalanceDisplay(balance);
+                    } else {
+                        showLoginRequired("Грешка: Профилът не е намерен.");
+                    }
+                });
+            } else {
+                showLoginRequired();
+            }
+        });
+        
+        function showLoginRequired(message = "Трябва да сте влезли, за да играете.") {
+            // Fake loading copied from PC version
+            const progressBar = document.getElementById('progress-bar');
+            const loadingPercentage = document.getElementById('loading-percentage');
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 100) progress = 100;
+                progressBar.style.width = `${progress}%`;
+                loadingPercentage.textContent = `${Math.floor(progress)}%`;
+                if (progress === 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        loadingScreen.style.opacity = '0';
+                        loadingScreen.style.display = 'none';
+                        loginRequiredContainer.querySelector('p').textContent = message;
+                        loginRequiredContainer.classList.remove('hidden');
+                        loginRequiredContainer.classList.add('flex');
+                        gameContainer.classList.add('hidden');
+                    }, 500);
+                }
+            }, 200);
+        }
+
+        async function initializeGame(initialBalance) {
+             // Fake loading copied from PC version
+            const progressBar = document.getElementById('progress-bar');
+            const loadingPercentage = document.getElementById('loading-percentage');
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 100) progress = 100;
+                progressBar.style.width = `${progress}%`;
+                loadingPercentage.textContent = `${Math.floor(progress)}%`;
+                if (progress === 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        loadingScreen.style.opacity = '0';
+                        loadingScreen.style.display = 'none';
+                        gameContainer.classList.remove('hidden');
+                        gameContainer.classList.add('flex');
+                    }, 500);
+                }
+            }, 200);
+
+            // ================== GAME LOGIC (Mostly identical to PC) ==================
+            // DOM Elements
+            const balanceDisplay = document.getElementById('balance-display');
+            const betPanels = document.querySelectorAll('[data-panel]');
+            const multiplierDisplay = document.getElementById('multiplier-display');
+            const gameStatusText = document.getElementById('game-status-text');
+            const rocket = document.getElementById('rocket');
+            const gameArea = document.getElementById('game-area');
+            const historyBarContainer = document.getElementById('history-bar-container');
+            const liveBetsList = document.getElementById('live-bets-list');
+            const tabHistory = document.getElementById('tab-history');
+            const tabPlayers = document.getElementById('tab-players');
+            const playersListContainer = document.getElementById('players-list-container');
+            
+            // Game State
+            let userBalance = initialBalance;
+            let gameState = 'waiting';
+            let currentMultiplier = 1.00;
+            let crashPoint = 1.00;
+            let startTime = 0;
+            let history = [];
+            let animationFrameId;
+            let bets = { 1: { active: false, cashedOut: false }, 2: { active: false, cashedOut: false } };
+            let autoBets = { 1: false, 2: false };
+
+            // --- UI Update Functions (Identical logic, just different DOM targets) ---
+            function updateBalanceDisplay(newBalance) {
+                userBalance = newBalance;
+                balanceDisplay.textContent = userBalance.toFixed(2);
+            }
+
+            function updateMultiplierDisplay(value, state) {
+                if (state === 'crashed') {
+                    multiplierDisplay.innerHTML = `<div class="text-red-500">CRASHED @<br>${value.toFixed(2)}x</div>`;
+                    multiplierDisplay.classList.add('scale-110');
+                } else if (state === 'playing') {
+                    multiplierDisplay.innerHTML = `${value.toFixed(2)}x`;
+                    multiplierDisplay.classList.remove('scale-110');
+                } else {
+                     multiplierDisplay.classList.remove('scale-110');
+                }
+            }
+            
+            function updateBetButton(panel, state, value = null) {
+                const btn = panel.querySelector('.bet-btn');
+                switch (state) {
+                    case 'bet':
+                        btn.textContent = 'ЗАЛОЖИ';
+                        btn.className = 'bet-btn btn-primary font-bold py-3 rounded-lg flex-grow text-lg';
+                        btn.disabled = false;
+                        panel.querySelectorAll('input').forEach(i => i.disabled = false);
+                        break;
+                    case 'cancel':
+                        btn.textContent = 'ОТКАЖИ';
+                        btn.className = 'bet-btn bg-red-600 text-white font-bold py-3 rounded-lg flex-grow text-lg';
+                        break;
+                    case 'cashout':
+                        btn.textContent = `КЕШАУТ ${value.toFixed(2)}`;
+                        btn.className = 'bet-btn btn-cashout font-bold py-3 rounded-lg flex-grow text-lg';
+                        break;
+                    case 'cashed_out':
+                         btn.textContent = `ПЕЧАЛБА ${value.toFixed(2)}`;
+                         btn.className = 'bet-btn bg-gray-600 text-white font-bold py-3 rounded-lg flex-grow text-lg';
+                         btn.disabled = true;
+                         break;
+                    case 'disabled':
+                        btn.disabled = true;
+                        panel.querySelectorAll('input').forEach(i => i.disabled = true);
+                        break;
+                }
+            }
+
+            function updateHistoryBar() {
+                historyBarContainer.innerHTML = '';
+                history.slice(0, 10).forEach(val => {
+                    const item = document.createElement('div');
+                    item.textContent = `${val.toFixed(2)}x`;
+                    let colorClass = 'history-low';
+                    if (val === 1.00) colorClass = 'history-crash';
+                    else if (val >= 10.00) colorClass = 'history-high';
+                    else if (val >= 2.00) colorClass = 'history-mid';
+                    item.className = `history-item ${colorClass}`;
+                    historyBarContainer.appendChild(item);
+                });
+            }
+
+            // --- Game Flow & Logic (Identical to PC version) ---
+            function gameLoop() {
+                if (gameState === 'playing') {
+                    const elapsed = (Date.now() - startTime) / 1000;
+                    currentMultiplier = 1 + 0.06 * Math.pow(elapsed, 2);
+
+                    if (currentMultiplier >= crashPoint) {
+                        currentMultiplier = crashPoint;
+                        setGameState('crashed');
+                    } else {
+                        updateMultiplierDisplay(currentMultiplier, 'playing');
+                        [1, 2].forEach(panelId => {
+                            if (bets[panelId].active && !bets[panelId].cashedOut) {
+                                const panel = document.querySelector(`[data-panel="${panelId}"]`);
+                                const autoCashoutValue = parseFloat(panel.querySelector('.auto-cashout').value);
+                                if (autoCashoutValue && currentMultiplier >= autoCashoutValue) {
+                                    cashout(panelId);
+                                }
+                                updateBetButton(panel, 'cashout', bets[panelId].amount * currentMultiplier);
+                            }
+                        });
+                        const progress = Math.min(elapsed / 10, 1);
+                        const xPos = -15 + 110 * progress;
+                        const yPos = 10 + 50 * Math.sin(progress * Math.PI);
+                        rocket.style.left = `${xPos}%`;
+                        rocket.style.bottom = `${yPos}%`;
+                    }
+                }
+                animationFrameId = requestAnimationFrame(gameLoop);
+            }
+
+            function setGameState(newState) {
+                gameState = newState;
+                switch (newState) {
+                    case 'waiting':
+                        const waitTime = Math.floor(Math.random() * 8000) + 2000;
+                        let countdown = Math.ceil(waitTime / 1000);
+                        gameStatusText.textContent = `Започва след ${countdown}...`;
+                        const countdownInterval = setInterval(() => {
+                           countdown--;
+                           gameStatusText.textContent = `Започва след ${countdown}...`;
+                           if (countdown <= 0) clearInterval(countdownInterval);
+                        }, 1000);
+                        setTimeout(() => setGameState('betting'), waitTime);
+                        break;
+                    case 'betting':
+                        cancelAnimationFrame(animationFrameId);
+                        resetRound();
+                        gameStatusText.textContent = `ЗАЛАГАЙТЕ!`;
+                        [1, 2].forEach(id => {
+                            const panel = document.querySelector(`[data-panel="${id}"]`);
+                            updateBetButton(panel, 'bet');
+                             if (autoBets[id]) panel.querySelector('.bet-btn').click();
+                        });
+                        setTimeout(() => setGameState('playing'), 5000);
+                        break;
+                    case 'playing':
+                        gameStatusText.textContent = '';
+                        startTime = Date.now();
+                        crashPoint = generateCrashPoint();
+                        betPanels.forEach(p => {
+                            const id = p.dataset.panel;
+                            if (bets[id].active && !bets[id].cashedOut) updateBetButton(p, 'cashout', bets[id].amount * 1.00);
+                            else updateBetButton(p, 'disabled');
+                        });
+                        simulateOtherPlayersBetting();
+                        animationFrameId = requestAnimationFrame(gameLoop);
+                        break;
+                    case 'crashed':
+                        gameArea.classList.add('crashed');
+                        updateMultiplierDisplay(crashPoint, 'crashed');
+                        history.unshift(crashPoint);
+                        updateHistoryBar();
+                        [1, 2].forEach(panelId => {
+                            if (bets[panelId].active && !bets[panelId].cashedOut) {
+                                autoBets[panelId] = document.querySelector(`[data-panel="${panelId}"] .auto-bet-toggle`).checked;
+                            }
+                        });
+                        setTimeout(() => setGameState('waiting'), 4000);
+                        break;
+                }
+            }
+
+            function resetRound() {
+                gameArea.classList.remove('crashed');
+                currentMultiplier = 1.00;
+                multiplierDisplay.innerHTML = '';
+                rocket.style.left = '-15%';
+                rocket.style.bottom = '10%';
+                [1, 2].forEach(id => {
+                    bets[id].active = false;
+                    bets[id].cashedOut = false;
+                });
+            }
+
+            function generateCrashPoint() {
+                const e = 2**-52, h = Math.floor(Math.random() * (2**52));
+                if (Math.random() < 0.04) return 1.00;
+                return Math.floor(100 / (1 - h * e)) / 100;
+            }
+
+            async function placeBet(panelId) {
+                const panel = document.querySelector(`[data-panel="${panelId}"]`), amountInput = panel.querySelector('.bet-amount'), amount = parseFloat(amountInput.value);
+                if (isNaN(amount) || amount <= 0 || amount > userBalance) return;
+                try {
+                    await updateDoc(userDocRef, { chips: increment(-amount) });
+                    bets[panelId] = { active: true, amount: amount, cashedOut: false, autoCashout: parseFloat(panel.querySelector('.auto-cashout').value) || null };
+                    updateBetButton(panel, 'cancel');
+                } catch (e) { console.error("Bet failed:", e); }
+            }
+            
+            async function cancelBet(panelId) {
+                 if (!bets[panelId].active) return;
+                 const amount = bets[panelId].amount;
+                 try {
+                     await updateDoc(userDocRef, { chips: increment(amount) });
+                     bets[panelId].active = false;
+                     updateBetButton(document.querySelector(`[data-panel="${panelId}"]`), 'bet');
+                 } catch (e) { console.error("Cancel bet failed:", e); }
+            }
+            
+            async function cashout(panelId) {
+                if (!bets[panelId].active || bets[panelId].cashedOut) return;
+                const winAmount = bets[panelId].amount * currentMultiplier;
+                bets[panelId].cashedOut = true;
+                try {
+                    await updateDoc(userDocRef, { chips: increment(winAmount) });
+                    const panel = document.querySelector(`[data-panel="${panelId}"]`);
+                    updateBetButton(panel, 'cashed_out', winAmount);
+                    autoBets[panelId] = panel.querySelector('.auto-bet-toggle').checked;
+                } catch (e) { console.error("Cashout failed:", e); }
+            }
+            
+            // --- Event Listeners ---
+            betPanels.forEach(panel => {
+                const panelId = panel.dataset.panel, btn = panel.querySelector('.bet-btn');
+                btn.addEventListener('click', () => {
+                    if (gameState === 'betting') { if (bets[panelId].active) cancelBet(panelId); else placeBet(panelId); } 
+                    else if (gameState === 'playing' && bets[panelId].active && !bets[panelId].cashedOut) cashout(panelId);
+                });
+                panel.querySelector('.auto-bet-toggle').addEventListener('change', (e) => { autoBets[panelId] = e.target.checked; });
+            });
+
+            // Tab functionality for mobile
+            tabHistory.addEventListener('click', () => {
+                historyBarContainer.classList.remove('hidden');
+                playersListContainer.classList.add('hidden');
+                tabHistory.classList.add('border-yellow-400', 'text-yellow-400');
+                tabHistory.classList.remove('border-transparent', 'text-gray-500');
+                tabPlayers.classList.add('border-transparent', 'text-gray-500');
+                tabPlayers.classList.remove('border-yellow-400', 'text-yellow-400');
+            });
+            tabPlayers.addEventListener('click', () => {
+                historyBarContainer.classList.add('hidden');
+                playersListContainer.classList.remove('hidden');
+                tabPlayers.classList.add('border-yellow-400', 'text-yellow-400');
+                tabPlayers.classList.remove('border-transparent', 'text-gray-500');
+                tabHistory.classList.add('border-transparent', 'text-gray-500');
+                tabHistory.classList.remove('border-yellow-400', 'text-yellow-400');
+            });
+
+            // --- Simulation (Identical to PC) ---
+            let fakePlayers = [];
+            function simulateOtherPlayersBetting() {
+                liveBetsList.innerHTML = '';
+                fakePlayers = [];
+                const numPlayers = Math.floor(Math.random() * 15) + 5;
+                for (let i = 0; i < numPlayers; i++) {
+                    const player = {
+                        name: `Player${Math.floor(Math.random() * 900) + 100}`, bet: (Math.random() * 50 + 1).toFixed(2),
+                        cashoutAt: Math.random() > 0.1 ? 1.01 + Math.pow(Math.random(), 2) * 10 : null, cashedOut: false, element: null };
+                    const el = document.createElement('div');
+                    el.className = 'grid grid-cols-3 text-xs p-1 rounded';
+                    el.innerHTML = `<span>${player.name}</span><span class="text-center text-gray-400">${player.bet}</span><span class="text-right">-</span>`;
+                    player.element = el;
+                    liveBetsList.appendChild(el);
+                    fakePlayers.push(player);
+                }
+                const simInterval = setInterval(() => {
+                    if (gameState !== 'playing') { clearInterval(simInterval); return; }
+                    fakePlayers.forEach(p => {
+                        if (!p.cashedOut && p.cashoutAt && currentMultiplier >= p.cashoutAt) {
+                            p.cashedOut = true;
+                            p.element.children[2].textContent = `${p.cashoutAt.toFixed(2)}x`;
+                            p.element.children[2].classList.add('text-green-400', 'font-bold');
+                            p.element.classList.add('bg-green-900/50');
+                        }
+                    });
+                }, 200);
+            }
+            
+            // --- Start the game ---
+            updateHistoryBar();
+            setGameState('waiting');
+        }
+    </script>
+</body>
+</html>
