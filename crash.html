@@ -2,8 +2,8 @@
 <html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NIVRA - Crash Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>NIVRA - Очаквайте Скоро</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -21,11 +21,15 @@
             --glow-color: #f7b733;
             --secondary-glow: #fc4a1a;
         }
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background-color: #1a1a2e;
+        }
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #1a1a2e;
             color: #e0e0e0;
-            overflow: hidden;
         }
         .font-orbitron { font-family: 'Orbitron', sans-serif; }
         .gradient-text {
@@ -42,40 +46,11 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(247, 183, 51, 0.2);
         }
-        .btn-primary:disabled {
-            background: #4a4a6a;
-            color: #888;
-            cursor: not-allowed;
-            transform: translateY(0);
-            box-shadow: none;
+        .btn-primary:active:not(:disabled) {
+             transform: scale(0.98);
         }
-        .btn-cashout {
-            background: linear-gradient(90deg, #28a745, #218838);
-            color: white;
-        }
-        .btn-cashout:hover:not(:disabled) {
-            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.2);
-        }
-        .form-input {
-            background-color: #2c2c44;
-            border: 2px solid #4a4a6a;
-            color: #e0e0e0;
-        }
-        .form-input:focus {
-            background-color: #3a3a5a;
-            border-color: var(--glow-color);
-            outline: none;
-        }
-        .toggle-switch {
-            position: relative; display: inline-block; width: 44px; height: 24px;
-        }
-        .toggle-switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; inset: 0; background-color: #4a4a6a; transition: .4s; border-radius: 24px; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: #28a745; }
-        input:checked + .slider:before { transform: translateX(20px); }
 
-        /* Loading Screen from mobile engine */
+        /* Loading Screen Styles */
         #loading-screen {
             position: fixed; inset: 0; background-color: #100a1c; z-index: 10000;
             display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2rem;
@@ -89,50 +64,6 @@
         .progress-bar-container { width: 80%; max-width: 500px; height: 20px; background-color: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; border: 2px solid var(--glow-color); }
         .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #fc4a1a, #f7b733); transition: width 0.3s ease-out; }
         #loading-percentage { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; margin-top: 1rem; }
-
-        /* Game Area */
-        #game-area {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            background: #100a1c url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"%3E%3Cg fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Cpath opacity=".5" d="M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h16v9h1v-9h9v9h1v-9h9v9h1v-9h9v9h1v-9h9v9h1v-9h9v9h1v-9h9v9h1v-9h9v9h1v-9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1-1v-9h-1v9h1zm-10 0v-9h-1v9h1zm-10 0v-9h-1v9h1zm-10 0v-9h-1v9h1zm-10 0v-9h-1v9h1zm-10 0v-9h-1v9h1zm-10 0v-9h-1v9h1zm-10 0v-9h-1v9h1zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9z"/%3E%3Cpath d="M6 5V0h1v5h9V0h1v5h9V0h1v5h9V0h1v5h9V0h1v5h9V0h1v5h9V0h1v5h9V0h1v5h9V0h1v6H0V5h6zm-1 1H0v9h5V6zm1 0h9v9H6V6zm10 0h9v9h-9V6zm10 0h9v9h-9V6zm10 0h9v9h-9V6zm10 0h9v9h-9V6zm10 0h9v9h-9V6zm10 0h9v9h-9V6zm10 0h9v9h-9V6zm10 0h9v9h-9V6zM5 16H0v9h5v-9zm1 0h9v9H6v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zM5 26H0v9h5v-9zm1 0h9v9H6v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zM5 36H0v9h5v-9zm1 0h9v9H6v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zM5 46H0v9h5v-9zm1 0h9v9H6v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zM5 56H0v9h5v-9zm1 0h9v9H6v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zM5 66H0v9h5v-9zm1 0h9v9H6v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zM5 76H0v9h5v-9zm1 0h9v9H6v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zM5 86H0v9h5v-9zm1 0h9v9H6v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zm10 0h9v9h-9v-9zM5 96H0v4h5v-4zm1 0h9v4H6v-4zm10 0h9v4h-9v-4zm10 0h9v4h-9v-4zm10 0h9v4h-9v-4zm10 0h9v4h-9v-4zm10 0h9v4h-9v-4zm10 0h9v4h-9v-4zm10 0h9v4h-9v-4zm10 0h9v4h-9v-4z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
-            overflow: hidden; border-radius: 1rem;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5), inset 0 0 15px rgba(0,0,0,0.7);
-        }
-        #multiplier-display {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
-            text-shadow: 0 0 10px #fff, 0 0 20px var(--glow-color), 0 0 40px var(--glow-color);
-            transition: color 0.3s, text-shadow 0.3s, transform 0.3s;
-        }
-        #rocket {
-            position: absolute;
-            left: -10%; bottom: 10%;
-            width: 80px; height: 80px;
-            transform: rotate(25deg);
-            transition: all 0.2s linear;
-            z-index: 5;
-            filter: drop-shadow(0 0 15px #fff);
-        }
-        .crashed #rocket {
-            animation: explode 0.5s forwards;
-        }
-        @keyframes explode {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(2.5); opacity: 0; }
-        }
-
-        /* History */
-        .history-item {
-            padding: 4px 8px; border-radius: 4px; font-weight: 600;
-            font-size: 0.9rem;
-        }
-        .history-low { background-color: #3a5a9a; } /* < 2x */
-        .history-mid { background-color: #8a3a9a; } /* < 10x */
-        .history-high { background-color: #f7b733; color: #111; } /* >= 10x */
-        .history-crash { background-color: #c0392b; } /* = 1.00x */
-
     </style>
 </head>
 <body class="antialiased text-gray-200">
@@ -147,122 +78,48 @@
     </div>
 
     <!-- Login Required Message -->
-    <section id="login-required-container" class="w-full h-screen hidden flex-col items-center justify-center text-center p-8">
-        <div class="bg-gray-900 rounded-2xl shadow-2xl p-8 flex flex-col items-center gap-6 max-w-2xl">
-            <i class="fas fa-lock text-7xl text-yellow-400"></i>
-            <h2 class="text-4xl font-bold gradient-text">Достъпът е ограничен</h2>
-            <p class="text-gray-300 text-lg max-w-md">Трябва да сте влезли в профила си, за да играете.</p>
-            <a href="index.html" class="mt-4 px-8 py-4 rounded-lg font-bold text-xl btn-primary inline-block">Към лобито / Вход</a>
+    <section id="login-required-container" class="w-full h-full hidden flex-col items-center justify-center text-center p-4">
+        <div class="bg-gray-900 rounded-2xl shadow-2xl p-6 md:p-8 flex flex-col items-center gap-4 max-w-md w-full">
+            <i class="fas fa-lock text-5xl md:text-6xl text-yellow-400"></i>
+            <h2 class="text-2xl md:text-3xl font-bold gradient-text">Достъпът е ограничен</h2>
+            <p class="text-gray-300 text-base">Трябва да сте влезли, за да видите тази страница.</p>
+            <a href="index.html" class="mt-2 px-6 py-3 rounded-lg font-bold text-lg btn-primary inline-block">Към лобито / Вход</a>
         </div>
     </section>
+    
+    <!-- START OF MODIFIED SECTION: "Coming Soon" Message Container -->
+    <section id="coming-soon-container" class="w-full h-full hidden flex-col items-center justify-center text-center p-4">
+        <!-- The container is now responsive -->
+        <div class="bg-gray-900 rounded-2xl shadow-2xl p-6 md:p-8 flex flex-col items-center gap-4 md:gap-6 max-w-md md:max-w-xl lg:max-w-2xl w-full">
+            <i class="fas fa-cogs text-6xl md:text-7xl text-yellow-400 animate-spin" style="--fa-animation-duration: 5s;"></i>
+            
+            <h2 class="text-3xl md:text-4xl font-bold gradient-text mt-4">В Процес на Разработка!</h2>
+            
+            <!-- Longer and more detailed message -->
+            <p class="text-gray-300 text-base md:text-lg leading-relaxed">
+                Играта, която очаквате, е в процес на активна разработка.
+                <br><br>
+                Екипът на <strong>NIVRA</strong>, в тясно сътрудничество с нашите партньори от <span class="font-bold text-yellow-400">България.online</span>, работи неуморно, за да създаде едно наистина вълнуващо и иновативно Crash изживяване. Влагаме последните технологии и креативни идеи, за да гарантираме, че крайният продукт ще надмине вашите очаквания.
+                <br><br>
+                Вашата подкрепа е нашата най-голяма мотивация. Благодарим ви за търпението и разбирането!
+                <br><br>
+                Останете на линия за бъдещи новини и се пригответе за излитане!
+            </p>
+            
+            <!-- Back to lobby button -->
+            <a href="index.html" class="mt-4 md:mt-6 px-8 py-3 rounded-lg font-bold text-lg btn-primary inline-block">
+                Обратно към лобито
+            </a>
+        </div>
+    </section>
+    <!-- END OF MODIFIED SECTION -->
 
-    <!-- Game Container -->
-    <div id="game-container" class="w-full h-screen hidden p-4 flex flex-col">
-        <!-- Header -->
-        <header class="bg-gray-900 shadow-lg rounded-t-lg">
-            <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
-                <a href="index.html" class="text-xl font-bold text-gray-300 hover:text-yellow-400 transition flex items-center gap-2">
-                    <i class="fas fa-arrow-left"></i> Обратно към лобито
-                </a>
-                <div class="text-lg font-semibold flex items-center gap-2">
-                    <i class="fas fa-wallet text-yellow-400"></i>
-                    <span id="balance-display">0.00</span>
-                </div>
-            </nav>
-        </header>
 
-        <main class="flex-grow flex gap-4 min-h-0">
-            <!-- Left: Players List -->
-            <aside class="w-1/4 bg-gray-900 rounded-b-lg p-3 flex flex-col">
-                <h3 class="text-center font-bold text-lg mb-2 border-b border-gray-700 pb-2">Текущи Залози</h3>
-                <div id="live-bets-header" class="grid grid-cols-3 text-xs text-gray-400 font-semibold px-2">
-                    <span>Играч</span>
-                    <span class="text-center">Залог</span>
-                    <span class="text-right">Кешаут</span>
-                </div>
-                <div id="live-bets-list" class="flex-grow overflow-y-auto space-y-1 mt-2 pr-2">
-                    <!-- Live bets will be populated here by JS -->
-                </div>
-            </aside>
-
-            <!-- Center: Game -->
-            <div class="w-3/4 flex flex-col gap-4">
-                <!-- History Bar -->
-                <div id="history-bar" class="bg-gray-900 rounded-lg p-2 flex items-center gap-2 overflow-x-auto">
-                    <span class="text-gray-500 font-semibold whitespace-nowrap">Последни:</span>
-                    <!-- History items will be populated by JS -->
-                </div>
-
-                <!-- Main Game Area -->
-                <div id="game-area-wrapper" class="flex-grow bg-gray-900 rounded-lg p-2">
-                    <div id="game-area">
-                        <div id="multiplier-display" class="font-orbitron text-5xl md:text-7xl lg:text-9xl text-white transition-all duration-300">
-                           <div id="game-status-text" class="text-2xl md:text-4xl text-center"></div>
-                        </div>
-                        <img src="https://i.ibb.co/L5hB6WJ/rocket.png" id="rocket" alt="Rocket">
-                    </div>
-                </div>
-
-                <!-- Betting Controls -->
-                <div id="betting-controls" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Bet Panel 1 -->
-                    <div class="bg-gray-900 p-4 rounded-lg" data-panel="1">
-                        <div class="flex gap-2">
-                            <div class="flex-grow">
-                                <label class="text-xs text-gray-400">Сума на залог</label>
-                                <input type="number" class="bet-amount w-full p-2 rounded form-input" value="1.00" min="0.10" step="0.10">
-                            </div>
-                            <div class="flex-grow">
-                                <label class="text-xs text-gray-400">Авто кешаут</label>
-                                <input type="number" class="auto-cashout w-full p-2 rounded form-input" placeholder="1.50" min="1.01">
-                            </div>
-                        </div>
-                        <div class="flex justify-between items-center mt-3 text-sm">
-                             <div class="flex items-center gap-2">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" class="auto-bet-toggle">
-                                    <span class="slider"></span>
-                                </label>
-                                <span>Авто Залог</span>
-                            </div>
-                            <button class="bet-btn btn-primary font-bold py-3 px-6 rounded-lg w-full max-w-[200px]">ЗАЛОЖИ</button>
-                        </div>
-                    </div>
-                    <!-- Bet Panel 2 -->
-                    <div class="bg-gray-900 p-4 rounded-lg" data-panel="2">
-                         <div class="flex gap-2">
-                            <div class="flex-grow">
-                                <label class="text-xs text-gray-400">Сума на залог</label>
-                                <input type="number" class="bet-amount w-full p-2 rounded form-input" value="1.00" min="0.10" step="0.10">
-                            </div>
-                            <div class="flex-grow">
-                                <label class="text-xs text-gray-400">Авто кешаут</label>
-                                <input type="number" class="auto-cashout w-full p-2 rounded form-input" placeholder="2.00" min="1.01">
-                            </div>
-                        </div>
-                         <div class="flex justify-between items-center mt-3 text-sm">
-                             <div class="flex items-center gap-2">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" class="auto-bet-toggle">
-                                    <span class="slider"></span>
-                                </label>
-                                <span>Авто Залог</span>
-                            </div>
-                            <button class="bet-btn btn-primary font-bold py-3 px-6 rounded-lg w-full max-w-[200px]">ЗАЛОЖИ</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
+    <!-- Firebase and Logic Script -->
     <script type="module">
-        // --- FIREBASE SDK IMPORTS ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, onSnapshot, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-        // --- FIREBASE CONFIG ---
+        
         const firebaseConfig = {
           apiKey: "AIzaSyAatMUa6vFu2AAe3NCWse6j2moiXmXdl0U",
           authDomain: "nivra-casino.firebaseapp.com",
@@ -273,45 +130,27 @@
           measurementId: "G-2NF3P6H9GM"
         };
         
-        // --- FIREBASE INITIALIZATION ---
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const db = getFirestore(app);
 
-        // --- GLOBAL VARS ---
-        let currentUser = null;
-        let userDocRef = null;
-        let isGameInitialized = false;
-        
+        // --- DOM Elements ---
         const loadingScreen = document.getElementById('loading-screen');
-        const gameContainer = document.getElementById('game-container');
         const loginRequiredContainer = document.getElementById('login-required-container');
+        const comingSoonContainer = document.getElementById('coming-soon-container');
 
-        // --- AUTH STATE CHANGE ---
-        onAuthStateChanged(auth, async (user) => {
+        // --- Auth State Logic ---
+        onAuthStateChanged(auth, (user) => {
             if (user && user.emailVerified) {
-                currentUser = user;
-                userDocRef = doc(db, 'users', user.uid);
-
-                const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
-                    if (docSnap.exists()) {
-                        const balance = docSnap.data().chips;
-                        if (!isGameInitialized) {
-                            initializeGame(balance);
-                            isGameInitialized = true;
-                        }
-                        updateBalanceDisplay(balance);
-                    } else {
-                        showLoginRequired("Грешка: Не е намерен потребителски профил.");
-                    }
-                });
+                // User is logged in, show the "Coming Soon" message after loading
+                showComingSoon();
             } else {
+                // User is not logged in, show the login required message
                 showLoginRequired();
             }
         });
         
-        function showLoginRequired(message = "Трябва да сте влезли в профила си, за да играете.") {
-            // Fake loading for effect
+        // --- UI Display Functions ---
+        function runFakeLoading(onComplete) {
             const progressBar = document.getElementById('progress-bar');
             const loadingPercentage = document.getElementById('loading-percentage');
             let progress = 0;
@@ -324,355 +163,27 @@
                     clearInterval(interval);
                     setTimeout(() => {
                         loadingScreen.style.opacity = '0';
-                        loadingScreen.style.display = 'none';
-                        loginRequiredContainer.querySelector('p').textContent = message;
-                        loginRequiredContainer.classList.remove('hidden');
-                        loginRequiredContainer.classList.add('flex');
-                        gameContainer.classList.add('hidden');
+                        setTimeout(() => {
+                           loadingScreen.style.display = 'none';
+                           onComplete();
+                        }, 500);
                     }, 500);
                 }
             }, 200);
         }
-
-        async function initializeGame(initialBalance) {
-            // Fake loading for effect
-            const progressBar = document.getElementById('progress-bar');
-            const loadingPercentage = document.getElementById('loading-percentage');
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += Math.random() * 15;
-                if (progress > 100) progress = 100;
-                progressBar.style.width = `${progress}%`;
-                loadingPercentage.textContent = `${Math.floor(progress)}%`;
-                if (progress === 100) {
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        loadingScreen.style.opacity = '0';
-                        loadingScreen.style.display = 'none';
-                        gameContainer.classList.remove('hidden');
-                        gameContainer.classList.add('flex');
-                    }, 500);
-                }
-            }, 200);
-
-            // ================== GAME LOGIC ==================
-            
-            const balanceDisplay = document.getElementById('balance-display');
-            const betPanels = document.querySelectorAll('[data-panel]');
-            const multiplierDisplay = document.getElementById('multiplier-display');
-            const gameStatusText = document.getElementById('game-status-text');
-            const rocket = document.getElementById('rocket');
-            const gameArea = document.getElementById('game-area');
-            const historyBar = document.getElementById('history-bar');
-            const liveBetsList = document.getElementById('live-bets-list');
-            
-            let userBalance = initialBalance;
-            let gameState = 'waiting'; // waiting, betting, playing, crashed
-            let currentMultiplier = 1.00;
-            let crashPoint = 1.00;
-            let startTime = 0;
-            let history = [];
-            let animationFrameId;
-            
-            let bets = { 1: { active: false, cashedOut: false }, 2: { active: false, cashedOut: false } };
-            let autoBets = { 1: false, 2: false };
-
-            // --- UI Update Functions ---
-            function updateBalanceDisplay(newBalance) {
-                userBalance = newBalance;
-                balanceDisplay.textContent = userBalance.toFixed(2);
-            }
-
-            function updateMultiplierDisplay(value, state) {
-                if (state === 'crashed') {
-                    multiplierDisplay.innerHTML = `<div class="text-red-500">CRASHED @ ${value.toFixed(2)}x</div>`;
-                    multiplierDisplay.classList.add('scale-110');
-                } else if (state === 'playing') {
-                    multiplierDisplay.innerHTML = `${value.toFixed(2)}x`;
-                    multiplierDisplay.classList.remove('scale-110');
-                } else {
-                     multiplierDisplay.classList.remove('scale-110');
-                }
-            }
-            
-            function updateBetButton(panel, state, value = null) {
-                const btn = panel.querySelector('.bet-btn');
-                switch (state) {
-                    case 'bet':
-                        btn.textContent = 'ЗАЛОЖИ';
-                        btn.className = 'bet-btn btn-primary font-bold py-3 px-6 rounded-lg w-full max-w-[200px]';
-                        btn.disabled = false;
-                        panel.querySelectorAll('input').forEach(i => i.disabled = false);
-                        break;
-                    case 'cancel':
-                        btn.textContent = 'ОТКАЖИ';
-                        btn.className = 'bet-btn bg-red-600 text-white font-bold py-3 px-6 rounded-lg w-full max-w-[200px]';
-                        break;
-                    case 'cashout':
-                        btn.textContent = `КЕШАУТ ${value.toFixed(2)}`;
-                        btn.className = 'bet-btn btn-cashout font-bold py-3 px-6 rounded-lg w-full max-w-[200px]';
-                        break;
-                    case 'cashed_out':
-                         btn.textContent = `ПЕЧАЛБА ${value.toFixed(2)}`;
-                         btn.className = 'bet-btn bg-gray-600 text-white font-bold py-3 px-6 rounded-lg w-full max-w-[200px]';
-                         btn.disabled = true;
-                         break;
-                    case 'disabled':
-                        btn.disabled = true;
-                        panel.querySelectorAll('input').forEach(i => i.disabled = true);
-                        break;
-                }
-            }
-
-            function updateHistoryBar() {
-                const historyContainer = historyBar.querySelector('span').parentNode;
-                historyContainer.innerHTML = '<span class="text-gray-500 font-semibold whitespace-nowrap">Последни:</span>';
-                history.slice(0, 15).forEach(val => {
-                    const item = document.createElement('div');
-                    item.textContent = `${val.toFixed(2)}x`;
-                    let colorClass = 'history-low';
-                    if (val === 1.00) colorClass = 'history-crash';
-                    else if (val >= 10.00) colorClass = 'history-high';
-                    else if (val >= 2.00) colorClass = 'history-mid';
-                    item.className = `history-item ${colorClass}`;
-                    historyContainer.appendChild(item);
-                });
-            }
-
-            // --- Game Flow & Logic ---
-            
-            function gameLoop() {
-                if (gameState === 'playing') {
-                    const elapsed = (Date.now() - startTime) / 1000;
-                    currentMultiplier = 1 + 0.06 * Math.pow(elapsed, 2);
-
-                    if (currentMultiplier >= crashPoint) {
-                        currentMultiplier = crashPoint;
-                        setGameState('crashed');
-                    } else {
-                        updateMultiplierDisplay(currentMultiplier, 'playing');
-                        
-                        // Auto cashout check
-                        [1, 2].forEach(panelId => {
-                            if (bets[panelId].active && !bets[panelId].cashedOut) {
-                                const panel = document.querySelector(`[data-panel="${panelId}"]`);
-                                const autoCashoutValue = parseFloat(panel.querySelector('.auto-cashout').value);
-                                if (autoCashoutValue && currentMultiplier >= autoCashoutValue) {
-                                    cashout(panelId);
-                                }
-                                updateBetButton(panel, 'cashout', bets[panelId].amount * currentMultiplier);
-                            }
-                        });
-
-                        // Rocket animation
-                        const progress = Math.min(elapsed / 10, 1); // Normalize progress over ~10s
-                        const xPos = -10 + 100 * progress;
-                        const yPos = 10 + 50 * Math.sin(progress * Math.PI);
-                        rocket.style.left = `${xPos}%`;
-                        rocket.style.bottom = `${yPos}%`;
-                    }
-                }
-                animationFrameId = requestAnimationFrame(gameLoop);
-            }
-
-            function setGameState(newState) {
-                gameState = newState;
-                switch (newState) {
-                    case 'waiting':
-                        const waitTime = Math.floor(Math.random() * 8000) + 2000; // 2-10s
-                        let countdown = Math.ceil(waitTime / 1000);
-                        gameStatusText.textContent = `Рундът започва след ${countdown}...`;
-                        const countdownInterval = setInterval(() => {
-                           countdown--;
-                           gameStatusText.textContent = `Рундът започва след ${countdown}...`;
-                           if (countdown <= 0) clearInterval(countdownInterval);
-                        }, 1000);
-
-                        setTimeout(() => setGameState('betting'), waitTime);
-                        break;
-
-                    case 'betting':
-                        cancelAnimationFrame(animationFrameId);
-                        resetRound();
-                        gameStatusText.textContent = `ЗАЛАГАЙТЕ!`;
-                        [1, 2].forEach(id => {
-                            const panel = document.querySelector(`[data-panel="${id}"]`);
-                            updateBetButton(panel, 'bet');
-                             if (autoBets[id]) {
-                                panel.querySelector('.bet-btn').click();
-                             }
-                        });
-                        setTimeout(() => setGameState('playing'), 5000); // 5s betting window
-                        break;
-                        
-                    case 'playing':
-                        gameStatusText.textContent = '';
-                        startTime = Date.now();
-                        crashPoint = generateCrashPoint();
-                        betPanels.forEach(p => {
-                            const id = p.dataset.panel;
-                            if (bets[id].active && !bets[id].cashedOut) {
-                                updateBetButton(p, 'cashout', bets[id].amount * 1.00);
-                            } else {
-                                updateBetButton(p, 'disabled');
-                            }
-                        });
-                        simulateOtherPlayersBetting();
-                        animationFrameId = requestAnimationFrame(gameLoop);
-                        break;
-
-                    case 'crashed':
-                        gameArea.classList.add('crashed');
-                        updateMultiplierDisplay(crashPoint, 'crashed');
-                        history.unshift(crashPoint);
-                        updateHistoryBar();
-
-                        [1, 2].forEach(panelId => {
-                            if (bets[panelId].active && !bets[panelId].cashedOut) {
-                                // Lost
-                                autoBets[panelId] = document.querySelector(`[data-panel="${panelId}"] .auto-bet-toggle`).checked;
-                            }
-                        });
-
-                        setTimeout(() => setGameState('waiting'), 4000);
-                        break;
-                }
-            }
-
-            function resetRound() {
-                gameArea.classList.remove('crashed');
-                currentMultiplier = 1.00;
-                multiplierDisplay.innerHTML = '';
-                rocket.style.left = '-10%';
-                rocket.style.bottom = '10%';
-                
-                [1, 2].forEach(id => {
-                    bets[id].active = false;
-                    bets[id].cashedOut = false;
-                });
-            }
-
-            function generateCrashPoint() {
-                const e = 2**-52;
-                const h = Math.floor(Math.random() * (2**52));
-                // 4% chance of instant crash
-                if (Math.random() < 0.04) return 1.00;
-                return Math.floor(100 / (1 - h * e)) / 100;
-            }
-
-            async function placeBet(panelId) {
-                const panel = document.querySelector(`[data-panel="${panelId}"]`);
-                const amountInput = panel.querySelector('.bet-amount');
-                const amount = parseFloat(amountInput.value);
-
-                if (isNaN(amount) || amount <= 0 || amount > userBalance) return;
-                
-                try {
-                    await updateDoc(userDocRef, { chips: increment(-amount) });
-                    bets[panelId] = {
-                        active: true,
-                        amount: amount,
-                        cashedOut: false,
-                        autoCashout: parseFloat(panel.querySelector('.auto-cashout').value) || null
-                    };
-                    updateBetButton(panel, 'cancel');
-                } catch (error) {
-                    console.error("Bet failed:", error);
-                }
-            }
-            
-            async function cancelBet(panelId) {
-                 if (!bets[panelId].active) return;
-                 const amount = bets[panelId].amount;
-                 try {
-                     await updateDoc(userDocRef, { chips: increment(amount) });
-                     bets[panelId].active = false;
-                     const panel = document.querySelector(`[data-panel="${panelId}"]`);
-                     updateBetButton(panel, 'bet');
-                 } catch (error) {
-                    console.error("Cancel bet failed:", error);
-                 }
-            }
-            
-            async function cashout(panelId) {
-                if (!bets[panelId].active || bets[panelId].cashedOut) return;
-                
-                const winAmount = bets[panelId].amount * currentMultiplier;
-                bets[panelId].cashedOut = true;
-                
-                try {
-                    await updateDoc(userDocRef, { chips: increment(winAmount) });
-                    const panel = document.querySelector(`[data-panel="${panelId}"]`);
-                    updateBetButton(panel, 'cashed_out', winAmount);
-                    autoBets[panelId] = panel.querySelector('.auto-bet-toggle').checked;
-                } catch (error) {
-                    console.error("Cashout failed:", error);
-                }
-            }
-            
-            // --- Event Listeners ---
-            betPanels.forEach(panel => {
-                const panelId = panel.dataset.panel;
-                const btn = panel.querySelector('.bet-btn');
-                
-                btn.addEventListener('click', () => {
-                    if (gameState === 'betting') {
-                        if (bets[panelId].active) cancelBet(panelId);
-                        else placeBet(panelId);
-                    } else if (gameState === 'playing' && bets[panelId].active && !bets[panelId].cashedOut) {
-                        cashout(panelId);
-                    }
-                });
-
-                panel.querySelector('.auto-bet-toggle').addEventListener('change', (e) => {
-                    autoBets[panelId] = e.target.checked;
-                });
+        
+        function showLoginRequired() {
+            runFakeLoading(() => {
+                loginRequiredContainer.classList.remove('hidden');
+                loginRequiredContainer.classList.add('flex');
             });
+        }
 
-            // --- Other Players Simulation ---
-            let fakePlayers = [];
-            function simulateOtherPlayersBetting() {
-                liveBetsList.innerHTML = '';
-                fakePlayers = [];
-                const numPlayers = Math.floor(Math.random() * 15) + 5;
-                for (let i = 0; i < numPlayers; i++) {
-                    const player = {
-                        name: `Player${Math.floor(Math.random() * 900) + 100}`,
-                        bet: (Math.random() * 50 + 1).toFixed(2),
-                        cashoutAt: Math.random() > 0.1 ? 1.01 + Math.pow(Math.random(), 2) * 10 : null,
-                        cashedOut: false,
-                        element: null
-                    };
-                    const el = document.createElement('div');
-                    el.className = 'grid grid-cols-3 text-sm p-2 rounded bg-gray-800';
-                    el.innerHTML = `<span>${player.name}</span><span class="text-center text-gray-400">${player.bet}</span><span class="text-right">-</span>`;
-                    player.element = el;
-                    liveBetsList.appendChild(el);
-                    fakePlayers.push(player);
-                }
-                
-                // Animate them cashing out
-                const simInterval = setInterval(() => {
-                    if (gameState !== 'playing') {
-                        clearInterval(simInterval);
-                        return;
-                    }
-                    fakePlayers.forEach(p => {
-                        if (!p.cashedOut && p.cashoutAt && currentMultiplier >= p.cashoutAt) {
-                            p.cashedOut = true;
-                            const winAmount = (p.bet * p.cashoutAt).toFixed(2);
-                            p.element.children[2].textContent = `${p.cashoutAt.toFixed(2)}x`;
-                            p.element.children[2].classList.add('text-green-400', 'font-bold');
-                            p.element.classList.remove('bg-gray-800');
-                            p.element.classList.add('bg-green-900/50');
-                        }
-                    });
-                }, 200);
-            }
-            
-            // --- Start the game ---
-            updateHistoryBar();
-            setGameState('waiting');
+        function showComingSoon() {
+             runFakeLoading(() => {
+                comingSoonContainer.classList.remove('hidden');
+                comingSoonContainer.classList.add('flex');
+            });
         }
     </script>
 </body>
