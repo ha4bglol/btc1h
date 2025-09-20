@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIVRA - Вашето място за социални забавления</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #1a1a2e; color: #e0e0e0; }
+        .gradient-text { background: linear-gradient(90deg, #f7b733, #fc4a1a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .btn-primary { background: linear-gradient(90deg, #f7b733, #fc4a1a); transition: all 0.3s ease; }
+        .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(247, 183, 51, 0.2); }
+        .btn-primary:disabled { background: #4a4a6a; color: #8f8f8f; cursor: not-allowed; opacity: 0.7; transform: none; box-shadow: none; }
+        .btn-secondary { border: 2px solid #f7b733; color: #f7b733; transition: all 0.3s ease; }
+        .btn-secondary:hover:not(:disabled) { background-color: #f7b733; color: #1a1a2e; }
+        .tab-btn { padding: 0.75rem 1.5rem; font-weight: 600; color: #a0a0b0; border-bottom: 4px solid transparent; transition: all 0.3s ease; cursor: pointer; }
+        .tab-btn:hover { color: #f7b733; }
+        .tab-btn.active { color: #ffffff; border-bottom-color: #f7b733; }
+        .modal-overlay { display: none; position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px); z-index: 50; opacity: 0; transition: opacity 0.3s ease-in-out; align-items: center; justify-content: center; padding: 1rem; }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-content { background-image: radial-gradient(circle at top left, #2a2a40, #202030); border: 1px solid #4a4a6a; border-radius: 0.75rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 100%; position: relative; transform: scale(0.95); transition: transform 0.3s ease-in-out; }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+        .modal-overlay.shake .modal-content { animation: shake 0.5s; }
+        .form-input { background-color: #2c2c44; border: 1px solid #4a4a6a; color: #e0e0e0; transition: all 0.2s ease-in-out; width: 100%; border-radius: 0.5rem; padding: 0.75rem 1rem; }
+        .form-input:focus { outline: none; border-color: #f7b733; box-shadow: 0 0 0 3px rgba(247, 183, 51, 0.4); }
+        .step-indicator { display: flex; justify-content: space-between; margin-bottom: 2rem; }
+        .step { display: flex; flex-direction: column; align-items: center; position: relative; width: 33.33%; }
+        .step-circle { width: 32px; height: 32px; border-radius: 50%; background-color: #4a4a6a; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #4a4a6a; transition: all 0.3s ease; z-index: 1; }
+        .step.active .step-circle { background: linear-gradient(90deg, #f7b733, #fc4a1a); border-color: #f7b733; color: #1a1a2e; }
+        .step-line { position: absolute; top: 15px; left: 50%; width: 100%; height: 2px; background-color: #4a4a6a; z-index: 0; }
+        .step:first-child .step-line { left: 50%; } .step:last-child .step-line { width: 0; }
+        .step-label { margin-top: 0.5rem; font-size: 0.75rem; color: #a0a0b0; transition: color 0.3s; }
+        .step.active .step-label { color: #f7b733; }
+        .step-content { display: none; }
+        .step-content.active { display: block; animation: fadeIn 0.5s; }
+        .spinner { border: 2px solid rgba(255, 255, 255, 0.3); border-top-color: #fff; border-radius: 50%; width: 16px; height: 16px; animation: spin 1s linear infinite; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
+        @keyframes gift-shake { 0% { transform: rotate(0deg); } 25% { transform: rotate(5deg); } 50% { transform: rotate(0eg); } 75% { transform: rotate(-5deg); } 100% { transform: rotate(0deg); } }
+        .gift-icon-animation { animation: gift-shake 1s ease-in-out infinite; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- ЕКРАН ЗА ВЕРИФИКАЦИЯ -->
+    <div id="verification-notice" class="modal-overlay">
+        <div class="modal-content max-w-md p-8 text-center">
+            <div class="text-6xl text-yellow-400 mb-6"><i class="fas fa-envelope-open-text"></i></div>
+            <h2 class="text-3xl font-bold text-white mb-3">Потвърдете своя имейл</h2>
+            <p class="text-gray-400 mb-6">Изпратихме верификационен линк на <strong id="verification-email" class="text-white"></strong>. Моля, проверете своята пощенска кутия (и папката със спам), за да активирате акаунта си.</p>
+            <p id="verification-error" class="text-red-500 text-sm mb-4 text-center h-5"></p>
+            <div class="space-y-4">
+                <button id="resend-verification-btn" class="w-full max-w-xs mx-auto py-3 rounded-full text-black font-semibold btn-primary">Изпрати отново</button>
+                <button id="check-verification-btn" class="w-full max-w-xs mx-auto py-3 rounded-full border-2 btn-secondary flex items-center justify-center gap-2"><span class="btn-text">Вече потвърдих</span></button>
+                <button id="logout-from-verification-btn" class="text-gray-500 hover:text-white transition mt-4">Изход</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- КОНТЕЙНЕР ЗА ГЛАВНОТО ПРИЛОЖЕНИЕ -->
+    <div id="main-app">
+        <header class="bg-gray-900/80 backdrop-blur-sm sticky top-0 z-40 shadow-lg">
+            <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+                <a href="#" class="text-3xl font-bold gradient-text">NIVRA</a>
+                <div class="hidden md:flex items-center space-x-6 text-lg">
+                    <a href="#home" class="nav-link text-gray-300 hover:text-yellow-400 transition">Начало</a>
+                    <a href="#" id="welcome-bonus-link" class="nav-link text-yellow-400 hover:text-yellow-300 transition hidden"><i class="fas fa-gift"></i></a>
+                    <a href="#games" class="nav-link text-gray-300 hover:text-yellow-400 transition">Игри</a>
+                    <a href="#promo" class="nav-link text-gray-300 hover:text-yellow-400 transition">Промоции</a>
+                    <a href="#" id="leaderboard-link-desktop" class="nav-link text-gray-300 hover:text-yellow-400 transition">Класация</a>
+                    <a href="#about" class="nav-link text-gray-300 hover:text-yellow-400 transition">За нас</a>
+                </div>
+                <div class="hidden md:flex items-center space-x-4">
+                    <div id="logged-out-view" class="flex items-center space-x-4">
+                        <button id="login-btn-desktop" class="px-6 py-2 rounded-full border-2 btn-secondary">Вход</button>
+                        <button id="register-btn-desktop" class="px-6 py-2 rounded-full text-black font-semibold btn-primary">Регистрация</button>
+                    </div>
+                    <div id="logged-in-view" class="hidden items-center space-x-4">
+                        <button id="open-shop-btn" class="px-5 py-2 rounded-full text-sm font-semibold text-black btn-primary flex items-center gap-2 transform hover:scale-105 transition-transform">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Депозит</span>
+                        </button>
+                        <div class="text-right">
+                            <span id="user-balance" class="text-yellow-400 font-bold text-xl block"><i class="fas fa-coins mr-2"></i>0</span>
+                        </div>
+                        <div class="h-10 w-px bg-gray-700"></div>
+                        <div id="profile-button" class="flex items-center space-x-3 cursor-pointer group">
+                             <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-yellow-500 to-orange-500 flex items-center justify-center">
+                                <i class="fas fa-user text-white text-lg"></i>
+                            </div>
+                            <div class="text-left">
+                                <span id="user-username" class="text-white font-semibold block text-sm leading-tight group-hover:text-yellow-400 transition"></span>
+                                <span class="text-gray-500 text-xs leading-tight">Моят профил</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="menu-btn" class="md:hidden text-3xl cursor-pointer text-white">&#9776;</div>
+            </nav>
+        </header>
+        <div id="mobile-menu" class="hidden fixed inset-0 bg-black/90 z-50">
+             <div class="relative w-full h-full flex flex-col items-center justify-center text-center">
+                <div id="close-btn" class="absolute top-6 right-6 text-4xl text-white cursor-pointer">&times;</div>
+                <ul class="space-y-6 text-2xl">
+                    <li><a href="#home" class="nav-link mobile-nav-link text-gray-300">Начало</a></li>
+                    <li><a href="#games" class="nav-link mobile-nav-link text-gray-300">Игри</a></li>
+                    <li><a href="#promo" class="nav-link mobile-nav-link text-gray-300">Промоции</a></li>
+                    <li><a href="#" id="leaderboard-link-mobile" class="nav-link mobile-nav-link text-gray-300">Класация</a></li>
+                    <li><a href="#about" class="nav-link mobile-nav-link text-gray-300">За нас</a></li>
+                </ul>
+                <div class="mt-12 flex flex-col w-4/5 max-w-xs space-y-4">
+                    <div id="logged-out-view-mobile" class="flex flex-col space-y-4">
+                         <button id="login-btn-mobile" class="w-full px-6 py-3 rounded-full border-2 btn-secondary">Вход</button>
+                         <button id="register-btn-mobile" class="w-full px-6 py-3 rounded-full text-black font-semibold btn-primary">Регистрация</button>
+                    </div>
+                    <div id="logged-in-view-mobile" class="hidden flex-col items-center">
+                        <div class="text-center mb-4">
+                            <button id="open-shop-btn-mobile" class="px-6 py-3 rounded-full text-lg font-semibold text-black btn-primary flex items-center gap-2">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>Депозит</span>
+                            </button>
+                        </div>
+                        <div id="mobile-profile-info" class="text-center mb-6">
+                            <span id="user-username-mobile" class="text-white font-semibold block text-xl"></span>
+                            <span id="user-balance-mobile" class="text-yellow-400 font-bold text-lg"><i class="fas fa-coins mr-1"></i>0</span>
+                        </div>
+                        <button id="logout-btn-mobile" class="w-full px-6 py-3 rounded-full border-2 border-red-500 text-red-500">Изход</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <main>
+            <section id="home" class="relative min-h-screen flex items-center justify-center text-center bg-cover bg-center" style="background-image: url('https://i.imgur.com/RmOrVLj.png');">
+                <div class="absolute inset-0 bg-black bg-opacity-60"></div>
+                <div class="relative z-10 px-4"><h1 class="text-5xl md:text-7xl font-bold text-white mb-4 leading-tight">Вашето Място за <span class="gradient-text">Социални Забавления</span></h1><p class="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-8">Присъединете се към хиляди играчи в най-добрата платформа за безплатни игри и забавления.</p><a href="#games" class="nav-link px-10 py-4 text-lg font-semibold rounded-full text-black btn-primary">Играй сега <i class="fas fa-arrow-right ml-2"></i></a></div>
+            </section>
+            <section id="content-tabs" class="py-20 bg-[#161625]">
+                <div class="container mx-auto px-6">
+                    <div id="tab-buttons" class="flex justify-center border-b border-gray-700 mb-12"><button class="tab-btn active" data-tab="games">Игри</button><button class="tab-btn" data-tab="promo">Промоции</button><button class="tab-btn" data-tab="about">За Нас</button></div>
+                    <div id="tab-content">
+                        <div id="tab-games" class="tab-panel">
+                            <div class="flex flex-col md:flex-row gap-6 mb-8 justify-center">
+                                <div class="relative flex-grow max-w-lg"><input type="text" id="search-games" placeholder="Търси игра..." class="form-input !pl-10 w-full"><i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i></div>
+                                <div id="game-filters" class="flex items-center justify-center gap-2 flex-wrap"><button data-filter="all" class="filter-btn active px-4 py-2 rounded-full bg-yellow-500/20 text-yellow-400">Всички</button><button data-filter="slot" class="filter-btn px-4 py-2 rounded-full bg-gray-700/50 text-gray-300">Слотове</button><button data-filter="table" class="filter-btn px-4 py-2 rounded-full bg-gray-700/50 text-gray-300">Игри на маса</button></div>
+                            </div>
+                            <div id="games-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"></div>
+                            <p id="no-games-found" class="text-center text-gray-400 text-lg hidden">Няма намерени игри, съответстващи на търсенето.</p>
+                        </div>
+                        <div id="tab-promo" class="tab-panel hidden"><h2 class="text-4xl font-bold mb-12 text-center">Специални Предложения</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-8"><div class="bg-gray-900 p-8 rounded-xl shadow-lg"><div class="text-5xl mb-4 text-yellow-400"><i class="fas fa-hand-holding-usd"></i></div><h3 class="text-2xl font-semibold mb-2">Бонус Добре Дошъл</h3><p class="text-gray-400">Всеки нов играч получава 500 безплатни точки веднага след регистрация!</p></div><div class="bg-gray-900 p-8 rounded-xl shadow-lg"><div class="text-5xl mb-4 text-yellow-400"><i class="fas fa-gift"></i></div><h3 class="text-2xl font-semibold mb-2">Ежедневни Бонуси</h3><p class="text-gray-400">Влизайте всеки ден, за да получите своите безплатни виртуални кредити и награди.</p></div><div class="bg-gray-900 p-8 rounded-xl shadow-lg"><div class="text-5xl mb-4 text-yellow-400"><i class="fas fa-trophy"></i></div><h3 class="text-2xl font-semibold mb-2">Вълнуващи Турнири</h3><p class="text-gray-400">Състезавайте се с други играчи и се изкачете в класациите.</p></div></div></div>
+                        <div id="tab-about" class="tab-panel hidden"><div class="flex flex-col md:flex-row items-center gap-12"><div class="md:w-1/2"><img src="https://placehold.co/600x400/1a1a2e/f7b733?text=NIVRA+Community" alt="Community" class="rounded-xl shadow-2xl"></div><div class="md:w-1/2"><h2 class="text-4xl font-bold mb-4">Нашата Мисия в <span class="gradient-text">NIVRA</span></h2><p class="text-gray-400 mb-6">В NIVRA сме се посветили на идеята да трансформираме iGaming индустрията чрез внедряване на модерни и завършени технологии. Ние вярваме, че бъдещето на онлайн забавленията е в създаването на сигурни, ангажиращи и социално отговорни платформи. Като част от непрекъснато разрастващата се мрежа на Bulgaria.Online, ние се стремим да бъдем стандарт за качество и иновация в България и извън нея.</p><ul class="space-y-4"><li class="flex items-center"><i class="fas fa-check-circle text-yellow-400 mr-3"></i> 100% Безплатно забавление</li><li class="flex items-center"><i class="fas fa-check-circle text-yellow-400 mr-3"></i> Иновативни технологии</li><li class="flex items-center"><i class="fas fa-check-circle text-yellow-400 mr-3"></i> Част от Bulgaria.Online</li></ul></div></div></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <footer class="bg-gray-900 text-gray-400 py-8">
+            <div class="container mx-auto px-6 text-center">
+                 <div class="flex justify-center space-x-4 md:space-x-6 mb-4">
+                    <a href="#" class="footer-link hover:text-white" data-modal="terms-modal">Общи условия</a>
+                    <a href="#" class="footer-link hover:text-white" data-modal="privacy-modal">Политика за поверителност</a>
+                    <a href="#" class="footer-link hover:text-white" data-modal="responsible-gambling-modal">Отговорен хазарт</a>
+                </div>
+                <p class="text-xs text-gray-500">&copy; 2024 NIVRA. Всички права запазени.</p>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- Modals -->
+    <div id="login-modal" class="modal-overlay"> <div class="modal-content max-w-md p-8"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold text-center mb-6 gradient-text">Вход в NIVRA</h3> <form id="login-form"><div class="mb-4"><label for="login-email" class="block text-sm font-medium text-gray-400 mb-2">Имейл</label><input type="email" id="login-email" required class="form-input"></div><div class="mb-4"><label for="login-password" class="block text-sm font-medium text-gray-400 mb-2">Парола</label><input type="password" id="login-password" required class="form-input"></div><p id="login-error" class="text-red-500 text-sm mb-4 text-center h-5"></p><button type="submit" class="w-full py-3 rounded-full text-black font-semibold btn-primary flex items-center justify-center gap-2"><span class="btn-text">Вход</span></button></form> <div class="text-center mt-6"><a href="#" id="forgot-password-link" class="text-sm text-yellow-400 hover:underline">Забравена парола?</a></div> </div> </div>
+    <div id="forgot-password-modal" class="modal-overlay"> <div class="modal-content max-w-md p-8"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold text-center mb-6 gradient-text">Възстанови Парола</h3> <p class="text-gray-400 text-center mb-6">Въведете имейла си и ще изпратим линк за възстановяване.</p> <form id="forgot-password-form"><div class="mb-4"><label for="reset-email" class="block text-sm font-medium text-gray-400 mb-2">Имейл</label><input type="email" id="reset-email" required class="form-input"></div><p id="reset-error" class="text-red-500 text-sm mb-4 text-center h-5"></p><p id="reset-success" class="text-green-400 text-sm mb-4 text-center h-5"></p><button type="submit" class="w-full py-3 rounded-full text-black font-semibold btn-primary flex items-center justify-center gap-2"><span class="btn-text">Изпрати линк</span></button></form> <div class="text-center mt-6"><a href="#" id="back-to-login-link" class="text-sm text-yellow-400 hover:underline">&larr; Обратно към Вход</a></div> </div> </div>
+    <div id="login-required-modal" class="modal-overlay"> <div class="modal-content max-w-md p-8 text-center"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <div class="text-5xl text-yellow-400 mb-4"><i class="fas fa-lock"></i></div> <h3 class="text-2xl font-bold text-white mb-4">Достъпът е ограничен</h3> <p class="text-gray-400 mb-8">За да играете, трябва да влезете в профила си.</p> <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4"> <button id="login-from-required-btn" class="w-full py-3 rounded-full text-black font-semibold btn-primary">Вход</button> <button id="register-from-required-btn" class="w-full py-3 rounded-full border-2 btn-secondary">Регистрация</button> </div> </div> </div>
+    <div id="registration-success-modal" class="modal-overlay"> <div class="modal-content max-w-md p-8 text-center"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <div class="text-5xl text-green-400 mb-4"><i class="fas fa-check-circle"></i></div> <h3 class="text-2xl font-bold text-white mb-4">Регистрацията е Успешна!</h3> <p class="text-gray-400 mb-8">Изпратихме линк за активация на вашия имейл. Моля, проверете пощата си, за да завършите процеса.</p> <button id="close-success-modal-btn" class="w-full max-w-xs mx-auto py-3 rounded-full text-black font-semibold btn-primary">Добре</button> </div> </div>
+    <div id="platform-choice-modal" class="modal-overlay"> <div class="modal-content max-w-md p-8 text-center"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <div class="text-5xl text-yellow-400 mb-4"><i class="fas fa-gamepad"></i></div> <h3 class="text-2xl font-bold text-white mb-4">Изберете версия на играта</h3> <p class="text-gray-400 mb-8">Изберете най-подходящата версия за вашето устройство.</p> <div class="grid grid-cols-1 sm:grid-cols-2 gap-4"> <button data-version="mobile" class="platform-btn w-full py-4 rounded-lg text-black font-semibold btn-primary flex flex-col items-center justify-center"><i class="fab fa-apple text-2xl mb-1"></i><span>iOS</span></button> <button data-version="mobile" class="platform-btn w-full py-4 rounded-lg text-black font-semibold btn-primary flex flex-col items-center justify-center"><i class="fab fa-android text-2xl mb-1"></i><span>Android</span></button> <button data-version="full" class="platform-btn w-full py-4 rounded-lg border-2 btn-secondary flex flex-col items-center justify-center"><i class="fab fa-android text-2xl mb-1"></i><span>Android (Full)</span></button> <button data-version="full" class="platform-btn w-full py-4 rounded-lg border-2 btn-secondary flex flex-col items-center justify-center"><i class="fas fa-desktop text-2xl mb-1"></i><span>PC (Win/Mac)</span></button> </div> <div class="mt-6"> <label class="flex items-center justify-center space-x-3"> <input type="checkbox" id="remember-platform-choice" class="h-5 w-5 accent-pink-500 bg-gray-700 border-gray-600 rounded focus:ring-pink-500"> <span class="text-sm text-gray-300">Запомни избора ми</span> </label> </div> </div> </div>
+    <div id="register-modal" class="modal-overlay"> <div class="modal-content max-w-lg p-8 max-h-[90vh] overflow-y-auto"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold text-center mb-2 gradient-text">Създай Акаунт в NIVRA</h3> <div class="step-indicator"><div class="step active" id="indicator-1"><div class="step-circle">1</div><span class="step-label">Данни</span><div class="step-line"></div></div><div class="step" id="indicator-2"><div class="step-circle">2</div><span class="step-label">Профил</span><div class="step-line"></div></div><div class="step" id="indicator-3"><div class="step-circle">3</div><span class="step-label">Финал</span></div></div> <div id="register-step-1" class="step-content active"><form id="register-form-step1"><div class="mb-4"><label for="register-email" class="block text-sm font-medium text-gray-400 mb-2">Имейл</label><input type="email" id="register-email" required class="form-input"></div><div class="mb-4"><label for="register-password" class="block text-sm font-medium text-gray-400 mb-2">Парола</label><input type="password" id="register-password" required class="form-input"><p class="text-xs text-gray-500 mt-1">Минимум 6 символа.</p></div><div class="mb-6"><label for="register-confirm-password" class="block text-sm font-medium text-gray-400 mb-2">Потвърди Парола</label><input type="password" id="register-confirm-password" required class="form-input"></div><p id="register-step1-error" class="text-red-500 text-sm mb-4 text-center h-5"></p><button type="submit" class="w-full py-3 rounded-full text-black font-semibold btn-primary flex items-center justify-center gap-2"><span class="btn-text">Напред</span> <i class="fas fa-arrow-right"></i></button></form></div> <div id="register-step-2" class="step-content"><form id="register-form-step2"><div class="mb-4"><label for="register-fullname" class="block text-sm font-medium text-gray-400 mb-2">Пълно Име</label><input type="text" id="register-fullname" required class="form-input"></div><div class="mb-6"><label for="register-username" class="block text-sm font-medium text-gray-400 mb-2">Потребителско Име</label><input type="text" id="register-username" required class="form-input"></div><p id="register-step2-error" class="text-red-500 text-sm mb-4 text-center h-5"></p><div class="flex space-x-4"><button type="button" id="register-back-step1" class="w-1/2 py-3 rounded-full btn-secondary">Назад</button><button type="submit" class="w-1/2 py-3 rounded-full text-black font-semibold btn-primary flex items-center justify-center gap-2"><span class="btn-text">Напред</span> <i class="fas fa-arrow-right"></i></button></div></form></div> <div id="register-step-3" class="step-content"><form id="register-form-step3"><div class="space-y-4 mb-6 text-left p-4 bg-gray-800/50 rounded-lg"><label class="flex items-start space-x-3"><input type="checkbox" id="terms-agree" required class="mt-1 h-5 w-5 accent-pink-500 bg-gray-700 border-gray-600 rounded focus:ring-pink-500"><span class="text-sm text-gray-300">Съгласен съм с <a href="#" class="text-yellow-400 underline footer-link" data-modal="terms-modal">Общите условия</a>.</span></label><label class="flex items-start space-x-3"><input type="checkbox" id="age-confirm" required class="mt-1 h-5 w-5 accent-pink-500 bg-gray-700 border-gray-600 rounded focus:ring-pink-500"><span class="text-sm text-gray-300">Потвърждавам, че имам навършени 18 години.</span></label></div><p id="register-step3-error" class="text-red-500 text-sm mb-4 text-center h-5"></p><div class="flex space-x-4"><button type="button" id="register-back-step2" class="w-1/2 py-3 rounded-full btn-secondary">Назад</button><button type="submit" class="w-1/2 py-3 rounded-full text-black font-semibold btn-primary flex items-center justify-center gap-2"><span class="btn-text">Създай Акаунт</span></button></div></form></div> </div> </div>
+    
+    <!-- НОВИ МОДАЛИ -->
+    <div id="welcome-bonus-modal" class="modal-overlay"> <div class="modal-content max-w-md p-8 text-center"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <div class="text-7xl mb-4 text-yellow-400"><i class="fas fa-gift"></i></div> <h3 class="text-3xl font-bold text-white mb-4">Бонус Добре Дошъл!</h3> <p class="text-gray-400 mb-8">Поздравления за вашата регистрация! Вземете своя подарък от <span class="font-bold text-yellow-400 text-lg">500 Точки</span>, за да започнете играта.</p> <button id="claim-bonus-btn" class="w-full max-w-xs mx-auto py-3 rounded-full text-black font-semibold btn-primary flex items-center justify-center gap-2"> <span class="btn-text">Вземи Бонуса</span> </button> </div> </div>
+    <div id="user-profile-modal" class="modal-overlay"> <div class="modal-content max-w-md p-8"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <div class="text-center mb-6"> <div class="w-24 h-24 rounded-full bg-gradient-to-tr from-yellow-500 to-orange-500 flex items-center justify-center mx-auto mb-4 border-4 border-gray-700"> <i class="fas fa-user text-white text-4xl"></i> </div> <h3 id="profile-modal-username" class="text-2xl font-bold text-white"></h3> <p id="profile-modal-email" class="text-gray-400"></p> </div> <div class="bg-gray-800/50 p-4 rounded-lg space-y-3"> <div class="flex justify-between items-center"><span class="text-gray-400">Пълно име:</span><span id="profile-modal-fullname" class="font-semibold text-white"></span></div> <div class="flex justify-between items-center"><span class="text-gray-400">Баланс:</span><span id="profile-modal-balance" class="font-bold text-yellow-400 text-lg"></span></div> </div> <div id="platform-preference-display" class="mt-4 bg-gray-800/50 p-4 rounded-lg text-center cursor-pointer group"> <span class="text-gray-400 block text-sm">Предпочитана версия:</span> <span id="platform-text" class="text-white font-semibold block text-lg group-hover:text-yellow-400 transition"></span> <span class="text-gray-500 text-xs group-hover:text-yellow-400 transition">(кликни за промяна)</span> </div> <button id="logout-btn" class="w-full mt-6 py-3 rounded-full border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition text-sm">Изход от профила</button> </div> </div>
+    <div id="leaderboard-modal" class="modal-overlay"> <div class="modal-content max-w-2xl w-full p-6 md:p-8 max-h-[90vh]"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-3xl font-bold text-center mb-6 gradient-text">Класация</h3> <div id="leaderboard-content" class="overflow-y-auto max-h-[70vh] pr-2"> </div> </div> </div>
+    <div id="shop-modal" class="modal-overlay">
+        <div class="modal-content max-w-4xl p-6 md:p-8">
+            <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button>
+            <div class="text-center mb-8">
+                <div class="text-5xl text-yellow-400 mb-4"><i class="fas fa-store-alt"></i></div>
+                <h3 class="text-3xl font-bold text-white mb-2">Магазин за Точки</h3>
+                <p class="text-gray-400">Изберете пакет и платете сигурно с криптовалута чрез NOWPayments.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="shop-item group bg-gray-900/50 border border-gray-700 p-6 rounded-xl text-center flex flex-col hover:border-yellow-500 transition-all duration-300"> <h4 class="text-xl font-semibold text-white">Бърз Старт</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">1,000</span> <span class="block text-gray-500">точки</span> </div> <div class="flex-grow"></div> <button data-amount="3.99" data-currency="usd" class="buy-chip-btn w-full py-3 rounded-full text-black font-semibold btn-primary mt-4 flex items-center justify-center gap-2"> <span class="btn-text">Купи за $3.99</span> </button> </div>
+                <div class="shop-item group bg-gray-900/50 border border-gray-700 p-6 rounded-xl text-center flex flex-col hover:border-yellow-500 transition-all duration-300"> <h4 class="text-xl font-semibold text-white">Играч</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">4,200</span> <span class="block text-gray-500">точки</span> </div> <div class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full inline-block mx-auto">+17% БОНУС</div> <div class="flex-grow"></div> <button data-amount="11.99" data-currency="usd" class="buy-chip-btn w-full py-3 rounded-full text-black font-semibold btn-primary mt-4 flex items-center justify-center gap-2"> <span class="btn-text">Купи за $11.99</span> </button> </div>
+                <div class="shop-item group bg-gray-900/50 border-2 border-yellow-400 p-6 rounded-xl text-center flex flex-col relative transform lg:scale-105 shadow-2xl shadow-yellow-500/10"> <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-400 text-black text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Най-добра оферта</div> <h4 class="text-xl font-semibold text-white">Ентусиаст</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">9,000</span> <span class="block text-gray-500">точки</span> </div> <div class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full inline-block mx-auto">+25% БОНУС</div> <div class="flex-grow"></div> <button data-amount="23.99" data-currency="usd" class="buy-chip-btn w-full py-3 rounded-full text-black font-semibold btn-primary mt-4 flex items-center justify-center gap-2"> <span class="btn-text">Купи за $23.99</span> </button> </div>
+                <div class="shop-item group bg-gray-900/50 border border-gray-700 p-6 rounded-xl text-center flex flex-col hover:border-yellow-500 transition-all duration-300"> <h4 class="text-xl font-semibold text-white">Хай Ролер</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">25,000</span> <span class="block text-gray-500">точки</span> </div> <div class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full inline-block mx-auto">+56% БОНУС</div> <div class="flex-grow"></div> <button data-amount="49.99" data-currency="usd" class="buy-chip-btn w-full py-3 rounded-full text-black font-semibold btn-primary mt-4 flex items-center justify-center gap-2"> <span class="btn-text">Купи за $49.99</span> </button> </div>
+            </div>
+            <div id="shop-status" class="text-center mt-8 h-5 text-yellow-400 font-semibold"></div>
+        </div>
+    </div>
+    
+    <!-- Legal Modals -->
+    <div id="terms-modal" class="modal-overlay"> <div class="modal-content max-w-3xl p-8 max-h-[90vh] overflow-y-auto"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold mb-4 gradient-text">Общи условия</h3> <div class="text-gray-300 space-y-4 text-sm"> <p>Добре дошли в NIVRA!...</p> </div> </div> </div>
+    <div id="privacy-modal" class="modal-overlay"> <div class="modal-content max-w-3xl p-8 max-h-[90vh] overflow-y-auto"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold mb-4 gradient-text">Политика за поверителност</h3> <div class="text-gray-300 space-y-4 text-sm"> <p>Тази политика за поверителност...</p> </div> </div> </div>
+    <div id="responsible-gambling-modal" class="modal-overlay"> <div class="modal-content max-w-3xl p-8 max-h-[90vh] overflow-y-auto"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold mb-4 gradient-text">Отговорен хазарт</h3> <div class="text-gray-300 space-y-4 text-sm"> <p>Въпреки че NIVRA е социално казино...</p> </div> </div> </div>
+    
+    <script type="module">
+        // --- FIREBASE SDK IMPORTS ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, onSnapshot, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
+
+        // --- FIREBASE CONFIG ---
+        const firebaseConfig = {
+          apiKey: "AIzaSyAatMUa6vFu2AAe3NCWse6j2moiXmXdl0U",
+          authDomain: "nivra-casino.firebaseapp.com",
+          projectId: "nivra-casino",
+          storageBucket: "nivra-casino.appspot.com",
+          messagingSenderId: "463242246264",
+          appId: "1:463242246264:web:4a6e736e5c8df3109e158d",
+          measurementId: "G-2NF3P6H9GM"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        // ВАЖНО: Посочете региона, в който deploy-нахте вашите функции!
+        const functions = getFunctions(app, 'us-central1'); 
+        const createPayment = httpsCallable(functions, 'createPayment');
+
+        // --- GLOBAL STATE & DOM ---
+        const state = { 
+            registrationData: {},
+            userDataUnsubscribe: null,
+            isLoggedIn: false,
+            selectedGame: null,
+            currentUserData: null
+        };
+        const dom = {
+            verificationNotice: document.getElementById('verification-notice'), loginModal: document.getElementById('login-modal'), registerModal: document.getElementById('register-modal'), forgotPasswordModal: document.getElementById('forgot-password-modal'), loginRequiredModal: document.getElementById('login-required-modal'), registrationSuccessModal: document.getElementById('registration-success-modal'), platformChoiceModal: document.getElementById('platform-choice-modal'), welcomeBonusModal: document.getElementById('welcome-bonus-modal'), userProfileModal: document.getElementById('user-profile-modal'), leaderboardModal: document.getElementById('leaderboard-modal'), shopModal: document.getElementById('shop-modal'), shopStatus: document.getElementById('shop-status'),
+            loggedOutView: document.getElementById('logged-out-view'), loggedInView: document.getElementById('loggedIn-view'), loggedOutViewMobile: document.getElementById('logged-out-view-mobile'), loggedInViewMobile: document.getElementById('logged-in-view-mobile'),
+            loginForm: document.getElementById('login-form'), loginError: document.getElementById('login-error'), forgotPasswordForm: document.getElementById('forgot-password-form'), resetError: document.getElementById('reset-error'), resetSuccess: document.getElementById('reset-success'), registerForms: { step1: document.getElementById('register-form-step1'), step2: document.getElementById('register-form-step2'), step3: document.getElementById('register-form-step3') }, registerErrors: { step1: document.getElementById('register-step1-error'), step2: document.getElementById('register-step2-error'), step3: document.getElementById('register-step3-error') },
+            userUsernameDisplay: document.getElementById('user-username'), userBalanceDisplay: document.getElementById('user-balance'), userUsernameMobileDisplay: document.getElementById('user-username-mobile'), userBalanceMobileDisplay: document.getElementById('user-balance-mobile'),
+            profileModalUsername: document.getElementById('profile-modal-username'), profileModalEmail: document.getElementById('profile-modal-email'), profileModalFullname: document.getElementById('profile-modal-fullname'), profileModalBalance: document.getElementById('profile-modal-balance'),
+            verificationEmail: document.getElementById('verification-email'), verificationError: document.getElementById('verification-error'), resendVerificationBtn: document.getElementById('resend-verification-btn'), checkVerificationBtn: document.getElementById('check-verification-btn'), logoutFromVerificationBtn: document.getElementById('logout-from-verification-btn'),
+            platformPreferenceDisplay: document.getElementById('platform-preference-display'), platformText: document.getElementById('platform-text'),
+            welcomeBonusLink: document.getElementById('welcome-bonus-link'), claimBonusBtn: document.getElementById('claim-bonus-btn'),
+            gamesGrid: document.getElementById('games-grid'), noGamesFound: document.getElementById('no-games-found'), searchGamesInput: document.getElementById('search-games'), gameFilters: document.getElementById('game-filters'),
+        };
+
+        const gamesData = [ { name: 'Wild Angels', image: 'https://i.imgur.com/dhiFRpC.jpeg', link: 'wild-angels.html', category: 'slot' }, { name: 'Блекджек', image: 'https://i.imgur.com/S02AkzL.jpeg', link: 'blackjack.html', category: 'table' }, { name: 'Мини', image: 'https://i.imgur.com/dyT0wi7.jpeg', link: 'mini.html', category: 'slot' }, { name: 'Рулетка', image: 'https://i.imgur.com/BE0XYZa.jpeg', link: 'ruletka.html', category: 'table' }, { name: 'Война', image: 'https://i.imgur.com/TQBASik.jpeg', link: 'war-or-voina.html', category: 'table' }, { name: 'Dirty Bandit', image: 'https://i.imgur.com/pIbraBK.jpeg', link: 'dirty-bandit.html', category: 'slot' }, { name: 'Milky Criminal', image: 'https://i.imgur.com/Hw190eP.jpeg', link: 'milky-criminal.html', category: 'slot' }, { name: 'Max life', image: 'https://i.imgur.com/ctE5UwW.jpeg', link: 'max-life.html', category: 'slot' } ];
+        
+        // --- UTILITY FUNCTIONS ---
+        const openModal = (modal) => modal.classList.add('active');
+        const closeModal = (modal) => modal.classList.remove('active');
+        function toggleLoading(button, isLoading) { const btnText = button.querySelector('.btn-text'); if (isLoading) { button.disabled = true; if (btnText) btnText.style.display = 'none'; const spinner = document.createElement('div'); spinner.className = 'spinner'; button.prepend(spinner); } else { button.disabled = false; if (btnText) btnText.style.display = 'inline-block'; button.querySelector('.spinner')?.remove(); } }
+        
+        // --- SHOP LOGIC ---
+        const handlePurchase = async (button) => {
+            const amount = button.dataset.amount;
+            const currency = button.dataset.currency;
+            dom.shopStatus.textContent = 'Генериране на плащане, моля изчакайте...';
+            document.querySelectorAll('.buy-chip-btn').forEach(btn => toggleLoading(btn, true));
+            try {
+                const result = await createPayment({ amount: Number(amount), currency: currency });
+                if (result.data && result.data.invoiceUrl) {
+                    window.location.href = result.data.invoiceUrl;
+                } else { throw new Error("Невалиден отговор от сървъра."); }
+            } catch (error) {
+                console.error("Purchase failed:", error.message);
+                dom.shopStatus.textContent = 'Грешка: ' + error.message || 'Опитайте отново.';
+                document.querySelectorAll('.buy-chip-btn').forEach(btn => toggleLoading(btn, false));
+            }
+        };
+        
+        function setupModalTriggers() {
+            ['login-btn-desktop', 'login-btn-mobile', 'login-from-required-btn'].forEach(id => {
+                document.getElementById(id).addEventListener('click', () => { closeModal(dom.loginRequiredModal); openModal(dom.loginModal); });
+            });
+            ['register-btn-desktop', 'register-btn-mobile', 'register-from-required-btn'].forEach(id => {
+                document.getElementById(id).addEventListener('click', () => { closeModal(dom.loginRequiredModal); switchRegisterStep(1); openModal(dom.registerModal); });
+            });
+            document.getElementById('forgot-password-link').addEventListener('click', (e) => { e.preventDefault(); closeModal(dom.loginModal); openModal(dom.forgotPasswordModal); });
+            document.getElementById('back-to-login-link').addEventListener('click', (e) => { e.preventDefault(); closeModal(dom.forgotPasswordModal); openModal(dom.loginModal); });
+            document.getElementById('close-success-modal-btn').addEventListener('click', () => closeModal(dom.registrationSuccessModal));
+            dom.welcomeBonusLink.addEventListener('click', (e) => { e.preventDefault(); openModal(dom.welcomeBonusModal); });
+            document.getElementById('profile-button').addEventListener('click', () => { updateProfileModal(); openModal(dom.userProfileModal); });
+            ['leaderboard-link-desktop', 'leaderboard-link-mobile'].forEach(id => {
+                document.getElementById(id).addEventListener('click', (e) => {
+                    e.preventDefault();
+                    renderLeaderboard();
+                    openModal(dom.leaderboardModal);
+                    document.getElementById('mobile-menu').classList.add('hidden');
+                });
+            });
+            document.querySelectorAll('.footer-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const modalId = e.currentTarget.dataset.modal;
+                    if (modalId) openModal(document.getElementById(modalId));
+                });
+            });
+            document.querySelectorAll('.modal-overlay').forEach(overlay => {
+                overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(overlay); });
+                overlay.querySelector('.close-modal-btn')?.addEventListener('click', () => closeModal(overlay.closest('.modal-overlay')));
+            });
+            dom.platformPreferenceDisplay.addEventListener('click', () => {
+                if (confirm("Искате ли да изчистите запазения избор на версия? Ще трябва да избирате отново при всяко стартиране на игра.")) {
+                    localStorage.removeItem('platformPreference');
+                    updatePlatformPreferenceDisplay();
+                }
+            });
+            // SHOP TRIGGERS
+            ['open-shop-btn', 'open-shop-btn-mobile'].forEach(id => {
+                document.getElementById(id)?.addEventListener('click', () => {
+                    if(state.isLoggedIn) {
+                        dom.shopStatus.textContent = '';
+                        document.querySelectorAll('.buy-chip-btn').forEach(btn => toggleLoading(btn, false)); // Reset buttons
+                        openModal(dom.shopModal);
+                    }
+                });
+            });
+            dom.shopModal.addEventListener('click', (e) => {
+                const buyButton = e.target.closest('.buy-chip-btn');
+                if (buyButton && !buyButton.disabled) {
+                    handlePurchase(buyButton);
+                }
+            });
+        }
+
+        function switchRegisterStep(step) {
+            document.querySelectorAll('.step-content').forEach(s => s.classList.remove('active'));
+            document.getElementById(`register-step-${step}`).classList.add('active');
+            document.querySelectorAll('.step').forEach((s, i) => s.classList.toggle('active', i < step));
+        }
+
+        function updateUIForLoginState(isLoggedIn, userData = null) {
+            state.isLoggedIn = isLoggedIn;
+            [dom.loggedOutView, dom.loggedOutViewMobile].forEach(el => el.classList.toggle('hidden', isLoggedIn));
+            [dom.loggedInView, dom.loggedInViewMobile].forEach(el => el.classList.toggle('hidden', !isLoggedIn));
+
+            if (isLoggedIn && userData) {
+                const balanceFormatted = userData.chips.toLocaleString();
+                dom.userUsernameDisplay.textContent = userData.username;
+                dom.userBalanceDisplay.innerHTML = `<i class="fas fa-coins mr-2"></i>${balanceFormatted}`;
+                dom.userUsernameMobileDisplay.textContent = userData.username;
+                dom.userBalanceMobileDisplay.innerHTML = `<i class="fas fa-coins mr-1"></i>${balanceFormatted}`;
+                
+                const bonusClaimed = userData.welcomeBonusClaimed === true;
+                dom.welcomeBonusLink.classList.toggle('hidden', bonusClaimed);
+                dom.welcomeBonusLink.classList.toggle('gift-icon-animation', !bonusClaimed);
+                dom.claimBonusBtn.disabled = bonusClaimed;
+                if(bonusClaimed) dom.claimBonusBtn.textContent = "Бонусът е получен";
+
+            } else {
+                dom.userUsernameDisplay.textContent = '';
+                dom.userBalanceDisplay.innerHTML = `<i class="fas fa-coins mr-2"></i>0`;
+                dom.welcomeBonusLink.classList.add('hidden');
+            }
+            updatePlatformPreferenceDisplay();
+            renderGames();
+        }
+
+        const handleRegistration = async (button) => {
+            toggleLoading(button, true);
+            Object.values(dom.registerErrors).forEach(el => el.textContent = '');
+            const { email, password, fullName, username } = state.registrationData;
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                await sendEmailVerification(userCredential.user);
+                await setDoc(doc(db, "users", userCredential.user.uid), { uid: userCredential.user.uid, email, fullName, username, chips: 500, createdAt: new Date(), welcomeBonusClaimed: false });
+                await signOut(auth);
+                closeModal(dom.registerModal);
+                openModal(dom.registrationSuccessModal);
+            } catch(error) {
+                dom.registerErrors.step1.textContent = error.code === 'auth/email-already-in-use' ? "Този имейл вече е регистриран." : "Възникна грешка. Опитайте отново.";
+                switchRegisterStep(1);
+            } finally {
+                toggleLoading(button, false);
+            }
+        };
+        const handleLogin = async (e) => { e.preventDefault(); const button = e.target.querySelector('button[type="submit"]'); toggleLoading(button, true); dom.loginError.textContent = ''; try { await signInWithEmailAndPassword(auth, dom.loginForm['login-email'].value, dom.loginForm['login-password'].value); closeModal(dom.loginModal); } catch (error) { dom.loginError.textContent = "Грешен имейл или парола."; } finally { toggleLoading(button, false); } };
+        const handlePasswordReset = async (e) => { e.preventDefault(); const button = e.target.querySelector('button[type="submit"]'); toggleLoading(button, true); dom.resetError.textContent = ''; dom.resetSuccess.textContent = ''; try { await sendPasswordResetEmail(auth, dom.forgotPasswordForm['reset-email'].value); dom.resetSuccess.textContent = 'Линкът е изпратен! Проверете пощата си.'; dom.forgotPasswordForm.reset(); } catch (error) { dom.resetError.textContent = 'Грешка. Проверете имейла.'; } finally { toggleLoading(button, false); } };
+        const handleLogout = () => { if (confirm('Сигурни ли сте, че искате да излезете?')) { signOut(auth).catch(console.error); } };
+
+        function updatePlatformPreferenceDisplay() {
+            const preference = localStorage.getItem('platformPreference');
+            const displayElement = dom.platformPreferenceDisplay;
+            if (preference && state.isLoggedIn) {
+                displayElement.style.display = 'block';
+                dom.platformText.textContent = preference === 'full' ? 'PC / Full Версия' : 'Мобилна Версия';
+            } else {
+                displayElement.style.display = 'none';
+            }
+        }
+        function updateProfileModal() {
+            if (state.currentUserData) {
+                dom.profileModalUsername.textContent = state.currentUserData.username;
+                dom.profileModalEmail.textContent = state.currentUserData.email;
+                dom.profileModalFullname.textContent = state.currentUserData.fullName;
+                dom.profileModalBalance.innerHTML = `<i class="fas fa-coins mr-2"></i>${state.currentUserData.chips.toLocaleString()}`;
+                updatePlatformPreferenceDisplay();
+            }
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+            if (state.userDataUnsubscribe) { state.userDataUnsubscribe(); state.userDataUnsubscribe = null; }
+            if (user) {
+                await user.reload();
+                const refreshedUser = auth.currentUser;
+                if (refreshedUser && refreshedUser.emailVerified) {
+                    closeModal(dom.verificationNotice);
+                    const userDocRef = doc(db, 'users', refreshedUser.uid);
+                    state.userDataUnsubscribe = onSnapshot(userDocRef, (docSnap) => {
+                        if (docSnap.exists()) {
+                            state.currentUserData = docSnap.data();
+                            updateUIForLoginState(true, state.currentUserData);
+                        } else { handleLogout(); }
+                    });
+                } else {
+                    openModal(dom.verificationNotice);
+                    dom.verificationEmail.textContent = refreshedUser.email;
+                    updateUIForLoginState(false);
+                }
+            } else {
+                state.currentUserData = null;
+                closeModal(dom.verificationNotice);
+                updateUIForLoginState(false);
+            }
+        });
+        
+        function redirectToGame(game, version) {
+            let targetUrl = game.link; 
+            if (version === 'mobile' && targetUrl.includes('.html')) {
+                targetUrl = targetUrl.replace('.html', '-mobile.html');
+            }
+            window.location.href = targetUrl;
+        }
+
+        function renderGames() {
+            const searchTerm = dom.searchGamesInput.value.toLowerCase();
+            const activeFilter = dom.gameFilters.querySelector('.filter-btn.active').dataset.filter;
+            const filteredGames = gamesData.filter(game => {
+                const matchesSearch = game.name.toLowerCase().includes(searchTerm);
+                const matchesFilter = activeFilter === 'all' || game.category === activeFilter;
+                return matchesSearch && matchesFilter;
+            });
+
+            dom.gamesGrid.innerHTML = ''; 
+            if (filteredGames.length === 0) {
+                dom.noGamesFound.style.display = 'block';
+            } else {
+                dom.noGamesFound.style.display = 'none';
+                filteredGames.forEach(game => {
+                    const card = document.createElement('div');
+                    card.className = "game-card group cursor-pointer block bg-gray-900 rounded-lg overflow-hidden shadow-lg relative transform transition-transform duration-300 hover:-translate-y-2";
+                    card.innerHTML = `<img src="${game.image}" alt="${game.name}" class="w-full h-auto aspect-[3/4] object-cover"><div class="absolute inset-0 bg-black/70 flex flex-col items-center justify-center p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300"><h4 class="text-lg font-bold text-white text-center mb-4">${game.name}</h4><div class="w-20 h-20 bg-yellow-400 rounded-full text-black text-4xl flex items-center justify-center"><i class="fas fa-play"></i></div></div><h4 class="text-center font-semibold p-3 truncate group-hover:opacity-0 transition-opacity">${game.name}</h4>`;
+                    
+                    card.addEventListener('click', () => {
+                        if (state.isLoggedIn) {
+                            const preference = localStorage.getItem('platformPreference');
+                            if (preference) {
+                                redirectToGame(game, preference);
+                            } else {
+                                state.selectedGame = game; 
+                                openModal(dom.platformChoiceModal);
+                            }
+                        } else {
+                            openModal(dom.loginRequiredModal);
+                        }
+                    });
+                    dom.gamesGrid.appendChild(card);
+                });
+            }
+        }
+        
+        function renderLeaderboard() {
+            const leaderboardContent = document.getElementById('leaderboard-content');
+            leaderboardContent.innerHTML = '<div class="flex justify-center items-center h-32"><div class="spinner !w-8 !h-8"></div></div>';
+            const mockUsers = [ { username: 'GamingGod', chips: 25800000 }, { username: 'SlotMaster', chips: 19500000 }, { username: 'LuckyPlayer7', chips: 15200000 }, { username: 'CardShark', chips: 11800000 }, { username: 'HighRoller', chips: 9900000 }, { username: 'WinnerWinner', chips: 8500000 }, { username: 'JackpotJoe', chips: 7300000 }, { username: 'BetKing', chips: 6100000 }, { username: 'SpinQueen', chips: 5400000 }, { username: 'PokerFace', chips: 4800000 }, ];
+            setTimeout(() => {
+                let html = '<div class="space-y-2">';
+                mockUsers.forEach((user, index) => {
+                    const rank = index + 1;
+                    let rankClass = 'bg-gray-700/50 text-gray-300';
+                    if (rank === 1) rankClass = 'bg-yellow-500 text-black';
+                    if (rank === 2) rankClass = 'bg-gray-400 text-black';
+                    if (rank === 3) rankClass = 'bg-yellow-700 text-white';
+                    html += `<div class="flex items-center p-3 rounded-lg bg-gray-800/50"> <div class="w-10 h-10 flex-shrink-0 font-bold text-lg flex items-center justify-center rounded-md ${rankClass}">${rank}</div> <div class="ml-4 flex-grow font-semibold text-white truncate">${user.username}</div> <div class="ml-4 flex-shrink-0 text-yellow-400 font-bold text-right"><i class="fas fa-coins mr-2"></i>${user.chips.toLocaleString()}</div> </div>`;
+                });
+                html += '</div>';
+                leaderboardContent.innerHTML = html;
+            }, 500);
+        }
+
+        function init() {
+            setupModalTriggers();
+            dom.loginForm.addEventListener('submit', handleLogin);
+            dom.forgotPasswordForm.addEventListener('submit', handlePasswordReset);
+            dom.registerForms.step1.addEventListener('submit', (e) => { e.preventDefault(); dom.registerErrors.step1.textContent = ''; const pass = e.target['register-password'].value; if (pass.length < 6) { dom.registerErrors.step1.textContent = "Паролата е твърде кратка."; return; } if (pass !== e.target['register-confirm-password'].value) { dom.registerErrors.step1.textContent = "Паролите не съвпадат."; return; } state.registrationData.email = e.target['register-email'].value; state.registrationData.password = pass; switchRegisterStep(2); });
+            dom.registerForms.step2.addEventListener('submit', (e) => { e.preventDefault(); state.registrationData.fullName = e.target['register-fullname'].value; state.registrationData.username = e.target['register-username'].value; switchRegisterStep(3); });
+            dom.registerForms.step3.addEventListener('submit', (e) => { e.preventDefault(); handleRegistration(e.target.querySelector('button[type="submit"]')); });
+            document.getElementById('register-back-step1').addEventListener('click', () => switchRegisterStep(1));
+            document.getElementById('register-back-step2').addEventListener('click', () => switchRegisterStep(2));
+            ['logout-btn', 'logout-btn-mobile', 'logout-from-verification-btn'].forEach(id => document.getElementById(id)?.addEventListener('click', handleLogout));
+            dom.resendVerificationBtn.addEventListener('click', async () => { if (auth.currentUser) { try { await sendEmailVerification(auth.currentUser); alert('Изпратен е нов имейл!'); } catch { alert('Грешка. Опитайте по-късно.'); } } });
+            dom.checkVerificationBtn.addEventListener('click', async (e) => {
+                if (!auth.currentUser) return;
+                toggleLoading(e.currentTarget, true);
+                dom.verificationError.textContent = '';
+                await auth.currentUser.reload();
+                if (!auth.currentUser.emailVerified) {
+                    dom.verificationError.textContent = 'Имейлът все още не е потвърден.';
+                    dom.verificationNotice.classList.add('shake');
+                    setTimeout(() => { dom.verificationNotice.classList.remove('shake'); dom.verificationError.textContent = ''; }, 2000);
+                }
+                toggleLoading(e.currentTarget, false);
+            });
+            dom.claimBonusBtn.addEventListener('click', async (e) => {
+                const button = e.currentTarget;
+                toggleLoading(button, true);
+                if (auth.currentUser) {
+                    const userDocRef = doc(db, 'users', auth.currentUser.uid);
+                    try {
+                        await updateDoc(userDocRef, {
+                            chips: increment(500),
+                            welcomeBonusClaimed: true
+                        });
+                        closeModal(dom.welcomeBonusModal);
+                    } catch (error) {
+                        console.error("Error claiming bonus: ", error);
+                        alert("Възникна грешка при получаване на бонуса.");
+                    }
+                }
+                toggleLoading(button, false);
+            });
+            dom.platformChoiceModal.querySelectorAll('.platform-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const version = button.dataset.version; 
+                    if (document.getElementById('remember-platform-choice').checked) {
+                        localStorage.setItem('platformPreference', version);
+                    }
+                    closeModal(dom.platformChoiceModal);
+                    redirectToGame(state.selectedGame, version);
+                });
+            });
+            const tabButtons = document.querySelectorAll('.tab-btn'), tabPanels = document.querySelectorAll('.tab-panel'), navLinks = document.querySelectorAll('.nav-link'), contentTabsSection = document.getElementById('content-tabs');
+            function activateTab(tabId) { tabButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId)); tabPanels.forEach(panel => panel.classList.toggle('hidden', panel.id !== `tab-${tabId}`)); }
+            tabButtons.forEach(button => button.addEventListener('click', () => activateTab(button.dataset.tab)));
+            navLinks.forEach(link => { const href = link.getAttribute('href'); if (href && href.startsWith('#')) { link.addEventListener('click', e => { e.preventDefault(); const tabId = href.substring(1); const targetSection = document.getElementById(tabId); if (targetSection) { targetSection.scrollIntoView({ behavior: 'smooth' }); if (tabButtons.length > 0 && Array.from(tabButtons).some(b => b.dataset.tab === tabId)) { activateTab(tabId); } } else { window.scrollTo({ top: 0, behavior: 'smooth' }); } document.getElementById('mobile-menu').classList.add('hidden'); }); } });
+            const menuBtn = document.getElementById('menu-btn'), closeBtn = document.getElementById('close-btn'), mobileMenu = document.getElementById('mobile-menu');
+            menuBtn.addEventListener('click', () => mobileMenu.classList.remove('hidden')); closeBtn.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+            dom.searchGamesInput.addEventListener('input', renderGames);
+            dom.gameFilters.querySelectorAll('.filter-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    dom.gameFilters.querySelector('.filter-btn.active').classList.remove('active', 'bg-yellow-500/20', 'text-yellow-400');
+                    dom.gameFilters.querySelector('.filter-btn.active').classList.add('bg-gray-700/50', 'text-gray-300');
+                    button.classList.add('active', 'bg-yellow-500/20', 'text-yellow-400');
+                    button.classList.remove('bg-gray-700/50', 'text-gray-300');
+                    renderGames();
+                });
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
