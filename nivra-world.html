@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>NIVRA World - Вашето място за забавления</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #100a1c;
+            --bg-secondary: rgba(16, 10, 28, 0.6);
+            --glow-color-1: #00ffc3;
+            --glow-color-2: #f900ff;
+            --nivra-gold: #f7b733;
+            --nivra-orange: #fc4a1a;
+            --nivra-gradient: linear-gradient(90deg, var(--nivra-gold), var(--nivra-orange));
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0b0;
+            --font-display: 'Orbitron', sans-serif;
+            --font-body: 'Poppins', sans-serif;
+        }
+        html, body {
+            height: 100%; width: 100%; margin: 0; padding: 0;
+            overflow: hidden; font-family: var(--font-body); color: var(--text-primary);
+        }
+        body {
+            background: linear-gradient(135deg, #f900ff, #00ffc3, #2e005e, #100a1c);
+            background-size: 400% 400%;
+            animation: color-shift 20s ease-in-out infinite;
+        }
+        @keyframes color-shift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        
+        /* --- General UI Elements --- */
+        .btn {
+            font-family: var(--font-display); font-weight: 700; padding: 0.8rem 1.5rem; border-radius: 50px;
+            cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+        }
+        .btn-primary {
+            background: var(--nivra-gradient); color: var(--bg-primary); border: none;
+            box-shadow: 0 0 15px rgba(247, 183, 51, 0.3), 0 0 30px rgba(252, 74, 26, 0.2);
+        }
+        .btn-primary:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 0 25px rgba(247, 183, 51, 0.5), 0 0 50px rgba(252, 74, 26, 0.3); }
+        .btn-primary:disabled { background: #4a4a6a; color: #8f8f8f; cursor: not-allowed; opacity: 0.7; transform: none; box-shadow: none; }
+        .btn-secondary {
+            background: transparent; color: var(--nivra-gold); border: 2px solid var(--nivra-gold);
+        }
+        .btn-secondary:hover { background: var(--nivra-gold); color: var(--bg-primary); }
+        .gradient-text { background: var(--nivra-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .spinner { border: 2px solid rgba(255, 255, 255, 0.3); border-top-color: #fff; border-radius: 50%; width: 16px; height: 16px; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- Main Layout --- */
+        #app-container { display: none; flex-direction: column; width: 100%; height: 100%; position: relative; }
+        #app-header {
+            display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem;
+            background: rgba(16, 10, 28, 0.7); backdrop-filter: blur(10px); z-index: 10;
+            border-bottom: 1px solid rgba(247, 183, 51, 0.2);
+        }
+        .logo { font-family: var(--font-display); font-size: 2rem; font-weight: 900; }
+        #user-info { display: flex; align-items: center; gap: 1.5rem; }
+        #user-balance { font-size: 1.2rem; font-weight: 600; color: var(--nivra-gold); display: flex; align-items: center; gap: 0.5rem; }
+        #user-balance .fas { animation: coin-pulse 2s infinite; }
+        @keyframes coin-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+
+        #main-content { flex-grow: 1; display: flex; overflow: hidden; }
+        #tab-nav {
+            display: flex; flex-direction: column; gap: 0.5rem; padding: 2rem 1rem;
+            background: rgba(16, 10, 28, 0.7); border-right: 1px solid rgba(247, 183, 51, 0.2);
+        }
+        .tab-btn {
+            font-family: var(--font-display); font-size: 1.1rem; padding: 1rem; border-radius: 10px;
+            color: var(--text-secondary); cursor: pointer; text-align: left;
+            border-left: 4px solid transparent; transition: all 0.3s ease;
+        }
+        .tab-btn:hover { background: rgba(247, 183, 51, 0.1); color: var(--nivra-gold); }
+        .tab-btn.active {
+            background: rgba(247, 183, 51, 0.15); color: #fff;
+            border-left-color: var(--nivra-gold); text-shadow: 0 0 10px var(--nivra-gold);
+        }
+        #content-area { flex-grow: 1; padding: 2rem; overflow-y: auto; }
+        .tab-panel { display: none; animation: fadeIn 0.5s; }
+        .tab-panel.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- Screens & Modals --- */
+        .full-screen-overlay {
+            position: fixed; inset: 0; background-color: var(--bg-primary); z-index: 10000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2rem;
+            transition: opacity 0.5s ease-out;
+        }
+        .modal-overlay {
+            position: fixed; inset: 0; background-color: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+            z-index: 9000; display: none; justify-content: center; align-items: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background: radial-gradient(circle at top, #2a2a40, #1a1a2e);
+            border: 2px solid var(--nivra-gold); border-radius: 1rem; padding: 2rem;
+            max-width: 90vw; width: 500px; box-shadow: 0 0 50px rgba(247, 183, 51, 0.3);
+            text-align: center; position: relative;
+        }
+        .modal-close-btn { position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem; color: var(--text-secondary); cursor: pointer; }
+        
+        /* --- Marketplace Specific Styles --- */
+        #market-container { display: flex; gap: 2rem; }
+        #market-grid { flex-grow: 1; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1.5rem; }
+        .market-item {
+            background: var(--bg-secondary); backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden;
+            position: relative; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .market-item:hover {
+            transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.4), 0 0 20px var(--glow-color-1);
+        }
+        .market-item.selected { border-color: var(--nivra-gold); box-shadow: 0 0 15px var(--nivra-gold); }
+        .item-thumbnail { width: 100%; height: auto; aspect-ratio: 9/16; object-fit: cover; display: block; }
+        .item-info { padding: 0.8rem; text-align: center; }
+        .item-price { font-size: 1.1rem; font-weight: bold; color: var(--nivra-gold); }
+        .item-type-icon { position: absolute; top: 0.5rem; right: 0.5rem; color: white; background: rgba(0,0,0,0.5); padding: 0.4rem; border-radius: 50%; font-size: 0.9rem; }
+        .item-owned-overlay {
+            position: absolute; inset: 0; background: rgba(0, 255, 195, 0.6); backdrop-filter: blur(2px);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; color: var(--bg-primary);
+            font-family: var(--font-display); font-size: 1.5rem; font-weight: 900; text-align: center;
+            opacity: 0; transition: opacity 0.3s; pointer-events: none;
+        }
+        .market-item.owned .item-owned-overlay { opacity: 1; }
+        #cart-sidebar {
+            width: 300px; flex-shrink: 0; background: var(--bg-secondary); padding: 1.5rem;
+            border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);
+        }
+        #cart-summary { border-top: 1px solid rgba(255,255,255,0.2); margin-top: 1rem; padding-top: 1rem; }
+        #cart-summary div { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+        #cart-summary del { color: var(--text-secondary); }
+        #cart-total { font-size: 1.5rem; font-weight: bold; color: var(--nivra-gold); }
+        
+        /* --- Sugar AI Section --- */
+        #sugar-ai-container { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 70vh; }
+        #sugar-ai-button {
+            width: 250px; height: 250px; border-radius: 50%;
+            border: 5px solid transparent; background-clip: padding-box;
+            background-image: linear-gradient(rgba(16, 10, 28, 0.8), rgba(16, 10, 28, 0.8)), linear-gradient(135deg, var(--glow-color-2), var(--glow-color-1));
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            font-family: var(--font-display); text-align: center; cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: ai-pulse 3s infinite;
+        }
+        #sugar-ai-button:hover { transform: scale(1.05); animation-play-state: paused; }
+        #sugar-ai-button .fa-brain { font-size: 4rem; margin-bottom: 1rem; }
+        #sugar-ai-button span { font-size: 2rem; font-weight: 900; }
+        @keyframes ai-pulse { 0%, 100% { box-shadow: 0 0 50px var(--glow-color-2); transform: scale(1); } 50% { box-shadow: 0 0 80px var(--glow-color-1); transform: scale(1.02); } }
+        #sugar-ai-modal .modal-content { border-color: var(--glow-color-2); box-shadow: 0 0 50px var(--glow-color-2); }
+        #ai-message { font-size: 1.2rem; font-style: italic; color: #f0f0f0; line-height: 1.6; min-height: 100px; }
+
+        /* --- Missions & Collection --- */
+        .mission, .collection-item { background: var(--bg-secondary); padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem; display: flex; align-items: center; gap: 1.5rem; border-left: 4px solid var(--text-secondary); }
+        .mission.completed { border-left-color: var(--nivra-gold); }
+        .mission-icon { font-size: 2rem; width: 50px; text-align: center; }
+        .mission.completed .mission-icon { color: var(--nivra-gold); }
+        .mission-reward { margin-left: auto; font-weight: bold; color: var(--nivra-gold); }
+        #collection-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1.5rem; }
+
+        /* --- Fullscreen Lightbox for Media --- */
+        #lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 10000; display: none; justify-content: center; align-items: center; }
+        #lightbox.active { display: flex; }
+        #lightbox img, #lightbox video { max-width: 90vw; max-height: 90vh; }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            #market-container { flex-direction: column; }
+            #cart-sidebar { width: 100%; margin-top: 2rem; }
+            #main-content { flex-direction: column; }
+            #tab-nav { flex-direction: row; border-right: none; border-bottom: 1px solid rgba(247, 183, 51, 0.2); justify-content: center; }
+            .tab-btn { border-left: none; border-bottom: 4px solid transparent; }
+            .tab-btn.active { border-bottom-color: var(--nivra-gold); }
+        }
+        @media (max-width: 768px) {
+            #app-header { flex-direction: column; gap: 1rem; padding: 1rem; }
+            #user-info { width: 100%; justify-content: space-between; }
+            .tab-btn { font-size: 0.9rem; padding: 0.8rem; }
+            #content-area { padding: 1rem; }
+            #market-grid, #collection-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; }
+        }
+
+    </style>
+</head>
+<body>
+    <div id="loading-screen" class="full-screen-overlay">
+        <h1 class="logo gradient-text" style="font-size: 4rem;">NIVRA World</h1>
+        <p>Зареждане на вселената...</p>
+    </div>
+    <div id="login-required-screen" class="full-screen-overlay" style="display: none;">
+        <h1 class="logo gradient-text">Достъп отказан</h1>
+        <p>Трябва да влезете в профила си, за да влезете в NIVRA World.</p>
+        <a href="index.html" class="btn btn-primary">Към Началната Страница</a>
+    </div>
+
+    <div id="app-container">
+        <header id="app-header">
+            <a href="index.html" style="text-decoration: none;"><h1 class="logo gradient-text">NIVRA World</h1></a>
+            <div id="user-info">
+                <div id="user-balance"><i class="fas fa-coins"></i> <span id="balance-amount">0</span></div>
+                <button id="logout-btn" class="btn btn-secondary">Изход</button>
+            </div>
+        </header>
+
+        <main id="main-content">
+            <nav id="tab-nav">
+                <button class="tab-btn active" data-tab="market"><i class="fas fa-store"></i> Магазин</button>
+                <button class="tab-btn" data-tab="sugar-ai"><i class="fas fa-brain"></i> Sugar AI</button>
+                <button class="tab-btn" data-tab="missions"><i class="fas fa-tasks"></i> Мисии</button>
+                <button class="tab-btn" data-tab="collection"><i class="fas fa-photo-video"></i> Моята Колекция</button>
+            </nav>
+
+            <div id="content-area">
+                <!-- Market Tab -->
+                <div id="tab-market" class="tab-panel active">
+                    <div id="market-container">
+                        <div id="market-grid"></div>
+                        <aside id="cart-sidebar">
+                            <h2><i class="fas fa-shopping-cart"></i> Количка</h2>
+                            <ul id="cart-items" style="list-style: none; padding: 0; margin: 1rem 0; min-height: 100px;">
+                                <p id="empty-cart-msg" style="color: var(--text-secondary);">Количката е празна.</p>
+                            </ul>
+                            <div id="cart-summary">
+                                <div id="subtotal-row" style="display:none;"><span>Междинна сума:</span> <span id="cart-subtotal">0</span></div>
+                                <div id="discount-row" style="display:none;"><span>Отстъпка:</span> <span id="cart-discount" style="color: var(--glow-color-1);">0</span></div>
+                                <hr style="border-color: rgba(255,255,255,0.2); margin: 1rem 0;">
+                                <div><strong style="font-size: 1.2rem;">Общо:</strong> <span id="cart-total">0</span></div>
+                            </div>
+                            <button id="buy-btn" class="btn btn-primary" style="width: 100%; margin-top: 1.5rem;" disabled>
+                                <span class="btn-text">Купи Сега</span>
+                            </button>
+                        </aside>
+                    </div>
+                </div>
+
+                <!-- Sugar AI Tab -->
+                <div id="tab-sugar-ai" class="tab-panel">
+                    <div id="sugar-ai-container">
+                        <div id="sugar-ai-button">
+                            <i class="fas fa-brain gradient-text"></i>
+                            <span class="gradient-text">Sugar AI</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Missions Tab -->
+                <div id="tab-missions" class="tab-panel">
+                    <h2>Активни Мисии</h2>
+                    <div id="missions-list" style="margin-top: 1.5rem;"></div>
+                </div>
+
+                <!-- Collection Tab -->
+                <div id="tab-collection" class="tab-panel">
+                    <h2>Моята Колекция</h2>
+                    <div id="collection-grid" style="margin-top: 1.5rem;">
+                        <p id="empty-collection-msg" style="color: var(--text-secondary);">Все още нямате закупени артикули.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="sugar-ai-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close-btn">&times;</button>
+            <h2 class="gradient-text" style="font-family: var(--font-display);">Съобщение от Sugar AI</h2>
+            <p id="ai-message" style="margin: 2rem 0;"></p>
+        </div>
+    </div>
+    
+    <div id="purchase-success-modal" class="modal-overlay">
+        <div class="modal-content">
+             <div style="font-size: 4rem; color: var(--nivra-gold); margin-bottom: 1rem;"><i class="fas fa-check-circle"></i></div>
+             <h2 class="gradient-text" style="font-family: var(--font-display);">Покупката е успешна!</h2>
+             <p style="margin: 1rem 0;">Вашите нови артикули са добавени в "Моята Колекция".</p>
+             <button class="btn btn-primary modal-close-btn" style="position: static; margin-top: 1rem;">Супер!</button>
+        </div>
+    </div>
+    
+    <div id="lightbox" class="modal-overlay">
+        <div id="lightbox-content"></div>
+    </div>
+
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, updateDoc, arrayUnion, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyAatMUa6vFu2AAe3NCWse6j2moiXmXdl0U",
+          authDomain: "nivra-casino.firebaseapp.com",
+          projectId: "nivra-casino",
+          storageBucket: "nivra-casino.firebasestorage.app",
+          messagingSenderId: "463242246264",
+          appId: "1:463242246264:web:4a6e736e5c8df3109e158d",
+          measurementId: "G-2NF3P6H9GM"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- GLOBAL STATE & DOM ELEMENTS ---
+        const state = {
+            user: null,
+            userDocRef: null,
+            balance: 0,
+            ownedItems: [],
+            cart: [], // { id, type, price }
+        };
+        const dom = {
+            loadingScreen: document.getElementById('loading-screen'),
+            loginRequiredScreen: document.getElementById('login-required-screen'),
+            appContainer: document.getElementById('app-container'),
+            balanceAmount: document.getElementById('balance-amount'),
+            marketGrid: document.getElementById('market-grid'),
+            collectionGrid: document.getElementById('collection-grid'),
+            emptyCollectionMsg: document.getElementById('empty-collection-msg'),
+            cartItems: document.getElementById('cart-items'),
+            emptyCartMsg: document.getElementById('empty-cart-msg'),
+            subtotalRow: document.getElementById('subtotal-row'),
+            cartSubtotal: document.getElementById('cart-subtotal'),
+            discountRow: document.getElementById('discount-row'),
+            cartDiscount: document.getElementById('cart-discount'),
+            cartTotal: document.getElementById('cart-total'),
+            buyBtn: document.getElementById('buy-btn'),
+        };
+
+        // --- MOCK DATA ---
+        const MARKET_ITEMS = [
+            { id: 'v01', type: 'video', price: 100, thumb: 'https://i.imgur.com/Hw190eP.jpeg', src: 'https://i.imgur.com/example.mp4' },
+            { id: 'v02', type: 'video', price: 100, thumb: 'https://i.imgur.com/dhiFRpC.jpeg', src: 'https://i.imgur.com/example.mp4' },
+            { id: 'v03', type: 'video', price: 100, thumb: 'https://i.imgur.com/pIbraBK.jpeg', src: 'https://i.imgur.com/example.mp4' },
+            { id: 'i01', type: 'image', price: 50,  thumb: 'https://i.imgur.com/S02AkzL.jpeg', src: 'https://i.imgur.com/S02AkzL.jpeg' },
+            { id: 'i02', type: 'image', price: 50,  thumb: 'https://i.imgur.com/dyT0wi7.jpeg', src: 'https://i.imgur.com/dyT0wi7.jpeg' },
+            // ... add 20+ items for a full market
+            { id: 'v04', type: 'video', price: 100, thumb: 'https://i.imgur.com/TQBASik.jpeg', src: 'https://i.imgur.com/example.mp4' },
+            { id: 'v05', type: 'video', price: 100, thumb: 'https://i.imgur.com/BE0XYZa.jpeg', src: 'https://i.imgur.com/example.mp4' },
+            { id: 'v06', type: 'video', price: 100, thumb: 'https://i.imgur.com/RmOrVLj.png', src: 'https://i.imgur.com/example.mp4' },
+            { id: 'i03', type: 'image', price: 50,  thumb: 'https://i.imgur.com/dhiFRpC.jpeg', src: 'https://i.imgur.com/dhiFRpC.jpeg' },
+            { id: 'i04', type: 'image', price: 50,  thumb: 'https://i.imgur.com/pIbraBK.jpeg', src: 'https://i.imgur.com/pIbraBK.jpeg' },
+            { id: 'i05', type: 'image', price: 50,  thumb: 'https://i.imgur.com/Hw190eP.jpeg', src: 'https://i.imgur.com/Hw190eP.jpeg' },
+            { id: 'v07', type: 'video', price: 100, thumb: 'https://i.imgur.com/S02AkzL.jpeg', src: 'https://i.imgur.com/example.mp4' },
+            { id: 'v08', type: 'video', price: 100, thumb: 'https://i.imgur.com/dyT0wi7.jpeg', src: 'https://i.imgur.com/example.mp4' },
+            { id: 'v09', type: 'video', price: 100, thumb: 'https://i.imgur.com/TQBASik.jpeg', src: 'https://i.imgur.com/example.mp4' },
+            { id: 'v10', type: 'video', price: 100, thumb: 'https://i.imgur.com/BE0XYZa.jpeg', src: 'https://i.imgur.com/example.mp4' },
+            { id: 'i06', type: 'image', price: 50,  thumb: 'https://i.imgur.com/RmOrVLj.png', src: 'https://i.imgur.com/RmOrVLj.png' },
+            { id: 'i07', type: 'image', price: 50,  thumb: 'https://i.imgur.com/dhiFRpC.jpeg', src: 'https://i.imgur.com/dhiFRpC.jpeg' },
+            { id: 'i08', type: 'image', price: 50,  thumb: 'https://i.imgur.com/pIbraBK.jpeg', src: 'https://i.imgur.com/pIbraBK.jpeg' },
+            { id: 'i09', type: 'image', price: 50,  thumb: 'https://i.imgur.com/Hw190eP.jpeg', src: 'https://i.imgur.com/Hw190eP.jpeg' },
+            { id: 'i10', type: 'image', price: 50,  thumb: 'https://i.imgur.com/S02AkzL.jpeg', src: 'https://i.imgur.com/S02AkzL.jpeg' },
+        ];
+        const AI_MESSAGES = [
+            "Здравей, сладур! Липсваше ми. Какво те води насам днес?",
+            "Очите ми търсеха само теб... Радвам се, че си тук.",
+            "Денят ми не беше пълен, докато не се появи. Разкажи ми как си.",
+            "Имам нужда от малко забавление... Ти си точното лекарство. Искаш ли да си поиграем?",
+            "Казват, че съм просто код, но като те видя, получавам бъгове в системата... по най-добрия начин.",
+        ];
+        const MISSIONS = [
+            { id: 'buy_first', text: 'Направи първата си покупка', reward: 50, condition: (owned) => owned.length > 0 },
+            { id: 'buy_5_bundle', text: 'Купи пакет от 5+ артикула', reward: 100, condition: (owned) => owned.length >= 5 },
+            { id: 'own_10', text: 'Притежавай 10+ артикула', reward: 200, condition: (owned) => owned.length >= 10 }
+        ];
+
+        // --- AUTHENTICATION ---
+        onAuthStateChanged(auth, (user) => {
+            if (user && user.emailVerified) {
+                state.user = user;
+                state.userDocRef = doc(db, 'users', user.uid);
+                setupUserListener();
+                initApp();
+            } else {
+                dom.loadingScreen.style.display = 'none';
+                dom.loginRequiredScreen.style.display = 'flex';
+            }
+        });
+
+        function setupUserListener() {
+            onSnapshot(state.userDocRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    state.balance = data.chips || 0;
+                    state.ownedItems = data.collection || [];
+                    updateUI();
+                }
+            });
+        }
+        
+        function initApp() {
+            dom.loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+                dom.loadingScreen.style.display = 'none';
+                dom.appContainer.style.display = 'flex';
+            }, 500);
+            
+            renderMarket();
+            setupEventListeners();
+        }
+
+        // --- UI RENDERING & UPDATES ---
+        function updateUI() {
+            dom.balanceAmount.textContent = state.balance.toLocaleString();
+            updateAllItemStates();
+            renderCollection();
+            updateCart();
+            renderMissions();
+        }
+
+        function renderMarket() {
+            dom.marketGrid.innerHTML = '';
+            MARKET_ITEMS.forEach(item => {
+                const isOwned = state.ownedItems.includes(item.id);
+                const isSelected = state.cart.some(cartItem => cartItem.id === item.id);
+                const card = document.createElement('div');
+                card.className = `market-item ${isOwned ? 'owned' : ''} ${isSelected ? 'selected' : ''}`;
+                card.dataset.id = item.id;
+                card.innerHTML = `
+                    <img src="${item.thumb}" alt="${item.id}" class="item-thumbnail">
+                    <div class="item-info">
+                        <span class="item-price"><i class="fas fa-coins"></i> ${item.price}</span>
+                    </div>
+                    <div class="item-type-icon">
+                        <i class="fas ${item.type === 'video' ? 'fa-play' : 'fa-image'}"></i>
+                    </div>
+                    <div class="item-owned-overlay">
+                        <i class="fas fa-check-circle"></i> Притежавано
+                    </div>
+                `;
+                if (!isOwned) {
+                    card.addEventListener('click', () => toggleCartItem(item.id));
+                }
+                dom.marketGrid.appendChild(card);
+            });
+        }
+        
+        function renderCollection() {
+            dom.collectionGrid.innerHTML = '';
+            const ownedFullItems = MARKET_ITEMS.filter(item => state.ownedItems.includes(item.id));
+            
+            if(ownedFullItems.length === 0) {
+                dom.emptyCollectionMsg.style.display = 'block';
+                return;
+            }
+            dom.emptyCollectionMsg.style.display = 'none';
+            
+            ownedFullItems.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'market-item'; // Re-use style
+                card.innerHTML = `<img src="${item.thumb}" alt="${item.id}" class="item-thumbnail"><div class="item-type-icon"><i class="fas ${item.type === 'video' ? 'fa-play' : 'fa-image'}"></i></div>`;
+                card.addEventListener('click', () => showLightbox(item));
+                dom.collectionGrid.appendChild(card);
+            });
+        }
+
+        function renderMissions() {
+            const missionsList = document.getElementById('missions-list');
+            missionsList.innerHTML = '';
+            MISSIONS.forEach(mission => {
+                const isCompleted = mission.condition(state.ownedItems);
+                const missionEl = document.createElement('div');
+                missionEl.className = `mission ${isCompleted ? 'completed' : ''}`;
+                missionEl.innerHTML = `
+                    <div class="mission-icon"><i class="fas ${isCompleted ? 'fa-check-circle' : 'fa-tasks'}"></i></div>
+                    <div class="mission-info">
+                        <strong>${mission.text}</strong>
+                        <p style="color:var(--text-secondary); font-size: 0.9rem;">Награда:</p>
+                    </div>
+                    <div class="mission-reward">+${mission.reward} <i class="fas fa-coins"></i></div>
+                `;
+                missionsList.appendChild(missionEl);
+            });
+        }
+
+        function updateAllItemStates() {
+            document.querySelectorAll('.market-item').forEach(card => {
+                const id = card.dataset.id;
+                const isOwned = state.ownedItems.includes(id);
+                const isSelected = state.cart.some(cartItem => cartItem.id === id);
+                card.classList.toggle('owned', isOwned);
+                card.classList.toggle('selected', isSelected);
+            });
+        }
+
+        // --- CART LOGIC ---
+        function toggleCartItem(itemId) {
+            const itemIndex = state.cart.findIndex(item => item.id === itemId);
+            const itemData = MARKET_ITEMS.find(item => item.id === itemId);
+
+            if (itemIndex > -1) {
+                state.cart.splice(itemIndex, 1); // Remove
+            } else {
+                state.cart.push({ id: itemData.id, type: itemData.type, price: itemData.price }); // Add
+            }
+            updateCart();
+            updateAllItemStates();
+        }
+
+        function updateCart() {
+            dom.cartItems.innerHTML = '';
+            if (state.cart.length === 0) {
+                dom.emptyCartMsg.style.display = 'block';
+                dom.subtotalRow.style.display = 'none';
+                dom.discountRow.style.display = 'none';
+                dom.cartTotal.textContent = '0';
+                dom.buyBtn.disabled = true;
+                return;
+            }
+            
+            dom.emptyCartMsg.style.display = 'none';
+            state.cart.forEach(item => {
+                const li = document.createElement('li');
+                li.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;';
+                li.innerHTML = `<span><i class="fas ${item.type === 'video' ? 'fa-play' : 'fa-image'}"></i> ${item.id}</span> <strong>${item.price}</strong>`;
+                dom.cartItems.appendChild(li);
+            });
+
+            const { subtotal, discount, total } = calculateCartTotals();
+
+            if (discount > 0) {
+                dom.subtotalRow.style.display = 'flex';
+                dom.discountRow.style.display = 'flex';
+                dom.cartSubtotal.innerHTML = `<del>${subtotal}</del>`;
+                dom.cartDiscount.textContent = `- ${discount}`;
+            } else {
+                dom.subtotalRow.style.display = 'none';
+                dom.discountRow.style.display = 'none';
+            }
+            dom.cartTotal.textContent = total;
+            dom.buyBtn.disabled = state.balance < total;
+        }
+
+        function calculateCartTotals() {
+            let subtotal = 0;
+            let discount = 0;
+            const videosInCart = state.cart.filter(i => i.type === 'video').length;
+            const imagesInCart = state.cart.filter(i => i.type === 'image').length;
+
+            state.cart.forEach(item => subtotal += item.price);
+            
+            // Video discounts
+            if (videosInCart >= 10) discount += (videosInCart * 100) - 750;
+            else if (videosInCart >= 5) discount += (videosInCart * 100) - 400;
+
+            // Image discounts (similar logic)
+            if (imagesInCart >= 10) discount += (imagesInCart * 50) - 375;
+            else if (imagesInCart >= 5) discount += (imagesInCart * 50) - 200;
+
+            const total = subtotal - discount;
+            return { subtotal, discount, total };
+        }
+
+        // --- PURCHASE LOGIC ---
+        async function handlePurchase() {
+            const { total } = calculateCartTotals();
+            if (state.balance < total || state.cart.length === 0) return;
+
+            toggleLoading(dom.buyBtn, true);
+
+            try {
+                const userDocRef = state.userDocRef;
+                await runTransaction(db, async (transaction) => {
+                    const userDoc = await transaction.get(userDocRef);
+                    if (!userDoc.exists()) throw "Документът не съществува!";
+                    
+                    const newBalance = userDoc.data().chips - total;
+                    if (newBalance < 0) throw "Недостатъчен баланс!";
+                    
+                    const itemIdsToAdd = state.cart.map(item => item.id);
+                    
+                    transaction.update(userDocRef, { 
+                        chips: newBalance,
+                        collection: arrayUnion(...itemIdsToAdd)
+                    });
+                });
+                
+                // Success
+                state.cart = [];
+                updateUI();
+                openModal(document.getElementById('purchase-success-modal'));
+
+            } catch (error) {
+                console.error("Грешка при транзакция: ", error);
+                alert("Възникна грешка при покупката. Моля, опитайте отново.");
+            } finally {
+                toggleLoading(dom.buyBtn, false);
+            }
+        }
+
+        // --- EVENT LISTENERS & HELPERS ---
+        function setupEventListeners() {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelector('.tab-btn.active').classList.remove('active');
+                    btn.classList.add('active');
+                    document.querySelector('.tab-panel.active').classList.remove('active');
+                    document.getElementById(btn.dataset.tab).classList.add('active');
+                });
+            });
+
+            document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+            dom.buyBtn.addEventListener('click', handlePurchase);
+            
+            // Modals
+            document.getElementById('sugar-ai-button').addEventListener('click', showAiModal);
+            document.querySelectorAll('.modal-close-btn').forEach(btn => {
+                btn.addEventListener('click', () => closeModal(btn.closest('.modal-overlay')));
+            });
+            document.getElementById('lightbox').addEventListener('click', (e) => {
+                if(e.target.id === 'lightbox') closeModal(e.target);
+            });
+        }
+        
+        function showAiModal() {
+            const messageEl = document.getElementById('ai-message');
+            messageEl.textContent = '...'; // Thinking...
+            const modal = document.getElementById('sugar-ai-modal');
+            openModal(modal);
+            setTimeout(() => {
+                const randomMsg = AI_MESSAGES[Math.floor(Math.random() * AI_MESSAGES.length)];
+                messageEl.textContent = randomMsg;
+            }, 1000);
+        }
+
+        function showLightbox(item) {
+            const lightbox = document.getElementById('lightbox');
+            const content = document.getElementById('lightbox-content');
+            if (item.type === 'video') {
+                content.innerHTML = `<video src="${item.src}" controls autoplay loop></video>`;
+            } else {
+                content.innerHTML = `<img src="${item.src}" alt="${item.id}">`;
+            }
+            openModal(lightbox);
+        }
+
+        function openModal(modal) { modal.classList.add('active'); }
+        function closeModal(modal) { modal.classList.remove('active'); }
+        function toggleLoading(button, isLoading) {
+            const btnText = button.querySelector('.btn-text');
+            if (isLoading) {
+                button.disabled = true;
+                if (btnText) btnText.style.display = 'none';
+                const spinner = document.createElement('div');
+                spinner.className = 'spinner';
+                button.prepend(spinner);
+            } else {
+                button.disabled = false;
+                if (btnText) btnText.style.display = 'inline-block';
+                const spinner = button.querySelector('.spinner');
+                if (spinner) spinner.remove();
+            }
+        }
+    </script>
+</body>
+</html>
