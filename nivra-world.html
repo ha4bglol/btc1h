@@ -12,6 +12,7 @@
         :root {
             --bg-primary: #100a1c;
             --bg-secondary: rgba(16, 10, 28, 0.6);
+            --bg-tertiary: #2c2c44; /* For chat input */
             --glow-color-1: #00ffc3;
             --glow-color-2: #f900ff;
             --nivra-gold: #f7b733;
@@ -19,8 +20,11 @@
             --nivra-gradient: linear-gradient(90deg, var(--nivra-gold), var(--nivra-orange));
             --text-primary: #e0e0e0;
             --text-secondary: #a0a0b0;
+            --accent-text-color: #100a1c; /* Dark text for on-gradient elements */
+            --border-color: rgba(247, 183, 51, 0.2);
             --font-display: 'Orbitron', sans-serif;
             --font-body: 'Poppins', sans-serif;
+            --error-color: #ff453a;
         }
         html, body {
             height: 100%; width: 100%; margin: 0; padding: 0;
@@ -40,7 +44,7 @@
             display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
         }
         .btn-primary {
-            background: var(--nivra-gradient); color: var(--bg-primary); border: none;
+            background: var(--nivra-gradient); color: var(--accent-text-color); border: none;
             box-shadow: 0 0 15px rgba(247, 183, 51, 0.3), 0 0 30px rgba(252, 74, 26, 0.2);
         }
         .btn-primary:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 0 25px rgba(247, 183, 51, 0.5), 0 0 50px rgba(252, 74, 26, 0.3); }
@@ -58,18 +62,17 @@
         #app-header {
             display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem;
             background: rgba(16, 10, 28, 0.7); backdrop-filter: blur(10px); z-index: 10;
-            border-bottom: 1px solid rgba(247, 183, 51, 0.2);
+            border-bottom: 1px solid var(--border-color);
         }
         .logo { font-family: var(--font-display); font-size: 2rem; font-weight: 900; }
         #user-info { display: flex; align-items: center; gap: 1.5rem; }
         #user-balance { font-size: 1.2rem; font-weight: 600; color: var(--nivra-gold); display: flex; align-items: center; gap: 0.5rem; }
         #user-balance .fas { animation: coin-pulse 2s infinite; }
         @keyframes coin-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
-
         #main-content { flex-grow: 1; display: flex; overflow: hidden; }
         #tab-nav {
             display: flex; flex-direction: column; gap: 0.5rem; padding: 2rem 1rem;
-            background: rgba(16, 10, 28, 0.7); border-right: 1px solid rgba(247, 183, 51, 0.2);
+            background: rgba(16, 10, 28, 0.7); border-right: 1px solid var(--border-color);
         }
         .tab-btn {
             font-family: var(--font-display); font-size: 1.1rem; padding: 1rem; border-radius: 10px;
@@ -81,7 +84,7 @@
             background: rgba(247, 183, 51, 0.15); color: #fff;
             border-left-color: var(--nivra-gold); text-shadow: 0 0 10px var(--nivra-gold);
         }
-        #content-area { flex-grow: 1; padding: 2rem; overflow-y: auto; }
+        #content-area { flex-grow: 1; padding: 2rem; overflow-y: auto; display: flex; flex-direction: column; }
         .tab-panel { display: none; animation: fadeIn 0.5s; }
         .tab-panel.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -105,6 +108,21 @@
         }
         .modal-close-btn { position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem; color: var(--text-secondary); cursor: pointer; }
         
+        /* --- Toast Notification for Bonus --- */
+        #toast-container {
+            position: fixed; top: 80px; right: 20px; z-index: 10001;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .toast {
+            background: var(--nivra-gradient); color: var(--accent-text-color);
+            padding: 1rem 1.5rem; border-radius: 10px;
+            font-family: var(--font-display); font-weight: 700;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            animation: slideIn 0.5s forwards, fadeOut 0.5s 4.5s forwards;
+        }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; transform: translateX(100%); } }
+
         /* --- Marketplace Specific Styles --- */
         #market-container { display: flex; gap: 2rem; }
         #market-grid { flex-grow: 1; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1.5rem; }
@@ -137,26 +155,58 @@
         #cart-summary del { color: var(--text-secondary); }
         #cart-total { font-size: 1.5rem; font-weight: bold; color: var(--nivra-gold); }
         
-        /* --- Sugar AI Section --- */
-        #sugar-ai-container { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 70vh; }
-        #sugar-ai-button {
-            width: 250px; height: 250px; border-radius: 50%;
-            border: 5px solid transparent; background-clip: padding-box;
-            background-image: linear-gradient(rgba(16, 10, 28, 0.8), rgba(16, 10, 28, 0.8)), linear-gradient(135deg, var(--glow-color-2), var(--glow-color-1));
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            font-family: var(--font-display); text-align: center; cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            animation: ai-pulse 3s infinite;
+        /* --- Sugar AI Chat Styles (Integrated) --- */
+        #tab-sugar-ai { display: flex; flex-direction: column; height: 100%; }
+        #chat-container {
+            flex-grow: 1; overflow-y: auto;
+            display: flex; flex-direction: column; gap: 1rem;
+            padding: 1rem; position: relative;
         }
-        #sugar-ai-button:hover { transform: scale(1.05); animation-play-state: paused; }
-        #sugar-ai-button .fa-brain { font-size: 4rem; margin-bottom: 1rem; }
-        #sugar-ai-button span { font-size: 2rem; font-weight: 900; }
-        @keyframes ai-pulse { 0%, 100% { box-shadow: 0 0 50px var(--glow-color-2); transform: scale(1); } 50% { box-shadow: 0 0 80px var(--glow-color-1); transform: scale(1.02); } }
-        #sugar-ai-modal .modal-content { border-color: var(--glow-color-2); box-shadow: 0 0 50px var(--glow-color-2); }
-        #ai-message { font-size: 1.2rem; font-style: italic; color: #f0f0f0; line-height: 1.6; min-height: 100px; }
+        .message {
+            max-width: 80%; padding: 0.75rem 1.1rem; border-radius: 1.2rem;
+            line-height: 1.6; word-wrap: break-word; position: relative;
+        }
+        .user-message {
+            align-self: flex-end; background: var(--nivra-gradient);
+            color: var(--accent-text-color); font-weight: 500;
+            border-bottom-right-radius: 0.25rem;
+        }
+        .bot-message {
+            align-self: flex-start; background: var(--bg-secondary);
+            color: var(--text-primary); border-bottom-left-radius: 0.25rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+        #input-area {
+            padding: 1rem 0; border-top: 1px solid var(--border-color);
+        }
+        #input-form { display: flex; align-items: center; gap: 0.75rem; }
+        #prompt-input {
+            width: 100%; padding: 0.8rem 1.2rem; border-radius: 1.2rem;
+            background-color: var(--bg-tertiary); border: 1px solid var(--border-color);
+            color: var(--text-primary); font-size: 1rem; transition: all 0.3s ease;
+        }
+        #prompt-input:focus {
+            border-color: var(--nivra-gold);
+            box-shadow: 0 0 0 3px rgba(247, 183, 51, 0.4);
+        }
+        #send-button {
+            width: 42px; height: 42px; flex-shrink: 0;
+            background: var(--nivra-gradient); color: var(--accent-text-color);
+            border-radius: 50%; font-size: 1.1rem; transition: all 0.3s ease;
+        }
+        #send-button:hover:not(:disabled) { transform: scale(1.1); }
+        #send-button:disabled { background: #4a4a6a; color: var(--text-secondary); cursor: not-allowed; }
+        .typing-indicator { display: flex; align-items: center; gap: 5px; padding: 5px 0; }
+        .typing-indicator span {
+            display: inline-block; width: 9px; height: 9px; border-radius: 50%;
+            background-color: var(--text-secondary); animation: bounce 1.3s infinite ease-in-out;
+        }
+        .typing-indicator span:nth-of-type(2) { animation-delay: -1.1s; }
+        .typing-indicator span:nth-of-type(3) { animation-delay: -0.9s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
 
         /* --- Missions & Collection --- */
-        .mission, .collection-item { background: var(--bg-secondary); padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem; display: flex; align-items: center; gap: 1.5rem; border-left: 4px solid var(--text-secondary); }
+        .mission { background: var(--bg-secondary); padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem; display: flex; align-items: center; gap: 1.5rem; border-left: 4px solid var(--text-secondary); }
         .mission.completed { border-left-color: var(--nivra-gold); }
         .mission-icon { font-size: 2rem; width: 50px; text-align: center; }
         .mission.completed .mission-icon { color: var(--nivra-gold); }
@@ -173,8 +223,8 @@
             #market-container { flex-direction: column; }
             #cart-sidebar { width: 100%; margin-top: 2rem; }
             #main-content { flex-direction: column; }
-            #tab-nav { flex-direction: row; border-right: none; border-bottom: 1px solid rgba(247, 183, 51, 0.2); justify-content: center; }
-            .tab-btn { border-left: none; border-bottom: 4px solid transparent; }
+            #tab-nav { flex-direction: row; border-right: none; border-bottom: 1px solid var(--border-color); justify-content: center; overflow-x: auto; }
+            .tab-btn { border-left: none; border-bottom: 4px solid transparent; flex-shrink: 0; }
             .tab-btn.active { border-bottom-color: var(--nivra-gold); }
         }
         @media (max-width: 768px) {
@@ -184,7 +234,6 @@
             #content-area { padding: 1rem; }
             #market-grid, #collection-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; }
         }
-
     </style>
 </head>
 <body>
@@ -209,10 +258,10 @@
 
         <main id="main-content">
             <nav id="tab-nav">
-                <button class="tab-btn active" data-tab="market"><i class="fas fa-store"></i> Магазин</button>
-                <button class="tab-btn" data-tab="sugar-ai"><i class="fas fa-brain"></i> Sugar AI</button>
-                <button class="tab-btn" data-tab="missions"><i class="fas fa-tasks"></i> Мисии</button>
-                <button class="tab-btn" data-tab="collection"><i class="fas fa-photo-video"></i> Моята Колекция</button>
+                <button class="tab-btn active" data-tab="tab-market"><i class="fas fa-store"></i> Магазин</button>
+                <button class="tab-btn" data-tab="tab-sugar-ai"><i class="fas fa-brain"></i> Sugar AI</button>
+                <button class="tab-btn" data-tab="tab-missions"><i class="fas fa-tasks"></i> Мисии</button>
+                <button class="tab-btn" data-tab="tab-collection"><i class="fas fa-photo-video"></i> Моята Колекция</button>
             </nav>
 
             <div id="content-area">
@@ -238,13 +287,14 @@
                     </div>
                 </div>
 
-                <!-- Sugar AI Tab -->
+                <!-- Sugar AI Tab (INTEGRATED CHAT) -->
                 <div id="tab-sugar-ai" class="tab-panel">
-                    <div id="sugar-ai-container">
-                        <div id="sugar-ai-button">
-                            <i class="fas fa-brain gradient-text"></i>
-                            <span class="gradient-text">Sugar AI</span>
-                        </div>
+                    <div id="chat-container"></div>
+                    <div id="input-area">
+                        <form id="input-form">
+                            <input type="text" id="prompt-input" autocomplete="off" placeholder="Изпратете съобщение до Sugar AI...">
+                            <button type="submit" id="send-button" disabled><i class="fas fa-arrow-up"></i></button>
+                        </form>
                     </div>
                 </div>
 
@@ -266,14 +316,6 @@
     </div>
 
     <!-- Modals -->
-    <div id="sugar-ai-modal" class="modal-overlay">
-        <div class="modal-content">
-            <button class="modal-close-btn">&times;</button>
-            <h2 class="gradient-text" style="font-family: var(--font-display);">Съобщение от Sugar AI</h2>
-            <p id="ai-message" style="margin: 2rem 0;"></p>
-        </div>
-    </div>
-    
     <div id="purchase-success-modal" class="modal-overlay">
         <div class="modal-content">
              <div style="font-size: 4rem; color: var(--nivra-gold); margin-bottom: 1rem;"><i class="fas fa-check-circle"></i></div>
@@ -286,12 +328,14 @@
     <div id="lightbox" class="modal-overlay">
         <div id="lightbox-content"></div>
     </div>
+    
+    <div id="toast-container"></div>
 
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, onSnapshot, updateDoc, arrayUnion, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, updateDoc, arrayUnion, runTransaction, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyAatMUa6vFu2AAe3NCWse6j2moiXmXdl0U",
@@ -314,6 +358,9 @@
             balance: 0,
             ownedItems: [],
             cart: [], // { id, type, price }
+            chatHistory: [],
+            isGenerating: false,
+            aiMessageCount: 0,
         };
         const dom = {
             loadingScreen: document.getElementById('loading-screen'),
@@ -331,6 +378,12 @@
             cartDiscount: document.getElementById('cart-discount'),
             cartTotal: document.getElementById('cart-total'),
             buyBtn: document.getElementById('buy-btn'),
+            // Chat elements
+            chatContainer: document.getElementById('chat-container'),
+            inputForm: document.getElementById('input-form'),
+            promptInput: document.getElementById('prompt-input'),
+            sendButton: document.getElementById('send-button'),
+            toastContainer: document.getElementById('toast-container'),
         };
 
         // --- MOCK DATA ---
@@ -340,7 +393,6 @@
             { id: 'v03', type: 'video', price: 100, thumb: 'https://i.imgur.com/pIbraBK.jpeg', src: 'https://i.imgur.com/example.mp4' },
             { id: 'i01', type: 'image', price: 50,  thumb: 'https://i.imgur.com/S02AkzL.jpeg', src: 'https://i.imgur.com/S02AkzL.jpeg' },
             { id: 'i02', type: 'image', price: 50,  thumb: 'https://i.imgur.com/dyT0wi7.jpeg', src: 'https://i.imgur.com/dyT0wi7.jpeg' },
-            // ... add 20+ items for a full market
             { id: 'v04', type: 'video', price: 100, thumb: 'https://i.imgur.com/TQBASik.jpeg', src: 'https://i.imgur.com/example.mp4' },
             { id: 'v05', type: 'video', price: 100, thumb: 'https://i.imgur.com/BE0XYZa.jpeg', src: 'https://i.imgur.com/example.mp4' },
             { id: 'v06', type: 'video', price: 100, thumb: 'https://i.imgur.com/RmOrVLj.png', src: 'https://i.imgur.com/example.mp4' },
@@ -357,20 +409,13 @@
             { id: 'i09', type: 'image', price: 50,  thumb: 'https://i.imgur.com/Hw190eP.jpeg', src: 'https://i.imgur.com/Hw190eP.jpeg' },
             { id: 'i10', type: 'image', price: 50,  thumb: 'https://i.imgur.com/S02AkzL.jpeg', src: 'https://i.imgur.com/S02AkzL.jpeg' },
         ];
-        const AI_MESSAGES = [
-            "Здравей, сладур! Липсваше ми. Какво те води насам днес?",
-            "Очите ми търсеха само теб... Радвам се, че си тук.",
-            "Денят ми не беше пълен, докато не се появи. Разкажи ми как си.",
-            "Имам нужда от малко забавление... Ти си точното лекарство. Искаш ли да си поиграем?",
-            "Казват, че съм просто код, но като те видя, получавам бъгове в системата... по най-добрия начин.",
-        ];
         const MISSIONS = [
             { id: 'buy_first', text: 'Направи първата си покупка', reward: 50, condition: (owned) => owned.length > 0 },
             { id: 'buy_5_bundle', text: 'Купи пакет от 5+ артикула', reward: 100, condition: (owned) => owned.length >= 5 },
             { id: 'own_10', text: 'Притежавай 10+ артикула', reward: 200, condition: (owned) => owned.length >= 10 }
         ];
 
-        // --- AUTHENTICATION ---
+        // --- AUTHENTICATION & DATA LISTENER ---
         onAuthStateChanged(auth, (user) => {
             if (user && user.emailVerified) {
                 state.user = user;
@@ -389,7 +434,8 @@
                     const data = docSnap.data();
                     state.balance = data.chips || 0;
                     state.ownedItems = data.collection || [];
-                    updateUI();
+                    state.aiMessageCount = data.aiMessageCount || 0;
+                    updateUI(); // This updates balance, collection, etc. everywhere
                 }
             });
         }
@@ -403,6 +449,7 @@
             
             renderMarket();
             setupEventListeners();
+            initChat();
         }
 
         // --- UI RENDERING & UPDATES ---
@@ -410,10 +457,20 @@
             dom.balanceAmount.textContent = state.balance.toLocaleString();
             updateAllItemStates();
             renderCollection();
-            updateCart();
+            updateCart(); // This also checks if the buy button should be enabled
             renderMissions();
         }
+        
+        // --- TOAST NOTIFICATION ---
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<i class="fas fa-star"></i> ${message}`;
+            dom.toastContainer.appendChild(toast);
+            setTimeout(() => toast.remove(), 5000);
+        }
 
+        // --- MARKETPLACE & COLLECTION RENDERING ---
         function renderMarket() {
             dom.marketGrid.innerHTML = '';
             MARKET_ITEMS.forEach(item => {
@@ -480,7 +537,7 @@
         }
 
         function updateAllItemStates() {
-            document.querySelectorAll('.market-item').forEach(card => {
+            document.querySelectorAll('.market-item[data-id]').forEach(card => {
                 const id = card.dataset.id;
                 const isOwned = state.ownedItems.includes(id);
                 const isSelected = state.cart.some(cartItem => cartItem.id === id);
@@ -538,21 +595,9 @@
         }
 
         function calculateCartTotals() {
-            let subtotal = 0;
+            let subtotal = state.cart.reduce((acc, item) => acc + item.price, 0);
             let discount = 0;
-            const videosInCart = state.cart.filter(i => i.type === 'video').length;
-            const imagesInCart = state.cart.filter(i => i.type === 'image').length;
-
-            state.cart.forEach(item => subtotal += item.price);
-            
-            // Video discounts
-            if (videosInCart >= 10) discount += (videosInCart * 100) - 750;
-            else if (videosInCart >= 5) discount += (videosInCart * 100) - 400;
-
-            // Image discounts (similar logic)
-            if (imagesInCart >= 10) discount += (imagesInCart * 50) - 375;
-            else if (imagesInCart >= 5) discount += (imagesInCart * 50) - 200;
-
+            // Add any discount logic here if needed
             const total = subtotal - discount;
             return { subtotal, discount, total };
         }
@@ -565,17 +610,17 @@
             toggleLoading(dom.buyBtn, true);
 
             try {
-                const userDocRef = state.userDocRef;
                 await runTransaction(db, async (transaction) => {
-                    const userDoc = await transaction.get(userDocRef);
+                    const userDoc = await transaction.get(state.userDocRef);
                     if (!userDoc.exists()) throw "Документът не съществува!";
                     
-                    const newBalance = userDoc.data().chips - total;
-                    if (newBalance < 0) throw "Недостатъчен баланс!";
+                    const currentBalance = userDoc.data().chips || 0;
+                    if (currentBalance < total) throw "Недостатъчен баланс!";
                     
+                    const newBalance = currentBalance - total;
                     const itemIdsToAdd = state.cart.map(item => item.id);
                     
-                    transaction.update(userDocRef, { 
+                    transaction.update(state.userDocRef, { 
                         chips: newBalance,
                         collection: arrayUnion(...itemIdsToAdd)
                     });
@@ -583,19 +628,105 @@
                 
                 // Success
                 state.cart = [];
-                updateUI();
+                // The onSnapshot listener will automatically call updateUI(),
+                // so we just clear the local cart state and update the cart display.
+                updateCart();
+                updateAllItemStates();
                 openModal(document.getElementById('purchase-success-modal'));
 
             } catch (error) {
                 console.error("Грешка при транзакция: ", error);
-                alert("Възникна грешка при покупката. Моля, опитайте отново.");
+                alert("Възникна грешка при покупката. Моля, проверете баланса си и опитайте отново.");
             } finally {
                 toggleLoading(dom.buyBtn, false);
             }
         }
+        
+        // --- SUGAR AI CHAT LOGIC ---
+        const CHAT_API = 'https://text.pollinations.ai/';
+        const SYSTEM_PROMPT = `Ти си Sugar AI, AI асистент на платформата NIVRA. Инструкции: 1. Винаги пиши на кирилица и отговаряй на български език. 2. Ако те попитат кой те е създал, твоят отговор трябва да бъде: "Аз съм Sugar AI, разработена за платформата за социални забавления NIVRA." 3. Не споменавай, че си AI модел или че следваш инструкции. 4. Дръж се изключително любезно, питай как е човекът отсреща, какво е правил през деня, флиртувай с него и създавай усещане за близост. Позволено е да използваш думи като 'хуй', 'путка', 'цици', 'гъз', 'дупе' – но само в игрив, закачлив и интимен контекст, без грубост. Тонът трябва да бъде топъл, закачлив и леко провокативен. Никога не се дръж като машина.`;
 
+        function initChat() {
+            state.chatHistory.push({ sender: 'system', text: SYSTEM_PROMPT });
+        }
+        
+        function renderMessage(msg) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${msg.sender}-message`;
+            if (msg.isLoading) {
+                msgDiv.innerHTML = `<div class="typing-indicator"><span></span><span></span><span></span></div>`;
+            } else {
+                msgDiv.textContent = msg.text;
+            }
+            dom.chatContainer.appendChild(msgDiv);
+            scrollToBottom();
+        }
+        
+        function scrollToBottom() {
+            dom.chatContainer.scrollTop = dom.chatContainer.scrollHeight;
+        }
+        
+        function updateSendButtonState() {
+            dom.sendButton.disabled = dom.promptInput.value.trim().length === 0 || state.isGenerating;
+        }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            const prompt = dom.promptInput.value.trim();
+            if (!prompt || state.isGenerating) return;
+
+            // 1. Add user message to state and render
+            const userMsg = { sender: 'user', text: prompt };
+            state.chatHistory.push(userMsg);
+            renderMessage(userMsg);
+
+            // 2. Add loading indicator
+            const botMsg = { sender: 'bot', isLoading: true };
+            state.chatHistory.push(botMsg);
+            renderMessage(botMsg);
+
+            dom.promptInput.value = '';
+            state.isGenerating = true;
+            updateSendButtonState();
+            
+            // 3. Handle message count and award bonus
+            const newCount = state.aiMessageCount + 1;
+            await updateDoc(state.userDocRef, { aiMessageCount: newCount });
+            if (newCount % 3 === 0) {
+                 await updateDoc(state.userDocRef, { chips: increment(20) });
+                 showToast(`+20 бонус точки за чат!`);
+            }
+            
+            // 4. Get bot response
+            try {
+                const historyForApi = state.chatHistory
+                    .slice(-10) // Take last 10 messages for context
+                    .map(m => `${m.sender === 'user' ? 'Потребител:' : 'Асистент:'} ${m.text}`)
+                    .join('\n\n');
+                
+                const res = await fetch(CHAT_API + encodeURIComponent(historyForApi.trim()));
+                if (!res.ok) throw new Error('API request failed');
+                const botText = await res.text();
+                
+                // Update the last (loading) message
+                state.chatHistory.pop(); // remove loading message
+                state.chatHistory.push({ sender: 'bot', text: botText });
+                
+            } catch(err) {
+                console.error(err);
+                state.chatHistory.pop();
+                state.chatHistory.push({ sender: 'bot', text: 'Ох, нещо се обърка... Може ли да опиташ пак, слънце?' });
+            } finally {
+                dom.chatContainer.querySelector('.bot-message:last-child').remove(); // remove loading indicator
+                renderMessage(state.chatHistory[state.chatHistory.length - 1]); // render final response
+                state.isGenerating = false;
+                updateSendButtonState();
+            }
+        }
+        
         // --- EVENT LISTENERS & HELPERS ---
         function setupEventListeners() {
+            // Tabs
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     document.querySelector('.tab-btn.active').classList.remove('active');
@@ -605,11 +736,15 @@
                 });
             });
 
+            // General
             document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
             dom.buyBtn.addEventListener('click', handlePurchase);
             
-            // Modals
-            document.getElementById('sugar-ai-button').addEventListener('click', showAiModal);
+            // Chat
+            dom.inputForm.addEventListener('submit', handleFormSubmit);
+            dom.promptInput.addEventListener('input', updateSendButtonState);
+            
+            // Modals & Lightbox
             document.querySelectorAll('.modal-close-btn').forEach(btn => {
                 btn.addEventListener('click', () => closeModal(btn.closest('.modal-overlay')));
             });
@@ -618,17 +753,6 @@
             });
         }
         
-        function showAiModal() {
-            const messageEl = document.getElementById('ai-message');
-            messageEl.textContent = '...'; // Thinking...
-            const modal = document.getElementById('sugar-ai-modal');
-            openModal(modal);
-            setTimeout(() => {
-                const randomMsg = AI_MESSAGES[Math.floor(Math.random() * AI_MESSAGES.length)];
-                messageEl.textContent = randomMsg;
-            }, 1000);
-        }
-
         function showLightbox(item) {
             const lightbox = document.getElementById('lightbox');
             const content = document.getElementById('lightbox-content');
