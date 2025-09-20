@@ -427,6 +427,14 @@
         
         // --- SHOP LOGIC ---
         const handlePurchase = async (button) => {
+            // FIXED: Добавена е проверка, за да се гарантира, че потребителят е логнат преди опит за покупка.
+            if (!auth.currentUser) {
+                dom.shopStatus.textContent = 'Грешка: Трябва да сте влезли, за да направите покупка.';
+                // Спираме зареждането на всички бутони, ако има такова
+                document.querySelectorAll('.buy-chip-btn').forEach(btn => toggleLoading(btn, false));
+                return; // Прекратява изпълнението на функцията
+            }
+            
             const amount = button.dataset.amount;
             const currency = button.dataset.currency;
             dom.shopStatus.textContent = 'Генериране на плащане, моля изчакайте...';
@@ -438,7 +446,7 @@
                 } else { throw new Error("Невалиден отговор от сървъра."); }
             } catch (error) {
                 console.error("Purchase failed:", error.message);
-                dom.shopStatus.textContent = 'Грешка: ' + error.message || 'Опитайте отново.';
+                dom.shopStatus.textContent = 'Грешка: ' + (error.message || 'Опитайте отново.');
                 document.querySelectorAll('.buy-chip-btn').forEach(btn => toggleLoading(btn, false));
             }
         };
