@@ -442,7 +442,7 @@
                 await auth.currentUser.getIdToken(true); 
 
                 // ВАЖНА ПРОМЯНА: Изпращаме сумата като число с десетична запетая (напр. 3.99)
-                const result = await createPayment({ amount: parseFloat(amount), currency: currency });
+                const result = await createPayment({ amount: amount, currency: currency });
 
                 if (result.data && result.data.invoiceUrl) {
                     // Пренасочваме потребителя към страницата за плащане.
@@ -818,6 +818,7 @@
     </script>
 </body>
 </html>
+
 
 
 
