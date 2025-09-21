@@ -316,7 +316,6 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        // ВАЖНО: Посочете региона, в който deploy-нахте вашите функции!
         const functions = getFunctions(app, 'us-central1'); 
         const createPayment = httpsCallable(functions, 'createPayment');
 
@@ -425,14 +424,13 @@
             }
         }
         
-        // --- SHOP LOGIC (FIXED) ---
+        // --- SHOP LOGIC (КОРИГИРАНА) ---
         const handlePurchase = async (button) => {
             const amount = button.dataset.amount;
             const currency = button.dataset.currency;
             dom.shopStatus.textContent = 'Генериране на плащане, моля изчакайте...';
             document.querySelectorAll('.buy-chip-btn').forEach(btn => toggleLoading(btn, true));
 
-            // FIX: Check for current user and force a token refresh to ensure auth context is ready.
             if (!auth.currentUser) {
                 dom.shopStatus.textContent = 'Грешка: Трябва да сте влезли, за да направите покупка.';
                 document.querySelectorAll('.buy-chip-btn').forEach(btn => toggleLoading(btn, false));
@@ -440,17 +438,20 @@
             }
 
             try {
-                // Force a refresh of the ID token to avoid race conditions after login.
+                // Този ред е за по-голяма стабилност, особено веднага след логин.
                 await auth.currentUser.getIdToken(true); 
 
-                const result = await createPayment({ amount: Math.round(Number(amount) * 100), currency: currency });
+                // ВАЖНА ПРОМЯНА: Изпращаме сумата като число с десетична запетая (напр. 3.99)
+                const result = await createPayment({ amount: parseFloat(amount), currency: currency });
 
                 if (result.data && result.data.invoiceUrl) {
+                    // Пренасочваме потребителя към страницата за плащане.
                     window.location.href = result.data.invoiceUrl;
                 } else { 
                     throw new Error("Невалиден отговор от сървъра.");
                 }
             } catch (error) {
+                // Този код обработва грешките и ги показва на потребителя.
                 console.error("Purchase failed:", error);
                 
                 if (error.code === 'unauthenticated') {
@@ -461,6 +462,7 @@
                     dom.shopStatus.textContent = 'Възникна грешка: ' + (error.message || 'Опитайте отново.');
                 }
 
+                // Спираме анимацията за зареждане на бутоните.
                 document.querySelectorAll('.buy-chip-btn').forEach(btn => toggleLoading(btn, false));
             }
         };
@@ -564,7 +566,7 @@
             renderGames();
         }
 
-        // --- AUTHENTICATION (FINAL FIX) ---
+        // --- AUTHENTICATION ---
         const handleRegistration = async (button) => {
             toggleLoading(button, true);
             Object.values(dom.registerErrors).forEach(el => el.textContent = '');
@@ -572,15 +574,11 @@
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 
-                // FINAL FIX: Provide actionCodeSettings to ensure the link works reliably.
-                const actionCodeSettings = {
-                    url: window.location.href, // Redirect the user back to the current page after verification.
-                };
+                const actionCodeSettings = { url: window.location.href };
                 await sendEmailVerification(userCredential.user, actionCodeSettings);
 
                 await setDoc(doc(db, "users", userCredential.user.uid), { uid: userCredential.user.uid, email, fullName, username, chips: 1000, createdAt: new Date(), welcomeBonusClaimed: false });
                 
-                // User stays logged in, onAuthStateChanged will show the verification modal.
                 closeModal(dom.registerModal);
                 openModal(dom.registrationSuccessModal);
             } catch(error) {
@@ -632,16 +630,16 @@
                         if (docSnap.exists()) {
                             state.currentUserData = docSnap.data();
                             updateUIForLoginState(true, state.currentUserData);
-                        } else { // User exists in Auth but not Firestore, logout
+                        } else { 
                             handleLogout();
                         }
                     });
-                } else { // User not verified
+                } else { 
                     openModal(dom.verificationNotice);
                     dom.verificationEmail.textContent = refreshedUser ? refreshedUser.email : '';
-                    updateUIForLoginState(false); // Show logged-out view while unverified
+                    updateUIForLoginState(false); 
                 }
-            } else { // No user
+            } else { 
                 state.currentUserData = null;
                 closeModal(dom.verificationNotice);
                 updateUIForLoginState(false);
@@ -700,7 +698,6 @@
             const leaderboardContent = document.getElementById('leaderboard-content');
             leaderboardContent.innerHTML = '<div class="flex justify-center items-center h-32"><div class="spinner !w-8 !h-8"></div></div>'; // Show spinner
             
-            // Mock data - replace with actual Firestore query in a real app
             const mockUsers = [
                 { username: 'GamingGod', chips: 25800000 }, { username: 'SlotMaster', chips: 19500000 },
                 { username: 'LuckyPlayer7', chips: 15200000 }, { username: 'CardShark', chips: 11800000 },
@@ -709,7 +706,7 @@
                 { username: 'SpinQueen', chips: 5400000 }, { username: 'PokerFace', chips: 4800000 },
             ];
 
-            setTimeout(() => { // Simulate network delay
+            setTimeout(() => { 
                 let html = '<div class="space-y-2">';
                 mockUsers.forEach((user, index) => {
                     const rank = index + 1;
@@ -821,8 +818,6 @@
     </script>
 </body>
 </html>
-
-
 
 
 
