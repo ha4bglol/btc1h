@@ -425,15 +425,24 @@
             }
         }
         
-        // --- SHOP LOGIC ---
+        // --- SHOP LOGIC (FIXED) ---
         const handlePurchase = async (button) => {
             const amount = button.dataset.amount;
             const currency = button.dataset.currency;
             dom.shopStatus.textContent = 'Генериране на плащане, моля изчакайте...';
             document.querySelectorAll('.buy-chip-btn').forEach(btn => toggleLoading(btn, true));
+
+            // FIX: Check for current user and force a token refresh to ensure auth context is ready.
+            if (!auth.currentUser) {
+                dom.shopStatus.textContent = 'Грешка: Трябва да сте влезли, за да направите покупка.';
+                document.querySelectorAll('.buy-chip-btn').forEach(btn => toggleLoading(btn, false));
+                return;
+            }
+
             try {
-                // FIXED: Премахната е ръчната проверка за auth.currentUser, за да се избегне race condition.
-                // Разчитаме на вградената в httpsCallable обработка на грешки при автентикация.
+                // Force a refresh of the ID token to avoid race conditions after login.
+                await auth.currentUser.getIdToken(true); 
+
                 const result = await createPayment({ amount: Math.round(Number(amount) * 100), currency: currency });
 
                 if (result.data && result.data.invoiceUrl) {
@@ -442,9 +451,8 @@
                     throw new Error("Невалиден отговор от сървъра.");
                 }
             } catch (error) {
-                console.error("Purchase failed:", error); // Запиши цялата грешка в конзолата за дебъг
+                console.error("Purchase failed:", error);
                 
-                // FIXED: Добавена е обработка на специфичния код за грешка 'unauthenticated' от Firebase.
                 if (error.code === 'unauthenticated') {
                     dom.shopStatus.textContent = 'Грешка: Трябва да сте влезли, за да направите покупка.';
                 } else if (error.code === 'invalid-argument') {
