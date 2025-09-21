@@ -454,7 +454,7 @@
                 console.error("Purchase failed:", error);
                 
                 if (error.code === 'unauthenticated') {
-                    dom.shopStatus.textContent = 'Грешка: Трябва да сте влезли, за да направите покупка.';
+                    dom.shopStatus.textContent = 'Грешка: Проблем с удостоверяването. Моля, влезте отново.';
                 } else if (error.code === 'invalid-argument') {
                     dom.shopStatus.textContent = 'Грешка: Подадени са невалидни данни към сървъра.';
                 } else {
@@ -564,7 +564,7 @@
             renderGames();
         }
 
-        // --- AUTHENTICATION ---
+        // --- AUTHENTICATION (FIXED REGISTRATION) ---
         const handleRegistration = async (button) => {
             toggleLoading(button, true);
             Object.values(dom.registerErrors).forEach(el => el.textContent = '');
@@ -573,9 +573,12 @@
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 await sendEmailVerification(userCredential.user);
                 await setDoc(doc(db, "users", userCredential.user.uid), { uid: userCredential.user.uid, email, fullName, username, chips: 1000, createdAt: new Date(), welcomeBonusClaimed: false });
-                await signOut(auth);
+                
+                // FIX: Removed signOut(auth). The user should stay logged in but in an unverified state.
+                // The onAuthStateChanged listener will handle showing the verification modal.
+                
                 closeModal(dom.registerModal);
-                openModal(dom.registrationSuccessModal);
+                openModal(dom.registrationSuccessModal); // This modal can be closed by the user.
             } catch(error) {
                 dom.registerErrors.step1.textContent = error.code === 'auth/email-already-in-use' ? "Този имейл вече е регистриран." : "Възникна грешка. Опитайте отново.";
                 switchRegisterStep(1);
@@ -583,6 +586,7 @@
                 toggleLoading(button, false);
             }
         };
+
         const handleLogin = async (e) => { e.preventDefault(); const button = e.target.querySelector('button[type="submit"]'); toggleLoading(button, true); dom.loginError.textContent = ''; try { await signInWithEmailAndPassword(auth, dom.loginForm['login-email'].value, dom.loginForm['login-password'].value); closeModal(dom.loginModal); } catch (error) { dom.loginError.textContent = "Грешен имейл или парола."; } finally { toggleLoading(button, false); } };
         const handlePasswordReset = async (e) => { e.preventDefault(); const button = e.target.querySelector('button[type="submit"]'); toggleLoading(button, true); dom.resetError.textContent = ''; dom.resetSuccess.textContent = ''; try { await sendPasswordResetEmail(auth, dom.forgotPasswordForm['reset-email'].value); dom.resetSuccess.textContent = 'Линкът е изпратен! Проверете пощата си.'; dom.forgotPasswordForm.reset(); } catch (error) { dom.resetError.textContent = 'Грешка. Проверете имейла.'; } finally { toggleLoading(button, false); } };
         const handleLogout = () => { if (confirm('Сигурни ли сте, че искате да излезете?')) { signOut(auth).catch(console.error); } };
@@ -630,7 +634,7 @@
                 } else { // User not verified
                     openModal(dom.verificationNotice);
                     dom.verificationEmail.textContent = refreshedUser.email;
-                    updateUIForLoginState(false);
+                    updateUIForLoginState(false); // Show logged-out view while unverified
                 }
             } else { // No user
                 state.currentUserData = null;
