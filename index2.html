@@ -301,6 +301,9 @@
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, onSnapshot, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
         import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
+        // FINAL FIX: Import App Check
+        import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check.js";
+
 
         // --- FIREBASE CONFIG ---
         const firebaseConfig = {
@@ -314,9 +317,15 @@
         };
         
         const app = initializeApp(firebaseConfig);
+        
+        // FINAL FIX: Initialize App Check
+        const appCheck = initializeAppCheck(app, {
+          provider: new ReCaptchaV3Provider('6LeiPNArAAAAAIoLB1TI1ar1Wwi3RYX0gb_2oMEw'),
+          isTokenAutoRefreshEnabled: true
+        });
+
         const auth = getAuth(app);
         const db = getFirestore(app);
-        // ВАЖНО: Посочете региона, в който deploy-нахте вашите функции!
         const functions = getFunctions(app, 'us-central1'); 
         const createPayment = httpsCallable(functions, 'createPayment');
 
@@ -425,14 +434,13 @@
             }
         }
         
-        // --- SHOP LOGIC (FIXED) ---
+        // --- SHOP LOGIC ---
         const handlePurchase = async (button) => {
             const amount = button.dataset.amount;
             const currency = button.dataset.currency;
             dom.shopStatus.textContent = 'Генериране на плащане, моля изчакайте...';
             document.querySelectorAll('.buy-chip-btn').forEach(btn => toggleLoading(btn, true));
 
-            // FIX: Check for current user and force a token refresh to ensure auth context is ready.
             if (!auth.currentUser) {
                 dom.shopStatus.textContent = 'Грешка: Трябва да сте влезли, за да направите покупка.';
                 document.querySelectorAll('.buy-chip-btn').forEach(btn => toggleLoading(btn, false));
@@ -440,9 +448,7 @@
             }
 
             try {
-                // Force a refresh of the ID token to avoid race conditions after login.
                 await auth.currentUser.getIdToken(true); 
-
                 const result = await createPayment({ amount: Math.round(Number(amount) * 100), currency: currency });
 
                 if (result.data && result.data.invoiceUrl) {
@@ -451,14 +457,14 @@
                     throw new Error("Невалиден отговор от сървъра.");
                 }
             } catch (error) {
-                console.error("Purchase failed:", error);
+                console.error("--- ПЪЛЕН ОБЕКТ НА ГРЕШКАТА ---");
+                console.error(error);
+                console.error("--- КРАЙ НА ОБЕКТА ---");
+
+                dom.shopStatus.textContent = 'Възникна грешка. Проверете конзолата (F12).';
                 
-                if (error.code === 'unauthenticated') {
-                    dom.shopStatus.textContent = 'Грешка: Проблем с удостоверяването. Моля, влезте отново.';
-                } else if (error.code === 'invalid-argument') {
-                    dom.shopStatus.textContent = 'Грешка: Подадени са невалидни данни към сървъра.';
-                } else {
-                    dom.shopStatus.textContent = 'Възникна грешка: ' + (error.message || 'Опитайте отново.');
+                if (error.code === 'unauthenticated' || error.code === 'functions/unauthenticated') {
+                     dom.shopStatus.textContent = 'Грешка: Проблем с удостоверяването. Моля, опитайте отново.';
                 }
 
                 document.querySelectorAll('.buy-chip-btn').forEach(btn => toggleLoading(btn, false));
@@ -548,7 +554,6 @@
                 dom.userUsernameMobileDisplay.textContent = userData.username;
                 dom.userBalanceMobileDisplay.innerHTML = `<i class="fas fa-coins mr-1"></i>${balanceFormatted}`;
                 
-                // Handle welcome bonus gift icon
                 const bonusClaimed = userData.welcomeBonusClaimed === true;
                 dom.welcomeBonusLink.classList.toggle('hidden', bonusClaimed);
                 dom.welcomeBonusLink.classList.toggle('gift-icon-animation', !bonusClaimed);
@@ -564,23 +569,16 @@
             renderGames();
         }
 
-        // --- AUTHENTICATION (FINAL FIX) ---
+        // --- AUTHENTICATION ---
         const handleRegistration = async (button) => {
             toggleLoading(button, true);
             Object.values(dom.registerErrors).forEach(el => el.textContent = '');
             const { email, password, fullName, username } = state.registrationData;
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                
-                // FINAL FIX: Provide actionCodeSettings to ensure the link works reliably.
-                const actionCodeSettings = {
-                    url: window.location.href, // Redirect the user back to the current page after verification.
-                };
+                const actionCodeSettings = { url: window.location.href };
                 await sendEmailVerification(userCredential.user, actionCodeSettings);
-
                 await setDoc(doc(db, "users", userCredential.user.uid), { uid: userCredential.user.uid, email, fullName, username, chips: 1000, createdAt: new Date(), welcomeBonusClaimed: false });
-                
-                // User stays logged in, onAuthStateChanged will show the verification modal.
                 closeModal(dom.registerModal);
                 openModal(dom.registrationSuccessModal);
             } catch(error) {
@@ -632,16 +630,14 @@
                         if (docSnap.exists()) {
                             state.currentUserData = docSnap.data();
                             updateUIForLoginState(true, state.currentUserData);
-                        } else { // User exists in Auth but not Firestore, logout
-                            handleLogout();
-                        }
+                        } else { handleLogout(); }
                     });
-                } else { // User not verified
+                } else { 
                     openModal(dom.verificationNotice);
                     dom.verificationEmail.textContent = refreshedUser ? refreshedUser.email : '';
-                    updateUIForLoginState(false); // Show logged-out view while unverified
+                    updateUIForLoginState(false); 
                 }
-            } else { // No user
+            } else { 
                 state.currentUserData = null;
                 closeModal(dom.verificationNotice);
                 updateUIForLoginState(false);
@@ -660,12 +656,7 @@
         function renderGames() {
             const searchTerm = dom.searchGamesInput.value.toLowerCase();
             const activeFilter = dom.gameFilters.querySelector('.filter-btn.active').dataset.filter;
-
-            const filteredGames = gamesData.filter(game => {
-                const matchesSearch = game.name.toLowerCase().includes(searchTerm);
-                const matchesFilter = activeFilter === 'all' || game.category === activeFilter;
-                return matchesSearch && matchesFilter;
-            });
+            const filteredGames = gamesData.filter(game => game.name.toLowerCase().includes(searchTerm) && (activeFilter === 'all' || game.category === activeFilter));
 
             dom.gamesGrid.innerHTML = ''; 
             if (filteredGames.length === 0) {
@@ -680,15 +671,9 @@
                     card.addEventListener('click', () => {
                         if (state.isLoggedIn) {
                             const preference = localStorage.getItem('platformPreference');
-                            if (preference) {
-                                redirectToGame(game, preference);
-                            } else {
-                                state.selectedGame = game; 
-                                openModal(dom.platformChoiceModal);
-                            }
-                        } else {
-                            openModal(dom.loginRequiredModal);
-                        }
+                            if (preference) { redirectToGame(game, preference); } 
+                            else { state.selectedGame = game; openModal(dom.platformChoiceModal); }
+                        } else { openModal(dom.loginRequiredModal); }
                     });
                     dom.gamesGrid.appendChild(card);
                 });
@@ -698,18 +683,11 @@
         // --- LEADERBOARD LOGIC (MOCK DATA) ---
         function renderLeaderboard() {
             const leaderboardContent = document.getElementById('leaderboard-content');
-            leaderboardContent.innerHTML = '<div class="flex justify-center items-center h-32"><div class="spinner !w-8 !h-8"></div></div>'; // Show spinner
+            leaderboardContent.innerHTML = '<div class="flex justify-center items-center h-32"><div class="spinner !w-8 !h-8"></div></div>';
             
-            // Mock data - replace with actual Firestore query in a real app
-            const mockUsers = [
-                { username: 'GamingGod', chips: 25800000 }, { username: 'SlotMaster', chips: 19500000 },
-                { username: 'LuckyPlayer7', chips: 15200000 }, { username: 'CardShark', chips: 11800000 },
-                { username: 'HighRoller', chips: 9900000 }, { username: 'WinnerWinner', chips: 8500000 },
-                { username: 'JackpotJoe', chips: 7300000 }, { username: 'BetKing', chips: 6100000 },
-                { username: 'SpinQueen', chips: 5400000 }, { username: 'PokerFace', chips: 4800000 },
-            ];
+            const mockUsers = [ { username: 'GamingGod', chips: 25800000 }, { username: 'SlotMaster', chips: 19500000 }, { username: 'LuckyPlayer7', chips: 15200000 }, { username: 'CardShark', chips: 11800000 }, { username: 'HighRoller', chips: 9900000 }, { username: 'WinnerWinner', chips: 8500000 }, { username: 'JackpotJoe', chips: 7300000 }, { username: 'BetKing', chips: 6100000 }, { username: 'SpinQueen', chips: 5400000 }, { username: 'PokerFace', chips: 4800000 }, ];
 
-            setTimeout(() => { // Simulate network delay
+            setTimeout(() => { 
                 let html = '<div class="space-y-2">';
                 mockUsers.forEach((user, index) => {
                     const rank = index + 1;
@@ -717,14 +695,7 @@
                     if (rank === 1) rankClass = 'bg-yellow-500 text-black';
                     if (rank === 2) rankClass = 'bg-gray-400 text-black';
                     if (rank === 3) rankClass = 'bg-yellow-700 text-white';
-
-                    html += `
-                        <div class="flex items-center p-3 rounded-lg bg-gray-800/50">
-                            <div class="w-10 h-10 flex-shrink-0 font-bold text-lg flex items-center justify-center rounded-md ${rankClass}">${rank}</div>
-                            <div class="ml-4 flex-grow font-semibold text-white truncate">${user.username}</div>
-                            <div class="ml-4 flex-shrink-0 text-yellow-400 font-bold text-right"><i class="fas fa-coins mr-2"></i>${user.chips.toLocaleString()}</div>
-                        </div>
-                    `;
+                    html += `<div class="flex items-center p-3 rounded-lg bg-gray-800/50"> <div class="w-10 h-10 flex-shrink-0 font-bold text-lg flex items-center justify-center rounded-md ${rankClass}">${rank}</div> <div class="ml-4 flex-grow font-semibold text-white truncate">${user.username}</div> <div class="ml-4 flex-shrink-0 text-yellow-400 font-bold text-right"><i class="fas fa-coins mr-2"></i>${user.chips.toLocaleString()}</div> </div>`;
                 });
                 html += '</div>';
                 leaderboardContent.innerHTML = html;
@@ -769,15 +740,9 @@
                 if (auth.currentUser) {
                     const userDocRef = doc(db, 'users', auth.currentUser.uid);
                     try {
-                        await updateDoc(userDocRef, {
-                            chips: increment(500),
-                            welcomeBonusClaimed: true
-                        });
+                        await updateDoc(userDocRef, { chips: increment(500), welcomeBonusClaimed: true });
                         closeModal(dom.welcomeBonusModal);
-                    } catch (error) {
-                        console.error("Error claiming bonus: ", error);
-                        alert("Възникна грешка при получаване на бонуса.");
-                    }
+                    } catch (error) { console.error("Error claiming bonus: ", error); alert("Възникна грешка при получаване на бонуса."); }
                 }
                 toggleLoading(button, false);
             });
@@ -786,9 +751,7 @@
             dom.platformChoiceModal.querySelectorAll('.platform-btn').forEach(button => {
                 button.addEventListener('click', () => {
                     const version = button.dataset.version; 
-                    if (document.getElementById('remember-platform-choice').checked) {
-                        localStorage.setItem('platformPreference', version);
-                    }
+                    if (document.getElementById('remember-platform-choice').checked) { localStorage.setItem('platformPreference', version); }
                     closeModal(dom.platformChoiceModal);
                     redirectToGame(state.selectedGame, version);
                 });
