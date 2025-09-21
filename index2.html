@@ -564,22 +564,27 @@
             renderGames();
         }
 
-        // --- AUTHENTICATION (FIXED REGISTRATION) ---
+        // --- AUTHENTICATION (FINAL FIX) ---
         const handleRegistration = async (button) => {
             toggleLoading(button, true);
             Object.values(dom.registerErrors).forEach(el => el.textContent = '');
             const { email, password, fullName, username } = state.registrationData;
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                await sendEmailVerification(userCredential.user);
+                
+                // FINAL FIX: Provide actionCodeSettings to ensure the link works reliably.
+                const actionCodeSettings = {
+                    url: window.location.href, // Redirect the user back to the current page after verification.
+                };
+                await sendEmailVerification(userCredential.user, actionCodeSettings);
+
                 await setDoc(doc(db, "users", userCredential.user.uid), { uid: userCredential.user.uid, email, fullName, username, chips: 1000, createdAt: new Date(), welcomeBonusClaimed: false });
                 
-                // FIX: Removed signOut(auth). The user should stay logged in but in an unverified state.
-                // The onAuthStateChanged listener will handle showing the verification modal.
-                
+                // User stays logged in, onAuthStateChanged will show the verification modal.
                 closeModal(dom.registerModal);
-                openModal(dom.registrationSuccessModal); // This modal can be closed by the user.
+                openModal(dom.registrationSuccessModal);
             } catch(error) {
+                console.error("Registration Error:", error);
                 dom.registerErrors.step1.textContent = error.code === 'auth/email-already-in-use' ? "Този имейл вече е регистриран." : "Възникна грешка. Опитайте отново.";
                 switchRegisterStep(1);
             } finally {
@@ -633,7 +638,7 @@
                     });
                 } else { // User not verified
                     openModal(dom.verificationNotice);
-                    dom.verificationEmail.textContent = refreshedUser.email;
+                    dom.verificationEmail.textContent = refreshedUser ? refreshedUser.email : '';
                     updateUIForLoginState(false); // Show logged-out view while unverified
                 }
             } else { // No user
@@ -743,13 +748,13 @@
             ['logout-btn', 'logout-btn-mobile', 'logout-from-verification-btn'].forEach(id => document.getElementById(id)?.addEventListener('click', handleLogout));
             
             // Verification
-            dom.resendVerificationBtn.addEventListener('click', async () => { if (auth.currentUser) { try { await sendEmailVerification(auth.currentUser); alert('Изпратен е нов имейл!'); } catch { alert('Грешка. Опитайте по-късно.'); } } });
+            dom.resendVerificationBtn.addEventListener('click', async () => { if (auth.currentUser) { try { const actionCodeSettings = { url: window.location.href }; await sendEmailVerification(auth.currentUser, actionCodeSettings); alert('Изпратен е нов имейл!'); } catch { alert('Грешка. Опитайте по-късно.'); } } });
             dom.checkVerificationBtn.addEventListener('click', async (e) => {
                 if (!auth.currentUser) return;
                 toggleLoading(e.currentTarget, true);
                 dom.verificationError.textContent = '';
                 await auth.currentUser.reload();
-                if (!auth.currentUser.emailVerified) {
+                if (auth.currentUser && !auth.currentUser.emailVerified) {
                     dom.verificationError.textContent = 'Имейлът все още не е потвърден.';
                     dom.verificationNotice.classList.add('shake');
                     setTimeout(() => { dom.verificationNotice.classList.remove('shake'); dom.verificationError.textContent = ''; }, 2000);
@@ -816,6 +821,7 @@
     </script>
 </body>
 </html>
+
 
 
 
