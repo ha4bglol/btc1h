@@ -51,6 +51,16 @@
         @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
         @keyframes gift-shake { 0% { transform: rotate(0deg); } 25% { transform: rotate(5deg); } 50% { transform: rotate(0eg); } 75% { transform: rotate(-5deg); } 100% { transform: rotate(0deg); } }
         .gift-icon-animation { animation: gift-shake 1s ease-in-out infinite; }
+        
+        /* Nivra World Стилизация */
+        .nivra-world-gradient {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .text-shadow-neon {
+            text-shadow: 0 0 5px rgba(236, 72, 153, 0.7), 0 0 10px rgba(236, 72, 153, 0.7), 0 0 15px rgba(56, 189, 248, 0.7), 0 0 20px rgba(56, 189, 248, 0.7);
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -89,6 +99,10 @@
                         <button id="register-btn-desktop" class="px-6 py-2 rounded-full text-black font-semibold btn-primary">Регистрация</button>
                     </div>
                     <div id="logged-in-view" class="hidden items-center space-x-4">
+                        <button id="open-shop-btn" class="px-5 py-2 rounded-full text-sm font-semibold text-black btn-primary flex items-center gap-2 transform hover:scale-105 transition-transform">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Депозит</span>
+                        </button>
                         <div class="text-right">
                             <span id="user-balance" class="text-yellow-400 font-bold text-xl block"><i class="fas fa-coins mr-2"></i>0</span>
                         </div>
@@ -123,6 +137,12 @@
                          <button id="register-btn-mobile" class="w-full px-6 py-3 rounded-full text-black font-semibold btn-primary">Регистрация</button>
                     </div>
                     <div id="logged-in-view-mobile" class="hidden flex-col items-center">
+                        <div class="text-center mb-4">
+                            <button id="open-shop-btn-mobile" class="px-6 py-3 rounded-full text-lg font-semibold text-black btn-primary flex items-center gap-2">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>Депозит</span>
+                            </button>
+                        </div>
                         <div id="mobile-profile-info" class="text-center mb-6">
                             <span id="user-username-mobile" class="text-white font-semibold block text-xl"></span>
                             <span id="user-balance-mobile" class="text-yellow-400 font-bold text-lg"><i class="fas fa-coins mr-1"></i>0</span>
@@ -139,7 +159,12 @@
             </section>
             <section id="content-tabs" class="py-20 bg-[#161625]">
                 <div class="container mx-auto px-6">
-                    <div id="tab-buttons" class="flex justify-center border-b border-gray-700 mb-12"><button class="tab-btn active" data-tab="games">Игри</button><button class="tab-btn" data-tab="promo">Промоции</button><button class="tab-btn" data-tab="about">За Нас</button></div>
+                    <div id="tab-buttons" class="flex justify-center border-b border-gray-700 mb-12 flex-wrap">
+                        <button class="tab-btn active" data-tab="games">Игри</button>
+                        <button class="tab-btn" data-tab="nivra-world">Nivra World</button>
+                        <button class="tab-btn" data-tab="promo">Промоции</button>
+                        <button class="tab-btn" data-tab="about">За Нас</button>
+                    </div>
                     <div id="tab-content">
                         <div id="tab-games" class="tab-panel">
                             <div class="flex flex-col md:flex-row gap-6 mb-8 justify-center">
@@ -149,7 +174,35 @@
                             <div id="games-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"></div>
                             <p id="no-games-found" class="text-center text-gray-400 text-lg hidden">Няма намерени игри, съответстващи на търсенето.</p>
                         </div>
-                        <div id="tab-promo" class="tab-panel hidden"><h2 class="text-4xl font-bold mb-12 text-center">Специални Предложения</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-8"><div class="bg-gray-900 p-8 rounded-xl shadow-lg"><div class="text-5xl mb-4 text-yellow-400"><i class="fas fa-hand-holding-usd"></i></div><h3 class="text-2xl font-semibold mb-2">Бонус Добре Дошъл</h3><p class="text-gray-400">Всеки нов играч получава 500 безплатни точки веднага след регистрация!</p></div><div class="bg-gray-900 p-8 rounded-xl shadow-lg"><div class="text-5xl mb-4 text-yellow-400"><i class="fas fa-gift"></i></div><h3 class="text-2xl font-semibold mb-2">Ежедневни Бонуси</h3><p class="text-gray-400">Влизайте всеки ден, за да получите своите безплатни виртуални кредити и награди.</p></div><div class="bg-gray-900 p-8 rounded-xl shadow-lg"><div class="text-5xl mb-4 text-yellow-400"><i class="fas fa-trophy"></i></div><h3 class="text-2xl font-semibold mb-2">Вълнуващи Турнири</h3><p class="text-gray-400">Състезавайте се с други играчи и се изкачете в класациите.</p></div></div></div>
+                        
+                        <!-- НОВА СЕКЦИЯ NIVRA WORLD -->
+                        <div id="tab-nivra-world" class="tab-panel hidden text-center">
+                            <div class="max-w-4xl mx-auto">
+                                <h2 class="text-5xl md:text-6xl font-bold mb-4 nivra-world-gradient text-shadow-neon">Добре дошли в Nivra World</h2>
+                                <p class="text-lg text-gray-300 mb-12">Следващото измерение на социалните игри. Място, където общността, ексклузивните събития и дигиталните преживявания се сливат в едно.</p>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                    <div class="bg-gradient-to-br from-cyan-900/50 to-pink-900/50 p-8 rounded-2xl border border-cyan-400/30 shadow-lg shadow-cyan-500/20">
+                                        <div class="text-5xl mb-4 text-cyan-300 text-shadow-neon"><i class="fas fa-users"></i></div>
+                                        <h3 class="text-2xl font-semibold mb-2 text-white">Социални Хъбове</h3>
+                                        <p class="text-gray-400">Срещайте се с приятели, създавайте нови запознанства и се присъединете към тематични стаи за разговори и забавления.</p>
+                                    </div>
+                                    <div class="bg-gradient-to-br from-cyan-900/50 to-pink-900/50 p-8 rounded-2xl border border-pink-400/30 shadow-lg shadow-pink-500/20">
+                                        <div class="text-5xl mb-4 text-pink-400 text-shadow-neon"><i class="fas fa-calendar-star"></i></div>
+                                        <h3 class="text-2xl font-semibold mb-2 text-white">Ексклузивни Събития</h3>
+                                        <p class="text-gray-400">Участвайте в събития на живо, специални турнири и предизвикателства, достъпни само в Nivra World.</p>
+                                    </div>
+                                    <div class="bg-gradient-to-br from-cyan-900/50 to-pink-900/50 p-8 rounded-2xl border border-cyan-400/30 shadow-lg shadow-cyan-500/20">
+                                        <div class="text-5xl mb-4 text-cyan-300 text-shadow-neon"><i class="fas fa-gem"></i></div>
+                                        <h3 class="text-2xl font-semibold mb-2 text-white">Дигитални Колекции</h3>
+                                        <p class="text-gray-400">Персонализирайте своя аватар и профил с уникални предмети, които можете да спечелите или отключите.</p>
+                                    </div>
+                                </div>
+                                <p class="mt-12 text-gray-500 italic">Nivra World е в процес на разработка. Очаквайте скоро...</p>
+                            </div>
+                        </div>
+
+                        <div id="tab-promo" class="tab-panel hidden"><h2 class="text-4xl font-bold mb-12 text-center">Специални Предложения</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-8"><div class="bg-gray-900 p-8 rounded-xl shadow-lg"><div class="text-5xl mb-4 text-yellow-400"><i class="fas fa-hand-holding-usd"></i></div><h3 class="text-2xl font-semibold mb-2">Бонус Добре Дошъл</h3><p class="text-gray-400">Всеки нов играч получава 1000 безплатни точки веднага след регистрация!</p></div><div class="bg-gray-900 p-8 rounded-xl shadow-lg"><div class="text-5xl mb-4 text-yellow-400"><i class="fas fa-gift"></i></div><h3 class="text-2xl font-semibold mb-2">Ежедневни Бонуси</h3><p class="text-gray-400">Влизайте всеки ден, за да получите своите безплатни виртуални кредити и награди.</p></div><div class="bg-gray-900 p-8 rounded-xl shadow-lg"><div class="text-5xl mb-4 text-yellow-400"><i class="fas fa-trophy"></i></div><h3 class="text-2xl font-semibold mb-2">Вълнуващи Турнири</h3><p class="text-gray-400">Състезавайте се с други играчи и се изкачете в класациите.</p></div></div></div>
                         <div id="tab-about" class="tab-panel hidden"><div class="flex flex-col md:flex-row items-center gap-12"><div class="md:w-1/2"><img src="https://placehold.co/600x400/1a1a2e/f7b733?text=NIVRA+Community" alt="Community" class="rounded-xl shadow-2xl"></div><div class="md:w-1/2"><h2 class="text-4xl font-bold mb-4">Нашата Мисия в <span class="gradient-text">NIVRA</span></h2><p class="text-gray-400 mb-6">В NIVRA сме се посветили на идеята да трансформираме iGaming индустрията чрез внедряване на модерни и завършени технологии. Ние вярваме, че бъдещето на онлайн забавленията е в създаването на сигурни, ангажиращи и социално отговорни платформи. Като част от непрекъснато разрастващата се мрежа на Bulgaria.Online, ние се стремим да бъдем стандарт за качество и иновация в България и извън нея.</p><ul class="space-y-4"><li class="flex items-center"><i class="fas fa-check-circle text-yellow-400 mr-3"></i> 100% Безплатно забавление</li><li class="flex items-center"><i class="fas fa-check-circle text-yellow-400 mr-3"></i> Иновативни технологии</li><li class="flex items-center"><i class="fas fa-check-circle text-yellow-400 mr-3"></i> Част от Bulgaria.Online</li></ul></div></div></div>
                     </div>
                 </div>
@@ -218,6 +271,24 @@
             </div>
         </div>
     </div>
+    <div id="shop-modal" class="modal-overlay">
+        <div class="modal-content max-w-4xl p-6 md:p-8">
+            <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button>
+            <div class="text-center mb-8">
+                <div class="text-5xl text-yellow-400 mb-4"><i class="fas fa-store-alt"></i></div>
+                <h3 class="text-3xl font-bold text-white mb-2">Магазин за Точки</h3>
+                <p class="text-gray-400">Изберете пакет и платете сигурно с криптовалута чрез NOWPayments.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="shop-item group bg-gray-900/50 border border-gray-700 p-6 rounded-xl text-center flex flex-col hover:border-yellow-500 transition-all duration-300"> <h4 class="text-xl font-semibold text-white">Бърз Старт</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">1,000</span> <span class="block text-gray-500">точки</span> </div> <div class="flex-grow"></div> <button data-amount="3.99" data-currency="usd" class="buy-chip-btn w-full py-3 rounded-full text-black font-semibold btn-primary mt-4 flex items-center justify-center gap-2"> <span class="btn-text">Купи за $3.99</span> </button> </div>
+                <div class="shop-item group bg-gray-900/50 border border-gray-700 p-6 rounded-xl text-center flex flex-col hover:border-yellow-500 transition-all duration-300"> <h4 class="text-xl font-semibold text-white">Играч</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">4,200</span> <span class="block text-gray-500">точки</span> </div> <div class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full inline-block mx-auto">+17% БОНУС</div> <div class="flex-grow"></div> <button data-amount="11.99" data-currency="usd" class="buy-chip-btn w-full py-3 rounded-full text-black font-semibold btn-primary mt-4 flex items-center justify-center gap-2"> <span class="btn-text">Купи за $11.99</span> </button> </div>
+                <div class="shop-item group bg-gray-900/50 border-2 border-yellow-400 p-6 rounded-xl text-center flex flex-col relative transform lg:scale-105 shadow-2xl shadow-yellow-500/10"> <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-400 text-black text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Най-добра оферта</div> <h4 class="text-xl font-semibold text-white">Ентусиаст</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">9,000</span> <span class="block text-gray-500">точки</span> </div> <div class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full inline-block mx-auto">+25% БОНУС</div> <div class="flex-grow"></div> <button data-amount="23.99" data-currency="usd" class="buy-chip-btn w-full py-3 rounded-full text-black font-semibold btn-primary mt-4 flex items-center justify-center gap-2"> <span class="btn-text">Купи за $23.99</span> </button> </div>
+                <div class="shop-item group bg-gray-900/50 border border-gray-700 p-6 rounded-xl text-center flex flex-col hover:border-yellow-500 transition-all duration-300"> <h4 class="text-xl font-semibold text-white">Хай Ролер</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">25,000</span> <span class="block text-gray-500">точки</span> </div> <div class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full inline-block mx-auto">+56% БОНУС</div> <div class="flex-grow"></div> <button data-amount="49.99" data-currency="usd" class="buy-chip-btn w-full py-3 rounded-full text-black font-semibold btn-primary mt-4 flex items-center justify-center gap-2"> <span class="btn-text">Купи за $49.99</span> </button> </div>
+            </div>
+            <div id="shop-status" class="text-center mt-8 h-5 text-yellow-400 font-semibold"></div>
+        </div>
+    </div>
+
 
     <!-- Legal Modals -->
     <div id="terms-modal" class="modal-overlay"> <div class="modal-content max-w-3xl p-8 max-h-[90vh] overflow-y-auto"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold mb-4 gradient-text">Общи условия</h3> <div class="text-gray-300 space-y-4 text-sm"> <p>Добре дошли в NIVRA! Използвайки нашия уебсайт и услуги, вие се съгласявате с настоящите общи условия. NIVRA си запазва правото да променя, изменя или премахва всяка част от тези условия по всяко време и по свое усмотрение, без предварително уведомление. Ваша е отговорността да проверявате за промени.</p> <h4 class="font-bold text-lg text-white pt-2">1. Допустимост и възрастови ограничения</h4> <p>Услугите на NIVRA са предназначени единствено за лица, навършили 18 години. С използването на сайта вие декларирате и гарантирате, че сте на или над 18-годишна възраст. Ние си запазваме правото да изискваме доказателство за възраст по всяко време.</p> <h4 class="font-bold text-lg text-white pt-2">2. Забранени юрисдикции</h4> <p>Използването на услугите на NIVRA е забранено за лица, намиращи се в юрисдикции, където социалният хазарт, игрите с виртуални валути или т.нар. "loot boxes" са регулирани или забранени от местното законодателство. Вие носите пълната отговорност да се уверите, че използването на нашите услуги е законно във вашата страна на пребиваване.</p> <h4 class="font-bold text-lg text-white pt-2">3. Интелектуална собственост и права</h4> <p>Цялото съдържание на този сайт, включително, но не само, игри, текст, графики, лога и софтуер, е собственост на NIVRA или неговите лицензодатели и е защитено от законите за авторското право. Вие нямате право да копирате, разпространявате, променяте или създавате производни произведения от нашето съдържание без изрично писмено разрешение.</p> <h4 class="font-bold text-lg text-white pt-2">4. Права на NIVRA</h4> <p>NIVRA си запазва абсолютните и неограничени права да: <br> - Променя, спира или прекратява всяка игра или услуга по всяко време. <br> - Анулира, променя или конфискува баланси от виртуални точки по всякаква причина, включително при съмнения за измама, злоупотреба или техническа грешка. <br> - Блокира или изтрива потребителски акаунти по свое усмотрение, без обяснение или компенсация. <br> - Променя правилата на игрите, коефициентите на печалба и функционалностите на платформата без предизвестие.</p> </div> </div> </div>
@@ -229,6 +300,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, onSnapshot, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
 
         // --- FIREBASE CONFIG ---
         const firebaseConfig = {
@@ -244,6 +316,9 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        // ВАЖНО: Посочете региона, в който deploy-нахте вашите функции!
+        const functions = getFunctions(app, 'us-central1'); 
+        const createPayment = httpsCallable(functions, 'createPayment');
 
         // --- GLOBAL STATE & DOM ---
         const state = { 
@@ -266,6 +341,7 @@
             welcomeBonusModal: document.getElementById('welcome-bonus-modal'),
             userProfileModal: document.getElementById('user-profile-modal'),
             leaderboardModal: document.getElementById('leaderboard-modal'),
+            shopModal: document.getElementById('shop-modal'),
             
             // Views
             loggedOutView: document.getElementById('logged-out-view'),
@@ -314,6 +390,9 @@
             noGamesFound: document.getElementById('no-games-found'),
             searchGamesInput: document.getElementById('search-games'),
             gameFilters: document.getElementById('game-filters'),
+
+            // Shop
+            shopStatus: document.getElementById('shop-status'),
         };
 
         const gamesData = [ 
@@ -345,6 +424,46 @@
                 button.querySelector('.spinner')?.remove();
             }
         }
+        
+        // --- SHOP LOGIC (FIXED) ---
+        const handlePurchase = async (button) => {
+            const amount = button.dataset.amount;
+            const currency = button.dataset.currency;
+            dom.shopStatus.textContent = 'Генериране на плащане, моля изчакайте...';
+            document.querySelectorAll('.buy-chip-btn').forEach(btn => toggleLoading(btn, true));
+
+            // FIX: Check for current user and force a token refresh to ensure auth context is ready.
+            if (!auth.currentUser) {
+                dom.shopStatus.textContent = 'Грешка: Трябва да сте влезли, за да направите покупка.';
+                document.querySelectorAll('.buy-chip-btn').forEach(btn => toggleLoading(btn, false));
+                return;
+            }
+
+            try {
+                // Force a refresh of the ID token to avoid race conditions after login.
+                await auth.currentUser.getIdToken(true); 
+
+                const result = await createPayment({ amount: Math.round(Number(amount) * 100), currency: currency });
+
+                if (result.data && result.data.invoiceUrl) {
+                    window.location.href = result.data.invoiceUrl;
+                } else { 
+                    throw new Error("Невалиден отговор от сървъра.");
+                }
+            } catch (error) {
+                console.error("Purchase failed:", error);
+                
+                if (error.code === 'unauthenticated') {
+                    dom.shopStatus.textContent = 'Грешка: Проблем с удостоверяването. Моля, влезте отново.';
+                } else if (error.code === 'invalid-argument') {
+                    dom.shopStatus.textContent = 'Грешка: Подадени са невалидни данни към сървъра.';
+                } else {
+                    dom.shopStatus.textContent = 'Възникна грешка: ' + (error.message || 'Опитайте отново.');
+                }
+
+                document.querySelectorAll('.buy-chip-btn').forEach(btn => toggleLoading(btn, false));
+            }
+        };
 
         function setupModalTriggers() {
             // Auth buttons
@@ -392,6 +511,23 @@
                     updatePlatformPreferenceDisplay();
                 }
             });
+            
+            // SHOP TRIGGERS
+            ['open-shop-btn', 'open-shop-btn-mobile'].forEach(id => {
+                document.getElementById(id)?.addEventListener('click', () => {
+                    if(state.isLoggedIn) {
+                        dom.shopStatus.textContent = '';
+                        document.querySelectorAll('.buy-chip-btn').forEach(btn => toggleLoading(btn, false)); // Reset buttons
+                        openModal(dom.shopModal);
+                    }
+                });
+            });
+            dom.shopModal.addEventListener('click', (e) => {
+                const buyButton = e.target.closest('.buy-chip-btn');
+                if (buyButton && !buyButton.disabled) {
+                    handlePurchase(buyButton);
+                }
+            });
         }
 
         function switchRegisterStep(step) {
@@ -428,25 +564,34 @@
             renderGames();
         }
 
-        // --- AUTHENTICATION ---
+        // --- AUTHENTICATION (FINAL FIX) ---
         const handleRegistration = async (button) => {
             toggleLoading(button, true);
             Object.values(dom.registerErrors).forEach(el => el.textContent = '');
             const { email, password, fullName, username } = state.registrationData;
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                await sendEmailVerification(userCredential.user);
+                
+                // FINAL FIX: Provide actionCodeSettings to ensure the link works reliably.
+                const actionCodeSettings = {
+                    url: window.location.href, // Redirect the user back to the current page after verification.
+                };
+                await sendEmailVerification(userCredential.user, actionCodeSettings);
+
                 await setDoc(doc(db, "users", userCredential.user.uid), { uid: userCredential.user.uid, email, fullName, username, chips: 1000, createdAt: new Date(), welcomeBonusClaimed: false });
-                await signOut(auth);
+                
+                // User stays logged in, onAuthStateChanged will show the verification modal.
                 closeModal(dom.registerModal);
                 openModal(dom.registrationSuccessModal);
             } catch(error) {
+                console.error("Registration Error:", error);
                 dom.registerErrors.step1.textContent = error.code === 'auth/email-already-in-use' ? "Този имейл вече е регистриран." : "Възникна грешка. Опитайте отново.";
                 switchRegisterStep(1);
             } finally {
                 toggleLoading(button, false);
             }
         };
+
         const handleLogin = async (e) => { e.preventDefault(); const button = e.target.querySelector('button[type="submit"]'); toggleLoading(button, true); dom.loginError.textContent = ''; try { await signInWithEmailAndPassword(auth, dom.loginForm['login-email'].value, dom.loginForm['login-password'].value); closeModal(dom.loginModal); } catch (error) { dom.loginError.textContent = "Грешен имейл или парола."; } finally { toggleLoading(button, false); } };
         const handlePasswordReset = async (e) => { e.preventDefault(); const button = e.target.querySelector('button[type="submit"]'); toggleLoading(button, true); dom.resetError.textContent = ''; dom.resetSuccess.textContent = ''; try { await sendPasswordResetEmail(auth, dom.forgotPasswordForm['reset-email'].value); dom.resetSuccess.textContent = 'Линкът е изпратен! Проверете пощата си.'; dom.forgotPasswordForm.reset(); } catch (error) { dom.resetError.textContent = 'Грешка. Проверете имейла.'; } finally { toggleLoading(button, false); } };
         const handleLogout = () => { if (confirm('Сигурни ли сте, че искате да излезете?')) { signOut(auth).catch(console.error); } };
@@ -493,8 +638,8 @@
                     });
                 } else { // User not verified
                     openModal(dom.verificationNotice);
-                    dom.verificationEmail.textContent = refreshedUser.email;
-                    updateUIForLoginState(false);
+                    dom.verificationEmail.textContent = refreshedUser ? refreshedUser.email : '';
+                    updateUIForLoginState(false); // Show logged-out view while unverified
                 }
             } else { // No user
                 state.currentUserData = null;
@@ -603,13 +748,13 @@
             ['logout-btn', 'logout-btn-mobile', 'logout-from-verification-btn'].forEach(id => document.getElementById(id)?.addEventListener('click', handleLogout));
             
             // Verification
-            dom.resendVerificationBtn.addEventListener('click', async () => { if (auth.currentUser) { try { await sendEmailVerification(auth.currentUser); alert('Изпратен е нов имейл!'); } catch { alert('Грешка. Опитайте по-късно.'); } } });
+            dom.resendVerificationBtn.addEventListener('click', async () => { if (auth.currentUser) { try { const actionCodeSettings = { url: window.location.href }; await sendEmailVerification(auth.currentUser, actionCodeSettings); alert('Изпратен е нов имейл!'); } catch { alert('Грешка. Опитайте по-късно.'); } } });
             dom.checkVerificationBtn.addEventListener('click', async (e) => {
                 if (!auth.currentUser) return;
                 toggleLoading(e.currentTarget, true);
                 dom.verificationError.textContent = '';
                 await auth.currentUser.reload();
-                if (!auth.currentUser.emailVerified) {
+                if (auth.currentUser && !auth.currentUser.emailVerified) {
                     dom.verificationError.textContent = 'Имейлът все още не е потвърден.';
                     dom.verificationNotice.classList.add('shake');
                     setTimeout(() => { dom.verificationNotice.classList.remove('shake'); dom.verificationError.textContent = ''; }, 2000);
@@ -676,6 +821,7 @@
     </script>
 </body>
 </html>
+
 
 
 
