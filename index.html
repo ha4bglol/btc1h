@@ -301,6 +301,11 @@
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, onSnapshot, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
         import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
+        // ===================================
+        // === НОВ ИМПОРТ ЗА APP CHECK ===
+        // ===================================
+        import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check.js";
+
 
         // --- FIREBASE CONFIG ---
         const firebaseConfig = {
@@ -314,6 +319,18 @@
         };
         
         const app = initializeApp(firebaseConfig);
+        
+        // =================================================================================
+        // === НОВА ИНИЦИАЛИЗАЦИЯ НА APP CHECK - КЛЮЧОВО ЗА СИГУРНОСТТА ===
+        // =================================================================================
+        // ВАЖНО: Заменете 'YOUR_RECAPTCHA_V3_SITE_KEY' с вашия собствен ключ от
+        // Google Cloud reCAPTCHA Admin Console. Без това, заявките ще бъдат отхвърлени.
+        // https://cloud.google.com/recaptcha-enterprise/
+        const appCheck = initializeAppCheck(app, {
+            provider: new ReCaptchaV3Provider('YOUR_RECAPTCHA_V3_SITE_KEY'), 
+            isTokenAutoRefreshEnabled: true
+        });
+
         const auth = getAuth(app);
         const db = getFirestore(app);
         const functions = getFunctions(app, 'us-central1'); 
@@ -425,7 +442,7 @@
             }
         }
         
-        // --- SHOP LOGIC (КОРИГИРАНА) ---
+        // --- SHOP LOGIC ---
         const handlePurchase = async (button) => {
             const amount = button.dataset.amount;
             const currency = button.dataset.currency;
@@ -439,20 +456,17 @@
             }
 
             try {
-                // Този ред е за по-голяма стабилност, особено веднага след логин.
-                await auth.currentUser.getIdToken(true); 
-
-                // ВАЖНА ПРОМЯНА: Изпращаме сумата като число с десетична запетая (напр. 3.99)
+                // Извикваме cloud функцията с необходимите данни
                 const result = await createPayment({ amount: amount, currency: currency });
 
+                // Ако функцията върне URL, пренасочваме потребителя
                 if (result.data && result.data.invoiceUrl) {
-                    // Пренасочваме потребителя към страницата за плащане.
                     window.location.href = result.data.invoiceUrl;
                 } else { 
                     throw new Error("Невалиден отговор от сървъра.");
                 }
             } catch (error) {
-                // Този код обработва грешките и ги показва на потребителя.
+                // Показваме грешката на потребителя
                 console.error("Purchase failed:", error);
                 
                 if (error.code === 'unauthenticated') {
@@ -463,7 +477,7 @@
                     dom.shopStatus.textContent = 'Възникна грешка: ' + (error.message || 'Опитайте отново.');
                 }
 
-                // Спираме анимацията за зареждане на бутоните.
+                // Спираме анимацията за зареждане на бутоните
                 document.querySelectorAll('.buy-chip-btn').forEach(btn => toggleLoading(btn, false));
             }
         };
@@ -819,9 +833,6 @@
     </script>
 </body>
 </html>
-
-
-
 
 
 
