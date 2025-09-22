@@ -10,6 +10,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- НОВА БИБЛИОТЕКА ЗА QR КОДОВЕ -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
     <style>
         body { font-family: 'Poppins', sans-serif; background-color: #1a1a2e; color: #e0e0e0; }
@@ -99,7 +102,7 @@
                         <button id="register-btn-desktop" class="px-6 py-2 rounded-full text-black font-semibold btn-primary">Регистрация</button>
                     </div>
                     <div id="logged-in-view" class="hidden items-center space-x-4">
-                        <button id="open-shop-btn" class="px-5 py-2 rounded-full text-sm font-semibold text-black btn-primary flex items-center gap-2 transform hover:scale-105 transition-transform">
+                        <button id="deposit-btn" class="px-5 py-2 rounded-full text-sm font-semibold text-black btn-primary flex items-center gap-2 transform hover:scale-105 transition-transform">
                             <i class="fas fa-plus-circle"></i>
                             <span>Депозит</span>
                         </button>
@@ -138,7 +141,7 @@
                     </div>
                     <div id="logged-in-view-mobile" class="hidden flex-col items-center">
                         <div class="text-center mb-4">
-                            <button id="open-shop-btn-mobile" class="px-6 py-3 rounded-full text-lg font-semibold text-black btn-primary flex items-center gap-2">
+                            <button id="deposit-btn-mobile" class="px-6 py-3 rounded-full text-lg font-semibold text-black btn-primary flex items-center gap-2">
                                 <i class="fas fa-plus-circle"></i>
                                 <span>Депозит</span>
                             </button>
@@ -271,21 +274,45 @@
             </div>
         </div>
     </div>
-    <div id="shop-modal" class="modal-overlay">
-        <div class="modal-content max-w-4xl p-6 md:p-8">
-            <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button>
-            <div class="text-center mb-8">
-                <div class="text-5xl text-yellow-400 mb-4"><i class="fas fa-store-alt"></i></div>
-                <h3 class="text-3xl font-bold text-white mb-2">Магазин за Точки</h3>
-                <p class="text-gray-400">Изберете пакет и платете сигурно с криптовалута чрез NOWPayments.</p>
+
+    <!-- ********************************************** -->
+    <!-- ******** НОВ МОДАЛ ЗА ДЕПОЗИТ ********** -->
+    <!-- ********************************************** -->
+    <div id="deposit-modal" class="modal-overlay">
+        <div class="modal-content p-8 text-center max-w-md">
+            <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white">&times;</button>
+            <h3 class="text-2xl font-bold mb-2 gradient-text">Вашият Депозитен Адрес</h3>
+            <p class="text-gray-400 mb-6">Изпратете криптовалута на този адрес, за да заредите точки. <br><strong>100 точки = $1.00 USD</strong></p>
+            
+            <!-- Избор на криптовалута -->
+            <div class="mb-4">
+                <label for="crypto-select" class="block text-sm text-gray-400 mb-2">Изберете валута, за да видите адреса:</label>
+                <select id="crypto-select" class="form-input">
+                    <option value="btc">Bitcoin (BTC)</option>
+                    <option value="eth">Ethereum (ETH)</option>
+                    <option value="usdttrc20">Tether (USDT TRC20)</option>
+                    <option value="ltc">Litecoin (LTC)</option>
+                    <option value="doge">Dogecoin (DOGE)</option>
+                    <!-- Добавете други поддържани валути от NOWPayments тук -->
+                </select>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="shop-item group bg-gray-900/50 border border-gray-700 p-6 rounded-xl text-center flex flex-col hover:border-yellow-500 transition-all duration-300"> <h4 class="text-xl font-semibold text-white">Бърз Старт</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">1,000</span> <span class="block text-gray-500">точки</span> </div> <div class="flex-grow"></div> <button data-amount="3.99" data-currency="usd" class="buy-chip-btn w-full py-3 rounded-full text-black font-semibold btn-primary mt-4 flex items-center justify-center gap-2"> <span class="btn-text">Купи за $3.99</span> </button> </div>
-                <div class="shop-item group bg-gray-900/50 border border-gray-700 p-6 rounded-xl text-center flex flex-col hover:border-yellow-500 transition-all duration-300"> <h4 class="text-xl font-semibold text-white">Играч</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">4,200</span> <span class="block text-gray-500">точки</span> </div> <div class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full inline-block mx-auto">+17% БОНУС</div> <div class="flex-grow"></div> <button data-amount="11.99" data-currency="usd" class="buy-chip-btn w-full py-3 rounded-full text-black font-semibold btn-primary mt-4 flex items-center justify-center gap-2"> <span class="btn-text">Купи за $11.99</span> </button> </div>
-                <div class="shop-item group bg-gray-900/50 border-2 border-yellow-400 p-6 rounded-xl text-center flex flex-col relative transform lg:scale-105 shadow-2xl shadow-yellow-500/10"> <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-400 text-black text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Най-добра оферта</div> <h4 class="text-xl font-semibold text-white">Ентусиаст</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">9,000</span> <span class="block text-gray-500">точки</span> </div> <div class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full inline-block mx-auto">+25% БОНУС</div> <div class="flex-grow"></div> <button data-amount="23.99" data-currency="usd" class="buy-chip-btn w-full py-3 rounded-full text-black font-semibold btn-primary mt-4 flex items-center justify-center gap-2"> <span class="btn-text">Купи за $23.99</span> </button> </div>
-                <div class="shop-item group bg-gray-900/50 border border-gray-700 p-6 rounded-xl text-center flex flex-col hover:border-yellow-500 transition-all duration-300"> <h4 class="text-xl font-semibold text-white">Хай Ролер</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">25,000</span> <span class="block text-gray-500">точки</span> </div> <div class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full inline-block mx-auto">+56% БОНУС</div> <div class="flex-grow"></div> <button data-amount="49.99" data-currency="usd" class="buy-chip-btn w-full py-3 rounded-full text-black font-semibold btn-primary mt-4 flex items-center justify-center gap-2"> <span class="btn-text">Купи за $49.99</span> </button> </div>
+    
+            <!-- Контейнер за адреса и QR кода -->
+            <div id="address-container" class="hidden">
+                 <div class="bg-gray-900 p-4 rounded-lg mb-4">
+                    <div id="qr-code-container" class="mx-auto bg-white p-2 rounded-lg w-48 h-48 flex items-center justify-center">
+                        <!-- QR кодът ще се генерира тук -->
+                    </div>
+                    <p id="deposit-address" class="text-white break-all mt-4 text-sm cursor-pointer" title="Копирай адреса"></p>
+                </div>
+                 <p class="text-xs text-gray-500">Минимален депозит: ~$5. Балансът ви ще се актуализира автоматично след потвърждение от мрежата.</p>
             </div>
-            <div id="shop-status" class="text-center mt-8 h-5 text-yellow-400 font-semibold"></div>
+            
+            <!-- Съобщение за зареждане / грешка -->
+            <div id="address-loader" class="text-center py-10">
+                <div class="spinner mx-auto !w-8 !h-8"></div>
+                <p class="mt-4">Генериране на адрес...</p>
+            </div>
         </div>
     </div>
 
@@ -301,11 +328,7 @@
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, onSnapshot, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
         import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
-        // ===================================
-        // === НОВ ИМПОРТ ЗА APP CHECK ===
-        // ===================================
         import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check.js";
-
 
         // --- FIREBASE CONFIG ---
         const firebaseConfig = {
@@ -320,12 +343,6 @@
         
         const app = initializeApp(firebaseConfig);
         
-        // =================================================================================
-        // === НОВА ИНИЦИАЛИЗАЦИЯ НА APP CHECK - КЛЮЧОВО ЗА СИГУРНОСТТА ===
-        // =================================================================================
-        // ВАЖНО: Заменете 'YOUR_RECAPTCHA_V3_SITE_KEY' с вашия собствен ключ от
-        // Google Cloud reCAPTCHA Admin Console. Без това, заявките ще бъдат отхвърлени.
-        // https://cloud.google.com/recaptcha-enterprise/
         const appCheck = initializeAppCheck(app, {
             provider: new ReCaptchaV3Provider('6LeaZtErAAAAAAEiuumrNsmlHDivbUb9BEsyuZan'), 
             isTokenAutoRefreshEnabled: true
@@ -334,7 +351,9 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         const functions = getFunctions(app, 'us-central1'); 
-        const createPayment = httpsCallable(functions, 'createPayment');
+        
+        // --- НОВА CLOUD FUNCTION ---
+        const getOrCreateDepositAddress = httpsCallable(functions, 'getOrCreateDepositAddress');
 
         // --- GLOBAL STATE & DOM ---
         const state = { 
@@ -342,9 +361,10 @@
             userDataUnsubscribe: null,
             isLoggedIn: false,
             selectedGame: null,
-            currentUserData: null
+            currentUserData: null,
+            currentQrCode: null // Променлива за съхранение на QR кода
         };
-        // All DOM elements in a single object for easy access
+        
         const dom = {
             // Modals
             verificationNotice: document.getElementById('verification-notice'),
@@ -357,7 +377,7 @@
             welcomeBonusModal: document.getElementById('welcome-bonus-modal'),
             userProfileModal: document.getElementById('user-profile-modal'),
             leaderboardModal: document.getElementById('leaderboard-modal'),
-            shopModal: document.getElementById('shop-modal'),
+            depositModal: document.getElementById('deposit-modal'), // Нов модал
             
             // Views
             loggedOutView: document.getElementById('logged-out-view'),
@@ -407,8 +427,12 @@
             searchGamesInput: document.getElementById('search-games'),
             gameFilters: document.getElementById('game-filters'),
 
-            // Shop
-            shopStatus: document.getElementById('shop-status'),
+            // Deposit Modal Elements (НОВИ)
+            cryptoSelect: document.getElementById('crypto-select'),
+            addressContainer: document.getElementById('address-container'),
+            addressLoader: document.getElementById('address-loader'),
+            qrCodeContainer: document.getElementById('qr-code-container'),
+            depositAddress: document.getElementById('deposit-address'),
         };
 
         const gamesData = [ 
@@ -442,45 +466,45 @@
             }
         }
         
-        // --- SHOP LOGIC ---
-        const handlePurchase = async (button) => {
-            const amount = button.dataset.amount;
-            const currency = button.dataset.currency;
-            dom.shopStatus.textContent = 'Генериране на плащане, моля изчакайте...';
-            document.querySelectorAll('.buy-chip-btn').forEach(btn => toggleLoading(btn, true));
-
-            if (!auth.currentUser) {
-                dom.shopStatus.textContent = 'Грешка: Трябва да сте влезли, за да направите покупка.';
-                document.querySelectorAll('.buy-chip-btn').forEach(btn => toggleLoading(btn, false));
-                return;
-            }
-
+        // --- DEPOSIT LOGIC (НОВА) ---
+        async function showDepositAddress() {
+            dom.addressContainer.classList.add('hidden');
+            dom.addressLoader.classList.remove('hidden');
+            dom.addressLoader.innerHTML = `<div class="spinner mx-auto !w-8 !h-8"></div><p class="mt-4">Генериране на адрес...</p>`;
+        
+            const selectedCurrency = dom.cryptoSelect.value;
+            
             try {
-                // Извикваме cloud функцията с необходимите данни
-                const result = await createPayment({ amount: amount, currency: currency });
-
-                // Ако функцията върне URL, пренасочваме потребителя
-                if (result.data && result.data.invoiceUrl) {
-                    window.location.href = result.data.invoiceUrl;
-                } else { 
-                    throw new Error("Невалиден отговор от сървъра.");
-                }
-            } catch (error) {
-                // Показваме грешката на потребителя
-                console.error("Purchase failed:", error);
+                // Извикваме cloud функцията
+                const result = await getOrCreateDepositAddress({ currency: selectedCurrency });
+                const { address } = result.data;
                 
-                if (error.code === 'unauthenticated') {
-                    dom.shopStatus.textContent = 'Грешка: Проблем с удостоверяването. Моля, влезте отново.';
-                } else if (error.code === 'invalid-argument') {
-                    dom.shopStatus.textContent = 'Грешка: Подадени са невалидни данни към сървъра.';
+                dom.depositAddress.textContent = address;
+                dom.addressLoader.classList.add('hidden');
+                dom.addressContainer.classList.remove('hidden');
+                
+                // Генерираме QR код
+                dom.qrCodeContainer.innerHTML = ''; // Изчистваме стария контейнер
+                if (state.currentQrCode) {
+                    state.currentQrCode.clear();
+                    state.currentQrCode.makeCode(address);
                 } else {
-                    dom.shopStatus.textContent = 'Възникна грешка: ' + (error.message || 'Опитайте отново.');
+                    state.currentQrCode = new QRCode(dom.qrCodeContainer, {
+                        text: address,
+                        width: 176,
+                        height: 176,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
                 }
-
-                // Спираме анимацията за зареждане на бутоните
-                document.querySelectorAll('.buy-chip-btn').forEach(btn => toggleLoading(btn, false));
+        
+            } catch (error) {
+                console.error("Could not get deposit address:", error);
+                dom.addressLoader.innerHTML = `<p class="text-red-500">Грешка при зареждане на адреса. ${error.message || ''}</p>`;
             }
-        };
+        }
+
 
         function setupModalTriggers() {
             // Auth buttons
@@ -529,21 +553,27 @@
                 }
             });
             
-            // SHOP TRIGGERS
-            ['open-shop-btn', 'open-shop-btn-mobile'].forEach(id => {
+            // DEPOSIT TRIGGERS (НОВИ)
+            ['deposit-btn', 'deposit-btn-mobile'].forEach(id => {
                 document.getElementById(id)?.addEventListener('click', () => {
                     if(state.isLoggedIn) {
-                        dom.shopStatus.textContent = '';
-                        document.querySelectorAll('.buy-chip-btn').forEach(btn => toggleLoading(btn, false)); // Reset buttons
-                        openModal(dom.shopModal);
+                        openModal(dom.depositModal);
+                        showDepositAddress(); // Зареждаме адреса за валутата по подразбиране
                     }
                 });
             });
-            dom.shopModal.addEventListener('click', (e) => {
-                const buyButton = e.target.closest('.buy-chip-btn');
-                if (buyButton && !buyButton.disabled) {
-                    handlePurchase(buyButton);
-                }
+
+            // Слушател за смяна на криптовалутата (НОВ)
+            dom.cryptoSelect.addEventListener('change', showDepositAddress);
+
+            // Копиране на адреса при клик (НОВ)
+            dom.depositAddress.addEventListener('click', () => {
+                navigator.clipboard.writeText(dom.depositAddress.textContent)
+                    .then(() => {
+                        const originalText = dom.depositAddress.textContent;
+                        dom.depositAddress.textContent = 'Копирано!';
+                        setTimeout(() => { dom.depositAddress.textContent = originalText; }, 1500);
+                    });
             });
         }
 
@@ -814,7 +844,7 @@
 
             // Mobile Menu
             const menuBtn = document.getElementById('menu-btn'), closeBtn = document.getElementById('close-btn'), mobileMenu = document.getElementById('mobile-menu');
-            menuBtn.addEventListener('click', () => mobileMenu.classList.remove('hidden')); closeBtn.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+            menuBtn.addEventListener('click', () => mobileMenu.classList.remove('hidden')); closeBtn.addEventListener('click', () => mobileMenu.classList.add('hidden');
 
             // Game Search and Filter Listeners
             dom.searchGamesInput.addEventListener('input', renderGames);
