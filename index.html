@@ -296,7 +296,7 @@
             qrCodeContainer: document.getElementById('qr-code-container'),
             depositAddress: document.getElementById('deposit-address'),
         };
-        const gamesData = [ { name: 'Wild Angels', image: 'https://i.imgur.com/dhiFRpC.jpeg', link: 'wild-angels.html', category: 'slot' }, { name: 'Блекджек', image: 'https://i.imgur.com/S02AkzL.jpeg', link: 'blackjack.html', category: 'table' }, { name: 'Мини', image: 'https://i.imgur.com/dyT0wi7.jpeg', link: 'mini.html', category: 'slot' }, { name: 'Рулетка', image: 'https://i.imgur.com/BE0XYZa.jpeg', link: 'ruletka.html', category: 'table' }, { name: 'Война', image: 'https://i.imgur.com/TQBASik.jpeg', link: 'war-or-voina.html', category: 'table' }, { name: 'Dirty Bandit', image: 'https://i.imgur.com/pIbraBK.jpeg', link: 'dirty-bandit.html', category: 'slot' }, { name: 'Milky Criminal', image: 'https://i.imgur.com/Hw190eP.jpeg', link: 'milky-criminal.html', category: 'slot' }, { name: 'Max life', image: 'https://i.imgur.com/ctE5UwW.jpeg', link: 'max-life.html', category: 'slot' }, { name: 'Crash', image: 'https://i.imgur.com/Rs8kd7t.jpeg', link: 'crash.html', category: 'slot' } ];
+        const gamesData = [ { name: 'Taboo temptations', 'https://i.imgur.com/dEfXVKu.jpeg', link: 'taboo-temptations.html', category: 'slot' },{ name: 'Wild Angels', image: 'https://i.imgur.com/dhiFRpC.jpeg', link: 'wild-angels.html', category: 'slot' }, { name: 'Блекджек', image: 'https://i.imgur.com/S02AkzL.jpeg', link: 'blackjack.html', category: 'table' }, { name: 'Мини', image: 'https://i.imgur.com/dyT0wi7.jpeg', link: 'mini.html', category: 'slot' }, { name: 'Рулетка', image: 'https://i.imgur.com/BE0XYZa.jpeg', link: 'ruletka.html', category: 'table' }, { name: 'Война', image: 'https://i.imgur.com/TQBASik.jpeg', link: 'war-or-voina.html', category: 'table' }, { name: 'Dirty Bandit', image: 'https://i.imgur.com/pIbraBK.jpeg', link: 'dirty-bandit.html', category: 'slot' }, { name: 'Milky Criminal', image: 'https://i.imgur.com/Hw190eP.jpeg', link: 'milky-criminal.html', category: 'slot' }, { name: 'Max life', image: 'https://i.imgur.com/ctE5UwW.jpeg', link: 'max-life.html', category: 'slot' }, { name: 'Crash', image: 'https://i.imgur.com/Rs8kd7t.jpeg', link: 'crash.html', category: 'slot' } ];
         const openModal = (modal) => modal.classList.add('active');
         const closeModal = (modal) => modal.classList.remove('active');
         function toggleLoading(button, isLoading) { const btnText = button.querySelector('.btn-text'); if (isLoading) { button.disabled = true; if (btnText) btnText.style.display = 'none'; const spinner = document.createElement('div'); spinner.className = 'spinner'; button.prepend(spinner); } else { button.disabled = false; if (btnText) btnText.style.display = 'inline-block'; button.querySelector('.spinner')?.remove(); } }
@@ -321,6 +321,7 @@
     </script>
 </body>
 </html>
+
 
 
 
