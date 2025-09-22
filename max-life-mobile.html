@@ -635,6 +635,7 @@
             let symbolSize = 0;
             let hasRequestedFullscreen = false;
             let isMuted = false;
+            let isAudioUnlocked = false; // <<< iOS FIX: Flag to track if audio is unlocked
 
             const bgMusicPlayer = new Audio();
             bgMusicPlayer.volume = 0.3;
@@ -657,6 +658,33 @@
             const headerImage = document.getElementById('header-image');
             
             const reelStrips = [];
+
+            // <<< START iOS FIX
+            // This function is required to allow audio playback on iOS devices,
+            // which block audio until a direct user interaction (tap) initiates it.
+            function unlockAudioContext() {
+                if (isAudioUnlocked) return;
+                
+                // Try to play and immediately pause all sound elements.
+                // This "unlocks" them for future programmatic playback.
+                allSounds.forEach(sound => {
+                    const promise = sound.play();
+                    if (promise !== undefined) {
+                        promise.then(() => {
+                            sound.pause();
+                            if (sound === bgMusicPlayer) {
+                                sound.currentTime = 0; // Rewind background music
+                            }
+                        }).catch(error => {
+                            console.info("Audio unlock failed silently, this is expected.", error);
+                        });
+                    }
+                });
+                
+                isAudioUnlocked = true;
+                console.log("Audio context unlocked for iOS.");
+            }
+            // <<< END iOS FIX
 
             function goFullscreen() {
                 if (hasRequestedFullscreen || document.fullscreenElement) return;
@@ -758,6 +786,7 @@
             async function spin(isFreeSpin = false) {
                 if (isSpinning || symbolSize === 0) return;
                 
+                unlockAudioContext(); // <<< iOS FIX: Ensure audio is unlocked before any action
                 goFullscreen();
                 playNextTrack();
 
@@ -862,13 +891,24 @@
                 handleNextAction(hasWin, bonusTriggered);
             }
             
-            spinButton.addEventListener('click', () => spin());
-            autoSpinButton.addEventListener('click', toggleAutoSpin);
-            buyBonusButton.addEventListener('click', buyBonus);
+            // <<< iOS FIX: Add unlockAudioContext() to all user interaction listeners
+            spinButton.addEventListener('click', () => {
+                unlockAudioContext();
+                spin();
+            });
+            autoSpinButton.addEventListener('click', () => {
+                unlockAudioContext();
+                toggleAutoSpin();
+            });
+            buyBonusButton.addEventListener('click', () => {
+                unlockAudioContext();
+                buyBonus();
+            });
 
             betSelectionBar.addEventListener('click', (e) => {
                 const button = e.target.closest('.bet-select-btn');
                 if (button && !isSpinning) {
+                    unlockAudioContext(); // Also unlock on bet change
                     currentBetIndex = parseInt(button.dataset.index);
                     updateBetSelection();
                 }
@@ -878,7 +918,7 @@
                 if (e.code === 'Space' && !e.repeat) {
                     e.preventDefault();
                     if (document.querySelector('.modal[style*="display: flex"]')) return;
-                    spinButton.click();
+                    spinButton.click(); // This will trigger the click listener which already has the fix
                 }
             });
 
