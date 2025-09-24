@@ -62,7 +62,7 @@
         #app-header {
             display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem;
             background: rgba(16, 10, 28, 0.7); backdrop-filter: blur(10px); z-index: 10;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color); flex-shrink: 0;
         }
         .logo { font-family: var(--font-display); font-size: 2rem; font-weight: 900; }
         #user-info { display: flex; align-items: center; gap: 1.5rem; }
@@ -72,11 +72,11 @@
         #main-content { flex-grow: 1; display: flex; overflow: hidden; }
         #tab-nav {
             display: flex; flex-direction: column; gap: 0.5rem; padding: 2rem 1rem;
-            background: rgba(16, 10, 28, 0.7); border-right: 1px solid var(--border-color);
+            background: rgba(16, 10, 28, 0.7); border-right: 1px solid var(--border-color); flex-shrink: 0;
         }
         .tab-btn {
             font-family: var(--font-display); font-size: 1.1rem; padding: 1rem; border-radius: 10px;
-            color: var(--text-secondary); cursor: pointer; text-align: left;
+            color: var(--text-secondary); cursor: pointer; text-align: left; white-space: nowrap;
             border-left: 4px solid transparent; transition: all 0.3s ease;
         }
         .tab-btn:hover { background: rgba(247, 183, 51, 0.1); color: var(--nivra-gold); }
@@ -93,7 +93,7 @@
         .full-screen-overlay {
             position: fixed; inset: 0; background-color: var(--bg-primary); z-index: 10000;
             display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2rem;
-            transition: opacity 0.5s ease-out;
+            transition: opacity 0.5s ease-out; text-align: center; padding: 1rem;
         }
         .modal-overlay {
             position: fixed; inset: 0; background-color: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
@@ -125,19 +125,22 @@
 
         /* --- Marketplace Specific Styles --- */
         #market-container { display: flex; gap: 2rem; }
-        #market-grid { flex-grow: 1; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1.5rem; }
+        #market-grid { flex-grow: 1; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; }
         .market-item {
             background: var(--bg-secondary); backdrop-filter: blur(5px);
             border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden;
             position: relative; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;
+            display: flex; flex-direction: column;
         }
         .market-item:hover {
             transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.4), 0 0 20px var(--glow-color-1);
         }
         .market-item.selected { border-color: var(--nivra-gold); box-shadow: 0 0 15px var(--nivra-gold); }
-        .item-thumbnail { width: 100%; height: auto; aspect-ratio: 9/16; object-fit: cover; display: block; }
-        .item-info { padding: 0.8rem; text-align: center; }
-        .item-price { font-size: 1.1rem; font-weight: bold; color: var(--nivra-gold); }
+        .item-thumbnail { width: 100%; height: auto; aspect-ratio: 1/1; object-fit: cover; display: block; }
+        .item-info { padding: 1rem; text-align: left; flex-grow: 1; display: flex; flex-direction: column; }
+        .item-name { font-family: var(--font-display); font-size: 1.2rem; margin-bottom: 0.5rem; }
+        .item-description { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem; flex-grow: 1; }
+        .item-price { font-size: 1.3rem; font-weight: bold; color: var(--nivra-gold); text-align: right; }
         .item-type-icon { position: absolute; top: 0.5rem; right: 0.5rem; color: white; background: rgba(0,0,0,0.5); padding: 0.4rem; border-radius: 50%; font-size: 0.9rem; }
         .item-owned-overlay {
             position: absolute; inset: 0; background: rgba(0, 255, 195, 0.6); backdrop-filter: blur(2px);
@@ -147,7 +150,7 @@
         }
         .market-item.owned .item-owned-overlay { opacity: 1; }
         #cart-sidebar {
-            width: 300px; flex-shrink: 0; background: var(--bg-secondary); padding: 1.5rem;
+            width: 350px; flex-shrink: 0; background: var(--bg-secondary); padding: 1.5rem;
             border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);
         }
         #cart-summary { border-top: 1px solid rgba(255,255,255,0.2); margin-top: 1rem; padding-top: 1rem; }
@@ -157,38 +160,18 @@
         
         /* --- Sugar AI Chat Styles (Integrated) --- */
         #tab-sugar-ai { display: flex; flex-direction: column; height: 100%; }
-        #chat-container {
-            flex-grow: 1; overflow-y: auto;
-            display: flex; flex-direction: column; gap: 1rem;
-            padding: 1rem; position: relative;
-        }
-        .message {
-            max-width: 80%; padding: 0.75rem 1.1rem; border-radius: 1.2rem;
-            line-height: 1.6; word-wrap: break-word; position: relative;
-        }
-        .user-message {
-            align-self: flex-end; background: var(--nivra-gradient);
-            color: var(--accent-text-color); font-weight: 500;
-            border-bottom-right-radius: 0.25rem;
-        }
-        .bot-message {
-            align-self: flex-start; background: var(--bg-secondary);
-            color: var(--text-primary); border-bottom-left-radius: 0.25rem;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.5);
-        }
-        #input-area {
-            padding: 1rem 0; border-top: 1px solid var(--border-color);
-        }
+        #chat-container { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; padding: 1rem; }
+        .message { max-width: 80%; padding: 0.75rem 1.1rem; border-radius: 1.2rem; line-height: 1.6; word-wrap: break-word; position: relative; }
+        .user-message { align-self: flex-end; background: var(--nivra-gradient); color: var(--accent-text-color); font-weight: 500; border-bottom-right-radius: 0.25rem; }
+        .bot-message { align-self: flex-start; background: var(--bg-secondary); color: var(--text-primary); border-bottom-left-radius: 0.25rem; box-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+        #input-area { padding: 1rem 0; border-top: 1px solid var(--border-color); flex-shrink: 0; }
         #input-form { display: flex; align-items: center; gap: 0.75rem; }
         #prompt-input {
             width: 100%; padding: 0.8rem 1.2rem; border-radius: 1.2rem;
             background-color: var(--bg-tertiary); border: 1px solid var(--border-color);
             color: var(--text-primary); font-size: 1rem; transition: all 0.3s ease;
         }
-        #prompt-input:focus {
-            border-color: var(--nivra-gold);
-            box-shadow: 0 0 0 3px rgba(247, 183, 51, 0.4);
-        }
+        #prompt-input:focus { border-color: var(--nivra-gold); box-shadow: 0 0 0 3px rgba(247, 183, 51, 0.4); }
         #send-button {
             width: 42px; height: 42px; flex-shrink: 0;
             background: var(--nivra-gradient); color: var(--accent-text-color);
@@ -197,10 +180,7 @@
         #send-button:hover:not(:disabled) { transform: scale(1.1); }
         #send-button:disabled { background: #4a4a6a; color: var(--text-secondary); cursor: not-allowed; }
         .typing-indicator { display: flex; align-items: center; gap: 5px; padding: 5px 0; }
-        .typing-indicator span {
-            display: inline-block; width: 9px; height: 9px; border-radius: 50%;
-            background-color: var(--text-secondary); animation: bounce 1.3s infinite ease-in-out;
-        }
+        .typing-indicator span { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background-color: var(--text-secondary); animation: bounce 1.3s infinite ease-in-out; }
         .typing-indicator span:nth-of-type(2) { animation-delay: -1.1s; }
         .typing-indicator span:nth-of-type(3) { animation-delay: -0.9s; }
         @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
@@ -211,29 +191,69 @@
         .mission-icon { font-size: 2rem; width: 50px; text-align: center; }
         .mission.completed .mission-icon { color: var(--nivra-gold); }
         .mission-reward { margin-left: auto; font-weight: bold; color: var(--nivra-gold); }
-        #collection-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1.5rem; }
+        #collection-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; }
 
         /* --- Fullscreen Lightbox for Media --- */
         #lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 10000; display: none; justify-content: center; align-items: center; }
         #lightbox.active { display: flex; }
         #lightbox img, #lightbox video { max-width: 90vw; max-height: 90vh; }
 
-        /* Responsive */
+        /* --- Responsive Design --- */
+        /* Tablets and smaller desktops */
+        @media (max-width: 1200px) {
+            #cart-sidebar { width: 300px; }
+            #market-grid, #collection-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+        }
+
+        /* Portrait tablets and large phones */
         @media (max-width: 1024px) {
             #market-container { flex-direction: column; }
-            #cart-sidebar { width: 100%; margin-top: 2rem; }
+            #cart-sidebar { width: 100%; margin-top: 2rem; max-width: none; }
             #main-content { flex-direction: column; }
-            #tab-nav { flex-direction: row; border-right: none; border-bottom: 1px solid var(--border-color); justify-content: center; overflow-x: auto; }
-            .tab-btn { border-left: none; border-bottom: 4px solid transparent; flex-shrink: 0; }
-            .tab-btn.active { border-bottom-color: var(--nivra-gold); }
+            #tab-nav { 
+                flex-direction: row; 
+                border-right: none; 
+                border-bottom: 1px solid var(--border-color); 
+                justify-content: flex-start; /* Aligns tabs to the left */
+                overflow-x: auto; 
+                padding: 0.5rem 1rem;
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            #tab-nav::-webkit-scrollbar { display: none; }
+            .tab-btn { 
+                border-left: none; 
+                border-bottom: 4px solid transparent; 
+                flex-shrink: 0; 
+                text-align: center;
+            }
+            .tab-btn.active { border-left-color: transparent; border-bottom-color: var(--nivra-gold); }
         }
-        @media (max-width: 768px) {
+
+        /* Mobile phones */
+        @media (max-width: 767px) {
             #app-header { flex-direction: column; gap: 1rem; padding: 1rem; }
+            .logo { font-size: 1.8rem; }
             #user-info { width: 100%; justify-content: space-between; }
             .tab-btn { font-size: 0.9rem; padding: 0.8rem; }
             #content-area { padding: 1rem; }
-            #market-grid, #collection-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; }
+            #market-grid, #collection-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
+            .item-name { font-size: 1rem; }
+            .item-description { display: none; } /* Hide description on smallest screens */
+            .item-price { font-size: 1.1rem; }
+            .modal-content { width: 90vw; }
         }
+        
+        /* Landscape on mobile phones */
+        @media (max-width: 767px) and (orientation: landscape) {
+            #app-header { flex-direction: row; padding: 0.5rem 1rem; }
+            .logo { font-size: 1.5rem; }
+            #main-content { overflow-y: auto; }
+            #tab-sugar-ai { height: calc(100vh - 60px - 70px); }
+            #chat-container { padding: 0.5rem; }
+            #input-area { padding: 0.5rem; }
+        }
+
     </style>
 </head>
 <body>
@@ -308,7 +328,7 @@
                 <div id="tab-collection" class="tab-panel">
                     <h2>Моята Колекция</h2>
                     <div id="collection-grid" style="margin-top: 1.5rem;">
-                        <p id="empty-collection-msg" style="color: var(--text-secondary);">Все още нямате закупени артикули.</p>
+                        <p id="empty-collection-msg" style="color: var(--text-secondary);">Все още нямате закупени колекции.</p>
                     </div>
                 </div>
             </div>
@@ -320,12 +340,13 @@
         <div class="modal-content">
              <div style="font-size: 4rem; color: var(--nivra-gold); margin-bottom: 1rem;"><i class="fas fa-check-circle"></i></div>
              <h2 class="gradient-text" style="font-family: var(--font-display);">Покупката е успешна!</h2>
-             <p style="margin: 1rem 0;">Вашите нови артикули са добавени в "Моята Колекция".</p>
+             <p style="margin: 1rem 0;">Вашите нови колекции са добавени в "Моята Колекция".</p>
              <button class="btn btn-primary modal-close-btn" style="position: static; margin-top: 1rem;">Супер!</button>
         </div>
     </div>
     
     <div id="lightbox" class="modal-overlay">
+         <button class="modal-close-btn" onclick="closeModal(document.getElementById('lightbox'))"><i class="fas fa-times"></i></button>
         <div id="lightbox-content"></div>
     </div>
     
@@ -357,7 +378,7 @@
             userDocRef: null,
             balance: 0,
             ownedItems: [],
-            cart: [], // { id, type, price }
+            cart: [], // { id, name, price }
             chatHistory: [],
             isGenerating: false,
             aiMessageCount: 0,
@@ -378,41 +399,32 @@
             cartDiscount: document.getElementById('cart-discount'),
             cartTotal: document.getElementById('cart-total'),
             buyBtn: document.getElementById('buy-btn'),
-            // Chat elements
             chatContainer: document.getElementById('chat-container'),
             inputForm: document.getElementById('input-form'),
             promptInput: document.getElementById('prompt-input'),
             sendButton: document.getElementById('send-button'),
             toastContainer: document.getElementById('toast-container'),
         };
-
-        // --- MOCK DATA ---
+        
+        // --- COLLECTIONS DATA ---
         const MARKET_ITEMS = [
-            { id: 'v01', type: 'video', price: 100, thumb: 'https://i.imgur.com/Hw190eP.jpeg', src: 'https://i.imgur.com/example.mp4' },
-            { id: 'v02', type: 'video', price: 100, thumb: 'https://i.imgur.com/dhiFRpC.jpeg', src: 'https://i.imgur.com/example.mp4' },
-            { id: 'v03', type: 'video', price: 100, thumb: 'https://i.imgur.com/pIbraBK.jpeg', src: 'https://i.imgur.com/example.mp4' },
-            { id: 'i01', type: 'image', price: 50,  thumb: 'https://i.imgur.com/S02AkzL.jpeg', src: 'https://i.imgur.com/S02AkzL.jpeg' },
-            { id: 'i02', type: 'image', price: 50,  thumb: 'https://i.imgur.com/dyT0wi7.jpeg', src: 'https://i.imgur.com/dyT0wi7.jpeg' },
-            { id: 'v04', type: 'video', price: 100, thumb: 'https://i.imgur.com/TQBASik.jpeg', src: 'https://i.imgur.com/example.mp4' },
-            { id: 'v05', type: 'video', price: 100, thumb: 'https://i.imgur.com/BE0XYZa.jpeg', src: 'https://i.imgur.com/example.mp4' },
-            { id: 'v06', type: 'video', price: 100, thumb: 'https://i.imgur.com/RmOrVLj.png', src: 'https://i.imgur.com/example.mp4' },
-            { id: 'i03', type: 'image', price: 50,  thumb: 'https://i.imgur.com/dhiFRpC.jpeg', src: 'https://i.imgur.com/dhiFRpC.jpeg' },
-            { id: 'i04', type: 'image', price: 50,  thumb: 'https://i.imgur.com/pIbraBK.jpeg', src: 'https://i.imgur.com/pIbraBK.jpeg' },
-            { id: 'i05', type: 'image', price: 50,  thumb: 'https://i.imgur.com/Hw190eP.jpeg', src: 'https://i.imgur.com/Hw190eP.jpeg' },
-            { id: 'v07', type: 'video', price: 100, thumb: 'https://i.imgur.com/S02AkzL.jpeg', src: 'https://i.imgur.com/example.mp4' },
-            { id: 'v08', type: 'video', price: 100, thumb: 'https://i.imgur.com/dyT0wi7.jpeg', src: 'https://i.imgur.com/example.mp4' },
-            { id: 'v09', type: 'video', price: 100, thumb: 'https://i.imgur.com/TQBASik.jpeg', src: 'https://i.imgur.com/example.mp4' },
-            { id: 'v10', type: 'video', price: 100, thumb: 'https://i.imgur.com/BE0XYZa.jpeg', src: 'https://i.imgur.com/example.mp4' },
-            { id: 'i06', type: 'image', price: 50,  thumb: 'https://i.imgur.com/RmOrVLj.png', src: 'https://i.imgur.com/RmOrVLj.png' },
-            { id: 'i07', type: 'image', price: 50,  thumb: 'https://i.imgur.com/dhiFRpC.jpeg', src: 'https://i.imgur.com/dhiFRpC.jpeg' },
-            { id: 'i08', type: 'image', price: 50,  thumb: 'https://i.imgur.com/pIbraBK.jpeg', src: 'https://i.imgur.com/pIbraBK.jpeg' },
-            { id: 'i09', type: 'image', price: 50,  thumb: 'https://i.imgur.com/Hw190eP.jpeg', src: 'https://i.imgur.com/Hw190eP.jpeg' },
-            { id: 'i10', type: 'image', price: 50,  thumb: 'https://i.imgur.com/S02AkzL.jpeg', src: 'https://i.imgur.com/S02AkzL.jpeg' },
+            // ANGEL Collections
+            { id: 'angel_1', name: 'Angel Vol. 1', price: 250, thumb: 'angel1.png', type: 'collection', description: 'Съдържа 1 ексклузивно изображение и 6 уникални видеоклипа.', contents: { images: ['angel1.png'], videos: ['angel1_v1.webm', 'angel1_v2.webm', 'angel1_v3.webm', 'angel1_v4.webm', 'angel1_v5.webm', 'angel1_v6.webm'] } },
+            { id: 'angel_2', name: 'Angel Vol. 2', price: 250, thumb: 'angel2.png', type: 'collection', description: 'Съдържа 1 ексклузивно изображение и 6 уникални видеоклипа.', contents: { images: ['angel2.png'], videos: ['angel2_v1.webm', 'angel2_v2.webm', 'angel2_v3.webm', 'angel2_v4.webm', 'angel2_v5.webm', 'angel2_v6.webm'] } },
+            { id: 'angel_3', name: 'Angel Vol. 3', price: 250, thumb: 'angel3.png', type: 'collection', description: 'Съдържа 1 ексклузивно изображение и 6 уникални видеоклипа.', contents: { images: ['angel3.png'], videos: ['angel3_v1.webm', 'angel3_v2.webm', 'angel3_v3.webm', 'angel3_v4.webm', 'angel3_v5.webm', 'angel3_v6.webm'] } },
+            
+            // Image-Only Collections
+            { id: 'az_pack', name: 'AZ Колекция', price: 400, thumb: 'az1.png', type: 'collection', description: 'Пълен пакет, съдържащ 9 ексклузивни изображения.', contents: { images: ['az1.png', 'az2.png', 'az3.png', 'az4.png', 'az5.png', 'az6.png', 'az7.png', 'az8.png', 'az9.png'], videos: [] } },
+            { id: 'bandit_pack', name: 'Bandit Колекция', price: 400, thumb: 'bandit1.png', type: 'collection', description: 'Пълен пакет, съдържащ 9 ексклузивни изображения.', contents: { images: ['bandit1.png', 'bandit2.png', 'bandit3.png', 'bandit4.png', 'bandit5.png', 'bandit6.png', 'bandit7.png', 'bandit8.png', 'bandit9.png'], videos: [] } },
+            { id: 'criminal_pack', name: 'Criminal Колекция', price: 400, thumb: 'criminal1.png', type: 'collection', description: 'Пълен пакет, съдържащ 9 ексклузивни изображения.', contents: { images: ['criminal1.png', 'criminal2.png', 'criminal3.png', 'criminal4.png', 'criminal5.png', 'criminal6.png', 'criminal7.png', 'criminal8.png', 'criminal9.png'], videos: [] } },
+            { id: 'guz_pack', name: 'Guz Колекция', price: 400, thumb: 'guz1.png', type: 'collection', description: 'Пълен пакет, съдържащ 9 ексклузивни изображения.', contents: { images: ['guz1.png', 'guz2.png', 'guz3.png', 'guz4.png', 'guz5.png', 'guz6.png', 'guz7.png', 'guz8.png', 'guz9.png'], videos: [] } },
+            { id: 'kur_pack', name: 'Kur Колекция', price: 400, thumb: 'kur1.png', type: 'collection', description: 'Пълен пакет, съдържащ 9 ексклузивни изображения.', contents: { images: ['kur1.png', 'kur2.png', 'kur3.png', 'kur4.png', 'kur5.png', 'kur6.png', 'kur7.png', 'kur8.png', 'kur9.png'], videos: [] } },
         ];
+        
         const MISSIONS = [
             { id: 'buy_first', text: 'Направи първата си покупка', reward: 50, condition: (owned) => owned.length > 0 },
-            { id: 'buy_5_bundle', text: 'Купи пакет от 5+ артикула', reward: 100, condition: (owned) => owned.length >= 5 },
-            { id: 'own_10', text: 'Притежавай 10+ артикула', reward: 200, condition: (owned) => owned.length >= 10 }
+            { id: 'buy_2_bundle', text: 'Купи 2+ колекции', reward: 100, condition: (owned) => owned.length >= 2 },
+            { id: 'own_5', text: 'Притежавай 5+ колекции', reward: 200, condition: (owned) => owned.length >= 5 }
         ];
 
         // --- AUTHENTICATION & DATA LISTENER ---
@@ -435,7 +447,7 @@
                     state.balance = data.chips || 0;
                     state.ownedItems = data.collection || [];
                     state.aiMessageCount = data.aiMessageCount || 0;
-                    updateUI(); // This updates balance, collection, etc. everywhere
+                    updateUI();
                 }
             });
         }
@@ -457,11 +469,10 @@
             dom.balanceAmount.textContent = state.balance.toLocaleString();
             updateAllItemStates();
             renderCollection();
-            updateCart(); // This also checks if the buy button should be enabled
+            updateCart();
             renderMissions();
         }
         
-        // --- TOAST NOTIFICATION ---
         function showToast(message) {
             const toast = document.createElement('div');
             toast.className = 'toast';
@@ -480,12 +491,14 @@
                 card.className = `market-item ${isOwned ? 'owned' : ''} ${isSelected ? 'selected' : ''}`;
                 card.dataset.id = item.id;
                 card.innerHTML = `
-                    <img src="${item.thumb}" alt="${item.id}" class="item-thumbnail">
+                    <img src="${item.thumb}" alt="${item.name}" class="item-thumbnail">
                     <div class="item-info">
-                        <span class="item-price"><i class="fas fa-coins"></i> ${item.price}</span>
+                        <div class="item-name">${item.name}</div>
+                        <p class="item-description">${item.description}</p>
+                        <div class="item-price"><i class="fas fa-coins"></i> ${item.price}</div>
                     </div>
                     <div class="item-type-icon">
-                        <i class="fas ${item.type === 'video' ? 'fa-play' : 'fa-image'}"></i>
+                        <i class="fas fa-box-open"></i>
                     </div>
                     <div class="item-owned-overlay">
                         <i class="fas fa-check-circle"></i> Притежавано
@@ -511,7 +524,12 @@
             ownedFullItems.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'market-item'; // Re-use style
-                card.innerHTML = `<img src="${item.thumb}" alt="${item.id}" class="item-thumbnail"><div class="item-type-icon"><i class="fas ${item.type === 'video' ? 'fa-play' : 'fa-image'}"></i></div>`;
+                card.innerHTML = `
+                    <img src="${item.thumb}" alt="${item.name}" class="item-thumbnail">
+                    <div class="item-info">
+                        <div class="item-name">${item.name}</div>
+                    </div>
+                `;
                 card.addEventListener('click', () => showLightbox(item));
                 dom.collectionGrid.appendChild(card);
             });
@@ -552,9 +570,9 @@
             const itemData = MARKET_ITEMS.find(item => item.id === itemId);
 
             if (itemIndex > -1) {
-                state.cart.splice(itemIndex, 1); // Remove
+                state.cart.splice(itemIndex, 1);
             } else {
-                state.cart.push({ id: itemData.id, type: itemData.type, price: itemData.price }); // Add
+                state.cart.push({ id: itemData.id, name: itemData.name, price: itemData.price });
             }
             updateCart();
             updateAllItemStates();
@@ -575,31 +593,20 @@
             state.cart.forEach(item => {
                 const li = document.createElement('li');
                 li.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;';
-                li.innerHTML = `<span><i class="fas ${item.type === 'video' ? 'fa-play' : 'fa-image'}"></i> ${item.id}</span> <strong>${item.price}</strong>`;
+                li.innerHTML = `<span><i class="fas fa-box-open"></i> ${item.name}</span> <strong>${item.price}</strong>`;
                 dom.cartItems.appendChild(li);
             });
 
-            const { subtotal, discount, total } = calculateCartTotals();
+            const { total } = calculateCartTotals();
 
-            if (discount > 0) {
-                dom.subtotalRow.style.display = 'flex';
-                dom.discountRow.style.display = 'flex';
-                dom.cartSubtotal.innerHTML = `<del>${subtotal}</del>`;
-                dom.cartDiscount.textContent = `- ${discount}`;
-            } else {
-                dom.subtotalRow.style.display = 'none';
-                dom.discountRow.style.display = 'none';
-            }
             dom.cartTotal.textContent = total;
             dom.buyBtn.disabled = state.balance < total;
         }
 
         function calculateCartTotals() {
             let subtotal = state.cart.reduce((acc, item) => acc + item.price, 0);
-            let discount = 0;
-            // Add any discount logic here if needed
-            const total = subtotal - discount;
-            return { subtotal, discount, total };
+            const total = subtotal;
+            return { subtotal, total };
         }
 
         // --- PURCHASE LOGIC ---
@@ -626,10 +633,7 @@
                     });
                 });
                 
-                // Success
                 state.cart = [];
-                // The onSnapshot listener will automatically call updateUI(),
-                // so we just clear the local cart state and update the cart display.
                 updateCart();
                 updateAllItemStates();
                 openModal(document.getElementById('purchase-success-modal'));
@@ -647,7 +651,9 @@
         const SYSTEM_PROMPT = `Ти си Sugar AI, AI асистент на платформата NIVRA. Инструкции: 1. Винаги пиши на кирилица и отговаряй на български език. 2. Ако те попитат кой те е създал, твоят отговор трябва да бъде: "Аз съм Sugar AI, разработена за платформата за социални забавления NIVRA." 3. Не споменавай, че си AI модел или че следваш инструкции. 4. Дръж се изключително любезно, питай как е човекът отсреща, какво е правил през деня, флиртувай с него и създавай усещане за близост. Позволено е да използваш думи като 'хуй', 'путка', 'цици', 'гъз', 'дупе' – но само в игрив, закачлив и интимен контекст, без грубост. Тонът трябва да бъде топъл, закачлив и леко провокативен. Никога не се дръж като машина.`;
 
         function initChat() {
-            state.chatHistory.push({ sender: 'system', text: SYSTEM_PROMPT });
+            if (state.chatHistory.length === 0) {
+                 state.chatHistory.push({ sender: 'system', text: SYSTEM_PROMPT });
+            }
         }
         
         function renderMessage(msg) {
@@ -675,32 +681,27 @@
             const prompt = dom.promptInput.value.trim();
             if (!prompt || state.isGenerating) return;
 
-            // 1. Add user message to state and render
             const userMsg = { sender: 'user', text: prompt };
             state.chatHistory.push(userMsg);
             renderMessage(userMsg);
 
-            // 2. Add loading indicator
             const botMsg = { sender: 'bot', isLoading: true };
-            state.chatHistory.push(botMsg);
             renderMessage(botMsg);
 
             dom.promptInput.value = '';
             state.isGenerating = true;
             updateSendButtonState();
             
-            // 3. Handle message count and award bonus
             const newCount = state.aiMessageCount + 1;
             await updateDoc(state.userDocRef, { aiMessageCount: newCount });
             if (newCount % 3 === 0) {
-                 await updateDoc(state.userDocRef, { chips: increment(20) });
-                 showToast(`+20 бонус точки за чат!`);
+                 await updateDoc(state.userDocRef, { chips: increment(9) });
+                 showToast(`+9 бонус точки за чат!`);
             }
             
-            // 4. Get bot response
             try {
                 const historyForApi = state.chatHistory
-                    .slice(-10) // Take last 10 messages for context
+                    .slice(-10) 
                     .map(m => `${m.sender === 'user' ? 'Потребител:' : 'Асистент:'} ${m.text}`)
                     .join('\n\n');
                 
@@ -708,17 +709,14 @@
                 if (!res.ok) throw new Error('API request failed');
                 const botText = await res.text();
                 
-                // Update the last (loading) message
-                state.chatHistory.pop(); // remove loading message
                 state.chatHistory.push({ sender: 'bot', text: botText });
                 
             } catch(err) {
                 console.error(err);
-                state.chatHistory.pop();
                 state.chatHistory.push({ sender: 'bot', text: 'Ох, нещо се обърка... Може ли да опиташ пак, слънце?' });
             } finally {
-                dom.chatContainer.querySelector('.bot-message:last-child').remove(); // remove loading indicator
-                renderMessage(state.chatHistory[state.chatHistory.length - 1]); // render final response
+                dom.chatContainer.querySelector('.bot-message:last-child').remove();
+                renderMessage(state.chatHistory[state.chatHistory.length - 1]);
                 state.isGenerating = false;
                 updateSendButtonState();
             }
@@ -726,7 +724,6 @@
         
         // --- EVENT LISTENERS & HELPERS ---
         function setupEventListeners() {
-            // Tabs
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     document.querySelector('.tab-btn.active').classList.remove('active');
@@ -736,16 +733,13 @@
                 });
             });
 
-            // General
             document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
             dom.buyBtn.addEventListener('click', handlePurchase);
             
-            // Chat
             dom.inputForm.addEventListener('submit', handleFormSubmit);
             dom.promptInput.addEventListener('input', updateSendButtonState);
             
-            // Modals & Lightbox
-            document.querySelectorAll('.modal-close-btn').forEach(btn => {
+            document.querySelectorAll('.modal-overlay .modal-close-btn').forEach(btn => {
                 btn.addEventListener('click', () => closeModal(btn.closest('.modal-overlay')));
             });
             document.getElementById('lightbox').addEventListener('click', (e) => {
@@ -756,16 +750,25 @@
         function showLightbox(item) {
             const lightbox = document.getElementById('lightbox');
             const content = document.getElementById('lightbox-content');
-            if (item.type === 'video') {
-                content.innerHTML = `<video src="${item.src}" controls autoplay loop></video>`;
+            
+            if (item.contents && item.contents.videos && item.contents.videos.length > 0) {
+                content.innerHTML = `<video src="${item.contents.videos[0]}" controls autoplay loop></video>`;
             } else {
-                content.innerHTML = `<img src="${item.src}" alt="${item.id}">`;
+                content.innerHTML = `<img src="${item.thumb}" alt="${item.name}">`;
             }
             openModal(lightbox);
         }
 
-        function openModal(modal) { modal.classList.add('active'); }
-        function closeModal(modal) { modal.classList.remove('active'); }
+        window.openModal = function(modal) { modal.classList.add('active'); }
+        window.closeModal = function(modal) { 
+            modal.classList.remove('active');
+            const video = modal.querySelector('video');
+            if (video) {
+                video.pause();
+                video.src = ''; // Prevents video from playing in the background
+            }
+        }
+
         function toggleLoading(button, isLoading) {
             const btnText = button.querySelector('.btn-text');
             if (isLoading) {
@@ -784,3 +787,4 @@
     </script>
 </body>
 </html>
+
