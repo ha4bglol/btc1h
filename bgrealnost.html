@@ -281,7 +281,10 @@
              background: linear-gradient(45deg, #f85ace, #ff99cc);
              box-shadow: 0 0 15px var(--glow-color);
         }
-
+        #buyBonusButton:disabled {
+             filter: grayscale(1) brightness(0.7);
+             cursor: not-allowed;
+        }
         #autoSpinButton:not(.active):hover, #buyBonusButton:not(:disabled):hover {
             transform: translateY(-2px);
         }
@@ -726,7 +729,6 @@
         const BET_AMOUNTS = [1, 2, 5, 10, 20, 50];
         const MAX_WIN_MULTIPLIER = 2500;
         const BONUS_BUY_COST_MULTIPLIER = 100;
-        const backgroundMusicFiles = ['bg_music_1.mp3', 'bg_music_2.mp3', 'bg_music_3.mp3'];
 
         let balance = initialBalance;
         let currentBetIndex = 2;
@@ -737,9 +739,10 @@
         let expandingSymbol = null;
         let isMuted = false;
         let hasRequestedFullscreen = false;
-        let currentTrackIndex = Math.floor(Math.random() * backgroundMusicFiles.length);
 
         // Audio Elements
+        const backgroundMusicFiles = ['bg_music_1.mp3', 'bg_music_2.mp3', 'bg_music_3.mp3'];
+        let currentTrackIndex = Math.floor(Math.random() * backgroundMusicFiles.length);
         const bgMusicPlayer = new Audio();
         bgMusicPlayer.volume = 0.3;
         const winSound = new Audio('win_sound.mp3');
@@ -774,7 +777,7 @@
             if (hasRequestedFullscreen || document.fullscreenElement) return;
             const elem = document.documentElement;
             if (elem.requestFullscreen) {
-                elem.requestFullscreen().catch(err => console.error(`Fullscreen request failed: ${err.message}`));
+                elem.requestFullscreen().catch(err => console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`));
             } else if (elem.webkitRequestFullscreen) {
                 elem.webkitRequestFullscreen();
             }
@@ -782,13 +785,21 @@
         }
 
         function playNextTrack() {
-            if (bgMusicPlayer.paused) {
-                currentTrackIndex = (currentTrackIndex + 1) % backgroundMusicFiles.length;
-                bgMusicPlayer.src = backgroundMusicFiles[currentTrackIndex];
-                bgMusicPlayer.play().catch(e => console.warn("Music play failed, user interaction needed."));
+            if (backgroundMusicFiles.length === 0) return;
+            currentTrackIndex = (currentTrackIndex + 1) % backgroundMusicFiles.length;
+            bgMusicPlayer.src = backgroundMusicFiles[currentTrackIndex];
+            bgMusicPlayer.play().catch(e => console.warn("Music play failed."));
+        }
+        
+        bgMusicPlayer.addEventListener('ended', playNextTrack);
+
+        function manageBackgroundMusic(shouldPlay) {
+            if (shouldPlay && bgMusicPlayer.paused) {
+                bgMusicPlayer.play().catch(e => {});
+            } else if (!shouldPlay && !bgMusicPlayer.paused) {
+                bgMusicPlayer.pause();
             }
         }
-        bgMusicPlayer.addEventListener('ended', playNextTrack);
         
         function toggleMute() {
             isMuted = !isMuted;
@@ -852,9 +863,13 @@
 
         async function spin(isFreeSpin = false) {
             if (isSpinning) return;
-            
+
             goFullscreen();
-            playNextTrack();
+            
+            if (bgMusicPlayer.paused) {
+                 bgMusicPlayer.src = backgroundMusicFiles[currentTrackIndex];
+                 bgMusicPlayer.play().catch(e => { /* Autoplay blocked */ });
+            }
 
             if (!isFreeSpin && freeSpinsRemaining === 0 && balance < bet) {
                 if(isAutoSpinning) toggleAutoSpin();
@@ -896,37 +911,42 @@
                 return new Promise(async (resolve) => {
                     const reelStripElement = reel.querySelector('.reel-strip');
                     const strip = reelStrips[i];
+                    
                     const symbolSize = reel.clientHeight / SYMBOLS_PER_REEL_VISIBLE;
                     
                     const baseTargetPosition = finalIndexes[i] * symbolSize;
-                    const targetPositionInDom = baseTargetPosition + (strip.length * symbolSize);
+                    const loopOffset = strip.length * symbolSize;
+                    const targetPositionInDom = baseTargetPosition + loopOffset;
 
                     reelStripElement.style.transition = 'none';
+                    // Reset position to the equivalent symbol in the second loop for seamless spinning
                     const currentTransform = new DOMMatrix(getComputedStyle(reelStripElement).transform);
-                    reelStripElement.style.transform = `translateY(${currentTransform.f - (symbolSize/2)}px)`;
+                    const currentPos = Math.abs(currentTransform.f);
+                    const newStartPos = (currentPos % loopOffset) + loopOffset;
+                    reelStripElement.style.transform = `translateY(-${newStartPos}px)`;
                     reelStripElement.offsetHeight; 
 
                     let landedScatters = 0;
                     results.slice(0, i).forEach(r => r.forEach(s => { if (SYMBOLS[s]?.isScatter) landedScatters++; }));
                     
-                    let duration;
-                    if (freeSpinsRemaining === 0 && landedScatters >= 2) {
+                    let duration = 1.5 + i * 0.3;
+                    if (freeSpinsRemaining === 0 && landedScatters >= 2 && gameArea) {
                         gameArea.classList.add('anticipation-glow');
-                        duration = 2.0 + i * 0.8; 
+                        duration = 4 + i * 0.5;
+                        
                         if (!anticipationSoundPlayed) {
+                            manageBackgroundMusic(false);
                             anticipationSound.loop = true;
-                            anticipationSound.play().catch(e => {});
+                            anticipationSound.play();
                             anticipationSoundPlayed = true;
                         }
-                    } else {
-                        duration = 1.0 + i * 0.5;
                     }
                     
                     reelStripElement.style.transition = `transform ${duration}s cubic-bezier(0.25, 1, 0.5, 1)`;
                     reelStripElement.style.transform = `translateY(-${targetPositionInDom}px)`;
-                    
+
                     reelStripElement.addEventListener('transitionend', () => {
-                         results[i].forEach((symbolKey, symbolIndex) => {
+                        results[i].forEach((symbolKey, symbolIndex) => {
                             if (SYMBOLS[symbolKey]?.isScatter) {
                                 const symbolElement = getSymbolElement(i, finalIndexes[i] + symbolIndex);
                                 if (symbolElement) symbolElement.classList.add('scatter-land');
@@ -942,6 +962,7 @@
             if (anticipationSoundPlayed) {
                 anticipationSound.pause();
                 anticipationSound.currentTime = 0;
+                manageBackgroundMusic(true);
             }
             
             gameArea.classList.remove('anticipation-glow');
@@ -969,7 +990,7 @@
         });
 
         document.addEventListener('keydown', (e) => {
-            if (e.code === 'Space' && !e.repeat) {
+            if (e.code === 'Space') {
                 e.preventDefault();
                 if (document.querySelector('.modal[style*="display: flex"]')) return;
                 spinButton.click();
@@ -1028,9 +1049,11 @@
             reels.forEach(reel => {
                 const expandingSymbols = reel.querySelectorAll('.symbol.expanding');
                 expandingSymbols.forEach(el => el.remove());
+                
                 const strip = reel.querySelector('.reel-strip');
                 if (strip) { strip.style.opacity = '1'; }
             });
+
             document.querySelectorAll('.symbol').forEach(el => { el.className = 'symbol'; });
             gameArea.classList.remove('anticipation-glow');
         }
@@ -1074,6 +1097,7 @@
 
                 if (matchCount >= 3) {
                     if (!firstWinningSymbol) firstWinningSymbol = payingSymbolKey;
+
                     const symbolData = SYMBOLS[payingSymbolKey];
                     if (symbolData?.payout?.[matchCount]) {
                         const payout = symbolData.payout[matchCount] * bet;
@@ -1097,8 +1121,12 @@
 
                 if (expandingReelsIndices.size >= 3) {
                     hasExpansionWin = true;
-                    expandSound.play().catch(e => {});
+                    manageBackgroundMusic(false);
+                    expandSound.play();
+                    expandSound.onended = () => manageBackgroundMusic(true);
+
                     await new Promise(res => setTimeout(res, 500)); 
+
                     expandingReelsIndices.forEach(reelIndex => {
                         const reel = reels[reelIndex];
                         reel.querySelector('.reel-strip').style.opacity = '0';
@@ -1112,9 +1140,12 @@
                             reel.appendChild(expandingClone);
                         }
                     });
+
                     await new Promise(res => setTimeout(res, 800)); 
+
                     const payoutData = SYMBOLS[expandingSymbol].payout;
                     const numExpandedReels = expandingReelsIndices.size;
+
                     if (payoutData?.[numExpandedReels]) {
                         const expansionPayout = payoutData[numExpandedReels] * bet * PAYLINES.length;
                         totalWin += expansionPayout;
@@ -1130,9 +1161,13 @@
                 balance += totalWin;
                 await updateBalanceInFirestore(balance);
                 updateBalanceDisplay();
+                
                 if(freeSpinsRemaining === 0 && !hasExpansionWin) {
-                    winSound.play().catch(e => {});
+                    manageBackgroundMusic(false);
+                    winSound.play();
+                    winSound.onended = () => manageBackgroundMusic(true);
                 }
+                
                 playWinVideo(firstWinningSymbol);
                 await updateWin(totalWin, true);
                 flashWinningSymbols(winningPositions, finalIndexes);
@@ -1144,8 +1179,10 @@
                 bonusTriggered = true;
                 if(isAutoSpinning) toggleAutoSpin();
                 await triggerBonusAnimation(scatterPositions, finalIndexes);
+                
                 const bonusTransitionScreen = document.getElementById('bonus-transition-screen');
                 bonusTransitionScreen.style.display = 'flex';
+
                 bonusTransitionScreen.addEventListener('click', () => {
                     bonusTransitionScreen.style.display = 'none';
                     startBonus();
@@ -1205,7 +1242,8 @@
             if (isSpinning || freeSpinsRemaining > 0) return;
             const cost = bet * BONUS_BUY_COST_MULTIPLIER;
             if (balance < cost) {
-                messageBox.textContent = "НЯМАТЕ КРЕДИТ"; return;
+                messageBox.textContent = "НЯМАТЕ КРЕДИТ";
+                return;
             }
             balance -= cost;
             await updateBalanceInFirestore(balance);
@@ -1229,7 +1267,8 @@
 
         function getSymbolElement(reelIndex, stripIndex) {
             const stripElement = reels[reelIndex].querySelector('.reel-strip');
-            return stripElement ? stripElement.children[stripIndex] || null : null;
+            if (!stripElement) return null;
+            return stripElement.children[stripIndex] || null;
         }
 
         function flashWinningSymbols(positions, finalIndexes) {
@@ -1239,7 +1278,9 @@
                 const symbolIndexOnReel = parseInt(symbolIndexStr, 10);
                 const indexInStrip = finalIndexes[reelIndex] + symbolIndexOnReel;
                 const symbolElement = getSymbolElement(reelIndex, indexInStrip);
-                if (symbolElement) symbolElement.classList.add('win-pulse');
+                if (symbolElement) {
+                    symbolElement.classList.add('win-pulse');
+                }
             });
         }
         
@@ -1253,8 +1294,10 @@
                     if (!reel) return '0,0';
                     const reelRect = reel.getBoundingClientRect();
                     const symbolHeight = reelRect.height / SYMBOLS_PER_REEL_VISIBLE;
+                    
                     const x = reelRect.left - svgRect.left + (reelRect.width / 2);
                     const y = reelRect.top - svgRect.top + (coord.row * symbolHeight) + (symbolHeight / 2);
+
                     return `${x},${y}`;
                 }).join(' ');
                 
@@ -1266,10 +1309,10 @@
         }
 
         async function updateWin(amount, animate = false) {
-            const targetAmount = amount.toFixed(2);
             if (amount === 0) {
                 winDisplay.textContent = '0.00'; return;
             }
+            const targetAmount = amount.toFixed(2);
             if (animate) {
                 const duration = 1000; const frameDuration = 1000 / 60; const totalFrames = Math.round(duration / frameDuration);
                 let frame = 0; const startValue = 0; const endValue = amount;
@@ -1289,6 +1332,7 @@
         }
 
         function updateBalanceDisplay() { balanceDisplay.textContent = balance.toFixed(2); }
+        
         function updateSpinButtonText() {
             const spinText = document.getElementById('spin-text');
             const spinIcon = spinButton.querySelector('svg');
