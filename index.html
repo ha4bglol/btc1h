@@ -51,6 +51,22 @@
         @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
         @keyframes gift-shake { 0% { transform: rotate(0deg); } 25% { transform: rotate(5deg); } 50% { transform: rotate(0eg); } 75% { transform: rotate(-5deg); } 100% { transform: rotate(0deg); } }
         .gift-icon-animation { animation: gift-shake 1s ease-in-out infinite; }
+
+        /* Nivra World RGB Animation */
+        @keyframes rgb-text-animation {
+            0% { color: #ffadad; }
+            14% { color: #ffd6a5; }
+            28% { color: #fdffb6; }
+            42% { color: #caffbf; }
+            57% { color: #9bf6ff; }
+            71% { color: #a0c4ff; }
+            85% { color: #bdb2ff; }
+            100% { color: #ffc6ff; }
+        }
+        .nivra-world-link {
+            font-weight: 700;
+            animation: rgb-text-animation 4s linear infinite alternate;
+        }
         
         /* Nivra World Стилизация */
         .nivra-world-gradient {
@@ -90,6 +106,7 @@
                     <a href="#" id="welcome-bonus-link" class="nav-link text-yellow-400 hover:text-yellow-300 transition hidden"><i class="fas fa-gift"></i></a>
                     <a href="#games" class="nav-link text-gray-300 hover:text-yellow-400 transition">Игри</a>
                     <a href="#promo" class="nav-link text-gray-300 hover:text-yellow-400 transition">Промоции</a>
+                    <a href="nivra-world.html" class="nav-link nivra-world-link">Nivra World</a>
                     <a href="#" id="leaderboard-link-desktop" class="nav-link text-gray-300 hover:text-yellow-400 transition">Класация</a>
                     <a href="#about" class="nav-link text-gray-300 hover:text-yellow-400 transition">За нас</a>
                 </div>
@@ -99,15 +116,7 @@
                         <button id="register-btn-desktop" class="px-6 py-2 rounded-full text-black font-semibold btn-primary">Регистрация</button>
                     </div>
                     <div id="logged-in-view" class="hidden items-center space-x-4">
-                        <button id="open-shop-btn" class="px-5 py-2 rounded-full text-sm font-semibold text-black btn-primary flex items-center gap-2 transform hover:scale-105 transition-transform">
-                            <i class="fas fa-plus-circle"></i>
-                            <span>Депозит</span>
-                        </button>
-                        <div class="text-right">
-                            <span id="user-balance" class="text-yellow-400 font-bold text-xl block"><i class="fas fa-coins mr-2"></i>0</span>
-                        </div>
-                        <div class="h-10 w-px bg-gray-700"></div>
-                        <div id="profile-button" class="flex items-center space-x-3 cursor-pointer group">
+                         <div id="profile-button" class="flex items-center space-x-3 cursor-pointer group">
                              <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-yellow-500 to-orange-500 flex items-center justify-center">
                                 <i class="fas fa-user text-white text-lg"></i>
                             </div>
@@ -116,6 +125,14 @@
                                 <span class="text-gray-500 text-xs leading-tight">Моят профил</span>
                             </div>
                         </div>
+                        <div class="h-10 w-px bg-gray-700"></div>
+                        <div class="text-right">
+                             <span id="user-balance" class="text-yellow-400 font-bold text-2xl block"><i class="fas fa-coins mr-2"></i>0</span>
+                        </div>
+                        <button id="open-shop-btn" class="px-6 py-3 rounded-full text-lg font-semibold text-black btn-primary flex items-center gap-2 transform hover:scale-105 transition-transform">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Депозит</span>
+                        </button>
                     </div>
                 </div>
                 <div id="menu-btn" class="md:hidden text-3xl cursor-pointer text-white">&#9776;</div>
@@ -128,26 +145,25 @@
                     <li><a href="#home" class="nav-link mobile-nav-link text-gray-300">Начало</a></li>
                     <li><a href="#games" class="nav-link mobile-nav-link text-gray-300">Игри</a></li>
                     <li><a href="#promo" class="nav-link mobile-nav-link text-gray-300">Промоции</a></li>
+                    <li><a href="nivra-world.html" class="nav-link mobile-nav-link nivra-world-link">Nivra World</a></li>
                     <li><a href="#" id="leaderboard-link-mobile" class="nav-link mobile-nav-link text-gray-300">Класация</a></li>
                     <li><a href="#about" class="nav-link mobile-nav-link text-gray-300">За нас</a></li>
                 </ul>
-                <div class="mt-12 flex flex-col w-4/5 max-w-xs space-y-4">
+                <div class="mt-12 w-4/5 max-w-xs">
                     <div id="logged-out-view-mobile" class="flex flex-col space-y-4">
                          <button id="login-btn-mobile" class="w-full px-6 py-3 rounded-full border-2 btn-secondary">Вход</button>
                          <button id="register-btn-mobile" class="w-full px-6 py-3 rounded-full text-black font-semibold btn-primary">Регистрация</button>
                     </div>
-                    <div id="logged-in-view-mobile" class="hidden flex-col items-center">
-                        <div class="text-center mb-4">
-                            <button id="open-shop-btn-mobile" class="px-6 py-3 rounded-full text-lg font-semibold text-black btn-primary flex items-center gap-2">
-                                <i class="fas fa-plus-circle"></i>
-                                <span>Депозит</span>
-                            </button>
-                        </div>
-                        <div id="mobile-profile-info" class="text-center mb-6">
+                    <div id="logged-in-view-mobile" class="hidden flex-col items-center space-y-4">
+                        <div id="mobile-profile-info" class="text-center">
                             <span id="user-username-mobile" class="text-white font-semibold block text-xl"></span>
-                            <span id="user-balance-mobile" class="text-yellow-400 font-bold text-lg"><i class="fas fa-coins mr-1"></i>0</span>
+                            <span id="user-balance-mobile" class="text-yellow-400 font-bold text-2xl"><i class="fas fa-coins mr-1"></i>0</span>
                         </div>
-                        <button id="logout-btn-mobile" class="w-full px-6 py-3 rounded-full border-2 border-red-500 text-red-500">Изход</button>
+                        <button id="open-shop-btn-mobile" class="w-full px-6 py-4 rounded-full text-xl font-semibold text-black btn-primary flex items-center justify-center gap-2">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Депозит</span>
+                        </button>
+                        <button id="logout-btn-mobile" class="w-full px-6 py-3 rounded-full border-2 border-red-500 text-red-500 mt-4">Изход</button>
                     </div>
                 </div>
             </div>
@@ -161,7 +177,7 @@
                 <div class="container mx-auto px-6">
                     <div id="tab-buttons" class="flex justify-center border-b border-gray-700 mb-12 flex-wrap">
                         <button class="tab-btn active" data-tab="games">Игри</button>
-                        <button class="tab-btn" data-tab="nivra-world">Nivra World</button>
+                        <a href="nivra-world.html" class="tab-btn">Nivra World</a>
                         <button class="tab-btn" data-tab="promo">Промоции</button>
                         <button class="tab-btn" data-tab="about">За Нас</button>
                     </div>
@@ -175,33 +191,6 @@
                             <p id="no-games-found" class="text-center text-gray-400 text-lg hidden">Няма намерени игри, съответстващи на търсенето.</p>
                         </div>
                         
-                        <!-- НОВА СЕКЦИЯ NIVRA WORLD -->
-                        <div id="tab-nivra-world" class="tab-panel hidden text-center">
-                            <div class="max-w-4xl mx-auto">
-                                <h2 class="text-5xl md:text-6xl font-bold mb-4 nivra-world-gradient text-shadow-neon">Добре дошли в Nivra World</h2>
-                                <p class="text-lg text-gray-300 mb-12">Следващото измерение на социалните игри. Място, където общността, ексклузивните събития и дигиталните преживявания се сливат в едно.</p>
-                                
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                                    <div class="bg-gradient-to-br from-cyan-900/50 to-pink-900/50 p-8 rounded-2xl border border-cyan-400/30 shadow-lg shadow-cyan-500/20">
-                                        <div class="text-5xl mb-4 text-cyan-300 text-shadow-neon"><i class="fas fa-users"></i></div>
-                                        <h3 class="text-2xl font-semibold mb-2 text-white">Социални Хъбове</h3>
-                                        <p class="text-gray-400">Срещайте се с приятели, създавайте нови запознанства и се присъединете към тематични стаи за разговори и забавления.</p>
-                                    </div>
-                                    <div class="bg-gradient-to-br from-cyan-900/50 to-pink-900/50 p-8 rounded-2xl border border-pink-400/30 shadow-lg shadow-pink-500/20">
-                                        <div class="text-5xl mb-4 text-pink-400 text-shadow-neon"><i class="fas fa-calendar-star"></i></div>
-                                        <h3 class="text-2xl font-semibold mb-2 text-white">Ексклузивни Събития</h3>
-                                        <p class="text-gray-400">Участвайте в събития на живо, специални турнири и предизвикателства, достъпни само в Nivra World.</p>
-                                    </div>
-                                    <div class="bg-gradient-to-br from-cyan-900/50 to-pink-900/50 p-8 rounded-2xl border border-cyan-400/30 shadow-lg shadow-cyan-500/20">
-                                        <div class="text-5xl mb-4 text-cyan-300 text-shadow-neon"><i class="fas fa-gem"></i></div>
-                                        <h3 class="text-2xl font-semibold mb-2 text-white">Дигитални Колекции</h3>
-                                        <p class="text-gray-400">Персонализирайте своя аватар и профил с уникални предмети, които можете да спечелите или отключите.</p>
-                                    </div>
-                                </div>
-                                <p class="mt-12 text-gray-500 italic">Nivra World е в процес на разработка. Очаквайте скоро...</p>
-                            </div>
-                        </div>
-
                         <div id="tab-promo" class="tab-panel hidden"><h2 class="text-4xl font-bold mb-12 text-center">Специални Предложения</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-8"><div class="bg-gray-900 p-8 rounded-xl shadow-lg"><div class="text-5xl mb-4 text-yellow-400"><i class="fas fa-hand-holding-usd"></i></div><h3 class="text-2xl font-semibold mb-2">Бонус Добре Дошъл</h3><p class="text-gray-400">Всеки нов играч получава 1000 безплатни точки веднага след регистрация!</p></div><div class="bg-gray-900 p-8 rounded-xl shadow-lg"><div class="text-5xl mb-4 text-yellow-400"><i class="fas fa-gift"></i></div><h3 class="text-2xl font-semibold mb-2">Ежедневни Бонуси</h3><p class="text-gray-400">Влизайте всеки ден, за да получите своите безплатни виртуални кредити и награди.</p></div><div class="bg-gray-900 p-8 rounded-xl shadow-lg"><div class="text-5xl mb-4 text-yellow-400"><i class="fas fa-trophy"></i></div><h3 class="text-2xl font-semibold mb-2">Вълнуващи Турнири</h3><p class="text-gray-400">Състезавайте се с други играчи и се изкачете в класациите.</p></div></div></div>
                         <div id="tab-about" class="tab-panel hidden"><div class="flex flex-col md:flex-row items-center gap-12"><div class="md:w-1/2"><img src="https://placehold.co/600x400/1a1a2e/f7b733?text=NIVRA+Community" alt="Community" class="rounded-xl shadow-2xl"></div><div class="md:w-1/2"><h2 class="text-4xl font-bold mb-4">Нашата Мисия в <span class="gradient-text">NIVRA</span></h2><p class="text-gray-400 mb-6">В NIVRA сме се посветили на идеята да трансформираме iGaming индустрията чрез внедряване на модерни и завършени технологии. Ние вярваме, че бъдещето на онлайн забавленията е в създаването на сигурни, ангажиращи и социално отговорни платформи. Като част от непрекъснато разрастващата се мрежа на Bulgaria.Online, ние се стремим да бъдем стандарт за качество и иновация в България и извън нея.</p><ul class="space-y-4"><li class="flex items-center"><i class="fas fa-check-circle text-yellow-400 mr-3"></i> 100% Безплатно забавление</li><li class="flex items-center"><i class="fas fa-check-circle text-yellow-400 mr-3"></i> Иновативни технологии</li><li class="flex items-center"><i class="fas fa-check-circle text-yellow-400 mr-3"></i> Част от Bulgaria.Online</li></ul></div></div></div>
                     </div>
@@ -271,21 +260,42 @@
             </div>
         </div>
     </div>
+
+    <!-- НОВ МОДАЛ ЗА МАГАЗИН -->
     <div id="shop-modal" class="modal-overlay">
-        <div class="modal-content max-w-4xl p-6 md:p-8">
-            <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button>
-            <div class="text-center mb-8">
-                <div class="text-5xl text-yellow-400 mb-4"><i class="fas fa-store-alt"></i></div>
-                <h3 class="text-3xl font-bold text-white mb-2">Магазин за Точки</h3>
-                <p class="text-gray-400">Изберете пакет и платете сигурно с криптовалута чрез NOWPayments.</p>
+        <div class="modal-content max-w-5xl p-6 md:p-8">
+            <button id="shop-close-btn" class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button>
+            
+            <div id="shop-main-view">
+                <div class="text-center mb-8">
+                    <div class="text-5xl text-yellow-400 mb-4"><i class="fas fa-store-alt"></i></div>
+                    <h3 class="text-3xl font-bold text-white mb-2">Магазин за Точки</h3>
+                    <p class="text-gray-400">Изберете пакет и платете сигурно с криптовалута чрез NOWPayments.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                    <!-- Пакет 1 -->
+                    <div class="shop-item group bg-gray-900/50 border border-gray-700 p-6 rounded-xl text-center flex flex-col hover:border-yellow-500 transition-all duration-300"> <h4 class="text-xl font-semibold text-white">Стартер</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">250</span> <span class="block text-gray-500">точки</span> </div> <div class="flex-grow"></div> <button data-widget-src="https://nowpayments.io/embeds/payment-widget?iid=6285958129" class="buy-chip-btn w-full py-3 rounded-full text-black font-semibold btn-primary mt-4">Купи за $3.99</button> </div>
+                    <!-- Пакет 2 -->
+                    <div class="shop-item group bg-gray-900/50 border border-gray-700 p-6 rounded-xl text-center flex flex-col hover:border-yellow-500 transition-all duration-300"> <h4 class="text-xl font-semibold text-white">Играч</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">400</span> <span class="block text-gray-500">точки</span> </div> <div class="flex-grow"></div> <button data-widget-src="https://nowpayments.io/embeds/payment-widget?iid=6372733683" class="buy-chip-btn w-full py-3 rounded-full text-black font-semibold btn-primary mt-4">Купи за $4.99</button> </div>
+                    <!-- Пакет 3 -->
+                    <div class="shop-item group bg-gray-900/50 border-2 border-yellow-400 p-6 rounded-xl text-center flex flex-col relative transform lg:scale-105 shadow-2xl shadow-yellow-500/10"> <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-400 text-black text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Най-добра оферта</div> <h4 class="text-xl font-semibold text-white">Ентусиаст</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">1,000</span> <span class="block text-gray-500">точки</span> </div> <div class="flex-grow"></div> <button data-widget-src="https://nowpayments.io/embeds/payment-widget?iid=6177900060" class="buy-chip-btn w-full py-3 rounded-full text-black font-semibold btn-primary mt-4">Купи за $9.99</button> </div>
+                    <!-- Пакет 4 -->
+                    <div class="shop-item group bg-gray-900/50 border border-gray-700 p-6 rounded-xl text-center flex flex-col hover:border-yellow-500 transition-all duration-300"> <h4 class="text-xl font-semibold text-white">Майстор</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">2,500</span> <span class="block text-gray-500">точки</span> </div> <div class="flex-grow"></div> <button data-widget-src="https://nowpayments.io/embeds/payment-widget?iid=4433405413" class="buy-chip-btn w-full py-3 rounded-full text-black font-semibold btn-primary mt-4">Купи за $19.99</button> </div>
+                     <!-- Пакет 5 -->
+                    <div class="shop-item group bg-gray-900/50 border border-gray-700 p-6 rounded-xl text-center flex flex-col hover:border-yellow-500 transition-all duration-300"> <h4 class="text-xl font-semibold text-white">Хай Ролер</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">10,000</span> <span class="block text-gray-500">точки</span> </div> <div class="flex-grow"></div> <button data-widget-src="https://nowpayments.io/embeds/payment-widget?iid=4955657869" class="buy-chip-btn w-full py-3 rounded-full text-black font-semibold btn-primary mt-4">Купи за $59.99</button> </div>
+                </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="shop-item group bg-gray-900/50 border border-gray-700 p-6 rounded-xl text-center flex flex-col hover:border-yellow-500 transition-all duration-300"> <h4 class="text-xl font-semibold text-white">Бърз Старт</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">1,000</span> <span class="block text-gray-500">точки</span> </div> <div class="flex-grow"></div> <button data-amount="3.99" data-currency="usd" class="buy-chip-btn w-full py-3 rounded-full text-black font-semibold btn-primary mt-4 flex items-center justify-center gap-2"> <span class="btn-text">Купи за $3.99</span> </button> </div>
-                <div class="shop-item group bg-gray-900/50 border border-gray-700 p-6 rounded-xl text-center flex flex-col hover:border-yellow-500 transition-all duration-300"> <h4 class="text-xl font-semibold text-white">Играч</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">4,200</span> <span class="block text-gray-500">точки</span> </div> <div class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full inline-block mx-auto">+17% БОНУС</div> <div class="flex-grow"></div> <button data-amount="11.99" data-currency="usd" class="buy-chip-btn w-full py-3 rounded-full text-black font-semibold btn-primary mt-4 flex items-center justify-center gap-2"> <span class="btn-text">Купи за $11.99</span> </button> </div>
-                <div class="shop-item group bg-gray-900/50 border-2 border-yellow-400 p-6 rounded-xl text-center flex flex-col relative transform lg:scale-105 shadow-2xl shadow-yellow-500/10"> <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-400 text-black text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Най-добра оферта</div> <h4 class="text-xl font-semibold text-white">Ентусиаст</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">9,000</span> <span class="block text-gray-500">точки</span> </div> <div class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full inline-block mx-auto">+25% БОНУС</div> <div class="flex-grow"></div> <button data-amount="23.99" data-currency="usd" class="buy-chip-btn w-full py-3 rounded-full text-black font-semibold btn-primary mt-4 flex items-center justify-center gap-2"> <span class="btn-text">Купи за $23.99</span> </button> </div>
-                <div class="shop-item group bg-gray-900/50 border border-gray-700 p-6 rounded-xl text-center flex flex-col hover:border-yellow-500 transition-all duration-300"> <h4 class="text-xl font-semibold text-white">Хай Ролер</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">25,000</span> <span class="block text-gray-500">точки</span> </div> <div class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full inline-block mx-auto">+56% БОНУС</div> <div class="flex-grow"></div> <button data-amount="49.99" data-currency="usd" class="buy-chip-btn w-full py-3 rounded-full text-black font-semibold btn-primary mt-4 flex items-center justify-center gap-2"> <span class="btn-text">Купи за $49.99</span> </button> </div>
+
+            <div id="payment-widget-view" class="hidden">
+                 <button id="back-to-shop-btn" class="mb-4 text-yellow-400 hover:underline"><i class="fas fa-arrow-left mr-2"></i>Обратно към магазина</button>
+                 <div id="payment-widget-container" class="bg-white rounded-lg overflow-hidden">
+                     <!-- Iframe will be inserted here -->
+                 </div>
+                 <div class="mt-6 p-4 bg-gray-800/50 rounded-lg text-center">
+                    <p class="text-yellow-400 font-semibold"><i class="fas fa-info-circle mr-2"></i>Важна информация</p>
+                    <p class="text-gray-300 text-sm">След успешно плащане, кредитите ще бъдат добавени към вашия баланс. Поради естеството на блокчейн потвържденията, този процес може да отнеме от 5 минути до 24 часа. Благодарим за търпението!</p>
+                 </div>
             </div>
-            <div id="shop-status" class="text-center mt-8 h-5 text-yellow-400 font-semibold"></div>
         </div>
     </div>
 
@@ -300,13 +310,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, onSnapshot, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
-        // ===================================
-        // === НОВ ИМПОРТ ЗА APP CHECK ===
-        // ===================================
-        import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check.js";
-
-
+        
         // --- FIREBASE CONFIG ---
         const firebaseConfig = {
           apiKey: "AIzaSyAatMUa6vFu2AAe3NCWse6j2moiXmXdl0U",
@@ -319,22 +323,8 @@
         };
         
         const app = initializeApp(firebaseConfig);
-        
-        // =================================================================================
-        // === НОВА ИНИЦИАЛИЗАЦИЯ НА APP CHECK - КЛЮЧОВО ЗА СИГУРНОСТТА ===
-        // =================================================================================
-        // ВАЖНО: Заменете 'YOUR_RECAPTCHA_V3_SITE_KEY' с вашия собствен ключ от
-        // Google Cloud reCAPTCHA Admin Console. Без това, заявките ще бъдат отхвърлени.
-        // https://cloud.google.com/recaptcha-enterprise/
-        const appCheck = initializeAppCheck(app, {
-            provider: new ReCaptchaV3Provider('YOUR_RECAPTCHA_V3_SITE_KEY'), 
-            isTokenAutoRefreshEnabled: true
-        });
-
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const functions = getFunctions(app, 'us-central1'); 
-        const createPayment = httpsCallable(functions, 'createPayment');
 
         // --- GLOBAL STATE & DOM ---
         const state = { 
@@ -408,7 +398,10 @@
             gameFilters: document.getElementById('game-filters'),
 
             // Shop
-            shopStatus: document.getElementById('shop-status'),
+            shopMainView: document.getElementById('shop-main-view'),
+            paymentWidgetView: document.getElementById('payment-widget-view'),
+            paymentWidgetContainer: document.getElementById('payment-widget-container'),
+            backToShopBtn: document.getElementById('back-to-shop-btn'),
         };
 
         const gamesData = [
@@ -445,44 +438,28 @@
         }
         
         // --- SHOP LOGIC ---
-        const handlePurchase = async (button) => {
-            const amount = button.dataset.amount;
-            const currency = button.dataset.currency;
-            dom.shopStatus.textContent = 'Генериране на плащане, моля изчакайте...';
-            document.querySelectorAll('.buy-chip-btn').forEach(btn => toggleLoading(btn, true));
+        function showShopMainView() {
+            dom.shopMainView.classList.remove('hidden');
+            dom.paymentWidgetView.classList.add('hidden');
+            dom.paymentWidgetContainer.innerHTML = ''; // Clear previous widget
+        }
 
-            if (!auth.currentUser) {
-                dom.shopStatus.textContent = 'Грешка: Трябва да сте влезли, за да направите покупка.';
-                document.querySelectorAll('.buy-chip-btn').forEach(btn => toggleLoading(btn, false));
-                return;
-            }
-
-            try {
-                // Извикваме cloud функцията с необходимите данни
-                const result = await createPayment({ amount: amount, currency: currency });
-
-                // Ако функцията върне URL, пренасочваме потребителя
-                if (result.data && result.data.invoiceUrl) {
-                    window.location.href = result.data.invoiceUrl;
-                } else { 
-                    throw new Error("Невалиден отговор от сървъра.");
-                }
-            } catch (error) {
-                // Показваме грешката на потребителя
-                console.error("Purchase failed:", error);
-                
-                if (error.code === 'unauthenticated') {
-                    dom.shopStatus.textContent = 'Грешка: Проблем с удостоверяването. Моля, влезте отново.';
-                } else if (error.code === 'invalid-argument') {
-                    dom.shopStatus.textContent = 'Грешка: Подадени са невалидни данни към сървъра.';
-                } else {
-                    dom.shopStatus.textContent = 'Възникна грешка: ' + (error.message || 'Опитайте отново.');
-                }
-
-                // Спираме анимацията за зареждане на бутоните
-                document.querySelectorAll('.buy-chip-btn').forEach(btn => toggleLoading(btn, false));
-            }
-        };
+        function showPaymentWidget(widgetSrc) {
+            dom.shopMainView.classList.add('hidden');
+            dom.paymentWidgetView.classList.remove('hidden');
+            
+            const iframe = document.createElement('iframe');
+            iframe.src = widgetSrc;
+            iframe.width = "410";
+            iframe.height = "696";
+            iframe.frameBorder = "0";
+            iframe.scrolling = "no";
+            iframe.style.overflowY = "hidden";
+            iframe.innerHTML = "Can't load widget";
+            
+            dom.paymentWidgetContainer.innerHTML = ''; // Clear previous
+            dom.paymentWidgetContainer.appendChild(iframe);
+        }
 
         function setupModalTriggers() {
             // Auth buttons
@@ -521,8 +498,11 @@
             // Close modal logic
             document.querySelectorAll('.modal-overlay').forEach(overlay => {
                 overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(overlay); });
-                overlay.querySelector('.close-modal-btn')?.addEventListener('click', () => closeModal(overlay.closest('.modal-overlay')));
             });
+            document.querySelectorAll('.close-modal-btn').forEach(btn => {
+                btn.addEventListener('click', () => closeModal(btn.closest('.modal-overlay')));
+            });
+
 
             dom.platformPreferenceDisplay.addEventListener('click', () => {
                 if (confirm("Искате ли да изчистите запазения избор на версия? Ще трябва да избирате отново при всяко стартиране на игра.")) {
@@ -535,18 +515,22 @@
             ['open-shop-btn', 'open-shop-btn-mobile'].forEach(id => {
                 document.getElementById(id)?.addEventListener('click', () => {
                     if(state.isLoggedIn) {
-                        dom.shopStatus.textContent = '';
-                        document.querySelectorAll('.buy-chip-btn').forEach(btn => toggleLoading(btn, false)); // Reset buttons
+                        showShopMainView();
                         openModal(dom.shopModal);
                     }
                 });
             });
-            dom.shopModal.addEventListener('click', (e) => {
-                const buyButton = e.target.closest('.buy-chip-btn');
-                if (buyButton && !buyButton.disabled) {
-                    handlePurchase(buyButton);
-                }
+            
+            dom.shopModal.querySelectorAll('.buy-chip-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const widgetSrc = e.currentTarget.dataset.widgetSrc;
+                    if (widgetSrc) {
+                        showPaymentWidget(widgetSrc);
+                    }
+                });
             });
+
+            dom.backToShopBtn.addEventListener('click', showShopMainView);
         }
 
         function switchRegisterStep(step) {
@@ -811,8 +795,8 @@
             // Tab Navigation
             const tabButtons = document.querySelectorAll('.tab-btn'), tabPanels = document.querySelectorAll('.tab-panel'), navLinks = document.querySelectorAll('.nav-link'), contentTabsSection = document.getElementById('content-tabs');
             function activateTab(tabId) { tabButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId)); tabPanels.forEach(panel => panel.classList.toggle('hidden', panel.id !== `tab-${tabId}`)); }
-            tabButtons.forEach(button => button.addEventListener('click', () => activateTab(button.dataset.tab)));
-            navLinks.forEach(link => { const href = link.getAttribute('href'); if (href && href.startsWith('#')) { link.addEventListener('click', e => { e.preventDefault(); const tabId = href.substring(1); const targetSection = document.getElementById(tabId); if (targetSection) { targetSection.scrollIntoView({ behavior: 'smooth' }); if (tabButtons.length > 0 && Array.from(tabButtons).some(b => b.dataset.tab === tabId)) { activateTab(tabId); } } else { window.scrollTo({ top: 0, behavior: 'smooth' }); } document.getElementById('mobile-menu').classList.add('hidden'); }); } });
+            tabButtons.forEach(button => { if(button.dataset.tab) { button.addEventListener('click', () => activateTab(button.dataset.tab)) }});
+            navLinks.forEach(link => { const href = link.getAttribute('href'); if (href && href.startsWith('#')) { link.addEventListener('click', e => { e.preventDefault(); const targetId = href.substring(1); const targetSection = document.getElementById(targetId); if(targetSection) { targetSection.scrollIntoView({ behavior: 'smooth' }); if (targetId === 'games' || targetId === 'promo' || targetId === 'about') { activateTab(targetId); } } else if (href === '#home') { window.scrollTo({ top: 0, behavior: 'smooth' }); } document.getElementById('mobile-menu').classList.add('hidden'); }); } });
 
             // Mobile Menu
             const menuBtn = document.getElementById('menu-btn'), closeBtn = document.getElementById('close-btn'), mobileMenu = document.getElementById('mobile-menu');
@@ -822,23 +806,25 @@
             dom.searchGamesInput.addEventListener('input', renderGames);
             dom.gameFilters.querySelectorAll('.filter-btn').forEach(button => {
                 button.addEventListener('click', () => {
-                    dom.gameFilters.querySelector('.filter-btn.active').classList.remove('active', 'bg-yellow-500/20', 'text-yellow-400');
-                    dom.gameFilters.querySelector('.filter-btn.active').classList.add('bg-gray-700/50', 'text-gray-300');
+                    const currentActive = dom.gameFilters.querySelector('.filter-btn.active');
+                    if (currentActive) {
+                        currentActive.classList.remove('active', 'bg-yellow-500/20', 'text-yellow-400');
+                        currentActive.classList.add('bg-gray-700/50', 'text-gray-300');
+                    }
                     button.classList.add('active', 'bg-yellow-500/20', 'text-yellow-400');
                     button.classList.remove('bg-gray-700/50', 'text-gray-300');
                     renderGames();
                 });
             });
+
+            // Initialize
+            renderGames();
         }
 
         init();
     </script>
 </body>
 </html>
-
-
-
-
 
 
 
