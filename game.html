@@ -316,7 +316,7 @@
             display: flex; justify-content: center; align-items: center; box-sizing: border-box; position: relative;
         }
         .symbol img {
-            max-width: 85%; max-height: 85%; object-fit: contain; filter: drop-shadow(0 0 8px rgba(0,0,0,0.7)); transition: transform 0.3s, filter 0.3s;
+            max-width: 85%; max-height: 85%; object-fit: contain; filter: drop-shadow(0 0 8px rgba(0,0,0,0.7)); transition: transform 0.3s, filter 0.3s, opacity 0.2s ease-out;
         }
 
         #ui-panel {
@@ -1073,9 +1073,10 @@
             gameArea.classList.remove('anticipation-glow');
         }
 
-        function playInPlaceWinVideo(symbolKey, reelIndex, rowIndex) {
+        function playInPlaceWinVideo(symbolKey, reelIndex, rowIndex, symbolImg) {
             const symbolData = SYMBOLS[symbolKey];
             if (!symbolData || !symbolData.videos || symbolData.videos === 0) {
+                if (symbolImg) symbolImg.style.opacity = '1'; // Reshow if no video is available
                 return;
             }
 
@@ -1093,9 +1094,18 @@
             video.style.top = `${reelElement.offsetTop + (rowIndex * symbolHeight)}px`;
             video.style.left = `${reelElement.offsetLeft}px`;
 
-            video.addEventListener('ended', () => video.remove());
+            video.addEventListener('ended', () => {
+                if (symbolImg) symbolImg.style.opacity = '1';
+                video.remove();
+            });
+            
             reelsContainer.appendChild(video);
-            video.play().catch(e => console.error("In-place video play failed:", e));
+            
+            video.play().catch(e => {
+                console.error("In-place video play failed:", e);
+                if (symbolImg) symbolImg.style.opacity = '1'; // Also reshow if playback fails
+                video.remove();
+            });
         }
         
         async function checkWin(results, finalIndexes) {
@@ -1141,7 +1151,9 @@
                         totalWin += payout;
                         const lineCoords = [];
                         for (let i = 0; i < matchCount; i++) {
-                            winningPositions.add(`${i}-${line[i]}-${payingSymbolKey}`);
+                            const symbolOnLine = results[i][line[i]];
+                            const effectiveSymbol = SYMBOLS[symbolOnLine]?.isWild ? payingSymbolKey : symbolOnLine;
+                            winningPositions.add(`${i}-${line[i]}-${effectiveSymbol}`);
                             lineCoords.push({reel: i, row: line[i]});
                         }
                         winningLines.push(lineCoords);
@@ -1287,8 +1299,12 @@
                 const symbolElement = getSymbolElement(reelIndex, indexInStrip);
                 
                 if (symbolElement) {
+                    const symbolImg = symbolElement.querySelector('img');
+                    if(symbolImg) {
+                        symbolImg.style.opacity = '0';
+                    }
                     symbolElement.classList.add('win-pulse');
-                    playInPlaceWinVideo(symbolKey, reelIndex, symbolIndexOnReel);
+                    playInPlaceWinVideo(symbolKey, reelIndex, symbolIndexOnReel, symbolImg);
                 }
             });
         }
