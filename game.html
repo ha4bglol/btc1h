@@ -17,7 +17,7 @@
             --scatter-glow-color: #ffffff;
             --font-main: 'Poppins', sans-serif;
             --font-title: 'Orbitron', sans-serif;
-            --symbol-size: clamp(55px, 13vh, 80px); /* Reduced symbol size for a more compact look */
+            --symbol-size: clamp(55px, 13vh, 80px); 
         }
 
         html, body {
@@ -28,11 +28,10 @@
             overflow: hidden;
             font-family: var(--font-main);
             color: #fff;
-            background-color: #090a0f; /* Darker base background */
+            background-color: #090a0f; 
         }
 
         body {
-            /* New, more stylish background */
             background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
             display: flex;
             justify-content: center;
@@ -199,11 +198,6 @@
             top: 0;
             left: 0;
             width: 100%;
-        }
-        /* New style for motion blur effect */
-        .reel-strip.spinning .symbol img {
-            filter: blur(4px);
-            transform: scale(0.9);
         }
         .symbol {
             width: 100%;
@@ -713,12 +707,15 @@
             }
 
             function setInitialReelPositions() {
-                reels.forEach((reel, i) => {
+                 reels.forEach((reel, i) => {
                     const strip = reelStrips[i];
-                    const randomIndex = Math.floor(Math.random() * strip.length);
-                    const finalPosition = (randomIndex * symbolSize) + (strip.length * symbolSize);
-                    
                     const reelStripElement = reel.querySelector('.reel-strip');
+                    const symbolSize = reel.clientHeight / SYMBOLS_PER_REEL_VISIBLE;
+                    if (isNaN(symbolSize) || symbolSize === 0) return;
+
+                    const randomIndex = Math.floor(Math.random() * strip.length);
+                    const finalPosition = randomIndex * symbolSize;
+                    
                     reelStripElement.style.transition = 'none';
                     reelStripElement.style.transform = `translateY(-${finalPosition}px)`;
                 });
@@ -734,14 +731,13 @@
                     betSelectionBar.appendChild(button);
                 });
                 
-                symbolSize = document.querySelector('.symbol').offsetHeight;
-                
                 const randomHeaderImage = HEADER_IMAGES[Math.floor(Math.random() * HEADER_IMAGES.length)];
                 headerImage.src = randomHeaderImage;
 
                 updateBetSelection();
                 updateBalanceDisplay();
                 updateWin(0);
+                setTimeout(setInitialReelPositions, 100);
             }
             
             function updateBetSelection() {
@@ -752,7 +748,7 @@
             }
 
             async function spin(isFreeSpin = false) {
-                if (isSpinning || symbolSize === 0) return;
+                if (isSpinning) return;
                 
                 goFullscreen();
                 playNextTrack();
@@ -796,44 +792,44 @@
                 const spinPromises = reels.map((reel, i) => {
                     return new Promise(async (resolve) => {
                         const reelStripElement = reel.querySelector('.reel-strip');
-                        reelStripElement.classList.add('spinning'); // Add class for blur effect
                         const strip = reelStrips[i];
+                        const symbolSize = reel.clientHeight / SYMBOLS_PER_REEL_VISIBLE;
                         
                         const baseTargetPosition = finalIndexes[i] * symbolSize;
-                        const targetPositionInDom = baseTargetPosition + (strip.length * symbolSize);
+                        const loopOffset = strip.length * symbolSize;
 
                         reelStripElement.style.transition = 'none';
-                        const currentTransform = new DOMMatrix(getComputedStyle(reelStripElement).transform);
-                        reelStripElement.style.transform = `translateY(${currentTransform.f - 15}px)`;
-                        reelStripElement.offsetHeight; 
+                        reelStripElement.style.transform = `translateY(-${baseTargetPosition + loopOffset}px)`;
+                        reelStripElement.offsetHeight; // Force reflow
 
                         let landedScatters = 0;
                         results.slice(0, i).forEach(r => r.forEach(s => { if (SYMBOLS[s]?.isScatter) landedScatters++; }));
                         
-                        let duration;
+                        let duration = 1.5 + i * 0.3;
                         if (freeSpinsRemaining === 0 && landedScatters >= 2) {
                             slotMachine.classList.add('anticipation-glow');
-                            duration = 2.0 + i * 0.8; 
+                            duration = 4 + i * 0.5;
+                            
                             if (!anticipationSoundPlayed) {
                                 anticipationSound.loop = true;
                                 anticipationSound.play().catch(e => {});
                                 anticipationSoundPlayed = true;
                             }
-                        } else {
-                            // ***КОРИГИРАН ТАЙМИНГ НА ВЪРТЕНЕ СПОРЕД ИЗИСКВАНИЯТА***
-                            // Първи reel (i=0) спира след 1.0 сек.
-                            // Всеки следващ спира 0.5 сек. по-късно.
-                            duration = 1.0 + i * 0.5;
                         }
                         
-                        // New bezier curve for bounce effect
-                        reelStripElement.style.transition = `transform ${duration}s cubic-bezier(0.34, 1.56, 0.64, 1)`;
-                        reelStripElement.style.transform = `translateY(-${targetPositionInDom}px)`;
+                        reelStripElement.style.transition = `transform ${duration}s cubic-bezier(0.25, 1, 0.5, 1)`;
+                        reelStripElement.style.transform = `translateY(-${baseTargetPosition}px)`;
+
+                        await new Promise(res => setTimeout(res, duration * 1000));
                         
-                        reelStripElement.addEventListener('transitionend', () => {
-                            reelStripElement.classList.remove('spinning'); // Remove blur on land
-                            resolve();
-                        }, { once: true });
+                        results[i].forEach((symbolKey, symbolIndex) => {
+                             if (SYMBOLS[symbolKey]?.isScatter) {
+                                const domIndex = finalIndexes[i] + symbolIndex;
+                                const symbolElement = getSymbolElement(i, domIndex);
+                                if (symbolElement) symbolElement.classList.add('scatter-land');
+                            }
+                        });
+                        resolve();
                     });
                 });
                 
@@ -843,16 +839,6 @@
                     anticipationSound.pause();
                     anticipationSound.currentTime = 0;
                 }
-                
-                results.forEach((reelResult, reelIndex) => {
-                    reelResult.forEach((symbolKey, symbolIndex) => {
-                         if (SYMBOLS[symbolKey]?.isScatter) {
-                            const domIndex = finalIndexes[reelIndex] + symbolIndex + reelStrips[reelIndex].length;
-                            const symbolElement = getSymbolElement(reelIndex, domIndex);
-                            if (symbolElement) symbolElement.classList.add('scatter-land');
-                        }
-                    });
-                });
                 
                 slotMachine.classList.remove('anticipation-glow');
                 const { hasWin, bonusTriggered, winAmount } = await checkWin(results, finalIndexes);
@@ -1098,7 +1084,7 @@
 
             async function triggerBonusAnimation(scatterPos, finalIndexes) {
                 scatterPos.forEach(sp => {
-                    const domIndex = finalIndexes[sp.reel] + sp.pos + reelStrips[sp.reel].length;
+                    const domIndex = finalIndexes[sp.reel] + sp.pos;
                     const symbolElement = getSymbolElement(sp.reel, domIndex);
                     if(symbolElement) symbolElement.classList.add('scatter-trigger');
                 });
@@ -1115,7 +1101,7 @@
                     const [reelIndexStr, symbolIndexStr] = pos.split('-');
                     const reelIndex = parseInt(reelIndexStr, 10);
                     const symbolIndexOnReel = parseInt(symbolIndexStr, 10);
-                    const domIndex = finalIndexes[reelIndex] + symbolIndexOnReel + reelStrips[reelIndex].length;
+                    const domIndex = finalIndexes[reelIndex] + symbolIndexOnReel;
                     const symbolElement = getSymbolElement(reelIndex, domIndex);
                     if (symbolElement) symbolElement.classList.add('win-pulse');
                 });
@@ -1180,7 +1166,6 @@
             
             initializeReels();
             initializeUI();
-            setInitialReelPositions();
             
             return function(newBalance) {
                 if (!isSpinning) {
