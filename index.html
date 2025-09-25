@@ -59,6 +59,27 @@
         /* Scrollbar hide utility */
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Payment Widget Responsive Container */
+        .payment-widget-container {
+            position: relative;
+            width: 100%;
+            max-width: 410px;
+            margin: 0 auto;
+            /* Modern CSS for aspect ratio: 696 (height) / 410 (width) */
+            aspect-ratio: 410 / 696;
+            background-color: #2c2c44; /* Placeholder background */
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        .payment-widget-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -126,11 +147,8 @@
         </header>
 
         <main>
-            <section id="home" class="relative min-h-[50vh] md:min-h-[60vh] flex items-center justify-center text-center bg-cover bg-center" style="background-image: url('https://i.imgur.com/RmOrVLj.png');">
+            <section id="home" class="relative min-h-[25vh] md:min-h-[30vh] bg-cover bg-center" style="background-image: url('https://i.imgur.com/RmOrVLj.png');">
                 <div class="absolute inset-0 bg-black bg-opacity-60"></div>
-                <div class="relative z-10 px-4">
-                    <!-- Content removed as per request -->
-                </div>
             </section>
 
             <!-- JACKPOTS SECTION -->
@@ -261,7 +279,7 @@
 
     <!-- НОВ МОДАЛ ЗА МАГАЗИН -->
     <div id="shop-modal" class="modal-overlay">
-        <div class="modal-content max-w-5xl p-6 md:p-8">
+        <div class="modal-content max-w-5xl p-6 md:p-8 max-h-[90vh] overflow-y-auto">
             <button id="shop-close-btn" class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button>
             
             <div id="shop-main-view">
@@ -286,8 +304,8 @@
 
             <div id="payment-widget-view" class="hidden">
                  <button id="back-to-shop-btn" class="mb-4 text-yellow-400 hover:underline"><i class="fas fa-arrow-left mr-2"></i>Обратно към магазина</button>
-                 <div id="payment-widget-container" class="bg-white rounded-lg overflow-hidden">
-                     <!-- Iframe will be inserted here -->
+                 <div id="payment-widget-container" class="payment-widget-container">
+                     <!-- Iframe will be inserted here by JavaScript -->
                  </div>
                  <div class="mt-6 p-4 bg-gray-800/50 rounded-lg text-center">
                     <p class="text-yellow-400 font-semibold"><i class="fas fa-info-circle mr-2"></i>Важна информация</p>
@@ -417,15 +435,7 @@
         ];
 
         // --- UTILITY FUNCTIONS ---
-        const openModal = (modal) => {
-            // Create a dummy modal for login required, as it was removed from the HTML
-            if (!modal) { 
-                alert("Моля, влезте в профила си, за да продължите.");
-                openModal(dom.loginModal);
-                return;
-            }
-            modal.classList.add('active');
-        }
+        const openModal = (modal) => modal.classList.add('active');
         const closeModal = (modal) => modal.classList.remove('active');
 
         function toggleLoading(button, isLoading) {
@@ -456,11 +466,8 @@
             
             const iframe = document.createElement('iframe');
             iframe.src = widgetSrc;
-            iframe.width = "410";
-            iframe.height = "696";
-            iframe.frameBorder = "0";
-            iframe.scrolling = "no";
-            iframe.style.overflowY = "hidden";
+            iframe.title = "Payment Widget";
+            iframe.allow = "payment";
             iframe.innerHTML = "Can't load widget";
             
             dom.paymentWidgetContainer.innerHTML = ''; // Clear previous
@@ -837,10 +844,7 @@
         init();
     </script>
 </body>
-</html>
-
-
-
+</html
 
 
 
