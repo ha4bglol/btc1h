@@ -813,15 +813,17 @@
                         let duration;
                         if (freeSpinsRemaining === 0 && landedScatters >= 2) {
                             slotMachine.classList.add('anticipation-glow');
-                            duration = 1.8 + i * 0.6; 
+                            duration = 2.0 + i * 0.8; 
                             if (!anticipationSoundPlayed) {
                                 anticipationSound.loop = true;
                                 anticipationSound.play().catch(e => {});
                                 anticipationSoundPlayed = true;
                             }
                         } else {
-                            // Faster, more professional timing
-                            duration = 0.8 + i * 0.4;
+                            // ***КОРИГИРАН ТАЙМИНГ НА ВЪРТЕНЕ СПОРЕД ИЗИСКВАНИЯТА***
+                            // Първи reel (i=0) спира след 1.0 сек.
+                            // Всеки следващ спира 0.5 сек. по-късно.
+                            duration = 1.0 + i * 0.5;
                         }
                         
                         // New bezier curve for bounce effect
