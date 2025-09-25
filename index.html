@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
@@ -19,7 +19,7 @@
         .btn-primary:disabled { background: #4a4a6a; color: #8f8f8f; cursor: not-allowed; opacity: 0.7; transform: none; box-shadow: none; }
         .btn-secondary { border: 2px solid #f7b733; color: #f7b733; transition: all 0.3s ease; }
         .btn-secondary:hover:not(:disabled) { background-color: #f7b733; color: #1a1a2e; }
-        .tab-btn { padding: 0.75rem 1.5rem; font-weight: 600; color: #a0a0b0; border-bottom: 4px solid transparent; transition: all 0.3s ease; cursor: pointer; }
+        .tab-btn { padding: 0.75rem 1rem; md:padding: 0.75rem 1.5rem; font-weight: 600; color: #a0a0b0; border-bottom: 4px solid transparent; transition: all 0.3s ease; cursor: pointer; white-space: nowrap; }
         .tab-btn:hover { color: #f7b733; }
         .tab-btn.active { color: #ffffff; border-bottom-color: #f7b733; }
         
@@ -51,32 +51,14 @@
         @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
         @keyframes gift-shake { 0% { transform: rotate(0deg); } 25% { transform: rotate(5deg); } 50% { transform: rotate(0eg); } 75% { transform: rotate(-5deg); } 100% { transform: rotate(0deg); } }
         .gift-icon-animation { animation: gift-shake 1s ease-in-out infinite; }
+        @keyframes jackpot-glow { 0%, 100% { box-shadow: 0 0 15px rgba(247, 183, 51, 0.3), 0 0 30px rgba(247, 183, 51, 0.2); } 50% { box-shadow: 0 0 30px rgba(247, 183, 51, 0.5), 0 0 50px rgba(247, 183, 51, 0.3); } }
 
-        /* Nivra World RGB Animation */
-        @keyframes rgb-text-animation {
-            0% { color: #ffadad; }
-            14% { color: #ffd6a5; }
-            28% { color: #fdffb6; }
-            42% { color: #caffbf; }
-            57% { color: #9bf6ff; }
-            71% { color: #a0c4ff; }
-            85% { color: #bdb2ff; }
-            100% { color: #ffc6ff; }
-        }
-        .nivra-world-link {
-            font-weight: 700;
-            animation: rgb-text-animation 4s linear infinite alternate;
-        }
-        
-        /* Nivra World Стилизация */
-        .nivra-world-gradient {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .text-shadow-neon {
-            text-shadow: 0 0 5px rgba(236, 72, 153, 0.7), 0 0 10px rgba(236, 72, 153, 0.7), 0 0 15px rgba(56, 189, 248, 0.7), 0 0 20px rgba(56, 189, 248, 0.7);
-        }
+        .jackpot-card-mega { animation: jackpot-glow 4s infinite; }
+        .jackpot-amount { font-family: 'Roboto Mono', monospace; }
+
+        /* Scrollbar hide utility */
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="antialiased">
@@ -99,83 +81,100 @@
     <!-- КОНТЕЙНЕР ЗА ГЛАВНОТО ПРИЛОЖЕНИЕ -->
     <div id="main-app">
         <header class="bg-gray-900/80 backdrop-blur-sm sticky top-0 z-40 shadow-lg">
-            <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
-                <a href="#" class="text-3xl font-bold gradient-text">NIVRA</a>
-                <div class="hidden md:flex items-center space-x-6 text-lg">
-                    <a href="#home" class="nav-link text-gray-300 hover:text-yellow-400 transition">Начало</a>
-                    <a href="#" id="welcome-bonus-link" class="nav-link text-yellow-400 hover:text-yellow-300 transition hidden"><i class="fas fa-gift"></i></a>
-                    <a href="#games" class="nav-link text-gray-300 hover:text-yellow-400 transition">Игри</a>
-                    <a href="#promo" class="nav-link text-gray-300 hover:text-yellow-400 transition">Промоции</a>
-                    <a href="nivra-world.html" class="nav-link nivra-world-link">Nivra World</a>
-                    <a href="#" id="leaderboard-link-desktop" class="nav-link text-gray-300 hover:text-yellow-400 transition">Класация</a>
-                    <a href="#about" class="nav-link text-gray-300 hover:text-yellow-400 transition">За нас</a>
-                </div>
-                <div class="hidden md:flex items-center space-x-4">
-                    <div id="logged-out-view" class="flex items-center space-x-4">
-                        <button id="login-btn-desktop" class="px-6 py-2 rounded-full border-2 btn-secondary">Вход</button>
-                        <button id="register-btn-desktop" class="px-6 py-2 rounded-full text-black font-semibold btn-primary">Регистрация</button>
+            <nav class="container mx-auto px-4 sm:px-6 py-3 flex justify-between items-center gap-4">
+                <a href="#" class="text-3xl font-bold gradient-text flex-shrink-0">NIVRA</a>
+                
+                <!-- Desktop & Mobile Navigation (Horizontally scrollable) -->
+                <div class="flex-grow overflow-x-auto scrollbar-hide">
+                    <div class="flex items-center space-x-4 text-md">
+                        <a href="#home" class="nav-link text-gray-300 hover:text-yellow-400 transition whitespace-nowrap">Начало</a>
+                        <a href="#" id="welcome-bonus-link" class="nav-link text-yellow-400 hover:text-yellow-300 transition hidden whitespace-nowrap"><i class="fas fa-gift"></i></a>
+                        <a href="#games" class="nav-link text-gray-300 hover:text-yellow-400 transition whitespace-nowrap">Игри</a>
+                        <a href="#promo" class="nav-link text-gray-300 hover:text-yellow-400 transition whitespace-nowrap">Промоции</a>
+                        <a href="nivra-world.html" class="nav-link nivra-world-link whitespace-nowrap">Nivra World</a>
+                        <a href="#" id="leaderboard-link-desktop" class="nav-link text-gray-300 hover:text-yellow-400 transition whitespace-nowrap">Класация</a>
+                        <a href="#about" class="nav-link text-gray-300 hover:text-yellow-400 transition whitespace-nowrap">За нас</a>
                     </div>
-                    <div id="logged-in-view" class="hidden items-center space-x-4">
-                         <div id="profile-button" class="flex items-center space-x-3 cursor-pointer group">
+                </div>
+
+                <div class="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
+                    <div id="logged-out-view" class="flex items-center space-x-2 sm:space-x-4">
+                        <button id="login-btn-desktop" class="px-4 sm:px-6 py-2 rounded-full border-2 btn-secondary text-sm sm:text-base">Вход</button>
+                        <button id="register-btn-desktop" class="px-4 sm:px-6 py-2 rounded-full text-black font-semibold btn-primary text-sm sm:text-base">Регистрация</button>
+                    </div>
+                    <div id="logged-in-view" class="hidden items-center space-x-2 sm:space-x-4">
+                         <div id="profile-button" class="flex items-center space-x-2 sm:space-x-3 cursor-pointer group">
                              <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-yellow-500 to-orange-500 flex items-center justify-center">
                                 <i class="fas fa-user text-white text-lg"></i>
                             </div>
-                            <div class="text-left">
+                            <div class="text-left hidden md:block">
                                 <span id="user-username" class="text-white font-semibold block text-sm leading-tight group-hover:text-yellow-400 transition"></span>
                                 <span class="text-gray-500 text-xs leading-tight">Моят профил</span>
                             </div>
                         </div>
-                        <div class="h-10 w-px bg-gray-700"></div>
+                        <div class="h-10 w-px bg-gray-700 hidden sm:block"></div>
                         <div class="text-right">
-                             <span id="user-balance" class="text-yellow-400 font-bold text-2xl block"><i class="fas fa-coins mr-2"></i>0</span>
+                             <span id="user-balance" class="text-yellow-400 font-bold text-lg sm:text-2xl block"><i class="fas fa-coins mr-1 sm:mr-2"></i>0</span>
                         </div>
-                        <button id="open-shop-btn" class="px-6 py-3 rounded-full text-lg font-semibold text-black btn-primary flex items-center gap-2 transform hover:scale-105 transition-transform">
+                        <button id="open-shop-btn" class="px-3 sm:px-6 py-2 sm:py-3 rounded-full font-semibold text-black btn-primary flex items-center gap-2 transform hover:scale-105 transition-transform text-sm sm:text-base">
                             <i class="fas fa-plus-circle"></i>
-                            <span>Депозит</span>
+                            <span class="hidden sm:inline">Депозит</span>
                         </button>
                     </div>
                 </div>
-                <div id="menu-btn" class="md:hidden text-3xl cursor-pointer text-white">&#9776;</div>
             </nav>
         </header>
-        <div id="mobile-menu" class="hidden fixed inset-0 bg-black/90 z-50">
-             <div class="relative w-full h-full flex flex-col items-center justify-center text-center">
-                <div id="close-btn" class="absolute top-6 right-6 text-4xl text-white cursor-pointer">&times;</div>
-                <ul class="space-y-6 text-2xl">
-                    <li><a href="#home" class="nav-link mobile-nav-link text-gray-300">Начало</a></li>
-                    <li><a href="#games" class="nav-link mobile-nav-link text-gray-300">Игри</a></li>
-                    <li><a href="#promo" class="nav-link mobile-nav-link text-gray-300">Промоции</a></li>
-                    <li><a href="nivra-world.html" class="nav-link mobile-nav-link nivra-world-link">Nivra World</a></li>
-                    <li><a href="#" id="leaderboard-link-mobile" class="nav-link mobile-nav-link text-gray-300">Класация</a></li>
-                    <li><a href="#about" class="nav-link mobile-nav-link text-gray-300">За нас</a></li>
-                </ul>
-                <div class="mt-12 w-4/5 max-w-xs">
-                    <div id="logged-out-view-mobile" class="flex flex-col space-y-4">
-                         <button id="login-btn-mobile" class="w-full px-6 py-3 rounded-full border-2 btn-secondary">Вход</button>
-                         <button id="register-btn-mobile" class="w-full px-6 py-3 rounded-full text-black font-semibold btn-primary">Регистрация</button>
+
+        <main>
+            <section id="home" class="relative min-h-[50vh] md:min-h-[60vh] flex items-center justify-center text-center bg-cover bg-center" style="background-image: url('https://i.imgur.com/RmOrVLj.png');">
+                <div class="absolute inset-0 bg-black bg-opacity-60"></div>
+                <div class="relative z-10 px-4">
+                    <!-- Content removed as per request -->
+                </div>
+            </section>
+
+            <!-- JACKPOTS SECTION -->
+            <section id="jackpots" class="py-16 bg-[#1a1a2e]">
+                <div class="container mx-auto px-6">
+                    <div class="text-center mb-12">
+                        <h2 class="text-3xl md:text-4xl font-bold gradient-text">Nivra Джакпоти</h2>
+                        <p class="text-gray-400 mt-2">Стойностите растат всяка секунда! Играй, за да спечелиш.</p>
                     </div>
-                    <div id="logged-in-view-mobile" class="hidden flex-col items-center space-y-4">
-                        <div id="mobile-profile-info" class="text-center">
-                            <span id="user-username-mobile" class="text-white font-semibold block text-xl"></span>
-                            <span id="user-balance-mobile" class="text-yellow-400 font-bold text-2xl"><i class="fas fa-coins mr-1"></i>0</span>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                        <!-- Major Jackpot -->
+                        <div class="jackpot-card bg-gray-900/50 border border-gray-700 p-6 rounded-xl text-center flex flex-col items-center justify-center transition-all duration-300 hover:border-yellow-500 hover:scale-105">
+                            <div class="text-4xl text-sky-400 mb-3"><i class="fas fa-star"></i></div>
+                            <h3 class="text-xl font-semibold text-sky-400 uppercase tracking-widest">Major</h3>
+                            <div class="my-2">
+                                <span id="jackpot-major-amount" class="jackpot-amount text-4xl md:text-5xl font-bold text-white">0</span>
+                            </div>
                         </div>
-                        <button id="open-shop-btn-mobile" class="w-full px-6 py-4 rounded-full text-xl font-semibold text-black btn-primary flex items-center justify-center gap-2">
-                            <i class="fas fa-plus-circle"></i>
-                            <span>Депозит</span>
-                        </button>
-                        <button id="logout-btn-mobile" class="w-full px-6 py-3 rounded-full border-2 border-red-500 text-red-500 mt-4">Изход</button>
+
+                        <!-- Mega Jackpot -->
+                        <div class="jackpot-card jackpot-card-mega bg-gray-900 border-2 border-yellow-400 p-6 rounded-xl text-center flex flex-col items-center justify-center relative transform md:scale-110">
+                            <div class="text-5xl text-yellow-400 mb-3"><i class="fas fa-gem"></i></div>
+                            <h3 class="text-2xl font-bold text-yellow-400 uppercase tracking-widest">Mega</h3>
+                            <div class="my-2">
+                                <span id="jackpot-mega-amount" class="jackpot-amount text-5xl md:text-6xl font-bold gradient-text">0</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Minor Jackpot -->
+                        <div class="jackpot-card bg-gray-900/50 border border-gray-700 p-6 rounded-xl text-center flex flex-col items-center justify-center transition-all duration-300 hover:border-yellow-500 hover:scale-105">
+                            <div class="text-4xl text-purple-400 mb-3"><i class="fas fa-bolt"></i></div>
+                            <h3 class="text-xl font-semibold text-purple-400 uppercase tracking-widest">Minor</h3>
+                            <div class="my-2">
+                                <span id="jackpot-minor-amount" class="jackpot-amount text-4xl md:text-5xl font-bold text-white">0</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <main>
-            <section id="home" class="relative min-h-screen flex items-center justify-center text-center bg-cover bg-center" style="background-image: url('https://i.imgur.com/RmOrVLj.png');">
-                <div class="absolute inset-0 bg-black bg-opacity-60"></div>
-                <div class="relative z-10 px-4"><h1 class="text-5xl md:text-7xl font-bold text-white mb-4 leading-tight">Вашето Място за <span class="gradient-text">Социални Забавления</span></h1><p class="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-8">Присъединете се към хиляди играчи в най-добрата платформа за безплатни игри и забавления.</p><a href="#games" class="nav-link px-10 py-4 text-lg font-semibold rounded-full text-black btn-primary">Играй сега <i class="fas fa-arrow-right ml-2"></i></a></div>
             </section>
+
+
             <section id="content-tabs" class="py-20 bg-[#161625]">
                 <div class="container mx-auto px-6">
-                    <div id="tab-buttons" class="flex justify-center border-b border-gray-700 mb-12 flex-wrap">
+                    <div id="tab-buttons" class="flex justify-center border-b border-gray-700 mb-12 flex-nowrap overflow-x-auto scrollbar-hide">
                         <button class="tab-btn active" data-tab="games">Игри</button>
                         <a href="nivra-world.html" class="tab-btn">Nivra World</a>
                         <button class="tab-btn" data-tab="promo">Промоции</button>
@@ -187,7 +186,7 @@
                                 <div class="relative flex-grow max-w-lg"><input type="text" id="search-games" placeholder="Търси игра..." class="form-input !pl-10 w-full"><i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i></div>
                                 <div id="game-filters" class="flex items-center justify-center gap-2 flex-wrap"><button data-filter="all" class="filter-btn active px-4 py-2 rounded-full bg-yellow-500/20 text-yellow-400">Всички</button><button data-filter="slot" class="filter-btn px-4 py-2 rounded-full bg-gray-700/50 text-gray-300">Слотове</button><button data-filter="table" class="filter-btn px-4 py-2 rounded-full bg-gray-700/50 text-gray-300">Игри на маса</button></div>
                             </div>
-                            <div id="games-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"></div>
+                            <div id="games-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6"></div>
                             <p id="no-games-found" class="text-center text-gray-400 text-lg hidden">Няма намерени игри, съответстващи на търсенето.</p>
                         </div>
                         
@@ -212,7 +211,6 @@
     <!-- Modals -->
     <div id="login-modal" class="modal-overlay"> <div class="modal-content max-w-md p-8"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold text-center mb-6 gradient-text">Вход в NIVRA</h3> <form id="login-form"><div class="mb-4"><label for="login-email" class="block text-sm font-medium text-gray-400 mb-2">Имейл</label><input type="email" id="login-email" required class="form-input"></div><div class="mb-4"><label for="login-password" class="block text-sm font-medium text-gray-400 mb-2">Парола</label><input type="password" id="login-password" required class="form-input"></div><p id="login-error" class="text-red-500 text-sm mb-4 text-center h-5"></p><button type="submit" class="w-full py-3 rounded-full text-black font-semibold btn-primary flex items-center justify-center gap-2"><span class="btn-text">Вход</span></button></form> <div class="text-center mt-6"><a href="#" id="forgot-password-link" class="text-sm text-yellow-400 hover:underline">Забравена парола?</a></div> </div> </div>
     <div id="forgot-password-modal" class="modal-overlay"> <div class="modal-content max-w-md p-8"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold text-center mb-6 gradient-text">Възстанови Парола</h3> <p class="text-gray-400 text-center mb-6">Въведете имейла си и ще изпратим линк за възстановяване.</p> <form id="forgot-password-form"><div class="mb-4"><label for="reset-email" class="block text-sm font-medium text-gray-400 mb-2">Имейл</label><input type="email" id="reset-email" required class="form-input"></div><p id="reset-error" class="text-red-500 text-sm mb-4 text-center h-5"></p><p id="reset-success" class="text-green-400 text-sm mb-4 text-center h-5"></p><button type="submit" class="w-full py-3 rounded-full text-black font-semibold btn-primary flex items-center justify-center gap-2"><span class="btn-text">Изпрати линк</span></button></form> <div class="text-center mt-6"><a href="#" id="back-to-login-link" class="text-sm text-yellow-400 hover:underline">&larr; Обратно към Вход</a></div> </div> </div>
-    <div id="login-required-modal" class="modal-overlay"> <div class="modal-content max-w-md p-8 text-center"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <div class="text-5xl text-yellow-400 mb-4"><i class="fas fa-lock"></i></div> <h3 class="text-2xl font-bold text-white mb-4">Достъпът е ограничен</h3> <p class="text-gray-400 mb-8">За да играете, трябва да влезете в профила си.</p> <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4"> <button id="login-from-required-btn" class="w-full py-3 rounded-full text-black font-semibold btn-primary">Вход</button> <button id="register-from-required-btn" class="w-full py-3 rounded-full border-2 btn-secondary">Регистрация</button> </div> </div> </div>
     <div id="registration-success-modal" class="modal-overlay"> <div class="modal-content max-w-md p-8 text-center"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <div class="text-5xl text-green-400 mb-4"><i class="fas fa-check-circle"></i></div> <h3 class="text-2xl font-bold text-white mb-4">Регистрацията е Успешна!</h3> <p class="text-gray-400 mb-8">Изпратихме линк за активация на вашия имейл. Моля, проверете пощата си, за да завършите процеса.</p> <button id="close-success-modal-btn" class="w-full max-w-xs mx-auto py-3 rounded-full text-black font-semibold btn-primary">Добре</button> </div> </div>
     <div id="platform-choice-modal" class="modal-overlay"> <div class="modal-content max-w-md p-8 text-center"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <div class="text-5xl text-yellow-400 mb-4"><i class="fas fa-gamepad"></i></div> <h3 class="text-2xl font-bold text-white mb-4">Изберете версия на играта</h3> <p class="text-gray-400 mb-8">Изберете най-подходящата версия за вашето устройство.</p> <div class="grid grid-cols-1 sm:grid-cols-2 gap-4"> <button data-version="mobile" class="platform-btn w-full py-4 rounded-lg text-black font-semibold btn-primary flex flex-col items-center justify-center"><i class="fab fa-apple text-2xl mb-1"></i><span>iOS</span></button> <button data-version="mobile" class="platform-btn w-full py-4 rounded-lg text-black font-semibold btn-primary flex flex-col items-center justify-center"><i class="fab fa-android text-2xl mb-1"></i><span>Android</span></button> <button data-version="full" class="platform-btn w-full py-4 rounded-lg border-2 btn-secondary flex flex-col items-center justify-center"><i class="fab fa-android text-2xl mb-1"></i><span>Android (Full)</span></button> <button data-version="full" class="platform-btn w-full py-4 rounded-lg border-2 btn-secondary flex flex-col items-center justify-center"><i class="fas fa-desktop text-2xl mb-1"></i><span>PC (Win/Mac)</span></button> </div> <div class="mt-6"> <label class="flex items-center justify-center space-x-3"> <input type="checkbox" id="remember-platform-choice" class="h-5 w-5 accent-pink-500 bg-gray-700 border-gray-600 rounded focus:ring-pink-500"> <span class="text-sm text-gray-300">Запомни избора ми</span> </label> </div> </div> </div>
     <div id="register-modal" class="modal-overlay"> <div class="modal-content max-w-lg p-8 max-h-[90vh] overflow-y-auto"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold text-center mb-2 gradient-text">Създай Акаунт в NIVRA</h3> <div class="step-indicator"><div class="step active" id="indicator-1"><div class="step-circle">1</div><span class="step-label">Данни</span><div class="step-line"></div></div><div class="step" id="indicator-2"><div class="step-circle">2</div><span class="step-label">Профил</span><div class="step-line"></div></div><div class="step" id="indicator-3"><div class="step-circle">3</div><span class="step-label">Финал</span></div></div> <div id="register-step-1" class="step-content active"><form id="register-form-step1"><div class="mb-4"><label for="register-email" class="block text-sm font-medium text-gray-400 mb-2">Имейл</label><input type="email" id="register-email" required class="form-input"></div><div class="mb-4"><label for="register-password" class="block text-sm font-medium text-gray-400 mb-2">Парола</label><input type="password" id="register-password" required class="form-input"><p class="text-xs text-gray-500 mt-1">Минимум 6 символа.</p></div><div class="mb-6"><label for="register-confirm-password" class="block text-sm font-medium text-gray-400 mb-2">Потвърди Парола</label><input type="password" id="register-confirm-password" required class="form-input"></div><p id="register-step1-error" class="text-red-500 text-sm mb-4 text-center h-5"></p><button type="submit" class="w-full py-3 rounded-full text-black font-semibold btn-primary flex items-center justify-center gap-2"><span class="btn-text">Напред</span> <i class="fas fa-arrow-right"></i></button></form></div> <div id="register-step-2" class="step-content"><form id="register-form-step2"><div class="mb-4"><label for="register-fullname" class="block text-sm font-medium text-gray-400 mb-2">Пълно Име</label><input type="text" id="register-fullname" required class="form-input"></div><div class="mb-6"><label for="register-username" class="block text-sm font-medium text-gray-400 mb-2">Потребителско Име</label><input type="text" id="register-username" required class="form-input"></div><p id="register-step2-error" class="text-red-500 text-sm mb-4 text-center h-5"></p><div class="flex space-x-4"><button type="button" id="register-back-step1" class="w-1/2 py-3 rounded-full btn-secondary">Назад</button><button type="submit" class="w-1/2 py-3 rounded-full text-black font-semibold btn-primary flex items-center justify-center gap-2"><span class="btn-text">Напред</span> <i class="fas fa-arrow-right"></i></button></div></form></div> <div id="register-step-3" class="step-content"><form id="register-form-step3"><div class="space-y-4 mb-6 text-left p-4 bg-gray-800/50 rounded-lg"><label class="flex items-start space-x-3"><input type="checkbox" id="terms-agree" required class="mt-1 h-5 w-5 accent-pink-500 bg-gray-700 border-gray-600 rounded focus:ring-pink-500"><span class="text-sm text-gray-300">Съгласен съм с <a href="#" class="text-yellow-400 underline footer-link" data-modal="terms-modal">Общите условия</a>.</span></label><label class="flex items-start space-x-3"><input type="checkbox" id="age-confirm" required class="mt-1 h-5 w-5 accent-pink-500 bg-gray-700 border-gray-600 rounded focus:ring-pink-500"><span class="text-sm text-gray-300">Потвърждавам, че имам навършени 18 години.</span></label></div><p id="register-step3-error" class="text-red-500 text-sm mb-4 text-center h-5"></p><div class="flex space-x-4"><button type="button" id="register-back-step2" class="w-1/2 py-3 rounded-full btn-secondary">Назад</button><button type="submit" class="w-1/2 py-3 rounded-full text-black font-semibold btn-primary flex items-center justify-center gap-2"><span class="btn-text">Създай Акаунт</span></button></div></form></div> </div> </div>
@@ -272,7 +270,7 @@
                     <h3 class="text-3xl font-bold text-white mb-2">Магазин за Точки</h3>
                     <p class="text-gray-400">Изберете пакет и платете сигурно с криптовалута чрез NOWPayments.</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                     <!-- Пакет 1 -->
                     <div class="shop-item group bg-gray-900/50 border border-gray-700 p-6 rounded-xl text-center flex flex-col hover:border-yellow-500 transition-all duration-300"> <h4 class="text-xl font-semibold text-white">Стартер</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">250</span> <span class="block text-gray-500">точки</span> </div> <div class="flex-grow"></div> <button data-widget-src="https://nowpayments.io/embeds/payment-widget?iid=6285958129" class="buy-chip-btn w-full py-3 rounded-full text-black font-semibold btn-primary mt-4">Купи за $3.99</button> </div>
                     <!-- Пакет 2 -->
@@ -341,7 +339,6 @@
             loginModal: document.getElementById('login-modal'),
             registerModal: document.getElementById('register-modal'),
             forgotPasswordModal: document.getElementById('forgot-password-modal'),
-            loginRequiredModal: document.getElementById('login-required-modal'),
             registrationSuccessModal: document.getElementById('registration-success-modal'),
             platformChoiceModal: document.getElementById('platform-choice-modal'),
             welcomeBonusModal: document.getElementById('welcome-bonus-modal'),
@@ -352,8 +349,6 @@
             // Views
             loggedOutView: document.getElementById('logged-out-view'),
             loggedInView: document.getElementById('logged-in-view'),
-            loggedOutViewMobile: document.getElementById('logged-out-view-mobile'),
-            loggedInViewMobile: document.getElementById('logged-in-view-mobile'),
             
             // Forms & Errors
             loginForm: document.getElementById('login-form'),
@@ -367,8 +362,6 @@
             // User Info Displays
             userUsernameDisplay: document.getElementById('user-username'),
             userBalanceDisplay: document.getElementById('user-balance'),
-            userUsernameMobileDisplay: document.getElementById('user-username-mobile'),
-            userBalanceMobileDisplay: document.getElementById('user-balance-mobile'),
 
             // Profile Modal Displays
             profileModalUsername: document.getElementById('profile-modal-username'),
@@ -402,6 +395,11 @@
             paymentWidgetView: document.getElementById('payment-widget-view'),
             paymentWidgetContainer: document.getElementById('payment-widget-container'),
             backToShopBtn: document.getElementById('back-to-shop-btn'),
+
+            // Jackpots
+            jackpotMega: document.getElementById('jackpot-mega-amount'),
+            jackpotMajor: document.getElementById('jackpot-major-amount'),
+            jackpotMinor: document.getElementById('jackpot-minor-amount'),
         };
 
         const gamesData = [
@@ -419,7 +417,15 @@
         ];
 
         // --- UTILITY FUNCTIONS ---
-        const openModal = (modal) => modal.classList.add('active');
+        const openModal = (modal) => {
+            // Create a dummy modal for login required, as it was removed from the HTML
+            if (!modal) { 
+                alert("Моля, влезте в профила си, за да продължите.");
+                openModal(dom.loginModal);
+                return;
+            }
+            modal.classList.add('active');
+        }
         const closeModal = (modal) => modal.classList.remove('active');
 
         function toggleLoading(button, isLoading) {
@@ -463,12 +469,8 @@
 
         function setupModalTriggers() {
             // Auth buttons
-            ['login-btn-desktop', 'login-btn-mobile', 'login-from-required-btn'].forEach(id => {
-                document.getElementById(id).addEventListener('click', () => { closeModal(dom.loginRequiredModal); openModal(dom.loginModal); });
-            });
-            ['register-btn-desktop', 'register-btn-mobile', 'register-from-required-btn'].forEach(id => {
-                document.getElementById(id).addEventListener('click', () => { closeModal(dom.loginRequiredModal); switchRegisterStep(1); openModal(dom.registerModal); });
-            });
+            document.getElementById('login-btn-desktop').addEventListener('click', () => { openModal(dom.loginModal); });
+            document.getElementById('register-btn-desktop').addEventListener('click', () => { switchRegisterStep(1); openModal(dom.registerModal); });
             // Link-based modals
             document.getElementById('forgot-password-link').addEventListener('click', (e) => { e.preventDefault(); closeModal(dom.loginModal); openModal(dom.forgotPasswordModal); });
             document.getElementById('back-to-login-link').addEventListener('click', (e) => { e.preventDefault(); closeModal(dom.forgotPasswordModal); openModal(dom.loginModal); });
@@ -477,13 +479,10 @@
             // Header buttons
             dom.welcomeBonusLink.addEventListener('click', (e) => { e.preventDefault(); openModal(dom.welcomeBonusModal); });
             document.getElementById('profile-button').addEventListener('click', () => { updateProfileModal(); openModal(dom.userProfileModal); });
-            ['leaderboard-link-desktop', 'leaderboard-link-mobile'].forEach(id => {
-                document.getElementById(id).addEventListener('click', (e) => {
+            document.getElementById('leaderboard-link-desktop').addEventListener('click', (e) => {
                     e.preventDefault();
                     renderLeaderboard();
                     openModal(dom.leaderboardModal);
-                    document.getElementById('mobile-menu').classList.add('hidden');
-                });
             });
 
             // Legal modals from footer and registration
@@ -512,13 +511,11 @@
             });
             
             // SHOP TRIGGERS
-            ['open-shop-btn', 'open-shop-btn-mobile'].forEach(id => {
-                document.getElementById(id)?.addEventListener('click', () => {
-                    if(state.isLoggedIn) {
-                        showShopMainView();
-                        openModal(dom.shopModal);
-                    }
-                });
+            document.getElementById('open-shop-btn')?.addEventListener('click', () => {
+                if(state.isLoggedIn) {
+                    showShopMainView();
+                    openModal(dom.shopModal);
+                }
             });
             
             dom.shopModal.querySelectorAll('.buy-chip-btn').forEach(button => {
@@ -541,15 +538,13 @@
 
         function updateUIForLoginState(isLoggedIn, userData = null) {
             state.isLoggedIn = isLoggedIn;
-            [dom.loggedOutView, dom.loggedOutViewMobile].forEach(el => el.classList.toggle('hidden', isLoggedIn));
-            [dom.loggedInView, dom.loggedInViewMobile].forEach(el => el.classList.toggle('hidden', !isLoggedIn));
+            dom.loggedOutView.classList.toggle('hidden', isLoggedIn);
+            dom.loggedInView.classList.toggle('hidden', !isLoggedIn);
 
             if (isLoggedIn && userData) {
-                const balanceFormatted = userData.chips.toLocaleString();
+                const balanceFormatted = userData.chips.toLocaleString('bg-BG');
                 dom.userUsernameDisplay.textContent = userData.username;
-                dom.userBalanceDisplay.innerHTML = `<i class="fas fa-coins mr-2"></i>${balanceFormatted}`;
-                dom.userUsernameMobileDisplay.textContent = userData.username;
-                dom.userBalanceMobileDisplay.innerHTML = `<i class="fas fa-coins mr-1"></i>${balanceFormatted}`;
+                dom.userBalanceDisplay.innerHTML = `<i class="fas fa-coins mr-1 sm:mr-2"></i>${balanceFormatted}`;
                 
                 // Handle welcome bonus gift icon
                 const bonusClaimed = userData.welcomeBonusClaimed === true;
@@ -560,7 +555,7 @@
 
             } else {
                 dom.userUsernameDisplay.textContent = '';
-                dom.userBalanceDisplay.innerHTML = `<i class="fas fa-coins mr-2"></i>0`;
+                dom.userBalanceDisplay.innerHTML = `<i class="fas fa-coins mr-1 sm:mr-2"></i>0`;
                 dom.welcomeBonusLink.classList.add('hidden');
             }
             updatePlatformPreferenceDisplay();
@@ -611,7 +606,7 @@
                 dom.profileModalUsername.textContent = state.currentUserData.username;
                 dom.profileModalEmail.textContent = state.currentUserData.email;
                 dom.profileModalFullname.textContent = state.currentUserData.fullName;
-                dom.profileModalBalance.innerHTML = `<i class="fas fa-coins mr-2"></i>${state.currentUserData.chips.toLocaleString()}`;
+                dom.profileModalBalance.innerHTML = `<i class="fas fa-coins mr-2"></i>${state.currentUserData.chips.toLocaleString('bg-BG')}`;
                 updatePlatformPreferenceDisplay();
             }
         }
@@ -686,7 +681,7 @@
                                 openModal(dom.platformChoiceModal);
                             }
                         } else {
-                            openModal(dom.loginRequiredModal);
+                            openModal(dom.loginModal);
                         }
                     });
                     dom.gamesGrid.appendChild(card);
@@ -720,13 +715,30 @@
                         <div class="flex items-center p-3 rounded-lg bg-gray-800/50">
                             <div class="w-10 h-10 flex-shrink-0 font-bold text-lg flex items-center justify-center rounded-md ${rankClass}">${rank}</div>
                             <div class="ml-4 flex-grow font-semibold text-white truncate">${user.username}</div>
-                            <div class="ml-4 flex-shrink-0 text-yellow-400 font-bold text-right"><i class="fas fa-coins mr-2"></i>${user.chips.toLocaleString()}</div>
+                            <div class="ml-4 flex-shrink-0 text-yellow-400 font-bold text-right"><i class="fas fa-coins mr-2"></i>${user.chips.toLocaleString('bg-BG')}</div>
                         </div>
                     `;
                 });
                 html += '</div>';
                 leaderboardContent.innerHTML = html;
             }, 500);
+        }
+
+        // --- JACKPOT LOGIC (MOCK DATA) ---
+        let jackpots = {
+            mega: 12543876,
+            major: 1876453,
+            minor: 234567,
+        };
+
+        function updateJackpots() {
+            jackpots.mega += Math.random() * 21.37;
+            jackpots.major += Math.random() * 8.12;
+            jackpots.minor += Math.random() * 3.78;
+
+            dom.jackpotMega.textContent = Math.floor(jackpots.mega).toLocaleString('bg-BG');
+            dom.jackpotMajor.textContent = Math.floor(jackpots.major).toLocaleString('bg-BG');
+            dom.jackpotMinor.textContent = Math.floor(jackpots.minor).toLocaleString('bg-BG');
         }
 
         // --- INITIALIZATION ---
@@ -743,7 +755,7 @@
             document.getElementById('register-back-step2').addEventListener('click', () => switchRegisterStep(2));
             
             // Logout
-            ['logout-btn', 'logout-btn-mobile', 'logout-from-verification-btn'].forEach(id => document.getElementById(id)?.addEventListener('click', handleLogout));
+            ['logout-btn', 'logout-from-verification-btn'].forEach(id => document.getElementById(id)?.addEventListener('click', handleLogout));
             
             // Verification
             dom.resendVerificationBtn.addEventListener('click', async () => { if (auth.currentUser) { try { const actionCodeSettings = { url: window.location.href }; await sendEmailVerification(auth.currentUser, actionCodeSettings); alert('Изпратен е нов имейл!'); } catch { alert('Грешка. Опитайте по-късно.'); } } });
@@ -796,11 +808,8 @@
             const tabButtons = document.querySelectorAll('.tab-btn'), tabPanels = document.querySelectorAll('.tab-panel'), navLinks = document.querySelectorAll('.nav-link'), contentTabsSection = document.getElementById('content-tabs');
             function activateTab(tabId) { tabButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId)); tabPanels.forEach(panel => panel.classList.toggle('hidden', panel.id !== `tab-${tabId}`)); }
             tabButtons.forEach(button => { if(button.dataset.tab) { button.addEventListener('click', () => activateTab(button.dataset.tab)) }});
-            navLinks.forEach(link => { const href = link.getAttribute('href'); if (href && href.startsWith('#')) { link.addEventListener('click', e => { e.preventDefault(); const targetId = href.substring(1); const targetSection = document.getElementById(targetId); if(targetSection) { targetSection.scrollIntoView({ behavior: 'smooth' }); if (targetId === 'games' || targetId === 'promo' || targetId === 'about') { activateTab(targetId); } } else if (href === '#home') { window.scrollTo({ top: 0, behavior: 'smooth' }); } document.getElementById('mobile-menu').classList.add('hidden'); }); } });
+            navLinks.forEach(link => { const href = link.getAttribute('href'); if (href && href.startsWith('#')) { link.addEventListener('click', e => { e.preventDefault(); const targetId = href.substring(1); const targetSection = document.getElementById(targetId); if(targetSection) { targetSection.scrollIntoView({ behavior: 'smooth' }); if (targetId === 'games' || targetId === 'promo' || targetId === 'about') { activateTab(targetId); } } else if (href === '#home') { window.scrollTo({ top: 0, behavior: 'smooth' }); } }); } });
 
-            // Mobile Menu
-            const menuBtn = document.getElementById('menu-btn'), closeBtn = document.getElementById('close-btn'), mobileMenu = document.getElementById('mobile-menu');
-            menuBtn.addEventListener('click', () => mobileMenu.classList.remove('hidden')); closeBtn.addEventListener('click', () => mobileMenu.classList.add('hidden'));
 
             // Game Search and Filter Listeners
             dom.searchGamesInput.addEventListener('input', renderGames);
@@ -817,7 +826,11 @@
                 });
             });
 
-            // Initialize
+            // Initialize Jackpots
+            updateJackpots(); // Initial call
+            setInterval(updateJackpots, 1370); // Update roughly every 1.4 seconds
+
+            // Initialize Games
             renderGames();
         }
 
