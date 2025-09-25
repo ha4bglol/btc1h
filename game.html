@@ -1060,6 +1060,8 @@
         
         function clearAnimations() {
             winLinesSvg.innerHTML = '';
+            document.querySelectorAll('.in-place-win-video').forEach(v => v.remove());
+            
             reels.forEach(reel => {
                 const expandingSymbols = reel.querySelectorAll('.symbol.expanding');
                 expandingSymbols.forEach(el => el.remove());
@@ -1067,9 +1069,13 @@
                 const strip = reel.querySelector('.reel-strip');
                 if (strip) { strip.style.opacity = '1'; }
             });
-
-            document.querySelectorAll('.symbol').forEach(el => { el.className = 'symbol'; });
-            document.querySelectorAll('.in-place-win-video').forEach(v => v.remove());
+            
+            document.querySelectorAll('.symbol').forEach(el => {
+                el.className = 'symbol';
+                const img = el.querySelector('img');
+                if (img) img.style.opacity = '1';
+            });
+            
             gameArea.classList.remove('anticipation-glow');
         }
 
