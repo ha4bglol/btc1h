@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Wild Angels - Neon Dream</title>
+    <title>Wild Angels</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -12,11 +12,11 @@
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap');
 
         :root {
-            --glow-color: #00ffc3; /* Светло зелено/тюркоаз */
-            --secondary-glow: #f900ff; /* Ярко розово/магента */
-            --win-glow-color: #ffee00;
-            --anticipation-glow-color: #ffc400;
-            --scatter-glow-color: #f900ff; /* Розово за скатер */
+            --glow-color: #7CFC00; /* Светло зелено */
+            --secondary-glow: #FF69B4; /* Светло розово */
+            --win-glow-color: #ADFF2F; /* Ярко зелено-жълто */
+            --anticipation-glow-color: #FF69B4; /* Розово */
+            --scatter-glow-color: #FF69B4; /* Розово за скатер */
         }
 
         html, body {
@@ -30,7 +30,7 @@
         }
 
         body {
-            background: linear-gradient(135deg, #f900ff, #00ffc3, #2e005e, #100a1c);
+            background: linear-gradient(135deg, #ffafbd, #a2d2ff, #2e005e, #100a1c);
             background-size: 400% 400%;
             animation: color-shift 15s ease-in-out infinite;
         }
@@ -220,7 +220,7 @@
             height: 100%;
             padding: 0 2.5vmin;
             flex-shrink: 0;
-            width: clamp(120px, 25vmin, 200px);
+            width: clamp(150px, 28vmin, 250px);
         }
         
         #right-panel {
@@ -229,11 +229,11 @@
 
         #spinButton {
             font-family: 'Orbitron', sans-serif;
-            width: clamp(90px, 20vmin, 160px);
-            height: clamp(90px, 20vmin, 160px);
+            width: clamp(100px, 22vmin, 180px);
+            height: clamp(100px, 22vmin, 180px);
             border: 3px solid var(--glow-color);
             border-radius: 50%;
-            background-image: linear-gradient(to bottom, rgba(0, 255, 195, 0.3), rgba(0, 255, 195, 0.1));
+            background-image: linear-gradient(to bottom, rgba(124, 252, 0, 0.3), rgba(124, 252, 0, 0.1));
             color: #fff;
             cursor: pointer;
             text-shadow: 0 0 1vmin var(--glow-color);
@@ -241,12 +241,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: clamp(0.8rem, 2.5vmin, 1.4rem);
+            font-size: clamp(1rem, 2.8vmin, 1.6rem);
             flex-direction: column;
             line-height: 1.2;
         }
         #spinButton:not(:disabled):hover {
-            background-color: rgba(0, 255, 195, 0.4);
+            background-color: rgba(124, 252, 0, 0.4);
             box-shadow: 0 0 2vmin var(--glow-color);
             transform: scale(1.05);
         }
@@ -270,40 +270,40 @@
             padding: 1.5vmin 3vmin; 
             border: 2px solid var(--glow-color);
             border-radius: 1.5vmin;
-            background-image: linear-gradient(to bottom, rgba(0, 255, 195, 0.3), rgba(0, 255, 195, 0.1));
+            background-image: linear-gradient(to bottom, rgba(124, 252, 0, 0.3), rgba(124, 252, 0, 0.1));
             color: #fff;
             cursor: pointer;
             text-shadow: 0 0 1vmin var(--glow-color);
             transition: all 0.2s;
         }
         #autoSpinButton:not(.active):hover, #buyBonusButton:not(:disabled):hover {
-            background-color: rgba(0, 255, 195, 0.4);
+            background-color: rgba(124, 252, 0, 0.4);
             box-shadow: 0 0 2vmin var(--glow-color);
             transform: translateY(-2px);
         }
         #autoSpinButton.active { 
-            background: var(--secondary-glow); 
-            border-color: var(--secondary-glow); 
-            box-shadow: 0 0 2vmin var(--secondary-glow); 
+            background: var(--glow-color); /* Kept green for active state */
+            border-color: var(--glow-color); 
+            box-shadow: 0 0 2vmin var(--glow-color); 
         }
 
         .reels-container {
             display: flex;
-            gap: 1vmin;
-            padding: 1.5vmin;
+            gap: 1.5vmin;
+            padding: 2vmin;
             background: rgba(0, 0, 0, 0.4);
             border: 2px solid var(--glow-color);
             border-radius: 2vmin;
-            box-shadow: 0 0 3vmin var(--glow-color), inset 0 0 2vmin rgba(0, 255, 195, 0.5);
+            box-shadow: 0 0 3vmin var(--glow-color), inset 0 0 2vmin rgba(124, 252, 0, 0.5);
             backdrop-filter: blur(8px);
             position: relative;
         }
 
         .reel {
-            width: clamp(80px, 16vmin, 220px);
-            height: clamp(240px, 48vmin, 660px);
+            width: clamp(120px, 18vmin, 300px);
+            height: clamp(360px, 54vmin, 900px);
             overflow: hidden;
-            background: linear-gradient(135deg, rgba(249, 0, 255, 0.1), rgba(0, 255, 195, 0.1));
+            background: linear-gradient(135deg, rgba(255, 105, 180, 0.1), rgba(124, 252, 0, 0.1));
             border-radius: 1vmin;
             position: relative;
             box-shadow: inset 0 0 10px #000;
@@ -312,11 +312,11 @@
         .reel-strip { position: absolute; top: 0; left: 0; width: 100%; transition: opacity 0.3s ease-out; }
         .symbol {
             width: 100%;
-            height: clamp(80px, 16vmin, 220px);
+            height: clamp(120px, 18vmin, 300px);
             display: flex; justify-content: center; align-items: center; box-sizing: border-box; position: relative;
         }
         .symbol img {
-            max-width: 85%; max-height: 85%; object-fit: contain; filter: drop-shadow(0 0 8px rgba(0,0,0,0.7)); transition: transform 0.3s, filter 0.3s;
+            max-width: 85%; max-height: 85%; object-fit: contain; filter: drop-shadow(0 0 8px rgba(0,0,0,0.7)); transition: transform 0.3s, filter 0.3s, opacity 0.2s ease-out;
         }
 
         #ui-panel {
@@ -368,7 +368,7 @@
         .bet-select-btn {
             font-family: 'Orbitron', sans-serif;
             background: rgba(0,0,0,0.4);
-            border: 2px solid rgba(0, 255, 195, 0.5);
+            border: 2px solid rgba(124, 252, 0, 0.5);
             color: #fff;
             padding: 1vmin 2vmin;
             border-radius: 1vmin;
@@ -378,7 +378,7 @@
         }
         .bet-select-btn:hover {
             border-color: var(--glow-color);
-            background: rgba(0, 255, 195, 0.2);
+            background: rgba(124, 252, 0, 0.2);
         }
         .bet-select-btn.active {
             background: var(--glow-color);
@@ -394,7 +394,7 @@
             padding: 1.5vmin 3vmin; 
             border: 2px solid var(--secondary-glow);
             border-radius: 1.5vmin;
-            background-image: linear-gradient(to bottom, rgba(249, 0, 255, 0.3), rgba(249, 0, 255, 0.1));
+            background-image: linear-gradient(to bottom, rgba(255, 105, 180, 0.3), rgba(255, 105, 180, 0.1));
             color: #fff;
             cursor: pointer;
             text-shadow: 0 0 1vmin var(--secondary-glow);
@@ -405,31 +405,11 @@
             cursor: not-allowed;
         }
         
-        .video-animation-container {
+        .in-place-win-video {
             position: absolute;
-            top: 0;
-            height: 100%;
-            width: clamp(150px, 30vw, 400px);
-            z-index: 5;
             pointer-events: none;
-            display: none;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #left-video-container { left: 0; }
-        #right-video-container { right: 0; transform: scaleX(-1); }
-
-        .video-player {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: auto;
-            height: 80%;
-            max-width: 100%;
-            transition: opacity 0.2s ease-in-out;
-            opacity: 0;
+            z-index: 200;
+            object-fit: cover;
         }
 
         #win-lines-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
@@ -447,7 +427,7 @@
         .symbol.expanding { position: absolute; left: 0; width: 100%; z-index: 50; animation: expand-symbol 0.7s forwards; }
         @keyframes expand-symbol { 0% { transform: scale(0.8); opacity: 0; } 60% { transform: scale(1.1); opacity: 1; filter: drop-shadow(0 0 35px var(--win-glow-color)); } 100% { transform: scale(1); opacity: 1; } }
         #game-area.anticipation-glow .reels-container { animation: anticipation-pulse 1.2s infinite; }
-        @keyframes anticipation-pulse { 0%, 100% { box-shadow: 0 0 3vmin var(--glow-color), inset 0 0 2vmin rgba(0, 255, 195, 0.5); } 50% { box-shadow: 0 0 8vmin var(--anticipation-glow-color), inset 0 0 4vmin var(--anticipation-glow-color); } }
+        @keyframes anticipation-pulse { 0%, 100% { box-shadow: 0 0 3vmin var(--glow-color), inset 0 0 2vmin rgba(124, 252, 0, 0.5); } 50% { box-shadow: 0 0 8vmin var(--anticipation-glow-color), inset 0 0 4vmin var(--anticipation-glow-color); } }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; text-align: center; color: #fff; z-index: 1000; }
         .modal-content { font-family: 'Orbitron', sans-serif; animation: modal-appear 1s forwards; background: rgba(10, 0, 20, 0.95); border: 2px solid var(--glow-color); border-radius: 2vmin; padding: 3vmin; max-width: 90vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 0 50px var(--secondary-glow); }
@@ -482,7 +462,6 @@
             .reel { width: 100%; height: 100%; }
             .symbol { height: 33.333%; }
             .symbol img { max-width: 80%; max-height: 80%; }
-            #left-video-container, #right-video-container { display: none; }
             #right-panel {
                 order: 2;
                 height: auto;
@@ -556,15 +535,6 @@
         <h1 class="game-title">Wild Angels</h1>
         
         <button id="mute-button"><i class="fas fa-volume-high"></i></button>
-
-        <div id="left-video-container" class="video-animation-container">
-            <video id="videoLeft1" class="video-player" src="" muted playsinline></video>
-            <video id="videoLeft2" class="video-player" src="" muted playsinline></video>
-        </div>
-        <div id="right-video-container" class="video-animation-container">
-            <video id="videoRight1" class="video-player" src="" muted playsinline></video>
-            <video id="videoRight2" class="video-player" src="" muted playsinline></video>
-        </div>
 
         <div id="game-area">
             <div class="side-panel"></div>
@@ -715,9 +685,8 @@
         for (const symbolKey in SYMBOLS) {
             const symbolData = SYMBOLS[symbolKey];
             if (symbolData.videos && symbolData.videos > 0) {
-                for (let i = 1; i <= symbolData.videos; i++) {
-                    assetsToLoad.push({type: 'video', src: `${symbolKey}_v${i}.webm`});
-                }
+                // Only preload the first video for the new logic
+                assetsToLoad.push({type: 'video', src: `${symbolKey}_v1.webm`});
             }
         }
         
@@ -809,6 +778,7 @@
         const buyBonusButton = document.getElementById('buyBonusButton');
         const balanceDisplay = document.getElementById('balance');
         const winDisplay = document.getElementById('win');
+        const reelsContainer = document.querySelector('.reels-container');
         const reels = Array.from({ length: REEL_COUNT }, (_, i) => document.getElementById(`reel${i}`));
         const gameArea = document.getElementById('game-area');
         const winLinesSvg = document.getElementById('win-lines-svg');
@@ -817,16 +787,6 @@
         const muteButton = document.getElementById('mute-button');
         
         const reelStrips = [];
-        
-        const leftVideoContainer = document.getElementById('left-video-container');
-        const rightVideoContainer = document.getElementById('right-video-container');
-        const videoPlayers = {
-            left1: document.getElementById('videoLeft1'),
-            left2: document.getElementById('videoLeft2'),
-            right1: document.getElementById('videoRight1'),
-            right2: document.getElementById('videoRight2')
-        };
-        let isWinVideoPlaying = false;
         
         function goFullscreen() {
             const elem = document.documentElement;
@@ -1099,8 +1059,9 @@
         }
         
         function clearAnimations() {
-            stopWinVideo();
             winLinesSvg.innerHTML = '';
+            document.querySelectorAll('.in-place-win-video').forEach(v => v.remove());
+            
             reels.forEach(reel => {
                 const expandingSymbols = reel.querySelectorAll('.symbol.expanding');
                 expandingSymbols.forEach(el => el.remove());
@@ -1108,16 +1069,55 @@
                 const strip = reel.querySelector('.reel-strip');
                 if (strip) { strip.style.opacity = '1'; }
             });
-
-            document.querySelectorAll('.symbol').forEach(el => { el.className = 'symbol'; });
+            
+            document.querySelectorAll('.symbol').forEach(el => {
+                el.className = 'symbol';
+                const img = el.querySelector('img');
+                if (img) img.style.opacity = '1';
+            });
+            
             gameArea.classList.remove('anticipation-glow');
+        }
+
+        function playInPlaceWinVideo(symbolKey, reelIndex, rowIndex, symbolImg) {
+            const symbolData = SYMBOLS[symbolKey];
+            if (!symbolData || !symbolData.videos || symbolData.videos === 0) {
+                if (symbolImg) symbolImg.style.opacity = '1'; // Reshow if no video is available
+                return;
+            }
+
+            const reelElement = reels[reelIndex];
+            const symbolHeight = reelElement.clientHeight / SYMBOLS_PER_REEL_VISIBLE;
+            const symbolWidth = reelElement.clientWidth;
+
+            const video = document.createElement('video');
+            video.src = `${symbolKey}_v1.webm`;
+            video.muted = true;
+            video.playsInline = true;
+            video.className = 'in-place-win-video';
+            video.style.width = `${symbolWidth}px`;
+            video.style.height = `${symbolHeight}px`;
+            video.style.top = `${reelElement.offsetTop + (rowIndex * symbolHeight)}px`;
+            video.style.left = `${reelElement.offsetLeft}px`;
+
+            video.addEventListener('ended', () => {
+                if (symbolImg) symbolImg.style.opacity = '1';
+                video.remove();
+            });
+            
+            reelsContainer.appendChild(video);
+            
+            video.play().catch(e => {
+                console.error("In-place video play failed:", e);
+                if (symbolImg) symbolImg.style.opacity = '1'; // Also reshow if playback fails
+                video.remove();
+            });
         }
         
         async function checkWin(results, finalIndexes) {
             let totalWin = 0; const winningLines = []; const winningPositions = new Set();
             let scatterCount = 0; const scatterPositions = [];
-            let firstWinningSymbol = null;
-
+            
             results.forEach((reelResult, reelIndex) => {
                 reelResult.forEach((symbolKey, symbolIndex) => {
                     if (SYMBOLS[symbolKey]?.isScatter) {
@@ -1151,15 +1151,15 @@
                 }
 
                 if (matchCount >= 3) {
-                    if (!firstWinningSymbol) firstWinningSymbol = payingSymbolKey;
-
                     const symbolData = SYMBOLS[payingSymbolKey];
                     if (symbolData?.payout?.[matchCount]) {
                         const payout = symbolData.payout[matchCount] * (bet / 10);
                         totalWin += payout;
                         const lineCoords = [];
                         for (let i = 0; i < matchCount; i++) {
-                            winningPositions.add(`${i}-${line[i]}`);
+                            const symbolOnLine = results[i][line[i]];
+                            const effectiveSymbol = SYMBOLS[symbolOnLine]?.isWild ? payingSymbolKey : symbolOnLine;
+                            winningPositions.add(`${i}-${line[i]}-${effectiveSymbol}`);
                             lineCoords.push({reel: i, row: line[i]});
                         }
                         winningLines.push(lineCoords);
@@ -1223,9 +1223,8 @@
                     winSound.onended = () => manageBackgroundMusic(true);
                 }
                 
-                playWinVideo(firstWinningSymbol);
                 await updateWin(totalWin, true);
-                flashWinningSymbols(winningPositions, finalIndexes);
+                flashWinningSymbolsAndPlayVideos(winningPositions, finalIndexes);
                 drawWinningLines(winningLines);
             }
             
@@ -1247,40 +1246,6 @@
             return { hasWin: totalWin > 0 || hasExpansionWin, bonusTriggered, winAmount: totalWin };
         }
         
-        function playWinVideo(symbolKey) {
-            const symbolData = SYMBOLS[symbolKey];
-            if (!symbolData || !symbolData.videos || symbolData.videos === 0 || isWinVideoPlaying) {
-                return;
-            }
-            isWinVideoPlaying = true;
-            const videoIndex = Math.floor(Math.random() * symbolData.videos) + 1;
-            const videoSrc = `${symbolKey}_v${videoIndex}.webm`; 
-            leftVideoContainer.style.display = 'flex';
-            rightVideoContainer.style.display = 'flex';
-            Object.values(videoPlayers).forEach(video => {
-                video.src = videoSrc;
-                video.currentTime = 0;
-                video.loop = true; // <-- ДОБАВЕТЕ ТОЗИ РЕД
-            });
-            videoPlayers.left1.play();
-            videoPlayers.right1.play();
-            videoPlayers.left1.style.opacity = 1;
-            videoPlayers.right1.style.opacity = 1;
-        }
-
-        function stopWinVideo() {
-            if (!isWinVideoPlaying) return;
-            leftVideoContainer.style.display = 'none';
-            rightVideoContainer.style.display = 'none';
-            Object.values(videoPlayers).forEach(video => {
-                video.pause();
-                video.loop = false; // <-- ДОБАВЕТЕ ТОЗИ РЕД
-
-                video.src = "";
-            });
-            isWinVideoPlaying = false;
-        }
-
         function startBonus() {
             freeSpinsRemaining = SYMBOLS.scatter.spins;
             updateSpinButtonText();
@@ -1330,15 +1295,22 @@
             return stripElement.children[stripIndex] || null;
         }
 
-        function flashWinningSymbols(positions, finalIndexes) {
+        function flashWinningSymbolsAndPlayVideos(positions, finalIndexes) {
             positions.forEach(pos => {
-                const [reelIndexStr, symbolIndexStr] = pos.split('-');
+                const [reelIndexStr, symbolIndexStr, symbolKey] = pos.split('-');
                 const reelIndex = parseInt(reelIndexStr, 10);
                 const symbolIndexOnReel = parseInt(symbolIndexStr, 10);
+                
                 const indexInStrip = finalIndexes[reelIndex] + symbolIndexOnReel;
                 const symbolElement = getSymbolElement(reelIndex, indexInStrip);
+                
                 if (symbolElement) {
+                    const symbolImg = symbolElement.querySelector('img');
+                    if(symbolImg) {
+                        symbolImg.style.opacity = '0';
+                    }
                     symbolElement.classList.add('win-pulse');
+                    playInPlaceWinVideo(symbolKey, reelIndex, symbolIndexOnReel, symbolImg);
                 }
             });
         }
@@ -1420,6 +1392,3 @@
     </script>
 </body>
 </html>
-
-
-
