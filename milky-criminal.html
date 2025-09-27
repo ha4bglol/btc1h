@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>MILKY CRIMINAL</title>
+    <title>Milky criminal</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -13,9 +13,9 @@
 
         :root {
             --glow-color: #00ffc3; /* Светло зелено/тюркоаз */
-            --secondary-glow: #00fff2; /* Ярко розово/магента */
+            --secondary-glow: #ffffff; /* Ярко розово/магента */
             --win-glow-color: #ff0000;
-            --anticipation-glow-color: #ffc400;
+            --anticipation-glow-color: #ea00ff;
             --scatter-glow-color: #f900ff; /* Розово за скатер */
         }
 
@@ -30,7 +30,7 @@
         }
 
         body {
-            background: linear-gradient(135deg, #00ffdd, #00ffc3, #2e005e, #100a1c);
+            background: linear-gradient(135deg, #eeff00, #0051ff, #2e005e, #100a1c);
             background-size: 400% 400%;
             animation: color-shift 15s ease-in-out infinite;
         }
@@ -532,7 +532,7 @@
 
     <div id="game-container">
         
-        <h1 class="game-title">Wild Angels</h1>
+        <h1 class="game-title">Milky Criminal</h1>
         
         <button id="mute-button"><i class="fas fa-volume-high"></i></button>
 
@@ -629,7 +629,7 @@
         'criminal8': { weight: 4,  src: 'criminal8.png', videos: 2, payout: { '3': 200,'4': 400, '5': 800 }},
         'criminal9': { weight: 3,  src: 'criminal9.png', videos: 5, payout: { '3': 220,'4': 450, '5': 900 }},
         'wild':   { weight: 2,  src: 'wild.png',   isWild: true, payout: { '3': 250, '4': 500, '5': 1000 }},
-        'scatter':{ weight: 5,  src: 'scatter3.png',spins: 10, isScatter: true }
+        'scatter':{ weight: 5,  src: 'scatter.png',spins: 10, isScatter: true }
     };
 
     async function updateBalanceInFirestore(newBalance) {
@@ -1392,3 +1392,4 @@
     </script>
 </body>
 </html>
+
