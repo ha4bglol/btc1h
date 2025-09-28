@@ -1280,22 +1280,26 @@
             }, 4000);
         }
         
-          async function buyBonus() {
+        async function buyBonus() {
             if (isSpinning || freeSpinsRemaining > 0) return;
-            
+
             const cost = bet * BONUS_BUY_COST_MULTIPLIER;
             if (balance < cost) {
                 messageBox.textContent = "Недостатъчен Баланс";
                 return;
             }
-            
-            isSpinning = true; 
+
+            isSpinning = true;
             setControlsDisabled(true);
 
-            balance -= cost;
-            await updateBalanceInFirestore(balance);
+            const newBalance = balance - cost;
+            await updateBalanceInFirestore(newBalance);
+
+            // Manually update local state after successful Firestore call to ensure UI is responsive
+            // even before the onSnapshot listener fires.
+            balance = newBalance;
             updateBalanceDisplay();
-            
+
             const bonusTransitionScreen = document.getElementById('bonus-transition-screen');
             bonusTransitionScreen.style.display = 'flex';
             bonusTransitionScreen.addEventListener('click', () => {
@@ -1303,6 +1307,7 @@
                 startBonus();
             }, { once: true });
         }
+
 
         async function triggerBonusAnimation(scatterPos, finalIndexes) {
             scatterPos.forEach(sp => {
