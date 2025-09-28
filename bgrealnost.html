@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>BG REALNOST - PC Port</title>
+    <title>BG REALNOST</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -12,14 +12,11 @@
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap');
 
         :root {
-            /* BG REALNOST Palette */
-            --glow-color: #ff99cc; /* Baby Pink */
-            --secondary-glow: #aaffc3; /* Baby Green */
-            --win-glow-color: #05f7ff;
-            --anticipation-glow-color: #f85ace;
-            --scatter-glow-color: #eeff00;
-            --font-main: 'Poppins', sans-serif;
-            --font-title: 'Orbitron', sans-serif;
+            --glow-color: #ff00aa; /* Неоново розово */
+            --secondary-glow: #00e5ff; /* Електриково синьо */
+            --win-glow-color: #ffd700; /* Златно жълто */
+            --anticipation-glow-color: #9d00ff; /* Наситено лилаво */
+            --scatter-glow-color: #ff00aa; /* Розово за скатер, като основното */
         }
 
         html, body {
@@ -28,12 +25,12 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            font-family: var(--font-main);
+            font-family: 'Poppins', sans-serif;
             color: #fff;
         }
 
         body {
-            background: linear-gradient(135deg, #ff00ae, #46c08d, #00ffb3);
+            background: linear-gradient(135deg, #ff2a7f, #7f00ff, #291a0e, #0b021a);
             background-size: 400% 400%;
             animation: color-shift 15s ease-in-out infinite;
         }
@@ -47,7 +44,7 @@
         #loading-screen {
             position: fixed;
             inset: 0;
-            background-color: #1a1a1a;
+            background-color: #0b021a;
             z-index: 10000;
             display: flex;
             flex-direction: column;
@@ -57,7 +54,7 @@
             transition: opacity 0.5s ease-out;
         }
         .loading-title {
-            font-family: var(--font-title);
+            font-family: 'Orbitron', sans-serif;
             font-size: clamp(3rem, 10vmin, 6rem);
             background: linear-gradient(90deg, var(--secondary-glow), var(--glow-color));
             -webkit-background-clip: text;
@@ -81,7 +78,7 @@
             transition: width 0.3s ease-out;
         }
         #loading-percentage {
-            font-family: var(--font-title);
+            font-family: 'Orbitron', sans-serif;
             font-size: 1.5rem;
             margin-top: 1rem;
         }
@@ -123,7 +120,7 @@
             align-items: center;
             text-align: center;
             padding: 2rem;
-            background-color: #1a1a1a;
+            background-color: #0b021a;
         }
         .login-box {
             background: rgba(0,0,0,0.4);
@@ -137,9 +134,9 @@
             display: inline-block;
             margin-top: 2rem;
             padding: 1rem 2rem;
-            font-family: var(--font-title);
+            font-family: 'Orbitron', sans-serif;
             background: var(--glow-color);
-            color: #1a1a1a;
+            color: #0b021a;
             border-radius: 1rem;
             text-decoration: none;
             font-weight: bold;
@@ -183,16 +180,25 @@
             top: 7vmin;
             left: 50%;
             transform: translateX(-50%);
-            font-family: var(--font-title);
+            font-family: 'Orbitron', sans-serif;
             font-size: clamp(2.5rem, 7vmin, 5rem);
             z-index: 10;
             animation: rgb-text-glow 5s linear infinite;
         }
         
         @keyframes rgb-text-glow {
-            0% { color: var(--glow-color); text-shadow: 0 0 8px var(--glow-color), 0 0 15px var(--glow-color), 0 0 25px var(--glow-color); }
-            50% { color: var(--secondary-glow); text-shadow: 0 0 8px var(--secondary-glow), 0 0 15px var(--secondary-glow), 0 0 25px var(--secondary-glow); }
-            100% { color: var(--glow-color); text-shadow: 0 0 8px var(--glow-color), 0 0 15px var(--glow-color), 0 0 25px var(--glow-color); }
+            0% {
+                color: var(--glow-color);
+                text-shadow: 0 0 10px var(--glow-color), 0 0 20px var(--glow-color), 0 0 30px #fff;
+            }
+            50% {
+                color: var(--secondary-glow);
+                text-shadow: 0 0 10px var(--secondary-glow), 0 0 20px var(--secondary-glow), 0 0 30px #fff;
+            }
+            100% {
+                color: var(--glow-color);
+                text-shadow: 0 0 10px var(--glow-color), 0 0 20px var(--glow-color), 0 0 30px #fff;
+            }
         }
 
         #game-area {
@@ -214,7 +220,7 @@
             height: 100%;
             padding: 0 2.5vmin;
             flex-shrink: 0;
-            width: clamp(120px, 25vmin, 200px);
+            width: clamp(150px, 28vmin, 250px);
         }
         
         #right-panel {
@@ -222,12 +228,12 @@
         }
 
         #spinButton {
-            font-family: var(--font-title);
-            width: clamp(90px, 20vmin, 160px);
-            height: clamp(90px, 20vmin, 160px);
+            font-family: 'Orbitron', sans-serif;
+            width: clamp(100px, 22vmin, 180px);
+            height: clamp(100px, 22vmin, 180px);
             border: 3px solid var(--glow-color);
             border-radius: 50%;
-            background: rgba(255, 153, 204, 0.15);
+            background-image: linear-gradient(to bottom, rgba(255, 0, 170, 0.3), rgba(255, 0, 170, 0.1));
             color: #fff;
             cursor: pointer;
             text-shadow: 0 0 1vmin var(--glow-color);
@@ -235,14 +241,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: clamp(0.8rem, 2.5vmin, 1.4rem);
+            font-size: clamp(1rem, 2.8vmin, 1.6rem);
             flex-direction: column;
             line-height: 1.2;
-            backdrop-filter: blur(5px);
-            box-shadow: 0 0 15px var(--glow-color);
         }
         #spinButton:not(:disabled):hover {
-            box-shadow: 0 0 25px var(--glow-color), 0 0 45px var(--secondary-glow);
+            background-color: rgba(255, 0, 170, 0.4);
+            box-shadow: 0 0 2vmin var(--glow-color);
             transform: scale(1.05);
         }
         #spinButton:disabled {
@@ -259,59 +264,46 @@
             transform: rotate(180deg);
         }
 
-        .control-btn {
-            font-family: var(--font-title);
+        #autoSpinButton {
+            font-family: 'Orbitron', sans-serif;
             font-size: clamp(1rem, 2vmin, 1.5rem); 
             padding: 1.5vmin 3vmin; 
+            border: 2px solid var(--glow-color);
             border-radius: 1.5vmin;
+            background-image: linear-gradient(to bottom, rgba(255, 0, 170, 0.3), rgba(255, 0, 170, 0.1));
             color: #fff;
             cursor: pointer;
+            text-shadow: 0 0 1vmin var(--glow-color);
             transition: all 0.2s;
-            width: 100%;
-            text-align: center;
-        }
-
-        #autoSpinButton {
-            border: 2px solid var(--secondary-glow);
-            background: linear-gradient(45deg, #004d2a, #aaffc3);
-            box-shadow: 0 0 15px var(--secondary-glow);
-        }
-        #buyBonusButton {
-             border: 2px solid var(--glow-color);
-             background: linear-gradient(45deg, #f85ace, #ff99cc);
-             box-shadow: 0 0 15px var(--glow-color);
-        }
-        #buyBonusButton:disabled {
-             filter: grayscale(1) brightness(0.7);
-             cursor: not-allowed;
         }
         #autoSpinButton:not(.active):hover, #buyBonusButton:not(:disabled):hover {
+            background-color: rgba(255, 0, 170, 0.4);
+            box-shadow: 0 0 2vmin var(--glow-color);
             transform: translateY(-2px);
         }
         #autoSpinButton.active { 
             background: var(--secondary-glow); 
             border-color: var(--secondary-glow); 
-            box-shadow: 0 0 2vmin var(--secondary-glow);
-            color: #000;
+            box-shadow: 0 0 2vmin var(--secondary-glow); 
         }
 
         .reels-container {
             display: flex;
-            gap: 1vmin;
-            padding: 1.5vmin;
+            gap: 1.5vmin;
+            padding: 2vmin;
             background: rgba(0, 0, 0, 0.4);
             border: 2px solid var(--glow-color);
             border-radius: 2vmin;
-            box-shadow: 0 0 3vmin var(--glow-color), inset 0 0 2vmin rgba(255, 153, 204, 0.5);
+            box-shadow: 0 0 3vmin var(--glow-color), inset 0 0 2vmin rgba(255, 0, 170, 0.5);
             backdrop-filter: blur(8px);
             position: relative;
         }
 
         .reel {
-            width: clamp(80px, 16vmin, 220px);
-            height: clamp(240px, 48vmin, 660px);
+            width: clamp(120px, 18vmin, 300px);
+            height: clamp(360px, 54vmin, 900px);
             overflow: hidden;
-            background: linear-gradient(135deg, rgba(255, 153, 204, 0.1), rgba(170, 255, 195, 0.1));
+            background: linear-gradient(135deg, rgba(255, 0, 170, 0.1), rgba(0, 229, 255, 0.1));
             border-radius: 1vmin;
             position: relative;
             box-shadow: inset 0 0 10px #000;
@@ -320,11 +312,11 @@
         .reel-strip { position: absolute; top: 0; left: 0; width: 100%; transition: opacity 0.3s ease-out; }
         .symbol {
             width: 100%;
-            height: clamp(80px, 16vmin, 220px);
+            height: clamp(120px, 18vmin, 300px);
             display: flex; justify-content: center; align-items: center; box-sizing: border-box; position: relative;
         }
         .symbol img {
-            max-width: 90%; max-height: 90%; object-fit: contain; filter: drop-shadow(0 0 8px rgba(0,0,0,0.7)); transition: transform 0.3s, filter 0.3s;
+            max-width: 85%; max-height: 85%; object-fit: contain; filter: drop-shadow(0 0 8px rgba(0,0,0,0.7)); transition: transform 0.3s, filter 0.3s, opacity 0.2s ease-out;
         }
 
         #ui-panel {
@@ -341,26 +333,29 @@
         }
 
         .info-bar {
-            display: grid;
-            grid-template-columns: 1fr 1.5fr 1fr;
+            display: flex;
+            justify-content: space-around;
             align-items: center;
             width: 100%;
-            max-width: 900px;
-            gap: 10px;
+            max-width: 1200px;
+            font-size: clamp(0.9rem, 2vmin, 1.2rem);
         }
         
         .info-box { 
-            text-align: center;
+            text-align: center; 
+        }
+
+        #balance-box, #win-box {
             background: rgba(0,0,0,0.3);
-            border: 1px solid var(--glow-color);
-            border-radius: 8px;
-            padding: 4px 6px;
+            border: 2px solid var(--glow-color);
+            border-radius: 1.5vmin;
+            padding: 1vmin 2vmin;
+            box-shadow: 0 0 1.5vmin var(--glow-color);
             backdrop-filter: blur(5px);
         }
 
-        .info-box .label { font-size: clamp(0.8rem, 2vmin, 1rem); color: #ccc; }
-        .info-box .value { font-family: var(--font-title); display: block; font-size: clamp(1rem, 2.5vmin, 1.5rem); color: var(--glow-color); letter-spacing: 1px;}
-        #message-box { font-family: var(--font-title); font-size: clamp(1.1rem, 3vmin, 1.8rem); color: var(--win-glow-color); text-shadow: 0 0 10px var(--win-glow-color); padding: 1vmin; display: flex; justify-content: center; align-items: center;}
+        .info-box span { font-family: 'Orbitron', sans-serif; display: block; font-size: clamp(1rem, 2.5vmin, 1.5rem); color: var(--glow-color);}
+        #message-box { font-family: 'Orbitron', sans-serif; font-size: clamp(1.1rem, 3vmin, 1.8rem); color: var(--win-glow-color); text-shadow: 0 0 10px var(--win-glow-color); padding: 1vmin; }
         
         #bet-selection-bar {
             display: flex;
@@ -371,9 +366,9 @@
             padding: 1vmin 0;
         }
         .bet-select-btn {
-            font-family: var(--font-title);
+            font-family: 'Orbitron', sans-serif;
             background: rgba(0,0,0,0.4);
-            border: 2px solid rgba(255, 153, 204, 0.5);
+            border: 2px solid rgba(255, 0, 170, 0.5);
             color: #fff;
             padding: 1vmin 2vmin;
             border-radius: 1vmin;
@@ -383,7 +378,7 @@
         }
         .bet-select-btn:hover {
             border-color: var(--glow-color);
-            background: rgba(255, 153, 204, 0.2);
+            background: rgba(255, 0, 170, 0.2);
         }
         .bet-select-btn.active {
             background: var(--glow-color);
@@ -393,31 +388,28 @@
             transform: scale(1.05);
         }
         
-        .video-animation-container {
-            position: absolute;
-            top: 0;
-            height: 100%;
-            width: clamp(150px, 30vw, 400px);
-            z-index: 5;
-            pointer-events: none;
-            display: none;
-            justify-content: center;
-            align-items: center;
+        #buyBonusButton {
+             font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1rem, 2vmin, 1.5rem); 
+            padding: 1.5vmin 3vmin; 
+            border: 2px solid var(--secondary-glow);
+            border-radius: 1.5vmin;
+            background-image: linear-gradient(to bottom, rgba(0, 229, 255, 0.3), rgba(0, 229, 255, 0.1));
+            color: #fff;
+            cursor: pointer;
+            text-shadow: 0 0 1vmin var(--secondary-glow);
+            transition: all 0.2s;
         }
-
-        #left-video-container { left: 0; }
-        #right-video-container { right: 0; transform: scaleX(-1); }
-
-        .video-player {
+        #buyBonusButton:disabled {
+            filter: grayscale(1) brightness(0.7);
+            cursor: not-allowed;
+        }
+        
+        .in-place-win-video {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: auto;
-            height: 80%;
-            max-width: 100%;
-            transition: opacity 0.2s ease-in-out;
-            opacity: 0;
+            pointer-events: none;
+            z-index: 200;
+            object-fit: cover;
         }
 
         #win-lines-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
@@ -435,20 +427,60 @@
         .symbol.expanding { position: absolute; left: 0; width: 100%; z-index: 50; animation: expand-symbol 0.7s forwards; }
         @keyframes expand-symbol { 0% { transform: scale(0.8); opacity: 0; } 60% { transform: scale(1.1); opacity: 1; filter: drop-shadow(0 0 35px var(--win-glow-color)); } 100% { transform: scale(1); opacity: 1; } }
         #game-area.anticipation-glow .reels-container { animation: anticipation-pulse 1.2s infinite; }
-        @keyframes anticipation-pulse { 0%, 100% { box-shadow: 0 0 3vmin var(--glow-color), inset 0 0 2vmin rgba(255, 153, 204, 0.5); } 50% { box-shadow: 0 0 8vmin var(--anticipation-glow-color), inset 0 0 4vmin var(--anticipation-glow-color); } }
+        @keyframes anticipation-pulse { 0%, 100% { box-shadow: 0 0 3vmin var(--glow-color), inset 0 0 2vmin rgba(255, 0, 170, 0.5); } 50% { box-shadow: 0 0 8vmin var(--anticipation-glow-color), inset 0 0 4vmin var(--anticipation-glow-color); } }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; text-align: center; color: #fff; z-index: 1000; }
-        .modal-content { font-family: var(--font-title); animation: modal-appear 1s forwards; background: rgba(26, 26, 26, 0.95); border: 2px solid var(--glow-color); border-radius: 2vmin; padding: 3vmin; max-width: 90vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 0 50px var(--secondary-glow); }
+        .modal-content { font-family: 'Orbitron', sans-serif; animation: modal-appear 1s forwards; background: rgba(10, 0, 20, 0.95); border: 2px solid var(--glow-color); border-radius: 2vmin; padding: 3vmin; max-width: 90vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 0 50px var(--secondary-glow); }
         @keyframes modal-appear { 0% { transform: scale(0.5) rotate(-15deg); opacity: 0; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
         .modal-title { font-size: 5vmin; color: var(--glow-color); text-shadow: 0 0 2vmin var(--glow-color); }
         .modal-subtitle { font-size: 4vmin; margin-top: 2vmin; }
         #expanding-symbol-info { display: flex; align-items: center; justify-content: center; gap: 2vmin; margin-top: 1vmin; }
         #expanding-symbol-display { width: 10vmin; height: 10vmin; }
         #bonus-transition-screen { cursor: pointer; z-index: 2000; flex-direction: column; }
-        .bonus-transition-content { font-family: var(--font-title); text-align: center; animation: bonus-pulse 1.5s infinite; }
-        .bonus-transition-content h1 { font-size: clamp(3rem, 10vmin, 8rem); color: var(--win-glow-color); text-shadow: 0 0 10px var(--win-glow-color), 0 0 30px var(--glow-color), 0 0 60px var(--secondary-glow); margin: 0; }
+        .bonus-transition-content { font-family: 'Orbitron', sans-serif; text-align: center; animation: bonus-pulse 1.5s infinite; }
+        .bonus-transition-content h1 { font-size: clamp(3rem, 10vmin, 8rem); color: var(--win-glow-color); text-shadow: 0 0 10px var(--win-glow-color), 0 0 30px var(--win-glow-color), 0 0 60px var(--secondary-glow); margin: 0; }
         .bonus-transition-content p { font-size: clamp(1rem, 3vmin, 2rem); color: #fff; margin-top: 2vmin; text-shadow: 0 0 10px #000; }
         @keyframes bonus-pulse { 0%, 100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.05); opacity: 1; } }
+
+        /* --- MOBILE/PORTRAIT LAYOUT --- */
+        @media (orientation: portrait) {
+            #game-area {
+                flex-direction: column;
+                justify-content: center;
+                padding-top: 10vmin; /* Reduced */
+                padding-bottom: 30vmin; /* Reduced */
+                gap: 2vh;
+            }
+            .game-title { font-size: 8vmin; top: 2vmin; }
+            .reels-container {
+                order: 1;
+                width: 95vw;
+                height: 57vw;
+                padding: 1.5vw;
+                gap: 1vw;
+            }
+            .reel { width: 100%; height: 100%; }
+            .symbol { height: 33.333%; }
+            .symbol img { max-width: 80%; max-height: 80%; }
+            #right-panel {
+                order: 2;
+                height: auto;
+                padding: 0;
+                flex-direction: row;
+                gap: 4vw;
+                justify-content: center;
+                align-items: center;
+            }
+            #ui-panel {
+                padding: 1.5vmin;
+                gap: 1vmin;
+                justify-content: flex-end;
+                height: 30vmin; /* Reduced */
+            }
+            .info-bar { font-size: clamp(0.8rem, 2.8vmin, 1.1rem); }
+            #bet-selection-bar { flex-wrap: wrap; gap: 1.5vmin; }
+            .bet-select-btn { padding: 1.5vmin 2.5vmin; }
+        }
 
         /* --- FIX FOR LANDSCAPE ON SMALL HEIGHT DEVICES (PHONES) --- */
         @media (max-height: 500px) and (orientation: landscape) {
@@ -456,7 +488,7 @@
             #mute-button { width: 6vh; height: 6vh; font-size: 2.5vh; }
             .side-panel { width: 15vw; padding: 0 2vw; }
             #spinButton { width: 18vh; height: 18vh; }
-            .control-btn { padding: 1vh 2vh; font-size: 2vh; }
+            #autoSpinButton, #buyBonusButton { padding: 1vh 2vh; font-size: 2vh; }
             
             #game-area { padding-top: 8vh; padding-bottom: 25vh; }
 
@@ -466,7 +498,7 @@
             
             #ui-panel { height: 25vh; padding: 1vh; gap: 1vh;}
             .info-bar { font-size: 2vh; }
-            .info-box .value { font-size: 2.5vh; }
+            .info-box span { font-size: 2.5vh; }
             #bet-selection-bar { gap: 1vh; }
             .bet-select-btn { padding: 1vh 1.5vh; font-size: 1.8vh; }
         }
@@ -504,13 +536,6 @@
         
         <button id="mute-button"><i class="fas fa-volume-high"></i></button>
 
-        <div id="left-video-container" class="video-animation-container">
-            <video id="videoLeft" class="video-player" src="" muted playsinline></video>
-        </div>
-        <div id="right-video-container" class="video-animation-container">
-            <video id="videoRight" class="video-player" src="" muted playsinline></video>
-        </div>
-
         <div id="game-area">
             <div class="side-panel"></div>
             
@@ -530,22 +555,16 @@
                     <svg viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"></path></svg>
                     <span id="spin-text">ЗАВЪРТИ</span>
                 </button>
-                <button id="autoSpinButton" class="control-btn">AUTO</button>
-                <button id="buyBonusButton" class="control-btn">КУПИ БОНУС</button>
+                <button id="autoSpinButton">AUTO</button>
+                 <button id="buyBonusButton">КУПИ БОНУС</button>
             </div>
         </div>
 
         <div id="ui-panel">
             <div class="info-bar">
-                 <div class="info-box">
-                    <span class="label">Баланс:</span>
-                    <span id="balance-value" class="value">0.00</span>
-                </div>
-                <div id="message-box">ИЗБЕРЕТЕ ЗАЛОГ</div>
-                <div class="info-box">
-                    <span class="label">Печалба:</span>
-                    <span id="win-value" class="value">0.00</span>
-                </div>
+                <div class="info-box" id="balance-box">Баланс:<span id="balance">0</span></div>
+                <div class="info-box" id="message-box">ИЗБЕРЕТЕ ЗАЛОГ</div>
+                <div class="info-box" id="win-box">Печалба:<span id="win">0</span></div>
             </div>
             <div id="bet-selection-bar">
             </div>
@@ -600,22 +619,23 @@
     const loadingPercentage = document.getElementById('loading-percentage');
     
     const SYMBOLS = {
-        'rub1':    { weight: 20, src: 'guz1.png',     video: true, payout: { '3': 5,  '4': 10,  '5': 20  }},
-        'rub2':    { weight: 18, src: 'rub2.png',     video: true, payout: { '3': 10, '4': 20,  '5': 40  }},
-        'rub3':    { weight: 15, src: 'rub3.png',     video: true, payout: { '3': 15, '4': 30,  '5': 60  }},
-        'rub4':    { weight: 12, src: 'guz4.png',     video: true, payout: { '3': 20, '4': 40,  '5': 80  }},
-        'rub5':    { weight: 10, src: 'rub5.png',     video: true, payout: { '3': 30, '4': 60,  '5': 120 }},
-        'rub6':    { weight: 8,  src: 'rub6.png',     video: true, payout: { '3': 50, '4': 100, '5': 200 }},
-        'rub7':    { weight: 6,  src: 'rub7.png',     video: true, payout: { '3': 100,'4': 200, '5': 400 }},
-        'rub8':    { weight: 4,  src: 'rub8.png',     video: true, payout: { '3': 200,'4': 400, '5': 800 }},
-        'rub9':    { weight: 3,  src: 'rub9.png',     video: true, payout: { '3': 220,'4': 450, '5': 900 }},
-        'wild':    { weight: 2,  src: 'wild.png',    isWild: true, payout: { '3': 250, '4': 500, '5': 1000 }},
-        'scatter': { weight: 5,  src: 'scatter4.png', spins: 10, isScatter: true }
+        'guz1': { weight: 20, src: 'guz1.png', videos: 6, payout: { '3': 5,  '4': 10,  '5': 20  }},
+        'rub2': { weight: 18, src: 'rub2.png', videos: 6, payout: { '3': 10, '4': 20,  '5': 40  }},
+        'rub3': { weight: 15, src: 'rub3.png', videos: 6, payout: { '3': 15, '4': 30,  '5': 60  }},
+        'guz4': { weight: 12, src: 'guz4.png', videos: 6, payout: { '3': 20, '4': 40,  '5': 80  }},
+        'rub5': { weight: 10, src: 'rub5.png', videos: 6, payout: { '3': 30, '4': 60,  '5': 120 }},
+        'rub6': { weight: 8,  src: 'rub6.png', videos: 6, payout: { '3': 50, '4': 100, '5': 200 }},
+        'rub7': { weight: 6,  src: 'rub7.png', videos: 6, payout: { '3': 100,'4': 200, '5': 400 }},
+        'rub8': { weight: 4,  src: 'rub8.png', videos: 2, payout: { '3': 200,'4': 400, '5': 800 }},
+        'rub9': { weight: 3,  src: 'rub9.png', videos: 5, payout: { '3': 220,'4': 450, '5': 900 }},
+        'wild':   { weight: 2,  src: 'wild.png',   isWild: true, payout: { '3': 250, '4': 500, '5': 1000 }},
+        'scatter':{ weight: 5,  src: 'scatter4.png',spins: 10, isScatter: true }
     };
 
     async function updateBalanceInFirestore(newBalance) {
         if (!userDocRef) return;
         try {
+            // We use Math.round to avoid floating point issues in Firestore
             await updateDoc(userDocRef, { chips: Math.round(newBalance) });
         } catch (error) {
             console.error("Грешка при обновяване на баланса:", error);
@@ -656,14 +676,16 @@
     }
     
     async function preloadAssetsAndStartGame(initialBalance) {
-        const SOUND_FILES = ['win_sound.mp3', 'anticipation.mp3', 'expand.mp3', 'bg_music_1.mp3', 'bg_music_2.mp3', 'bg_music_3.mp3'];
+        const SOUND_FILES = ['bg_music_1.mp3', 'bg_music_2.mp3', 'bg_music_3.mp3', 'win_sound.mp3', 'anticipation.mp3', 'expand.mp3'];
         
         const assetsToLoad = [];
         Object.keys(SYMBOLS).forEach(name => assetsToLoad.push({type: 'image', src: SYMBOLS[name].src}));
         SOUND_FILES.forEach(name => assetsToLoad.push({type: 'audio', src: name}));
 
         for (const symbolKey in SYMBOLS) {
-            if (SYMBOLS[symbolKey].video) {
+            const symbolData = SYMBOLS[symbolKey];
+            if (symbolData.videos && symbolData.videos > 0) {
+                // Only preload the first video for the new logic
                 assetsToLoad.push({type: 'video', src: `${symbolKey}_v1.webm`});
             }
         }
@@ -726,12 +748,12 @@
             [0, 0, 1, 2, 2], [2, 2, 1, 0, 0], [1, 0, 0, 0, 1], [1, 2, 2, 2, 1], [0, 1, 1, 1, 2]
         ];
         
-        const BET_AMOUNTS = [1, 2, 5, 10, 20, 50];
+        const BET_AMOUNTS = [10, 20, 50, 100, 200, 500];
         const MAX_WIN_MULTIPLIER = 2500;
         const BONUS_BUY_COST_MULTIPLIER = 100;
 
         let balance = initialBalance;
-        let currentBetIndex = 2;
+        let currentBetIndex = 0;
         let bet = BET_AMOUNTS[currentBetIndex];
         let isSpinning = false;
         let isAutoSpinning = false;
@@ -742,7 +764,7 @@
 
         // Audio Elements
         const backgroundMusicFiles = ['bg_music_1.mp3', 'bg_music_2.mp3', 'bg_music_3.mp3'];
-        let currentTrackIndex = Math.floor(Math.random() * backgroundMusicFiles.length);
+        let currentTrackIndex = 0;
         const bgMusicPlayer = new Audio();
         bgMusicPlayer.volume = 0.3;
         const winSound = new Audio('win_sound.mp3');
@@ -754,8 +776,9 @@
         const spinButton = document.getElementById('spinButton');
         const autoSpinButton = document.getElementById('autoSpinButton');
         const buyBonusButton = document.getElementById('buyBonusButton');
-        const balanceDisplay = document.getElementById('balance-value');
-        const winDisplay = document.getElementById('win-value');
+        const balanceDisplay = document.getElementById('balance');
+        const winDisplay = document.getElementById('win');
+        const reelsContainer = document.querySelector('.reels-container');
         const reels = Array.from({ length: REEL_COUNT }, (_, i) => document.getElementById(`reel${i}`));
         const gameArea = document.getElementById('game-area');
         const winLinesSvg = document.getElementById('win-lines-svg');
@@ -765,23 +788,17 @@
         
         const reelStrips = [];
         
-        const leftVideoContainer = document.getElementById('left-video-container');
-        const rightVideoContainer = document.getElementById('right-video-container');
-        const videoPlayers = {
-            left: document.getElementById('videoLeft'),
-            right: document.getElementById('videoRight')
-        };
-        let isWinVideoPlaying = false;
-        
         function goFullscreen() {
-            if (hasRequestedFullscreen || document.fullscreenElement) return;
             const elem = document.documentElement;
             if (elem.requestFullscreen) {
                 elem.requestFullscreen().catch(err => console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`));
-            } else if (elem.webkitRequestFullscreen) {
+            } else if (elem.mozRequestFullScreen) { /* Firefox */
+                elem.mozRequestFullScreen();
+            } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
                 elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { /* IE/Edge */
+                elem.msRequestFullscreen();
             }
-            hasRequestedFullscreen = true;
         }
 
         function playNextTrack() {
@@ -845,7 +862,7 @@
             BET_AMOUNTS.forEach((amount, index) => {
                 const button = document.createElement('button');
                 button.classList.add('bet-select-btn');
-                button.textContent = amount.toFixed(2);
+                button.textContent = (amount / 10).toFixed(2);
                 button.dataset.index = index;
                 betSelectionBar.appendChild(button);
             });
@@ -864,8 +881,10 @@
         async function spin(isFreeSpin = false) {
             if (isSpinning) return;
 
-            goFullscreen();
-            
+            if (!hasRequestedFullscreen) {
+                goFullscreen();
+                hasRequestedFullscreen = true;
+            }
             if (bgMusicPlayer.paused) {
                  bgMusicPlayer.src = backgroundMusicFiles[currentTrackIndex];
                  bgMusicPlayer.play().catch(e => { /* Autoplay blocked */ });
@@ -873,15 +892,16 @@
 
             if (!isFreeSpin && freeSpinsRemaining === 0 && balance < bet) {
                 if(isAutoSpinning) toggleAutoSpin();
-                messageBox.textContent = "НЯМАТЕ КРЕДИТ";
+                messageBox.textContent = "Недостатъчен Баланс";
                 return;
             }
 
             isSpinning = true;
             setControlsDisabled(true);
+            
             clearAnimations();
             await updateWin(0);
-            messageBox.textContent = "КЪСМЕТ!";
+            messageBox.textContent = "УСПЕХ!";
             
             if (freeSpinsRemaining > 0) {
                 freeSpinsRemaining--;
@@ -889,7 +909,7 @@
             } else if (!isFreeSpin) {
                 balance -= bet;
                 await updateBalanceInFirestore(balance);
-                updateBalanceDisplay();
+                updateBalanceDisplay(); // Update UI immediately after bet
             }
             
             let results = [];
@@ -916,14 +936,9 @@
                     
                     const baseTargetPosition = finalIndexes[i] * symbolSize;
                     const loopOffset = strip.length * symbolSize;
-                    const targetPositionInDom = baseTargetPosition + loopOffset;
-
+                    
                     reelStripElement.style.transition = 'none';
-                    // Reset position to the equivalent symbol in the second loop for seamless spinning
-                    const currentTransform = new DOMMatrix(getComputedStyle(reelStripElement).transform);
-                    const currentPos = Math.abs(currentTransform.f);
-                    const newStartPos = (currentPos % loopOffset) + loopOffset;
-                    reelStripElement.style.transform = `translateY(-${newStartPos}px)`;
+                    reelStripElement.style.transform = `translateY(-${baseTargetPosition + loopOffset}px)`;
                     reelStripElement.offsetHeight; 
 
                     let landedScatters = 0;
@@ -943,17 +958,17 @@
                     }
                     
                     reelStripElement.style.transition = `transform ${duration}s cubic-bezier(0.25, 1, 0.5, 1)`;
-                    reelStripElement.style.transform = `translateY(-${targetPositionInDom}px)`;
+                    reelStripElement.style.transform = `translateY(-${baseTargetPosition}px)`;
 
-                    reelStripElement.addEventListener('transitionend', () => {
-                        results[i].forEach((symbolKey, symbolIndex) => {
-                            if (SYMBOLS[symbolKey]?.isScatter) {
-                                const symbolElement = getSymbolElement(i, finalIndexes[i] + symbolIndex);
-                                if (symbolElement) symbolElement.classList.add('scatter-land');
-                            }
-                        });
-                        resolve();
-                    }, { once: true });
+                    await new Promise(res => setTimeout(res, duration * 1000));
+                                            
+                    results[i].forEach((symbolKey, symbolIndex) => {
+                        if (SYMBOLS[symbolKey]?.isScatter) {
+                            const symbolElement = getSymbolElement(i, finalIndexes[i] + symbolIndex);
+                            if (symbolElement) symbolElement.classList.add('scatter-land');
+                        }
+                    });
+                    resolve();
                 });
             });
             
@@ -971,7 +986,7 @@
             if (!hasWin) {
                 messageBox.textContent = "ИЗБЕРЕТЕ ЗАЛОГ";
             } else {
-                 messageBox.textContent = `ПЕЧАЛБА: ${winAmount.toFixed(2)}`;
+                 messageBox.textContent = `ПЕЧАЛБА: ${(winAmount / 10).toFixed(2)}`;
             }
             
             handleNextAction(hasWin, bonusTriggered);
@@ -1044,8 +1059,9 @@
         }
         
         function clearAnimations() {
-            stopWinVideo();
             winLinesSvg.innerHTML = '';
+            document.querySelectorAll('.in-place-win-video').forEach(v => v.remove());
+            
             reels.forEach(reel => {
                 const expandingSymbols = reel.querySelectorAll('.symbol.expanding');
                 expandingSymbols.forEach(el => el.remove());
@@ -1053,16 +1069,55 @@
                 const strip = reel.querySelector('.reel-strip');
                 if (strip) { strip.style.opacity = '1'; }
             });
-
-            document.querySelectorAll('.symbol').forEach(el => { el.className = 'symbol'; });
+            
+            document.querySelectorAll('.symbol').forEach(el => {
+                el.className = 'symbol';
+                const img = el.querySelector('img');
+                if (img) img.style.opacity = '1';
+            });
+            
             gameArea.classList.remove('anticipation-glow');
+        }
+
+        function playInPlaceWinVideo(symbolKey, reelIndex, rowIndex, symbolImg) {
+            const symbolData = SYMBOLS[symbolKey];
+            if (!symbolData || !symbolData.videos || symbolData.videos === 0) {
+                if (symbolImg) symbolImg.style.opacity = '1'; // Reshow if no video is available
+                return;
+            }
+
+            const reelElement = reels[reelIndex];
+            const symbolHeight = reelElement.clientHeight / SYMBOLS_PER_REEL_VISIBLE;
+            const symbolWidth = reelElement.clientWidth;
+
+            const video = document.createElement('video');
+            video.src = `${symbolKey}_v1.webm`;
+            video.muted = true;
+            video.playsInline = true;
+            video.className = 'in-place-win-video';
+            video.style.width = `${symbolWidth}px`;
+            video.style.height = `${symbolHeight}px`;
+            video.style.top = `${reelElement.offsetTop + (rowIndex * symbolHeight)}px`;
+            video.style.left = `${reelElement.offsetLeft}px`;
+
+            video.addEventListener('ended', () => {
+                if (symbolImg) symbolImg.style.opacity = '1';
+                video.remove();
+            });
+            
+            reelsContainer.appendChild(video);
+            
+            video.play().catch(e => {
+                console.error("In-place video play failed:", e);
+                if (symbolImg) symbolImg.style.opacity = '1'; // Also reshow if playback fails
+                video.remove();
+            });
         }
         
         async function checkWin(results, finalIndexes) {
             let totalWin = 0; const winningLines = []; const winningPositions = new Set();
             let scatterCount = 0; const scatterPositions = [];
-            let firstWinningSymbol = null;
-
+            
             results.forEach((reelResult, reelIndex) => {
                 reelResult.forEach((symbolKey, symbolIndex) => {
                     if (SYMBOLS[symbolKey]?.isScatter) {
@@ -1096,15 +1151,15 @@
                 }
 
                 if (matchCount >= 3) {
-                    if (!firstWinningSymbol) firstWinningSymbol = payingSymbolKey;
-
                     const symbolData = SYMBOLS[payingSymbolKey];
                     if (symbolData?.payout?.[matchCount]) {
-                        const payout = symbolData.payout[matchCount] * bet;
+                        const payout = symbolData.payout[matchCount] * (bet / 10);
                         totalWin += payout;
                         const lineCoords = [];
                         for (let i = 0; i < matchCount; i++) {
-                            winningPositions.add(`${i}-${line[i]}`);
+                            const symbolOnLine = results[i][line[i]];
+                            const effectiveSymbol = SYMBOLS[symbolOnLine]?.isWild ? payingSymbolKey : symbolOnLine;
+                            winningPositions.add(`${i}-${line[i]}-${effectiveSymbol}`);
                             lineCoords.push({reel: i, row: line[i]});
                         }
                         winningLines.push(lineCoords);
@@ -1147,7 +1202,7 @@
                     const numExpandedReels = expandingReelsIndices.size;
 
                     if (payoutData?.[numExpandedReels]) {
-                        const expansionPayout = payoutData[numExpandedReels] * bet * PAYLINES.length;
+                        const expansionPayout = payoutData[numExpandedReels] * (bet / 10) * PAYLINES.length;
                         totalWin += expansionPayout;
                         document.querySelectorAll('.symbol.expanding').forEach(el => el.classList.add('win-pulse'));
                     }
@@ -1158,9 +1213,9 @@
             if (totalWin > maxWin) totalWin = maxWin;
 
             if (totalWin > 0) {
-                balance += totalWin;
-                await updateBalanceInFirestore(balance);
-                updateBalanceDisplay();
+                balance += totalWin; // Add win to local balance
+                await updateBalanceInFirestore(balance); // Sync with Firestore
+                updateBalanceDisplay(); // Update UI
                 
                 if(freeSpinsRemaining === 0 && !hasExpansionWin) {
                     manageBackgroundMusic(false);
@@ -1168,9 +1223,8 @@
                     winSound.onended = () => manageBackgroundMusic(true);
                 }
                 
-                playWinVideo(firstWinningSymbol);
                 await updateWin(totalWin, true);
-                flashWinningSymbols(winningPositions, finalIndexes);
+                flashWinningSymbolsAndPlayVideos(winningPositions, finalIndexes);
                 drawWinningLines(winningLines);
             }
             
@@ -1192,36 +1246,6 @@
             return { hasWin: totalWin > 0 || hasExpansionWin, bonusTriggered, winAmount: totalWin };
         }
         
-        function playWinVideo(symbolKey) {
-            const symbolData = SYMBOLS[symbolKey];
-            if (!symbolData || !symbolData.video || isWinVideoPlaying) {
-                return;
-            }
-            isWinVideoPlaying = true;
-            const videoSrc = `${symbolKey}_v1.webm`; 
-            leftVideoContainer.style.display = 'flex';
-            rightVideoContainer.style.display = 'flex';
-            Object.values(videoPlayers).forEach(video => {
-                video.src = videoSrc;
-                video.currentTime = 0;
-                video.loop = true;
-                video.play();
-                video.style.opacity = 1;
-            });
-        }
-
-        function stopWinVideo() {
-            if (!isWinVideoPlaying) return;
-            leftVideoContainer.style.display = 'none';
-            rightVideoContainer.style.display = 'none';
-            Object.values(videoPlayers).forEach(video => {
-                video.pause();
-                video.loop = false;
-                video.src = "";
-            });
-            isWinVideoPlaying = false;
-        }
-
         function startBonus() {
             freeSpinsRemaining = SYMBOLS.scatter.spins;
             updateSpinButtonText();
@@ -1242,7 +1266,7 @@
             if (isSpinning || freeSpinsRemaining > 0) return;
             const cost = bet * BONUS_BUY_COST_MULTIPLIER;
             if (balance < cost) {
-                messageBox.textContent = "НЯМАТЕ КРЕДИТ";
+                messageBox.textContent = "Недостатъчен Баланс";
                 return;
             }
             balance -= cost;
@@ -1271,22 +1295,30 @@
             return stripElement.children[stripIndex] || null;
         }
 
-        function flashWinningSymbols(positions, finalIndexes) {
+        function flashWinningSymbolsAndPlayVideos(positions, finalIndexes) {
             positions.forEach(pos => {
-                const [reelIndexStr, symbolIndexStr] = pos.split('-');
+                const [reelIndexStr, symbolIndexStr, symbolKey] = pos.split('-');
                 const reelIndex = parseInt(reelIndexStr, 10);
                 const symbolIndexOnReel = parseInt(symbolIndexStr, 10);
+                
                 const indexInStrip = finalIndexes[reelIndex] + symbolIndexOnReel;
                 const symbolElement = getSymbolElement(reelIndex, indexInStrip);
+                
                 if (symbolElement) {
+                    const symbolImg = symbolElement.querySelector('img');
+                    if(symbolImg) {
+                        symbolImg.style.opacity = '0';
+                    }
                     symbolElement.classList.add('win-pulse');
+                    playInPlaceWinVideo(symbolKey, reelIndex, symbolIndexOnReel, symbolImg);
                 }
             });
         }
         
         function drawWinningLines(winningLines) {
+            const reelContainerRect = document.querySelector('.reels-container').getBoundingClientRect();
             const svgRect = winLinesSvg.getBoundingClientRect();
-             if (reels.length === 0 || !svgRect) return;
+             if (reels.length === 0 || !reelContainerRect || !svgRect) return;
 
             winningLines.forEach(lineCoords => {
                 const points = lineCoords.map(coord => {
@@ -1312,7 +1344,7 @@
             if (amount === 0) {
                 winDisplay.textContent = '0.00'; return;
             }
-            const targetAmount = amount.toFixed(2);
+            const targetAmount = (amount / 10).toFixed(2);
             if (animate) {
                 const duration = 1000; const frameDuration = 1000 / 60; const totalFrames = Math.round(duration / frameDuration);
                 let frame = 0; const startValue = 0; const endValue = amount;
@@ -1320,7 +1352,7 @@
                     const timer = setInterval(() => {
                         frame++; const progress = frame / totalFrames;
                         const currentAmount = startValue + (endValue - startValue) * progress;
-                        winDisplay.textContent = currentAmount.toFixed(2);
+                        winDisplay.textContent = (currentAmount/10).toFixed(2);
                         if (frame >= totalFrames) {
                             clearInterval(timer);
                             winDisplay.textContent = targetAmount;
@@ -1331,13 +1363,12 @@
             } else { winDisplay.textContent = targetAmount; }
         }
 
-        function updateBalanceDisplay() { balanceDisplay.textContent = balance.toFixed(2); }
-        
+        function updateBalanceDisplay() { balanceDisplay.textContent = (balance/10).toFixed(2); }
         function updateSpinButtonText() {
             const spinText = document.getElementById('spin-text');
             const spinIcon = spinButton.querySelector('svg');
             if(freeSpinsRemaining > 0) {
-                spinText.textContent = `SPINS: ${freeSpinsRemaining}`;
+                spinText.textContent = `БЕЗПЛАТНИ: ${freeSpinsRemaining}`;
                 spinIcon.style.display = 'none';
             } else {
                 spinText.textContent = 'ЗАВЪРТИ';
@@ -1348,6 +1379,7 @@
         initializeReels();
         initializeUI();
         
+        // Return the function to handle external balance updates
         return function(newBalance) {
             if (!isSpinning) {
                 balance = newBalance;
