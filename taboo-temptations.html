@@ -1263,17 +1263,24 @@
             }, 4000);
         }
         
-        async function buyBonus() {
+          async function buyBonus() {
             if (isSpinning || freeSpinsRemaining > 0) return;
+            
+            isSpinning = true; 
+            setControlsDisabled(true);
+
             const cost = bet * BONUS_BUY_COST_MULTIPLIER;
             if (balance < cost) {
                 messageBox.textContent = "Недостатъчен Баланс";
+                isSpinning = false; 
+                setControlsDisabled(false);
                 return;
             }
+
             balance -= cost;
             await updateBalanceInFirestore(balance);
             updateBalanceDisplay();
-            setControlsDisabled(true);
+            
             const bonusTransitionScreen = document.getElementById('bonus-transition-screen');
             bonusTransitionScreen.style.display = 'flex';
             bonusTransitionScreen.addEventListener('click', () => {
