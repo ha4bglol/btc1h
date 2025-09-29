@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Taboo Temptations</title>
+    <title>TABOO</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap');
 
         :root {
-            --glow-color: #ff0000; /* Наситено червено */
+             --glow-color: #ff0000; /* Наситено червено */
             --secondary-glow: #ffc400; /* Тъмно жълто / Златно */
             --win-glow-color: #ff4500; /* Оранжево-червено за печалби */
             --anticipation-glow-color: #c62828; /* Дълбоко червено за напрежение */
@@ -30,9 +30,9 @@
         }
 
         body {
-            background: linear-gradient(135deg, #4a0000, #1a0000, #001a00, #000000);
+            background: linear-gradient(135deg,  #4a0000, #1a0000, #001a00, #000000);
             background-size: 400% 400%;
-            animation: color-shift 20s ease-in-out infinite;
+            animation: color-shift 15s ease-in-out infinite;
         }
 
         @keyframes color-shift {
@@ -44,7 +44,7 @@
         #loading-screen {
             position: fixed;
             inset: 0;
-            background-color: #000000;
+            background-color: #100a1c;
             z-index: 10000;
             display: flex;
             flex-direction: column;
@@ -136,7 +136,7 @@
             padding: 1rem 2rem;
             font-family: 'Orbitron', sans-serif;
             background: var(--glow-color);
-            color: #000000;
+            color: #100a1c;
             border-radius: 1rem;
             text-decoration: none;
             font-weight: bold;
@@ -233,7 +233,7 @@
             height: clamp(100px, 22vmin, 180px);
             border: 3px solid var(--glow-color);
             border-radius: 50%;
-            background-image: linear-gradient(to bottom, rgba(255, 0, 0, 0.3), rgba(255, 0, 0, 0.1));
+            background-image: linear-gradient(to bottom, rgba(0, 255, 195, 0.3), rgba(0, 255, 195, 0.1));
             color: #fff;
             cursor: pointer;
             text-shadow: 0 0 1vmin var(--glow-color);
@@ -246,7 +246,7 @@
             line-height: 1.2;
         }
         #spinButton:not(:disabled):hover {
-            background-color: rgba(255, 0, 0, 0.4);
+            background-color: rgba(0, 255, 195, 0.4);
             box-shadow: 0 0 2vmin var(--glow-color);
             transform: scale(1.05);
         }
@@ -270,32 +270,31 @@
             padding: 1.5vmin 3vmin; 
             border: 2px solid var(--glow-color);
             border-radius: 1.5vmin;
-            background-image: linear-gradient(to bottom, rgba(255, 0, 0, 0.3), rgba(255, 0, 0, 0.1));
+            background-image: linear-gradient(to bottom, rgba(0, 255, 195, 0.3), rgba(0, 255, 195, 0.1));
             color: #fff;
             cursor: pointer;
             text-shadow: 0 0 1vmin var(--glow-color);
             transition: all 0.2s;
         }
         #autoSpinButton:not(.active):hover, #buyBonusButton:not(:disabled):hover {
-            background-color: rgba(255, 0, 0, 0.4);
+            background-color: rgba(0, 255, 195, 0.4);
             box-shadow: 0 0 2vmin var(--glow-color);
             transform: translateY(-2px);
         }
         #autoSpinButton.active { 
             background: var(--secondary-glow); 
             border-color: var(--secondary-glow); 
-            box-shadow: 0 0 2vmin var(--secondary-glow);
-            color: #000;
+            box-shadow: 0 0 2vmin var(--secondary-glow); 
         }
 
         .reels-container {
             display: flex;
             gap: 1.5vmin;
             padding: 2vmin;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.4);
             border: 2px solid var(--glow-color);
             border-radius: 2vmin;
-            box-shadow: 0 0 3vmin var(--glow-color), inset 0 0 2vmin rgba(255, 0, 0, 0.5);
+            box-shadow: 0 0 3vmin var(--glow-color), inset 0 0 2vmin rgba(0, 255, 195, 0.5);
             backdrop-filter: blur(8px);
             position: relative;
         }
@@ -304,7 +303,7 @@
             width: clamp(120px, 18vmin, 300px);
             height: clamp(360px, 54vmin, 900px);
             overflow: hidden;
-            background: linear-gradient(135deg, rgba(100, 0, 0, 0.2), rgba(0, 50, 0, 0.2));
+            background: linear-gradient(135deg, rgba(249, 0, 255, 0.1), rgba(0, 255, 195, 0.1));
             border-radius: 1vmin;
             position: relative;
             box-shadow: inset 0 0 10px #000;
@@ -347,7 +346,7 @@
         }
 
         #balance-box, #win-box {
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.3);
             border: 2px solid var(--glow-color);
             border-radius: 1.5vmin;
             padding: 1vmin 2vmin;
@@ -369,7 +368,7 @@
         .bet-select-btn {
             font-family: 'Orbitron', sans-serif;
             background: rgba(0,0,0,0.4);
-            border: 2px solid rgba(255, 0, 0, 0.5);
+            border: 2px solid rgba(0, 255, 195, 0.5);
             color: #fff;
             padding: 1vmin 2vmin;
             border-radius: 1vmin;
@@ -379,7 +378,7 @@
         }
         .bet-select-btn:hover {
             border-color: var(--glow-color);
-            background: rgba(255, 0, 0, 0.2);
+            background: rgba(0, 255, 195, 0.2);
         }
         .bet-select-btn.active {
             background: var(--glow-color);
@@ -390,28 +389,20 @@
         }
         
         #buyBonusButton {
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(0.8rem, 1.8vmin, 1.3rem); /* Adjusted font size */
+             font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1rem, 2vmin, 1.5rem); 
             padding: 1.5vmin 3vmin; 
             border: 2px solid var(--secondary-glow);
             border-radius: 1.5vmin;
-            background-image: linear-gradient(to bottom, rgba(255, 196, 0, 0.3), rgba(255, 196, 0, 0.1));
+            background-image: linear-gradient(to bottom, rgba(249, 0, 255, 0.3), rgba(249, 0, 255, 0.1));
             color: #fff;
             cursor: pointer;
             text-shadow: 0 0 1vmin var(--secondary-glow);
             transition: all 0.2s;
-            white-space: nowrap; /* Prevent text wrapping */
         }
         #buyBonusButton:disabled {
             filter: grayscale(1) brightness(0.7);
             cursor: not-allowed;
-        }
-        
-        .in-place-win-video {
-            position: absolute;
-            pointer-events: none;
-            z-index: 200;
-            object-fit: cover;
         }
 
         #win-lines-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
@@ -419,7 +410,8 @@
         .win-line { fill: none; stroke: var(--secondary-glow); stroke-width: 5px; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 5px var(--secondary-glow)) drop-shadow(0 0 15px var(--secondary-glow)); stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: draw-line 0.8s ease-out forwards, blink-line 1s linear infinite 0.8s; }
         @keyframes draw-line { to { stroke-dashoffset: 0; } }
         @keyframes blink-line { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        .symbol.win-pulse img, .symbol.expanding.win-pulse img { animation: win-pulse-anim 1s ease-out infinite; }
+        
+        .symbol.win-pulse img { animation: win-pulse-anim 1s ease-out infinite; }
         @keyframes win-pulse-anim { 0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px var(--win-glow-color)) brightness(1.2); } 50% { transform: scale(1.25); filter: drop-shadow(0 0 25px var(--win-glow-color)) drop-shadow(0 0 10px #fff) brightness(1.8); } }
         .symbol.scatter-land img { animation: scatter-land-anim 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes scatter-land-anim { 0% { transform: scale(0.2) rotate(-360deg); opacity: 0; } 60% { transform: scale(1.3); } 100% { transform: scale(1); opacity: 1; } }
@@ -429,10 +421,10 @@
         .symbol.expanding { position: absolute; left: 0; width: 100%; z-index: 50; animation: expand-symbol 0.7s forwards; }
         @keyframes expand-symbol { 0% { transform: scale(0.8); opacity: 0; } 60% { transform: scale(1.1); opacity: 1; filter: drop-shadow(0 0 35px var(--win-glow-color)); } 100% { transform: scale(1); opacity: 1; } }
         #game-area.anticipation-glow .reels-container { animation: anticipation-pulse 1.2s infinite; }
-        @keyframes anticipation-pulse { 0%, 100% { box-shadow: 0 0 3vmin var(--glow-color), inset 0 0 2vmin rgba(255, 0, 0, 0.5); } 50% { box-shadow: 0 0 8vmin var(--anticipation-glow-color), inset 0 0 4vmin var(--anticipation-glow-color); } }
+        @keyframes anticipation-pulse { 0%, 100% { box-shadow: 0 0 3vmin var(--glow-color), inset 0 0 2vmin rgba(0, 255, 195, 0.5); } 50% { box-shadow: 0 0 8vmin var(--anticipation-glow-color), inset 0 0 4vmin var(--anticipation-glow-color); } }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; text-align: center; color: #fff; z-index: 1000; }
-        .modal-content { font-family: 'Orbitron', sans-serif; animation: modal-appear 1s forwards; background: rgba(20, 0, 0, 0.95); border: 2px solid var(--glow-color); border-radius: 2vmin; padding: 3vmin; max-width: 90vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 0 50px var(--secondary-glow); }
+        .modal-content { font-family: 'Orbitron', sans-serif; animation: modal-appear 1s forwards; background: rgba(10, 0, 20, 0.95); border: 2px solid var(--glow-color); border-radius: 2vmin; padding: 3vmin; max-width: 90vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 0 50px var(--secondary-glow); }
         @keyframes modal-appear { 0% { transform: scale(0.5) rotate(-15deg); opacity: 0; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
         .modal-title { font-size: 5vmin; color: var(--glow-color); text-shadow: 0 0 2vmin var(--glow-color); }
         .modal-subtitle { font-size: 4vmin; margin-top: 2vmin; }
@@ -490,8 +482,7 @@
             #mute-button { width: 6vh; height: 6vh; font-size: 2.5vh; }
             .side-panel { width: 15vw; padding: 0 2vw; }
             #spinButton { width: 18vh; height: 18vh; }
-            #autoSpinButton { padding: 1vh 2vh; font-size: 2vh; }
-             #buyBonusButton { padding: 1vh 2vh; font-size: 1.8vh; }
+            #autoSpinButton, #buyBonusButton { padding: 1vh 2vh; font-size: 2vh; }
             
             #game-area { padding-top: 8vh; padding-bottom: 25vh; }
 
@@ -535,7 +526,7 @@
 
     <div id="game-container">
         
-        <h1 class="game-title">Taboo Temptations</h1>
+        <h1 class="game-title">Taboo Temptensions</h1>
         
         <button id="mute-button"><i class="fas fa-volume-high"></i></button>
 
@@ -621,24 +612,25 @@
     const progressBar = document.getElementById('progress-bar');
     const loadingPercentage = document.getElementById('loading-percentage');
     
+    // INTEGRATED FROM MOBILE: New SYMBOLS object with videoSrc
     const SYMBOLS = {
-        'az1': { weight: 20, src: 'az1.png', videos: 1, payout: { '3': 5,  '4': 10,  '5': 20  }},
-        'az2': { weight: 18, src: 'az2.png', videos: 1, payout: { '3': 10, '4': 20,  '5': 40  }},
-        'az3': { weight: 15, src: 'az3.png', videos: 1, payout: { '3': 15, '4': 30,  '5': 60  }},
-        'az4': { weight: 12, src: 'az4.png', videos: 1, payout: { '3': 20, '4': 40,  '5': 80  }},
-        'az5': { weight: 10, src: 'az5.png', videos: 1, payout: { '3': 30, '4': 60,  '5': 120 }},
-        'az6': { weight: 8,  src: 'az6.png', videos: 1, payout: { '3': 50, '4': 100, '5': 200 }},
-        'az7': { weight: 6,  src: 'az7.png', videos: 1, payout: { '3': 100,'4': 200, '5': 400 }},
-        'az8': { weight: 4,  src: 'az8.png', videos: 1, payout: { '3': 200,'4': 400, '5': 800 }},
-        'az9': { weight: 3,  src: 'az9.png', videos: 1, payout: { '3': 220,'4': 450, '5': 900 }},
-        'wild':   { weight: 2,  src: 'wild.png',   isWild: true, payout: { '3': 250, '4': 500, '5': 1000 }},
-        'scatter':{ weight: 5,  src: 'scatter2.png',spins: 10, isScatter: true }
+        'criminal1': { weight: 20, src: 'az1.png', videoSrc: 'az1_v1.webm', payout: { '3': 5,  '4': 10,  '5': 20  }},
+        'criminal2': { weight: 18, src: 'az2.png', videoSrc: 'az2_v1.webm', payout: { '3': 10, '4': 20,  '5': 40  }},
+        'criminal3': { weight: 15, src: 'az3.png', videoSrc: 'az3_v1.webm', payout: { '3': 15, '4': 30,  '5': 60  }},
+        'criminal4': { weight: 12, src: 'az4.png', videoSrc: 'az4_v1.webm', payout: { '3': 20, '4': 40,  '5': 80  }},
+        'criminal5': { weight: 10, src: 'az5.png', videoSrc: 'az5_v1.webm', payout: { '3': 30, '4': 60,  '5': 120 }},
+        'criminal6': { weight: 8,  src: 'az6.png', videoSrc: 'az6_v1.webm', payout: { '3': 50, '4': 100, '5': 200 }},
+        'criminal7': { weight: 6,  src: 'az7.png', videoSrc: 'az7_v1.webm', payout: { '3': 100,'4': 200, '5': 400 }},
+        'criminal8': { weight: 4,  src: 'az8.png', videoSrc: 'az8_v1.webm', payout: { '3': 200,'4': 400, '5': 800 }},
+        'criminal9': { weight: 3,  src: 'az9.png', videoSrc: 'az9_v1.webm', payout: { '3': 220,'4': 450, '5': 900 }},
+        'wild':      { weight: 2,  src: 'wild.png',      videoSrc: 'wild.webm', isWild: true, payout: { '3': 250, '4': 500, '5': 1000 }},
+        'scatter':   { weight: 5,  src: 'scatter.png', spins: 10, isScatter: true } // Scatter has no win video by design
     };
 
     async function updateBalanceInFirestore(newBalance) {
         if (!userDocRef) return;
         try {
-            await updateDoc(userDocRef, { chips: Math.round(newBalance) });
+            await updateDoc(userDocRef, { chips: newBalance });
         } catch (error) {
             console.error("Грешка при обновяване на баланса:", error);
         }
@@ -681,15 +673,14 @@
         const SOUND_FILES = ['bg_music_1.mp3', 'bg_music_2.mp3', 'bg_music_3.mp3', 'win_sound.mp3', 'anticipation.mp3', 'expand.mp3'];
         
         const assetsToLoad = [];
-        Object.keys(SYMBOLS).forEach(name => assetsToLoad.push({type: 'image', src: SYMBOLS[name].src}));
-        SOUND_FILES.forEach(name => assetsToLoad.push({type: 'audio', src: name}));
-
-        for (const symbolKey in SYMBOLS) {
-            const symbolData = SYMBOLS[symbolKey];
-            if (symbolData.videos && symbolData.videos > 0) {
-                assetsToLoad.push({type: 'video', src: `${symbolKey}_v1.webm`});
+        Object.values(SYMBOLS).forEach(symbol => {
+            assetsToLoad.push({type: 'image', src: symbol.src});
+            // Preload videos as well
+            if (symbol.videoSrc) {
+                assetsToLoad.push({type: 'video', src: symbol.videoSrc});
             }
-        }
+        });
+        SOUND_FILES.forEach(name => assetsToLoad.push({type: 'audio', src: name}));
         
         let loadedCount = 0;
         const totalCount = assetsToLoad.length;
@@ -706,7 +697,7 @@
                 
                 const onAssetError = () => {
                     console.error(`Failed to load asset: ${asset.src}`);
-                    onAssetLoaded(); 
+                    onAssetLoaded(); // Continue loading even if one asset fails
                 };
 
                 if (asset.type === 'image') {
@@ -714,16 +705,11 @@
                     img.src = asset.src;
                     img.onload = onAssetLoaded;
                     img.onerror = onAssetError;
-                } else if (asset.type === 'audio') {
-                    const audio = new Audio();
-                    audio.addEventListener('canplaythrough', onAssetLoaded, { once: true });
-                    audio.addEventListener('error', onAssetError, { once: true });
-                    audio.src = asset.src;
-                } else if (asset.type === 'video') {
-                     const video = document.createElement('video');
-                     video.addEventListener('canplaythrough', onAssetLoaded, { once: true });
-                     video.addEventListener('error', onAssetError, { once: true });
-                     video.src = asset.src;
+                } else if (asset.type === 'audio' || asset.type === 'video') {
+                     const media = asset.type === 'audio' ? new Audio() : document.createElement('video');
+                     media.addEventListener('canplaythrough', onAssetLoaded, { once: true });
+                     media.addEventListener('error', onAssetError, { once: true });
+                     media.src = asset.src;
                 }
             });
         });
@@ -749,12 +735,13 @@
             [0, 0, 1, 2, 2], [2, 2, 1, 0, 0], [1, 0, 0, 0, 1], [1, 2, 2, 2, 1], [0, 1, 1, 1, 2]
         ];
         
-        const BET_AMOUNTS = [10, 20, 50, 100, 200, 500];
+        // FIXED: Bet amounts are now direct currency values
+        const BET_AMOUNTS = [1, 2, 5, 10, 20, 50];
         const MAX_WIN_MULTIPLIER = 2500;
         const BONUS_BUY_COST_MULTIPLIER = 100;
 
         let balance = initialBalance;
-        let currentBetIndex = 0;
+        let currentBetIndex = 2; // Default to 5.00
         let bet = BET_AMOUNTS[currentBetIndex];
         let isSpinning = false;
         let isAutoSpinning = false;
@@ -763,7 +750,6 @@
         let isMuted = false;
         let hasRequestedFullscreen = false;
 
-        // Audio Elements
         const backgroundMusicFiles = ['bg_music_1.mp3', 'bg_music_2.mp3', 'bg_music_3.mp3'];
         let currentTrackIndex = 0;
         const bgMusicPlayer = new Audio();
@@ -773,13 +759,11 @@
         const expandSound = new Audio('expand.mp3');
         const allSounds = [bgMusicPlayer, winSound, anticipationSound, expandSound];
 
-        // DOM Elements
         const spinButton = document.getElementById('spinButton');
         const autoSpinButton = document.getElementById('autoSpinButton');
         const buyBonusButton = document.getElementById('buyBonusButton');
         const balanceDisplay = document.getElementById('balance');
         const winDisplay = document.getElementById('win');
-        const reelsContainer = document.querySelector('.reels-container');
         const reels = Array.from({ length: REEL_COUNT }, (_, i) => document.getElementById(`reel${i}`));
         const gameArea = document.getElementById('game-area');
         const winLinesSvg = document.getElementById('win-lines-svg');
@@ -793,12 +777,8 @@
             const elem = document.documentElement;
             if (elem.requestFullscreen) {
                 elem.requestFullscreen().catch(err => console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`));
-            } else if (elem.mozRequestFullScreen) { /* Firefox */
-                elem.mozRequestFullScreen();
-            } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+            } else if (elem.webkitRequestFullscreen) {
                 elem.webkitRequestFullscreen();
-            } else if (elem.msRequestFullscreen) { /* IE/Edge */
-                elem.msRequestFullscreen();
             }
         }
 
@@ -812,7 +792,6 @@
         bgMusicPlayer.addEventListener('ended', playNextTrack);
 
         function manageBackgroundMusic(shouldPlay) {
-            if (isMuted) return;
             if (shouldPlay && bgMusicPlayer.paused) {
                 bgMusicPlayer.play().catch(e => {});
             } else if (!shouldPlay && !bgMusicPlayer.paused) {
@@ -864,7 +843,7 @@
             BET_AMOUNTS.forEach((amount, index) => {
                 const button = document.createElement('button');
                 button.classList.add('bet-select-btn');
-                button.textContent = amount.toFixed(2);
+                button.textContent = amount.toFixed(2); // Display correct format
                 button.dataset.index = index;
                 betSelectionBar.appendChild(button);
             });
@@ -878,12 +857,6 @@
             document.querySelectorAll('.bet-select-btn').forEach(btn => {
                 btn.classList.toggle('active', parseInt(btn.dataset.index) === currentBetIndex);
             });
-            updateBuyBonusButton();
-        }
-        
-        function updateBuyBonusButton() {
-            const cost = bet * BONUS_BUY_COST_MULTIPLIER;
-            buyBonusButton.textContent = `КУПИ (${cost.toFixed(2)})`;
         }
 
         async function spin(isFreeSpin = false) {
@@ -895,7 +868,7 @@
             }
             if (bgMusicPlayer.paused) {
                  bgMusicPlayer.src = backgroundMusicFiles[currentTrackIndex];
-                 bgMusicPlayer.play().catch(e => { /* Autoplay blocked */ });
+                 bgMusicPlayer.play().catch(e => {});
             }
 
             if (!isFreeSpin && freeSpinsRemaining === 0 && balance < bet) {
@@ -939,9 +912,7 @@
                 return new Promise(async (resolve) => {
                     const reelStripElement = reel.querySelector('.reel-strip');
                     const strip = reelStrips[i];
-                    
                     const symbolSize = reel.clientHeight / SYMBOLS_PER_REEL_VISIBLE;
-                    
                     const baseTargetPosition = finalIndexes[i] * symbolSize;
                     const loopOffset = strip.length * symbolSize;
                     
@@ -997,7 +968,7 @@
                  messageBox.textContent = `ПЕЧАЛБА: ${winAmount.toFixed(2)}`;
             }
             
-            handleNextAction(hasWin, bonusTriggered);
+            handleNextAction(bonusTriggered);
         }
         
         spinButton.addEventListener('click', () => spin());
@@ -1038,27 +1009,21 @@
             betSelectionBar.style.pointerEvents = disabled ? 'none' : 'auto';
         }
 
-        function handleNextAction(hasWin, bonusTriggered) {
-            const winDelay = hasWin ? (expandingSymbol ? 2500 : 1500) : 250;
-            const autoSpinDelay = hasWin ? 2500 : 1200;
-
+        // SIMPLIFIED: Delays are handled by awaiting animations now
+        function handleNextAction(bonusTriggered) {
             if (bonusTriggered) { return; }
 
             if (freeSpinsRemaining > 0) {
-                setTimeout(() => { 
-                    isSpinning = false; 
-                    spin(true); 
-                }, winDelay);
+                isSpinning = false; 
+                spin(true); 
             } else {
                 if (expandingSymbol) {
                     expandingSymbol = null;
                     updateSpinButtonText();
                 }
                 if (isAutoSpinning) {
-                    setTimeout(() => { 
-                        isSpinning = false; 
-                        spin(); 
-                    }, autoSpinDelay);
+                    isSpinning = false; 
+                    spin(); 
                 } else {
                     isSpinning = false;
                     setControlsDisabled(false);
@@ -1068,71 +1033,31 @@
         
         function clearAnimations() {
             winLinesSvg.innerHTML = '';
-            document.querySelectorAll('.in-place-win-video').forEach(v => v.remove());
-            
             reels.forEach(reel => {
                 const expandingSymbols = reel.querySelectorAll('.symbol.expanding');
                 expandingSymbols.forEach(el => el.remove());
-                
                 const strip = reel.querySelector('.reel-strip');
                 if (strip) { strip.style.opacity = '1'; }
             });
             
             document.querySelectorAll('.symbol').forEach(el => {
                 el.className = 'symbol';
-                const img = el.querySelector('img');
-                if (img) img.style.opacity = '1';
             });
             
             gameArea.classList.remove('anticipation-glow');
         }
 
-        function playInPlaceWinVideo(symbolKey, reelIndex, rowIndex, symbolImg) {
-            const symbolData = SYMBOLS[symbolKey];
-            if (!symbolData || !symbolData.videos || symbolData.videos === 0) {
-                if (symbolImg) symbolImg.style.opacity = '1';
-                return;
-            }
-
-            const reelElement = reels[reelIndex];
-            const symbolHeight = reelElement.clientHeight / SYMBOLS_PER_REEL_VISIBLE;
-            const symbolWidth = reelElement.clientWidth;
-
-            const video = document.createElement('video');
-            video.src = `${symbolKey}_v1.webm`;
-            video.muted = true;
-            video.playsInline = true;
-            video.className = 'in-place-win-video';
-            video.style.width = `${symbolWidth}px`;
-            video.style.height = `${symbolHeight}px`;
-            video.style.top = `${reelElement.offsetTop + (rowIndex * symbolHeight)}px`;
-            video.style.left = `${reelElement.offsetLeft}px`;
-
-            video.addEventListener('ended', () => {
-                if (symbolImg) symbolImg.style.opacity = '1';
-                video.remove();
-            });
-            
-            reelsContainer.appendChild(video);
-            
-            video.play().catch(e => {
-                console.error("In-place video play failed:", e);
-                if (symbolImg) symbolImg.style.opacity = '1';
-                video.remove();
-            });
-        }
-        
         async function checkWin(results, finalIndexes) {
-            let bonusTriggered = false;
-
-            // --- Step 1: Detect Scatters and Handle Retriggers ---
-            let scatterCount = 0;
+            let totalWin = 0; 
+            const winningLines = [];
+            let scatterCount = 0; 
             const scatterPositions = [];
+            
             results.forEach((reelResult, reelIndex) => {
                 reelResult.forEach((symbolKey, symbolIndex) => {
                     if (SYMBOLS[symbolKey]?.isScatter) {
                         scatterCount++;
-                        scatterPositions.push({ reel: reelIndex, pos: symbolIndex });
+                        scatterPositions.push({reel: reelIndex, pos: symbolIndex});
                     }
                 });
             });
@@ -1144,10 +1069,6 @@
                 await triggerBonusAnimation(scatterPositions, finalIndexes);
             }
 
-            // --- Step 2: Calculate Standard Line Wins ---
-            let lineWinAmount = 0;
-            const winningLines = [];
-            const winningPositions = new Set();
             PAYLINES.forEach((line) => {
                 let payingSymbolKey = null;
                 for (let i = 0; i < REEL_COUNT; i++) {
@@ -1167,27 +1088,19 @@
                 if (matchCount >= 3) {
                     const symbolData = SYMBOLS[payingSymbolKey];
                     if (symbolData?.payout?.[matchCount]) {
-                        const payout = symbolData.payout[matchCount] * (bet / 10);
-                        lineWinAmount += payout;
+                        // FIXED: Payout calculation is now direct
+                        const payout = symbolData.payout[matchCount] * bet;
+                        totalWin += payout;
                         const lineCoords = [];
                         for (let i = 0; i < matchCount; i++) {
-                            const symbolOnLine = results[i][line[i]];
-                            winningPositions.add(`${i}-${line[i]}-${payingSymbolKey}`);
-                            lineCoords.push({ reel: i, row: line[i] });
+                            lineCoords.push({reel: i, row: line[i]});
                         }
-                        winningLines.push(lineCoords);
+                        // INTEGRATED: Store paying symbol for video animation
+                        winningLines.push({coords: lineCoords, payingSymbol: payingSymbolKey});
                     }
                 }
             });
-
-            // --- Step 3: Animate Standard Line Wins (if any) ---
-            if (lineWinAmount > 0) {
-                drawWinningLines(winningLines);
-                flashWinningSymbolsAndPlayVideos(winningPositions, finalIndexes);
-            }
-
-            // --- Step 4: Check for and Animate Expansion Wins (if any) ---
-            let expansionWinAmount = 0;
+            
             let hasExpansionWin = false;
             if (expandingSymbol) {
                 const expandingReelsIndices = new Set();
@@ -1197,12 +1110,11 @@
 
                 if (expandingReelsIndices.size >= 3) {
                     hasExpansionWin = true;
-                    await new Promise(res => setTimeout(res, lineWinAmount > 0 ? 2000 : 500));
-                    
-                    clearAnimations(); 
-
                     manageBackgroundMusic(false);
-                    expandSound.play().finally(() => manageBackgroundMusic(true));
+                    expandSound.play();
+                    expandSound.onended = () => manageBackgroundMusic(true);
+
+                    await new Promise(res => setTimeout(res, 500)); 
 
                     expandingReelsIndices.forEach(reelIndex => {
                         const reel = reels[reelIndex];
@@ -1218,16 +1130,20 @@
                         }
                     });
 
-                    await new Promise(res => setTimeout(res, 800));
+                    await new Promise(res => setTimeout(res, 800)); 
 
                     const payoutData = SYMBOLS[expandingSymbol].payout;
-                    expansionWinAmount = payoutData[expandingReelsIndices.size] * (bet / 10) * PAYLINES.length;
-                    document.querySelectorAll('.symbol.expanding').forEach(el => el.classList.add('win-pulse'));
+                    const numExpandedReels = expandingReelsIndices.size;
+
+                    if (payoutData?.[numExpandedReels]) {
+                        // FIXED: Expansion payout calculation
+                        const expansionPayout = payoutData[numExpandedReels] * bet * PAYLINES.length;
+                        totalWin += expansionPayout;
+                        document.querySelectorAll('.symbol.expanding').forEach(el => el.classList.add('win-pulse'));
+                    }
                 }
             }
-
-            // --- Step 5: Finalize total, update balance and UI ---
-            let totalWin = lineWinAmount + expansionWinAmount;
+            
             const maxWin = bet * MAX_WIN_MULTIPLIER;
             if (totalWin > maxWin) totalWin = maxWin;
 
@@ -1236,20 +1152,22 @@
                 await updateBalanceInFirestore(balance);
                 updateBalanceDisplay();
                 
-                if (lineWinAmount > 0 && !hasExpansionWin) {
+                if(freeSpinsRemaining === 0 && !hasExpansionWin) {
                     manageBackgroundMusic(false);
-                    winSound.play().finally(() => manageBackgroundMusic(true));
+                    winSound.play();
+                    winSound.onended = () => manageBackgroundMusic(true);
                 }
-
+                
                 await updateWin(totalWin, true);
+                drawWinningLines(winningLines);
+                // INTEGRATED: Await the new, stable animation function
+                await playWinAnimations(winningLines, finalIndexes);
             }
             
-            // --- Step 6: Check for Initial Bonus Trigger ---
+            let bonusTriggered = false;
             if (freeSpinsRemaining === 0 && !expandingSymbol && scatterCount >= 3) {
                 bonusTriggered = true;
-                if (isAutoSpinning) toggleAutoSpin();
-                
-                await new Promise(res => setTimeout(res, totalWin > 0 ? 2000 : 500)); 
+                if(isAutoSpinning) toggleAutoSpin();
                 await triggerBonusAnimation(scatterPositions, finalIndexes);
                 
                 const bonusTransitionScreen = document.getElementById('bonus-transition-screen');
@@ -1260,8 +1178,8 @@
                     startBonus();
                 }, { once: true });
             }
-
-            return { hasWin: totalWin > 0, bonusTriggered, winAmount: totalWin };
+            
+            return { hasWin: totalWin > 0 || hasExpansionWin, bonusTriggered, winAmount: totalWin };
         }
         
         function startBonus() {
@@ -1282,24 +1200,22 @@
         
         async function buyBonus() {
             if (isSpinning || freeSpinsRemaining > 0) return;
+            
+            isSpinning = true; 
+            setControlsDisabled(true);
 
             const cost = bet * BONUS_BUY_COST_MULTIPLIER;
             if (balance < cost) {
                 messageBox.textContent = "Недостатъчен Баланс";
+                isSpinning = false; 
+                setControlsDisabled(false);
                 return;
             }
 
-            isSpinning = true;
-            setControlsDisabled(true);
-
-            const newBalance = balance - cost;
-            await updateBalanceInFirestore(newBalance);
-
-            // Manually update local state after successful Firestore call to ensure UI is responsive
-            // even before the onSnapshot listener fires.
-            balance = newBalance;
+            balance -= cost;
+            await updateBalanceInFirestore(balance);
             updateBalanceDisplay();
-
+            
             const bonusTransitionScreen = document.getElementById('bonus-transition-screen');
             bonusTransitionScreen.style.display = 'flex';
             bonusTransitionScreen.addEventListener('click', () => {
@@ -1307,7 +1223,6 @@
                 startBonus();
             }, { once: true });
         }
-
 
         async function triggerBonusAnimation(scatterPos, finalIndexes) {
             scatterPos.forEach(sp => {
@@ -1323,33 +1238,65 @@
             return stripElement.children[stripIndex] || null;
         }
 
-        function flashWinningSymbolsAndPlayVideos(positions, finalIndexes) {
-            positions.forEach(pos => {
-                const [reelIndexStr, symbolIndexStr, symbolKey] = pos.split('-');
-                const reelIndex = parseInt(reelIndexStr, 10);
-                const symbolIndexOnReel = parseInt(symbolIndexStr, 10);
-                
-                const indexInStrip = finalIndexes[reelIndex] + symbolIndexOnReel;
-                const symbolElement = getSymbolElement(reelIndex, indexInStrip);
-                
-                if (symbolElement) {
-                    const symbolImg = symbolElement.querySelector('img');
-                    if(symbolImg) {
-                        symbolImg.style.opacity = '0';
+        // INTEGRATED FROM MOBILE: New stable win animation function
+        async function playWinAnimations(winningLines, finalIndexes) {
+            const videoPromises = [];
+            const playedPositions = new Set(); 
+
+            winningLines.forEach(line => {
+                const payingSymbolKey = line.payingSymbol;
+                const symbolData = SYMBOLS[payingSymbolKey];
+                if (!symbolData || !symbolData.videoSrc) return;
+
+                line.coords.forEach(coord => {
+                    const posId = `${coord.reel}-${coord.row}`;
+                    if (playedPositions.has(posId)) return;
+                    playedPositions.add(posId);
+
+                    const domIndex = finalIndexes[coord.reel] + coord.row;
+                    const symbolElement = getSymbolElement(coord.reel, domIndex);
+                    
+                    if (symbolElement) {
+                        const videoPromise = new Promise(resolve => {
+                            const imgElement = symbolElement.querySelector('img');
+                            imgElement.style.transition = 'opacity 0.2s';
+                            imgElement.style.opacity = '0';
+
+                            const video = document.createElement('video');
+                            video.src = symbolData.videoSrc;
+                            video.autoplay = true;
+                            video.muted = true;
+                            video.playsInline = true;
+                            video.style.position = 'absolute';
+                            video.style.top = '0'; video.style.left = '0';
+                            video.style.width = '100%'; video.style.height = '100%';
+                            video.style.objectFit = 'contain';
+                            video.style.zIndex = '10';
+                            symbolElement.appendChild(video);
+
+                            const onEnd = () => {
+                                if (symbolElement.contains(video)) symbolElement.removeChild(video);
+                                imgElement.style.opacity = '1';
+                                resolve();
+                            };
+                            video.onended = onEnd;
+                            video.onerror = onEnd; // Fallback if video fails
+                        });
+                        videoPromises.push(videoPromise);
                     }
-                    symbolElement.classList.add('win-pulse');
-                    playInPlaceWinVideo(symbolKey, reelIndex, symbolIndexOnReel, symbolImg);
-                }
+                });
             });
+
+            await Promise.all(videoPromises);
         }
         
         function drawWinningLines(winningLines) {
-            const reelContainerRect = document.querySelector('.reels-container').getBoundingClientRect();
+            winLinesSvg.innerHTML = ''; // Clear previous lines
             const svgRect = winLinesSvg.getBoundingClientRect();
-             if (reels.length === 0 || !reelContainerRect || !svgRect) return;
+            if (reels.length === 0 || !svgRect) return;
 
-            winningLines.forEach(lineCoords => {
-                const points = lineCoords.map(coord => {
+            winningLines.forEach(lineData => {
+                const points = lineData.coords.map(coord => {
                     const reel = reels[coord.reel];
                     if (!reel) return '0,0';
                     const reelRect = reel.getBoundingClientRect();
