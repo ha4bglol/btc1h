@@ -103,7 +103,7 @@
             max-width: 90vw; width: 500px; box-shadow: 0 0 50px rgba(247, 183, 51, 0.3);
             text-align: center; position: relative;
         }
-        .modal-close-btn { position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem; color: var(--text-secondary); cursor: pointer; background: none; border: none; }
+        .modal-close-btn { position: absolute; top: 0.5rem; right: 0.5rem; font-size: 1.5rem; color: var(--text-secondary); cursor: pointer; background: none; border: none; padding: 0.5rem; /* MOBILE OPTIMIZATION: Bigger tap area */ }
         
         /* --- Toast Notification --- */
         #toast-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 10001; display: flex; flex-direction: column-reverse; gap: 10px; }
@@ -138,11 +138,14 @@
             opacity: 0; transition: opacity 0.3s; pointer-events: none;
         }
         .market-item.owned .item-owned-overlay { opacity: 1; }
+        .market-item.owned { cursor: not-allowed; } /* Make owned items not appear clickable */
+
         #cart-sidebar {
             width: 350px; flex-shrink: 0; background: var(--bg-secondary); padding: 1.5rem;
             border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column;
         }
-        #cart-items { flex-grow: 1; }
+        #cart-items { flex-grow: 1; display: flex; flex-direction: column; }
+        #empty-cart-msg { color: var(--text-secondary); text-align: center; margin: auto 0; }
         #cart-summary { border-top: 1px solid rgba(255,255,255,0.2); margin-top: 1rem; padding-top: 1rem; }
         #cart-summary div { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
         #cart-total { font-size: 1.5rem; font-weight: bold; color: var(--nivra-gold); }
@@ -162,9 +165,9 @@
         .mission-action .reward { font-weight: bold; color: var(--nivra-gold); display: block; text-align: right; margin-bottom: 0.5rem; }
 
         /* --- Fullscreen Lightbox for Media --- */
-        #lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 10000; display: none; justify-content: center; align-items: center; }
+        #lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 10000; display: none; justify-content: center; align-items: center; cursor: pointer; }
         #lightbox.active { display: flex; }
-        #lightbox img, #lightbox video { max-width: 90vw; max-height: 90vh; }
+        #lightbox img, #lightbox video { max-width: 90vw; max-height: 90vh; cursor: default; }
 
         /* --- Responsive Design --- */
         @media (max-width: 1024px) {
@@ -232,9 +235,9 @@
                         <div id="market-grid"></div>
                         <aside id="cart-sidebar">
                             <h2><i class="fas fa-shopping-cart"></i> Количка</h2>
-                            <ul id="cart-items" style="list-style: none; padding: 0; margin: 1rem 0; min-height: 100px;">
+                            <div id="cart-items" style="list-style: none; padding: 0; margin: 1rem 0; min-height: 100px;">
                                 <p id="empty-cart-msg" style="color: var(--text-secondary);">Количката е празна.</p>
-                            </ul>
+                            </div>
                             <div id="cart-summary">
                                 <div><strong style="font-size: 1.2rem;">Общо:</strong> <span id="cart-total">0</span></div>
                             </div>
@@ -290,19 +293,21 @@
         // == ДАННИ ЗА МАГАЗИНА И МИСИИТЕ (ЛЕСНО ЗА РЕДАКЦИЯ) ==
         // =================================================================================
         
+        // OPTIMIZATION: Добавяме път до медийните файлове, за да е лесно за промяна.
+        const MEDIA_PATH = ''; // Променете на 'assets/media/' ако файловете ви са в подпапка
+
         // За да добавиш нова колекция, просто копирай един от обектите и го промени.
         const MARKET_ITEMS = [
-            { id: 'angel_1', name: 'Angel Vol. 1', price: 250, thumb: 'angel1.png', type: 'collection', description: 'Съдържа 1 ексклузивно изображение и 6 уникални видеоклипа.', contents: { images: ['angel1.png'], videos: ['angel1_v1.webm', 'angel1_v2.webm', 'angel1_v3.webm', 'angel1_v4.webm', 'angel1_v5.webm', 'angel1_v6.webm'] } },
-            { id: 'angel_2', name: 'Angel Vol. 2', price: 250, thumb: 'angel2.png', type: 'collection', description: 'Съдържа 1 ексклузивно изображение и 6 уникални видеоклипа.', contents: { images: ['angel2.png'], videos: ['angel2_v1.webm', 'angel2_v2.webm', 'angel2_v3.webm', 'angel2_v4.webm', 'angel2_v5.webm', 'angel2_v6.webm'] } },
-            { id: 'angel_3', name: 'Angel Vol. 3', price: 250, thumb: 'angel3.png', type: 'collection', description: 'Съдържа 1 ексклузивно изображение и 6 уникални видеоклипа.', contents: { images: ['angel3.png'], videos: ['angel3_v1.webm', 'angel3_v2.webm', 'angel3_v3.webm', 'angel3_v4.webm', 'angel3_v5.webm', 'angel3_v6.webm'] } },
-            { id: 'az_pack', name: 'AZ Колекция', price: 400, thumb: 'az1.png', type: 'image_pack', description: 'Пълен пакет, съдържащ 9 ексклузивни изображения.', contents: { images: ['az1.png', 'az2.png', 'az3.png', 'az4.png', 'az5.png', 'az6.png', 'az7.png', 'az8.png', 'az9.png'], videos: [] } },
-            { id: 'bandit_pack', name: 'Bandit Колекция', price: 400, thumb: 'bandit1.png', type: 'image_pack', description: 'Пълен пакет, съдържащ 9 ексклузивни изображения.', contents: { images: ['bandit1.png', 'bandit2.png', 'bandit3.png', 'bandit4.png', 'bandit5.png', 'bandit6.png', 'bandit7.png', 'bandit8.png', 'bandit9.png'], videos: [] } },
-            { id: 'criminal_pack', name: 'Criminal Колекция', price: 400, thumb: 'criminal1.png', type: 'image_pack', description: 'Пълен пакет, съдържащ 9 ексклузивни изображения.', contents: { images: ['criminal1.png', 'criminal2.png', 'criminal3.png', 'criminal4.png', 'criminal5.png', 'criminal6.png', 'criminal7.png', 'criminal8.png', 'criminal9.png'], videos: [] } },
-            { id: 'guz_pack', name: 'Guz Колекция', price: 400, thumb: 'guz1.png', type: 'image_pack', description: 'Пълен пакет, съдържащ 9 ексклузивни изображения.', contents: { images: ['guz1.png', 'guz2.png', 'guz3.png', 'guz4.png', 'guz5.png', 'guz6.png', 'guz7.png', 'guz8.png', 'guz9.png'], videos: [] } },
-            { id: 'kur_pack', name: 'Kur Колекция', price: 400, thumb: 'kur1.png', type: 'image_pack', description: 'Пълен пакет, съдържащ 9 ексклузивни изображения.', contents: { images: ['kur1.png', 'kur2.png', 'kur3.png', 'kur4.png', 'kur5.png', 'kur6.png', 'kur7.png', 'kur8.png', 'kur9.png'], videos: [] } },
+            { id: 'angel_1', name: 'Angel Vol. 1', price: 250, thumb: `${MEDIA_PATH}angel1.png`, type: 'collection', description: 'Съдържа 1 ексклузивно изображение и 6 уникални видеоклипа.', contents: { images: [`${MEDIA_PATH}angel1.png`], videos: [`${MEDIA_PATH}angel1_v1.webm`, `${MEDIA_PATH}angel1_v2.webm`, `${MEDIA_PATH}angel1_v3.webm`, `${MEDIA_PATH}angel1_v4.webm`, `${MEDIA_PATH}angel1_v5.webm`, `${MEDIA_PATH}angel1_v6.webm`] } },
+            { id: 'angel_2', name: 'Angel Vol. 2', price: 250, thumb: `${MEDIA_PATH}angel2.png`, type: 'collection', description: 'Съдържа 1 ексклузивно изображение и 6 уникални видеоклипа.', contents: { images: [`${MEDIA_PATH}angel2.png`], videos: [`${MEDIA_PATH}angel2_v1.webm`, `${MEDIA_PATH}angel2_v2.webm`, `${MEDIA_PATH}angel2_v3.webm`, `${MEDIA_PATH}angel2_v4.webm`, `${MEDIA_PATH}angel2_v5.webm`, `${MEDIA_PATH}angel2_v6.webm`] } },
+            { id: 'angel_3', name: 'Angel Vol. 3', price: 250, thumb: `${MEDIA_PATH}angel3.png`, type: 'collection', description: 'Съдържа 1 ексклузивно изображение и 6 уникални видеоклипа.', contents: { images: [`${MEDIA_PATH}angel3.png`], videos: [`${MEDIA_PATH}angel3_v1.webm`, `${MEDIA_PATH}angel3_v2.webm`, `${MEDIA_PATH}angel3_v3.webm`, `${MEDIA_PATH}angel3_v4.webm`, `${MEDIA_PATH}angel3_v5.webm`, `${MEDIA_PATH}angel3_v6.webm`] } },
+            { id: 'az_pack', name: 'AZ Колекция', price: 400, thumb: `${MEDIA_PATH}az1.png`, type: 'image_pack', description: 'Пълен пакет, съдържащ 9 ексклузивни изображения.', contents: { images: [`${MEDIA_PATH}az1.png`, `${MEDIA_PATH}az2.png`, `${MEDIA_PATH}az3.png`, `${MEDIA_PATH}az4.png`, `${MEDIA_PATH}az5.png`, `${MEDIA_PATH}az6.png`, `${MEDIA_PATH}az7.png`, `${MEDIA_PATH}az8.png`, `${MEDIA_PATH}az9.png`], videos: [] } },
+            { id: 'bandit_pack', name: 'Bandit Колекция', price: 400, thumb: `${MEDIA_PATH}bandit1.png`, type: 'image_pack', description: 'Пълен пакет, съдържащ 9 ексклузивни изображения.', contents: { images: [`${MEDIA_PATH}bandit1.png`, `${MEDIA_PATH}bandit2.png`, `${MEDIA_PATH}bandit3.png`, `${MEDIA_PATH}bandit4.png`, `${MEDIA_PATH}bandit5.png`, `${MEDIA_PATH}bandit6.png`, `${MEDIA_PATH}bandit7.png`, `${MEDIA_PATH}bandit8.png`, `${MEDIA_PATH}bandit9.png`], videos: [] } },
+            { id: 'criminal_pack', name: 'Criminal Колекция', price: 400, thumb: `${MEDIA_PATH}criminal1.png`, type: 'image_pack', description: 'Пълен пакет, съдържащ 9 ексклузивни изображения.', contents: { images: [`${MEDIA_PATH}criminal1.png`, `${MEDIA_PATH}criminal2.png`, `${MEDIA_PATH}criminal3.png`, `${MEDIA_PATH}criminal4.png`, `${MEDIA_PATH}criminal5.png`, `${MEDIA_PATH}criminal6.png`, `${MEDIA_PATH}criminal7.png`, `${MEDIA_PATH}criminal8.png`, `${MEDIA_PATH}criminal9.png`], videos: [] } },
+            { id: 'guz_pack', name: 'Guz Колекция', price: 400, thumb: `${MEDIA_PATH}guz1.png`, type: 'image_pack', description: 'Пълен пакет, съдържащ 9 ексклузивни изображения.', contents: { images: [`${MEDIA_PATH}guz1.png`, `${MEDIA_PATH}guz2.png`, `${MEDIA_PATH}guz3.png`, `${MEDIA_PATH}guz4.png`, `${MEDIA_PATH}guz5.png`, `${MEDIA_PATH}guz6.png`, `${MEDIA_PATH}guz7.png`, `${MEDIA_PATH}guz8.png`, `${MEDIA_PATH}guz9.png`], videos: [] } },
+            { id: 'kur_pack', name: 'Kur Колекция', price: 400, thumb: `${MEDIA_PATH}kur1.png`, type: 'image_pack', description: 'Пълен пакет, съдържащ 9 ексклузивни изображения.', contents: { images: [`${MEDIA_PATH}kur1.png`, `${MEDIA_PATH}kur2.png`, `${MEDIA_PATH}kur3.png`, `${MEDIA_PATH}kur4.png`, `${MEDIA_PATH}kur5.png`, `${MEDIA_PATH}kur6.png`, `${MEDIA_PATH}kur7.png`, `${MEDIA_PATH}kur8.png`, `${MEDIA_PATH}kur9.png`], videos: [] } },
         ];
         
-        // За да добавиш нова мисия, просто копирай един от обектите и го промени.
         const MISSIONS = [
             { id: 'buy_first', text: 'Новобранец', description: 'Направи първата си покупка', reward: 50, condition: (owned) => owned.length > 0 },
             { id: 'buy_3', text: 'Колекционер', description: 'Купи 3+ колекции', reward: 100, condition: (owned) => owned.length >= 3 },
@@ -368,7 +373,7 @@
                     state.balance = data.chips || 0;
                     state.ownedItems = data.collection || [];
                     state.completedMissions = data.completedMissions || [];
-                    updateUI();
+                    updateUI(); // Central function to update everything based on new data
                 }
             });
         }
@@ -403,10 +408,8 @@
         function renderMarket() {
             dom.marketGrid.innerHTML = '';
             MARKET_ITEMS.forEach(item => {
-                const isOwned = state.ownedItems.includes(item.id);
-                const isSelected = state.cart.some(cartItem => cartItem.id === item.id);
                 const card = document.createElement('div');
-                card.className = `market-item ${isOwned ? 'owned' : ''} ${isSelected ? 'selected' : ''}`;
+                card.className = 'market-item';
                 card.dataset.id = item.id;
                 card.innerHTML = `
                     <img src="${item.thumb}" alt="${item.name}" class="item-thumbnail">
@@ -416,11 +419,9 @@
                         <div class="item-price"><i class="fas fa-coins"></i> ${item.price}</div>
                     </div>
                     <div class="item-owned-overlay"><i class="fas fa-check-circle"></i> Притежавано</div>`;
-                if (!isOwned) {
-                    card.addEventListener('click', () => toggleCartItem(item.id));
-                }
                 dom.marketGrid.appendChild(card);
             });
+            updateAllItemStates(); // Ensure correct state on initial render
         }
         
         function renderCollection() {
@@ -483,9 +484,9 @@
             } catch (error) {
                 console.error("Грешка при събиране на награда:", error);
                 alert("Възникна грешка. Моля, опитайте отново.");
-            } finally {
-                // UI ще се обнови автоматично от onSnapshot, няма нужда от toggleLoading(false)
+                toggleLoading(button, false); // Re-enable button on error
             }
+            // On success, UI will auto-update via onSnapshot, no need to re-enable button manually
         }
 
         function updateAllItemStates() {
@@ -499,10 +500,15 @@
         }
 
         function toggleCartItem(itemId) {
+            if (state.ownedItems.includes(itemId)) return; // Double check not to add owned items
+
             const itemIndex = state.cart.findIndex(item => item.id === itemId);
             const itemData = MARKET_ITEMS.find(item => item.id === itemId);
-            if (itemIndex > -1) { state.cart.splice(itemIndex, 1); } 
-            else { state.cart.push({ id: itemData.id, name: itemData.name, price: itemData.price }); }
+            if (itemIndex > -1) { 
+                state.cart.splice(itemIndex, 1); 
+            } else { 
+                state.cart.push({ id: itemData.id, name: itemData.name, price: itemData.price }); 
+            }
             updateCart();
             updateAllItemStates();
         }
@@ -510,13 +516,12 @@
         function updateCart() {
             dom.cartItems.innerHTML = '';
             if (state.cart.length === 0) {
-                dom.emptyCartMsg.style.display = 'block';
+                dom.cartItems.innerHTML = '<p id="empty-cart-msg">Количката е празна.</p>';
                 dom.cartTotal.textContent = '0';
                 dom.buyBtn.disabled = true;
                 return;
             }
             
-            dom.emptyCartMsg.style.display = 'none';
             state.cart.forEach(item => {
                 const li = document.createElement('li');
                 li.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;';
@@ -541,9 +546,10 @@
                     if (!userDoc.exists() || (userDoc.data().chips || 0) < total) {
                         throw "Недостатъчен баланс!";
                     }
+                    const itemsToBuy = state.cart.map(item => item.id);
                     transaction.update(state.userDocRef, { 
                         chips: increment(-total),
-                        collection: arrayUnion(...state.cart.map(item => item.id))
+                        collection: arrayUnion(...itemsToBuy)
                     });
                 });
                 
@@ -554,11 +560,12 @@
                 alert("Възникна грешка при покупката. Моля, проверете баланса си и опитайте отново.");
             } finally {
                 toggleLoading(dom.buyBtn, false);
-                // UI ще се обнови от onSnapshot
+                // UI will auto-update via onSnapshot, including the cart and market items state
             }
         }
         
         function setupEventListeners() {
+            // Tab navigation
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     document.querySelector('.tab-btn.active').classList.remove('active');
@@ -568,9 +575,20 @@
                 });
             });
 
+            // Logout and Purchase buttons
             document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
             dom.buyBtn.addEventListener('click', handlePurchase);
             
+            // FIX: Use event delegation for market items for better performance and to avoid stale listeners
+            dom.marketGrid.addEventListener('click', (e) => {
+                const card = e.target.closest('.market-item');
+                // Only toggle if the card exists and is not already owned
+                if (card && !card.classList.contains('owned')) {
+                    toggleCartItem(card.dataset.id);
+                }
+            });
+
+            // Missions list claim buttons
             dom.missionsList.addEventListener('click', (e) => {
                 const claimButton = e.target.closest('.claim-btn');
                 if (claimButton) {
@@ -582,11 +600,20 @@
         
         function showLightbox(item) {
             const lightbox = document.getElementById('lightbox');
-            const content = document.getElementById('lightbox-content');
-            if (item.contents?.videos?.length > 0) {
-                content.innerHTML = `<video src="${item.contents.videos[0]}" controls autoplay loop></video>`;
+            const contentContainer = document.getElementById('lightbox-content');
+            
+            // FIX: Prioritize video, then full image, then fallback to thumb
+            const hasVideos = item.contents?.videos?.length > 0;
+            const hasImages = item.contents?.images?.length > 0;
+
+            if (hasVideos) {
+                contentContainer.innerHTML = `<video src="${item.contents.videos[0]}" controls autoplay loop></video>`;
+            } else if (hasImages) {
+                // Show the first image from the collection, not the thumbnail
+                contentContainer.innerHTML = `<img src="${item.contents.images[0]}" alt="${item.name}">`;
             } else {
-                content.innerHTML = `<img src="${item.thumb}" alt="${item.name}">`;
+                // Fallback if no specific content is defined
+                contentContainer.innerHTML = `<img src="${item.thumb}" alt="${item.name}">`;
             }
             openModal(lightbox);
         }
@@ -619,3 +646,4 @@
     </script>
 </body>
 </html>
+
