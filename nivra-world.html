@@ -124,7 +124,7 @@
             position: relative; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;
             display: flex; flex-direction: column;
         }
-        .market-item:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.4), 0 0 20px var(--glow-color-1); }
+        .market-item:hover:not(.owned) { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.4), 0 0 20px var(--glow-color-1); }
         .market-item.selected { border-color: var(--nivra-gold); box-shadow: 0 0 15px var(--nivra-gold); }
         .item-thumbnail { width: 100%; height: auto; aspect-ratio: 1/1; object-fit: cover; display: block; }
         .item-info { padding: 1rem; text-align: left; flex-grow: 1; display: flex; flex-direction: column; }
@@ -138,7 +138,7 @@
             opacity: 0; transition: opacity 0.3s; pointer-events: none;
         }
         .market-item.owned .item-owned-overlay { opacity: 1; }
-        .market-item.owned { cursor: not-allowed; } /* Make owned items not appear clickable */
+        .market-item.owned { cursor: default; } /* Make owned items not appear clickable */
 
         #cart-sidebar {
             width: 350px; flex-shrink: 0; background: var(--bg-secondary); padding: 1.5rem;
@@ -236,7 +236,7 @@
                         <aside id="cart-sidebar">
                             <h2><i class="fas fa-shopping-cart"></i> Количка</h2>
                             <div id="cart-items" style="list-style: none; padding: 0; margin: 1rem 0; min-height: 100px;">
-                                <p id="empty-cart-msg" style="color: var(--text-secondary);">Количката е празна.</p>
+                                <p id="empty-cart-msg">Количката е празна.</p>
                             </div>
                             <div id="cart-summary">
                                 <div><strong style="font-size: 1.2rem;">Общо:</strong> <span id="cart-total">0</span></div>
@@ -293,10 +293,8 @@
         // == ДАННИ ЗА МАГАЗИНА И МИСИИТЕ (ЛЕСНО ЗА РЕДАКЦИЯ) ==
         // =================================================================================
         
-        // OPTIMIZATION: Добавяме път до медийните файлове, за да е лесно за промяна.
-        const MEDIA_PATH = ''; // Променете на 'assets/media/' ако файловете ви са в подпапка
+        const MEDIA_PATH = ''; 
 
-        // За да добавиш нова колекция, просто копирай един от обектите и го промени.
         const MARKET_ITEMS = [
             { id: 'angel_1', name: 'Angel Vol. 1', price: 250, thumb: `${MEDIA_PATH}angel1.png`, type: 'collection', description: 'Съдържа 1 ексклузивно изображение и 6 уникални видеоклипа.', contents: { images: [`${MEDIA_PATH}angel1.png`], videos: [`${MEDIA_PATH}angel1_v1.webm`, `${MEDIA_PATH}angel1_v2.webm`, `${MEDIA_PATH}angel1_v3.webm`, `${MEDIA_PATH}angel1_v4.webm`, `${MEDIA_PATH}angel1_v5.webm`, `${MEDIA_PATH}angel1_v6.webm`] } },
             { id: 'angel_2', name: 'Angel Vol. 2', price: 250, thumb: `${MEDIA_PATH}angel2.png`, type: 'collection', description: 'Съдържа 1 ексклузивно изображение и 6 уникални видеоклипа.', contents: { images: [`${MEDIA_PATH}angel2.png`], videos: [`${MEDIA_PATH}angel2_v1.webm`, `${MEDIA_PATH}angel2_v2.webm`, `${MEDIA_PATH}angel2_v3.webm`, `${MEDIA_PATH}angel2_v4.webm`, `${MEDIA_PATH}angel2_v5.webm`, `${MEDIA_PATH}angel2_v6.webm`] } },
@@ -334,10 +332,7 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        const state = {
-            user: null, userDocRef: null, balance: 0,
-            ownedItems: [], completedMissions: [], cart: [],
-        };
+        const state = { user: null, userDocRef: null, balance: 0, ownedItems: [], completedMissions: [], cart: [] };
         const dom = {
             loadingScreen: document.getElementById('loading-screen'),
             loginRequiredScreen: document.getElementById('login-required-screen'),
@@ -347,7 +342,6 @@
             collectionGrid: document.getElementById('collection-grid'),
             emptyCollectionMsg: document.getElementById('empty-collection-msg'),
             cartItems: document.getElementById('cart-items'),
-            emptyCartMsg: document.getElementById('empty-cart-msg'),
             cartTotal: document.getElementById('cart-total'),
             buyBtn: document.getElementById('buy-btn'),
             missionsList: document.getElementById('missions-list'),
@@ -373,7 +367,7 @@
                     state.balance = data.chips || 0;
                     state.ownedItems = data.collection || [];
                     state.completedMissions = data.completedMissions || [];
-                    updateUI(); // Central function to update everything based on new data
+                    updateUI();
                 }
             });
         }
@@ -384,7 +378,6 @@
                 dom.loadingScreen.style.display = 'none';
                 dom.appContainer.style.display = 'flex';
             }, 500);
-            
             renderMarket();
             setupEventListeners();
         }
@@ -421,15 +414,13 @@
                     <div class="item-owned-overlay"><i class="fas fa-check-circle"></i> Притежавано</div>`;
                 dom.marketGrid.appendChild(card);
             });
-            updateAllItemStates(); // Ensure correct state on initial render
+            updateAllItemStates();
         }
         
         function renderCollection() {
             dom.collectionGrid.innerHTML = '';
             const ownedFullItems = MARKET_ITEMS.filter(item => state.ownedItems.includes(item.id));
-            
             dom.emptyCollectionMsg.style.display = ownedFullItems.length === 0 ? 'block' : 'none';
-            
             ownedFullItems.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'market-item';
@@ -444,10 +435,8 @@
             MISSIONS.forEach(mission => {
                 const isCompleted = state.completedMissions.includes(mission.id);
                 const canComplete = mission.condition(state.ownedItems);
-
                 let statusClass = '';
                 let actionHtml = `<div class="reward">+${mission.reward} <i class="fas fa-coins"></i></div>`;
-
                 if (isCompleted) {
                     statusClass = 'claimed';
                     actionHtml = `<button class="btn btn-secondary" disabled><i class="fas fa-check"></i> Прибрано</button>`;
@@ -455,16 +444,12 @@
                     statusClass = 'claimable';
                     actionHtml = `<button class="btn btn-primary claim-btn"><span class="btn-text">Прибери ${mission.reward}</span></button>`;
                 }
-                
                 const missionEl = document.createElement('div');
                 missionEl.className = `mission ${statusClass}`;
                 missionEl.dataset.missionId = mission.id;
                 missionEl.innerHTML = `
                     <div class="mission-icon"><i class="fas ${isCompleted ? 'fa-check-double' : 'fa-tasks'}"></i></div>
-                    <div class="mission-info">
-                        <strong>${mission.text}</strong>
-                        <p>${mission.description}</p>
-                    </div>
+                    <div class="mission-info"><strong>${mission.text}</strong><p>${mission.description}</p></div>
                     <div class="mission-action">${actionHtml}</div>`;
                 dom.missionsList.appendChild(missionEl);
             });
@@ -473,7 +458,6 @@
         async function handleClaimMission(missionId, button) {
             const mission = MISSIONS.find(m => m.id === missionId);
             if (!mission || state.completedMissions.includes(missionId) || !mission.condition(state.ownedItems)) return;
-            
             toggleLoading(button, true);
             try {
                 await updateDoc(state.userDocRef, {
@@ -484,9 +468,8 @@
             } catch (error) {
                 console.error("Грешка при събиране на награда:", error);
                 alert("Възникна грешка. Моля, опитайте отново.");
-                toggleLoading(button, false); // Re-enable button on error
+                toggleLoading(button, false);
             }
-            // On success, UI will auto-update via onSnapshot, no need to re-enable button manually
         }
 
         function updateAllItemStates() {
@@ -500,15 +483,11 @@
         }
 
         function toggleCartItem(itemId) {
-            if (state.ownedItems.includes(itemId)) return; // Double check not to add owned items
-
+            if (state.ownedItems.includes(itemId)) return;
             const itemIndex = state.cart.findIndex(item => item.id === itemId);
             const itemData = MARKET_ITEMS.find(item => item.id === itemId);
-            if (itemIndex > -1) { 
-                state.cart.splice(itemIndex, 1); 
-            } else { 
-                state.cart.push({ id: itemData.id, name: itemData.name, price: itemData.price }); 
-            }
+            if (itemIndex > -1) { state.cart.splice(itemIndex, 1); } 
+            else { state.cart.push({ id: itemData.id, name: itemData.name, price: itemData.price }); }
             updateCart();
             updateAllItemStates();
         }
@@ -521,14 +500,12 @@
                 dom.buyBtn.disabled = true;
                 return;
             }
-            
             state.cart.forEach(item => {
                 const li = document.createElement('li');
                 li.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;';
                 li.innerHTML = `<span>${item.name}</span> <strong>${item.price}</strong>`;
                 dom.cartItems.appendChild(li);
             });
-
             const total = state.cart.reduce((acc, item) => acc + item.price, 0);
             dom.cartTotal.textContent = total.toLocaleString();
             dom.buyBtn.disabled = state.balance < total;
@@ -537,14 +514,17 @@
         async function handlePurchase() {
             const total = state.cart.reduce((acc, item) => acc + item.price, 0);
             if (state.balance < total || state.cart.length === 0) return;
-
             toggleLoading(dom.buyBtn, true);
 
             try {
                 await runTransaction(db, async (transaction) => {
                     const userDoc = await transaction.get(state.userDocRef);
-                    if (!userDoc.exists() || (userDoc.data().chips || 0) < total) {
-                        throw "Недостатъчен баланс!";
+                    if (!userDoc.exists()) {
+                        throw new Error("User document not found.");
+                    }
+                    const serverChips = userDoc.data().chips || 0;
+                    if (serverChips < total) {
+                        throw new Error("Insufficient funds on server.");
                     }
                     const itemsToBuy = state.cart.map(item => item.id);
                     transaction.update(state.userDocRef, { 
@@ -552,43 +532,41 @@
                         collection: arrayUnion(...itemsToBuy)
                     });
                 });
-                
                 state.cart = [];
                 openModal(document.getElementById('purchase-success-modal'));
             } catch (error) {
-                console.error("Грешка при транзакция: ", error);
-                alert("Възникна грешка при покупката. Моля, проверете баланса си и опитайте отново.");
+                // *** FIX: Подобрена обработка на грешки ***
+                console.error("Грешка при транзакция:", error);
+                let userMessage = "Възникна сървърна грешка при покупката. Моля, опитайте отново.";
+                if (error.message && error.message.includes("Insufficient funds")) {
+                    userMessage = "Недостатъчен баланс! Транзакцията беше отказана от сървъра.";
+                } else if (error.code === 'permission-denied') {
+                    userMessage = "Грешка: Нямате права да извършите тази операция. Проблем с правилата за сигурност (Security Rules).";
+                } else if (error.message && error.message.toLowerCase().includes('arrayunion')) {
+                    userMessage = "Грешка в типа данни. Полето 'collection' в базата данни вероятно не е масив. Свържете се с администратор.";
+                }
+                alert(userMessage + "\n\n(Вижте конзолата (F12) за технически детайли)");
             } finally {
                 toggleLoading(dom.buyBtn, false);
-                // UI will auto-update via onSnapshot, including the cart and market items state
+                // UI ще се обнови автоматично от onSnapshot
             }
         }
         
         function setupEventListeners() {
-            // Tab navigation
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelector('.tab-btn.active').classList.remove('active');
-                    btn.classList.add('active');
-                    document.querySelector('.tab-panel.active').classList.remove('active');
-                    document.getElementById(btn.dataset.tab).classList.add('active');
-                });
-            });
-
-            // Logout and Purchase buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => {
+                document.querySelector('.tab-btn.active').classList.remove('active');
+                btn.classList.add('active');
+                document.querySelector('.tab-panel.active').classList.remove('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+            }));
             document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
             dom.buyBtn.addEventListener('click', handlePurchase);
-            
-            // FIX: Use event delegation for market items for better performance and to avoid stale listeners
             dom.marketGrid.addEventListener('click', (e) => {
                 const card = e.target.closest('.market-item');
-                // Only toggle if the card exists and is not already owned
                 if (card && !card.classList.contains('owned')) {
                     toggleCartItem(card.dataset.id);
                 }
             });
-
-            // Missions list claim buttons
             dom.missionsList.addEventListener('click', (e) => {
                 const claimButton = e.target.closest('.claim-btn');
                 if (claimButton) {
@@ -601,18 +579,13 @@
         function showLightbox(item) {
             const lightbox = document.getElementById('lightbox');
             const contentContainer = document.getElementById('lightbox-content');
-            
-            // FIX: Prioritize video, then full image, then fallback to thumb
             const hasVideos = item.contents?.videos?.length > 0;
             const hasImages = item.contents?.images?.length > 0;
-
             if (hasVideos) {
                 contentContainer.innerHTML = `<video src="${item.contents.videos[0]}" controls autoplay loop></video>`;
             } else if (hasImages) {
-                // Show the first image from the collection, not the thumbnail
                 contentContainer.innerHTML = `<img src="${item.contents.images[0]}" alt="${item.name}">`;
             } else {
-                // Fallback if no specific content is defined
                 contentContainer.innerHTML = `<img src="${item.thumb}" alt="${item.name}">`;
             }
             openModal(lightbox);
