@@ -2,98 +2,133 @@
 <html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NIVRA - Вашето място за социални забавления</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #1a1a2e; color: #e0e0e0; }
-        .gradient-text { background: linear-gradient(90deg, #f7b733, #fc4a1a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .btn-primary { background: linear-gradient(90deg, #f7b733, #fc4a1a); transition: all 0.3s ease; }
-        .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(247, 183, 51, 0.2); }
-        .btn-primary:disabled { background: #4a4a6a; color: #8f8f8f; cursor: not-allowed; opacity: 0.7; transform: none; box-shadow: none; }
-        .btn-secondary { border: 2px solid #f7b733; color: #f7b733; transition: all 0.3s ease; }
-        .btn-secondary:hover:not(:disabled) { background-color: #f7b733; color: #1a1a2e; }
-        .tab-btn { padding: 0.75rem 1rem; md:padding: 0.75rem 1.5rem; font-weight: 600; color: #a0a0b0; border-bottom: 4px solid transparent; transition: all 0.3s ease; cursor: pointer; white-space: nowrap; }
-        .tab-btn:hover { color: #f7b733; }
-        .tab-btn.active { color: #ffffff; border-bottom-color: #f7b733; }
+        * { -webkit-tap-highlight-color: transparent; }
         
-        /* Модали и Форми */
-        .modal-overlay { display: none; position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px); z-index: 50; opacity: 0; transition: opacity 0.3s ease-in-out; align-items: center; justify-content: center; padding: 1rem; }
+        :root {
+            --neon-pink: #f9009a;
+            --neon-cyan: #00f9f9;
+            --neon-purple: #9d00f9;
+            --neon-red: #ff1b1b;
+            --dark-bg: #10081c;
+        }
+
+        body { 
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--dark-bg);
+            background-image: 
+                radial-gradient(circle at 1% 1%, rgba(157, 0, 249, 0.3), transparent 30%),
+                radial-gradient(circle at 99% 99%, rgba(0, 249, 249, 0.2), transparent 30%);
+            color: #e0e0e0;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        
+        .title-glow {
+            font-family: 'Orbitron', sans-serif;
+            color: #fff;
+            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--neon-pink), 0 0 30px var(--neon-pink), 0 0 40px var(--neon-pink);
+        }
+
+        /* --- Buttons --- */
+        .btn { padding: 0.6rem 1.5rem; border-radius: 9999px; font-weight: 700; font-family: 'Orbitron', sans-serif; text-transform: uppercase; transition: all 0.3s ease; border: 2px solid transparent; }
+        .btn-login { background: transparent; border-color: var(--neon-cyan); color: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan), inset 0 0 10px var(--neon-cyan); }
+        .btn-login:hover:not(:disabled) { background: var(--neon-cyan); color: var(--dark-bg); box-shadow: 0 0 20px var(--neon-cyan); transform: scale(1.05); }
+        .btn-register { background: linear-gradient(90deg, var(--neon-pink), var(--neon-purple)); color: white; box-shadow: 0 0 15px var(--neon-pink); }
+        .btn-register:hover:not(:disabled) { box-shadow: 0 0 25px var(--neon-pink); transform: scale(1.05); }
+        .btn:disabled { background: #4a4a6a; color: #8f8f8f; cursor: not-allowed; opacity: 0.7; transform: none; box-shadow: none; border-color: transparent; }
+        .btn-logout { background-color: transparent; border-color: var(--neon-red); color: var(--neon-red); box-shadow: 0 0 10px var(--neon-red), inset 0 0 10px var(--neon-red); }
+        .btn-logout:hover { background-color: var(--neon-red); color: white; }
+
+        /* --- Modals --- */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); z-index: 50; opacity: 0; transition: opacity 0.3s ease; align-items: center; justify-content: center; padding: 1rem; }
         .modal-overlay.active { display: flex; opacity: 1; }
-        .modal-content { background-image: radial-gradient(circle at top left, #2a2a40, #202030); border: 1px solid #4a4a6a; border-radius: 0.75rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 100%; position: relative; transform: scale(0.95); transition: transform 0.3s ease-in-out; }
+        .modal-content { background: linear-gradient(145deg, #1c102f, #10081c); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; box-shadow: 0 0 50px rgba(0,0,0,0.5); width: 100%; position: relative; transform: scale(0.95); transition: transform 0.3s ease-in-out; }
         .modal-overlay.active .modal-content { transform: scale(1); }
         .modal-overlay.shake .modal-content { animation: shake 0.5s; }
-        .form-input { background-color: #2c2c44; border: 1px solid #4a4a6a; color: #e0e0e0; transition: all 0.2s ease-in-out; width: 100%; border-radius: 0.5rem; padding: 0.75rem 1rem; }
-        .form-input:focus { outline: none; border-color: #f7b733; box-shadow: 0 0 0 3px rgba(247, 183, 51, 0.4); }
         
-        /* Стъпки на регистрация */
+        .form-input { background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255,255,255,0.2); color: #fff; border-radius: 12px; padding: 0.8rem 1rem; width: 100%; transition: all 0.3s ease; }
+        .form-input:focus { outline: none; border-color: var(--neon-cyan); background: rgba(0, 0, 0, 0.3); box-shadow: 0 0 15px rgba(0, 249, 249, 0.2); }
+        
+        /* --- Registration Step Indicator --- */
         .step-indicator { display: flex; justify-content: space-between; margin-bottom: 2rem; }
-        .step { display: flex; flex-direction: column; align-items: center; position: relative; width: 33.33%; }
-        .step-circle { width: 32px; height: 32px; border-radius: 50%; background-color: #4a4a6a; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #4a4a6a; transition: all 0.3s ease; z-index: 1; }
-        .step.active .step-circle { background: linear-gradient(90deg, #f7b733, #fc4a1a); border-color: #f7b733; color: #1a1a2e; }
-        .step-line { position: absolute; top: 15px; left: 50%; width: 100%; height: 2px; background-color: #4a4a6a; z-index: 0; }
-        .step:first-child .step-line { left: 50%; } .step:last-child .step-line { width: 0; }
-        .step-label { margin-top: 0.5rem; font-size: 0.75rem; color: #a0a0b0; transition: color 0.3s; }
-        .step.active .step-label { color: #f7b733; }
+        .step { display: flex; align-items: center; position: relative; flex-grow: 1; }
+        .step:last-child { flex-grow: 0; }
+        .step-circle { width: 32px; height: 32px; border-radius: 50%; background-color: #332848; color: #857a9e; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #332848; transition: all 0.4s ease; }
+        .step-label { display: none; } /* Hide labels on mobile */
+        @media (min-width: 640px) { .step-label { display: inline; margin-left: 0.5rem; color: #857a9e; font-weight: 600; transition: all 0.4s ease; } }
+        .step-line { position: absolute; left: 50%; top: 15px; height: 2px; width: 100%; background-color: #332848; transform: translateX(16px); z-index: -1; transition: all 0.4s ease; }
+        .step:last-child .step-line { display: none; }
+        .step.active .step-circle { background-color: var(--neon-pink); color: white; border-color: var(--neon-pink); }
+        .step.active .step-label { color: white; }
+        .step.active .step-line { background-color: var(--neon-pink); }
         .step-content { display: none; }
         .step-content.active { display: block; animation: fadeIn 0.5s; }
-        .spinner { border: 2px solid rgba(255, 255, 255, 0.3); border-top-color: #fff; border-radius: 50%; width: 16px; height: 16px; animation: spin 1s linear infinite; }
-        
-        /* Анимации */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
-        @keyframes gift-shake { 0% { transform: rotate(0deg); } 25% { transform: rotate(5deg); } 50% { transform: rotate(0eg); } 75% { transform: rotate(-5deg); } 100% { transform: rotate(0deg); } }
-        .gift-icon-animation { animation: gift-shake 1s ease-in-out infinite; }
-        @keyframes jackpot-glow { 0%, 100% { box-shadow: 0 0 15px rgba(247, 183, 51, 0.3), 0 0 30px rgba(247, 183, 51, 0.2); } 50% { box-shadow: 0 0 30px rgba(247, 183, 51, 0.5), 0 0 50px rgba(247, 183, 51, 0.3); } }
 
+        /* --- Header & Navigation --- */
+        header { background: rgba(16, 8, 28, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .nav-link { font-family: 'Orbitron', sans-serif; font-weight: 500; border-bottom: 2px solid transparent; transition: all 0.3s ease; color: #a0a0b0; white-space: nowrap; }
+        .nav-link:hover, .nivra-world-link { color: var(--neon-pink); }
+        .nivra-world-link:hover { border-bottom-color: var(--neon-pink); }
+        .pomosht-link { color: var(--neon-red) !important; }
+        .pomosht-link:hover { color: #ff4b4b !important; text-shadow: 0 0 10px var(--neon-red); border-bottom-color: var(--neon-red) !important; }
+
+        /* --- Tabs --- */
+        .tab-btn { padding: 0.75rem 1rem; md:padding: 0.75rem 1.5rem; font-weight: 600; font-size: 1rem; color: #a0a0b0; border-bottom: 4px solid transparent; transition: all 0.3s ease; cursor: pointer; white-space: nowrap; }
+        .tab-btn:hover { color: var(--neon-cyan); }
+        .tab-btn.active { color: #ffffff; border-bottom: 4px solid var(--neon-pink); }
+        .pomosht-tab { color: var(--neon-red); }
+        .pomosht-tab:hover { color: #ff4b4b; }
+
+        /* --- Game Cards --- */
+        .game-card { position: relative; border-radius: 16px; overflow: hidden; border: 2px solid transparent; transition: all 0.4s ease; box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+        .game-card:hover { transform: translateY(-8px) scale(1.03); border-color: var(--neon-pink); box-shadow: 0 15px 40px rgba(249, 0, 154, 0.3); }
+        .filter-btn { padding: 0.5rem 1.25rem; border-radius: 9999px; font-weight: 600; transition: all 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(0, 0, 0, 0.3); font-family: 'Rajdhani', sans-serif; }
+        .filter-btn.active { background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink)); border-color: transparent; color: white; }
+
+        /* --- Jackpots --- */
+        .jackpot-card { background: rgba(16, 8, 28, 0.7); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(5px); }
+        .jackpot-amount { font-family: 'Orbitron', monospace; }
+        @keyframes jackpot-glow { 0%, 100% { box-shadow: 0 0 15px rgba(249, 0, 154, 0.3), 0 0 30px rgba(249, 0, 154, 0.2); border-color: rgba(249, 0, 154, 0.5); } 50% { box-shadow: 0 0 30px rgba(249, 0, 154, 0.5), 0 0 50px rgba(249, 0, 154, 0.3); border-color: rgba(249, 0, 154, 1); } }
         .jackpot-card-mega { animation: jackpot-glow 4s infinite; }
-        .jackpot-amount { font-family: 'Roboto Mono', monospace; }
-
-        /* Scrollbar hide utility */
+        
+        /* --- Utilities & Animations --- */
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        /* Payment Widget Responsive Container */
-        .payment-widget-container {
-            position: relative;
-            width: 100%;
-            max-width: 410px;
-            margin: 0 auto;
-            /* Modern CSS for aspect ratio: 696 (height) / 410 (width) */
-            aspect-ratio: 410 / 696;
-            background-color: #2c2c44; /* Placeholder background */
-            border-radius: 0.5rem;
-            overflow: hidden;
-        }
-        .payment-widget-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 0;
-        }
+        .spinner { border: 3px solid rgba(255,255,255,0.2); border-top-color: var(--neon-cyan); border-radius: 50%; width: 24px; height: 24px; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
+        .payment-widget-container { position: relative; width: 100%; max-width: 410px; margin: 0 auto; aspect-ratio: 410 / 696; background-color: #2c2c44; border-radius: 0.5rem; overflow: hidden; }
+        .payment-widget-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
     </style>
 </head>
 <body class="antialiased">
 
     <!-- ЕКРАН ЗА ВЕРИФИКАЦИЯ -->
     <div id="verification-notice" class="modal-overlay">
-        <div class="modal-content max-w-md p-8 text-center">
-            <div class="text-6xl text-yellow-400 mb-6"><i class="fas fa-envelope-open-text"></i></div>
-            <h2 class="text-3xl font-bold text-white mb-3">Потвърдете своя имейл</h2>
-            <p class="text-gray-400 mb-6">Изпратихме верификационен линк на <strong id="verification-email" class="text-white"></strong>. Моля, проверете своята пощенска кутия (и папката със спам), за да активирате акаунта си.</p>
+        <div class="modal-content max-w-md p-6 sm:p-8 text-center">
+            <div class="text-6xl text-cyan-400 mb-6"><i class="fas fa-envelope-open-text"></i></div>
+            <h2 class="text-2xl sm:text-3xl font-bold text-white mb-3" style="font-family: 'Orbitron', sans-serif;">Потвърдете своя имейл</h2>
+            <p class="text-gray-400 mb-6 text-sm sm:text-base">Изпратихме верификационен линк на <strong id="verification-email" class="text-white"></strong>. Моля, проверете своята пощенска кутия (и папката със спам), за да активирате акаунта си.</p>
             <p id="verification-error" class="text-red-500 text-sm mb-4 text-center h-5"></p>
             <div class="space-y-4">
-                <button id="resend-verification-btn" class="w-full max-w-xs mx-auto py-3 rounded-full text-black font-semibold btn-primary">Изпрати отново</button>
-                <button id="check-verification-btn" class="w-full max-w-xs mx-auto py-3 rounded-full border-2 btn-secondary flex items-center justify-center gap-2"><span class="btn-text">Вече потвърдих</span></button>
+                <button id="resend-verification-btn" class="w-full max-w-xs mx-auto btn btn-register">Изпрати отново</button>
+                <button id="check-verification-btn" class="w-full max-w-xs mx-auto btn btn-login flex items-center justify-center gap-2"><span class="btn-text">Вече потвърдих</span></button>
                 <button id="logout-from-verification-btn" class="text-gray-500 hover:text-white transition mt-4">Изход</button>
             </div>
         </div>
@@ -101,43 +136,41 @@
     
     <!-- КОНТЕЙНЕР ЗА ГЛАВНОТО ПРИЛОЖЕНИЕ -->
     <div id="main-app">
-        <header class="bg-gray-900/80 backdrop-blur-sm sticky top-0 z-40 shadow-lg">
-            <nav class="container mx-auto px-4 sm:px-6 py-3 flex justify-between items-center gap-4">
-                <a href="#" class="text-3xl font-bold gradient-text flex-shrink-0">NIVRA</a>
+        <header class="sticky top-0 z-40 shadow-lg">
+            <nav class="container mx-auto px-2 sm:px-4 py-2 flex justify-between items-center">
+                <!-- Logo -->
+                <a href="#home" class="text-2xl sm:text-3xl font-bold gradient-text flex-shrink-0" style="font-family: 'Orbitron', sans-serif;">NIVRA</a>
                 
-                <!-- Desktop & Mobile Navigation (Horizontally scrollable) -->
-                <div class="flex-grow overflow-x-auto scrollbar-hide">
-                    <div class="flex items-center space-x-4 text-md">
-                        <a href="#home" class="nav-link text-gray-300 hover:text-yellow-400 transition whitespace-nowrap">Начало</a>
-                        <a href="#" id="welcome-bonus-link" class="nav-link text-yellow-400 hover:text-yellow-300 transition hidden whitespace-nowrap"><i class="fas fa-gift"></i></a>
-                        <a href="#games" class="nav-link text-gray-300 hover:text-yellow-400 transition whitespace-nowrap">Игри</a>
-                        <a href="#promo" class="nav-link text-gray-300 hover:text-yellow-400 transition whitespace-nowrap">Промоции</a>
-                        <a href="nivra-world.html" class="nav-link nivra-world-link whitespace-nowrap">Nivra World</a>
-                        <a href="#" id="leaderboard-link-desktop" class="nav-link text-gray-300 hover:text-yellow-400 transition whitespace-nowrap">Класация</a>
-                        <a href="#about" class="nav-link text-gray-300 hover:text-yellow-400 transition whitespace-nowrap">За нас</a>
+                <!-- Responsive Navigation -->
+                <div class="flex-grow flex justify-center items-center overflow-x-auto scrollbar-hide mx-2">
+                    <div class="flex items-center space-x-2 md:space-x-4">
+                        <a href="#home" class="nav-link text-xs sm:text-sm py-2 px-2 md:px-3">Начало</a>
+                        <a href="#games" class="nav-link text-xs sm:text-sm py-2 px-2 md:px-3">Игри</a>
+                        <a href="#promo" class="nav-link text-xs sm:text-sm py-2 px-2 md:px-3">Промоции</a>
+                        <a href="nivra-world.html" class="nav-link nivra-world-link text-xs sm:text-sm py-2 px-2 md:px-3">Nivra World</a>
+                        <a href="pomosht.html" class="nav-link pomosht-link text-xs sm:text-sm py-2 px-2 md:px-3">Помощ</a>
+                        <a href="#" id="leaderboard-link" class="nav-link text-xs sm:text-sm py-2 px-2 md:px-3">Класация</a>
+                        <a href="#about" class="nav-link text-xs sm:text-sm py-2 px-2 md:px-3">За нас</a>
                     </div>
                 </div>
 
-                <div class="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
-                    <div id="logged-out-view" class="flex items-center space-x-2 sm:space-x-4">
-                        <button id="login-btn-desktop" class="px-4 sm:px-6 py-2 rounded-full border-2 btn-secondary text-sm sm:text-base">Вход</button>
-                        <button id="register-btn-desktop" class="px-4 sm:px-6 py-2 rounded-full text-black font-semibold btn-primary text-sm sm:text-base">Регистрация</button>
+                <!-- Responsive User Area -->
+                <div class="flex items-center space-x-2 flex-shrink-0">
+                    <div id="logged-out-view" class="flex items-center space-x-2">
+                        <button id="login-btn" class="btn btn-login !text-xs !px-3 !py-1.5 md:!text-sm md:!px-4">Вход</button>
+                        <button id="register-btn" class="btn btn-register !text-xs !px-3 !py-1.5 md:!text-sm md:!px-4">Регистрация</button>
                     </div>
-                    <div id="logged-in-view" class="hidden items-center space-x-2 sm:space-x-4">
-                         <div id="profile-button" class="flex items-center space-x-2 sm:space-x-3 cursor-pointer group">
-                             <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-yellow-500 to-orange-500 flex items-center justify-center">
-                                <i class="fas fa-user text-white text-lg"></i>
+                    <div id="logged-in-view" class="hidden items-center space-x-2">
+                         <div id="profile-button" class="flex items-center space-x-2 cursor-pointer group">
+                             <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-tr from-pink-500 to-purple-500 flex items-center justify-center">
+                                <i class="fas fa-user text-white text-base md:text-lg"></i>
                             </div>
-                            <div class="text-left hidden md:block">
-                                <span id="user-username" class="text-white font-semibold block text-sm leading-tight group-hover:text-yellow-400 transition"></span>
-                                <span class="text-gray-500 text-xs leading-tight">Моят профил</span>
+                            <div class="hidden sm:block">
+                                <span id="user-username" class="text-white font-semibold block text-xs md:text-sm leading-tight group-hover:text-cyan-400 transition"></span>
+                                <span id="user-balance" class="text-cyan-400 font-bold text-xs md:text-sm" style="font-family: 'Orbitron', sans-serif;"><i class="fas fa-coins mr-1"></i>0</span>
                             </div>
                         </div>
-                        <div class="h-10 w-px bg-gray-700 hidden sm:block"></div>
-                        <div class="text-right">
-                             <span id="user-balance" class="text-yellow-400 font-bold text-lg sm:text-2xl block"><i class="fas fa-coins mr-1 sm:mr-2"></i>0</span>
-                        </div>
-                        <button id="open-shop-btn" class="px-3 sm:px-6 py-2 sm:py-3 rounded-full font-semibold text-black btn-primary flex items-center gap-2 transform hover:scale-105 transition-transform text-sm sm:text-base">
+                        <button id="open-shop-btn" class="btn btn-register flex items-center gap-1.5 transform hover:scale-105 transition-transform !text-xs !px-3 !py-1.5 md:!text-sm md:!px-4">
                             <i class="fas fa-plus-circle"></i>
                             <span class="hidden sm:inline">Депозит</span>
                         </button>
@@ -147,54 +180,39 @@
         </header>
 
         <main>
-            <section id="home" class="relative min-h-[25vh] md:min-h-[30vh] bg-cover bg-center" style="background-image: url('https://i.imgur.com/RmOrVLj.png');">
-                <div class="absolute inset-0 bg-black bg-opacity-60"></div>
-            </section>
-
             <!-- JACKPOTS SECTION -->
-            <section id="jackpots" class="py-16 bg-[#1a1a2e]">
-                <div class="container mx-auto px-6">
+            <section id="jackpots" class="py-12 sm:py-16">
+                <div class="container mx-auto px-4 sm:px-6">
                     <div class="text-center mb-12">
-                        <h2 class="text-3xl md:text-4xl font-bold gradient-text">Nivra Джакпоти</h2>
+                        <h2 class="text-3xl md:text-4xl font-bold gradient-text" style="font-family: 'Orbitron', sans-serif;">Nivra Джакпоти</h2>
                         <p class="text-gray-400 mt-2">Стойностите растат всяка секунда! Играй, за да спечелиш.</p>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-                        <!-- Major Jackpot -->
-                        <div class="jackpot-card bg-gray-900/50 border border-gray-700 p-6 rounded-xl text-center flex flex-col items-center justify-center transition-all duration-300 hover:border-yellow-500 hover:scale-105">
+                        <div class="jackpot-card p-6 rounded-xl text-center flex flex-col items-center justify-center transition-all duration-300 hover:border-cyan-500 hover:scale-105">
                             <div class="text-4xl text-sky-400 mb-3"><i class="fas fa-star"></i></div>
                             <h3 class="text-xl font-semibold text-sky-400 uppercase tracking-widest">Major</h3>
-                            <div class="my-2">
-                                <span id="jackpot-major-amount" class="jackpot-amount text-4xl md:text-5xl font-bold text-white">0</span>
-                            </div>
+                            <div class="my-2"><span id="jackpot-major-amount" class="jackpot-amount text-4xl md:text-5xl font-bold text-white">0</span></div>
                         </div>
-
-                        <!-- Mega Jackpot -->
-                        <div class="jackpot-card jackpot-card-mega bg-gray-900 border-2 border-yellow-400 p-6 rounded-xl text-center flex flex-col items-center justify-center relative transform md:scale-110">
-                            <div class="text-5xl text-yellow-400 mb-3"><i class="fas fa-gem"></i></div>
-                            <h3 class="text-2xl font-bold text-yellow-400 uppercase tracking-widest">Mega</h3>
-                            <div class="my-2">
-                                <span id="jackpot-mega-amount" class="jackpot-amount text-5xl md:text-6xl font-bold gradient-text">0</span>
-                            </div>
+                        <div class="jackpot-card jackpot-card-mega border-2 border-pink-500 p-6 rounded-xl text-center flex flex-col items-center justify-center relative transform md:scale-110">
+                            <div class="text-5xl text-pink-400 mb-3"><i class="fas fa-gem"></i></div>
+                            <h3 class="text-2xl font-bold text-pink-400 uppercase tracking-widest">Mega</h3>
+                            <div class="my-2"><span id="jackpot-mega-amount" class="jackpot-amount text-5xl md:text-6xl font-bold gradient-text">0</span></div>
                         </div>
-                        
-                        <!-- Minor Jackpot -->
-                        <div class="jackpot-card bg-gray-900/50 border border-gray-700 p-6 rounded-xl text-center flex flex-col items-center justify-center transition-all duration-300 hover:border-yellow-500 hover:scale-105">
+                        <div class="jackpot-card p-6 rounded-xl text-center flex flex-col items-center justify-center transition-all duration-300 hover:border-purple-500 hover:scale-105">
                             <div class="text-4xl text-purple-400 mb-3"><i class="fas fa-bolt"></i></div>
                             <h3 class="text-xl font-semibold text-purple-400 uppercase tracking-widest">Minor</h3>
-                            <div class="my-2">
-                                <span id="jackpot-minor-amount" class="jackpot-amount text-4xl md:text-5xl font-bold text-white">0</span>
-                            </div>
+                            <div class="my-2"><span id="jackpot-minor-amount" class="jackpot-amount text-4xl md:text-5xl font-bold text-white">0</span></div>
                         </div>
                     </div>
                 </div>
             </section>
 
-
-            <section id="content-tabs" class="py-20 bg-[#161625]">
-                <div class="container mx-auto px-6">
-                    <div id="tab-buttons" class="flex justify-center border-b border-gray-700 mb-12 flex-nowrap overflow-x-auto scrollbar-hide">
+            <section id="content-tabs" class="py-12 sm:py-20 bg-black/20">
+                <div class="container mx-auto px-4 sm:px-6">
+                    <div id="tab-buttons" class="flex justify-center border-b border-gray-700 mb-12 flex-wrap">
                         <button class="tab-btn active" data-tab="games">Игри</button>
                         <a href="nivra-world.html" class="tab-btn">Nivra World</a>
+                        <a href="pomosht.html" class="tab-btn pomosht-tab">Помощ</a>
                         <button class="tab-btn" data-tab="promo">Промоции</button>
                         <button class="tab-btn" data-tab="about">За Нас</button>
                     </div>
@@ -202,19 +220,19 @@
                         <div id="tab-games" class="tab-panel">
                             <div class="flex flex-col md:flex-row gap-6 mb-8 justify-center">
                                 <div class="relative flex-grow max-w-lg"><input type="text" id="search-games" placeholder="Търси игра..." class="form-input !pl-10 w-full"><i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i></div>
-                                <div id="game-filters" class="flex items-center justify-center gap-2 flex-wrap"><button data-filter="all" class="filter-btn active px-4 py-2 rounded-full bg-yellow-500/20 text-yellow-400">Всички</button><button data-filter="slot" class="filter-btn px-4 py-2 rounded-full bg-gray-700/50 text-gray-300">Слотове</button><button data-filter="table" class="filter-btn px-4 py-2 rounded-full bg-gray-700/50 text-gray-300">Игри на маса</button></div>
+                                <div id="game-filters" class="flex items-center justify-center gap-2 flex-wrap"><button data-filter="all" class="filter-btn active">Всички</button><button data-filter="slot" class="filter-btn">Слотове</button><button data-filter="table" class="filter-btn">Игри на маса</button></div>
                             </div>
                             <div id="games-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6"></div>
                             <p id="no-games-found" class="text-center text-gray-400 text-lg hidden">Няма намерени игри, съответстващи на търсенето.</p>
                         </div>
                         
-                        <div id="tab-promo" class="tab-panel hidden"><h2 class="text-4xl font-bold mb-12 text-center">Специални Предложения</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-8"><div class="bg-gray-900 p-8 rounded-xl shadow-lg"><div class="text-5xl mb-4 text-yellow-400"><i class="fas fa-hand-holding-usd"></i></div><h3 class="text-2xl font-semibold mb-2">Бонус Добре Дошъл</h3><p class="text-gray-400">Всеки нов играч получава 1000 безплатни точки веднага след регистрация!</p></div><div class="bg-gray-900 p-8 rounded-xl shadow-lg"><div class="text-5xl mb-4 text-yellow-400"><i class="fas fa-gift"></i></div><h3 class="text-2xl font-semibold mb-2">Ежедневни Бонуси</h3><p class="text-gray-400">Влизайте всеки ден, за да получите своите безплатни виртуални кредити и награди.</p></div><div class="bg-gray-900 p-8 rounded-xl shadow-lg"><div class="text-5xl mb-4 text-yellow-400"><i class="fas fa-trophy"></i></div><h3 class="text-2xl font-semibold mb-2">Вълнуващи Турнири</h3><p class="text-gray-400">Състезавайте се с други играчи и се изкачете в класациите.</p></div></div></div>
-                        <div id="tab-about" class="tab-panel hidden"><div class="flex flex-col md:flex-row items-center gap-12"><div class="md:w-1/2"><img src="https://placehold.co/600x400/1a1a2e/f7b733?text=NIVRA+Community" alt="Community" class="rounded-xl shadow-2xl"></div><div class="md:w-1/2"><h2 class="text-4xl font-bold mb-4">Нашата Мисия в <span class="gradient-text">NIVRA</span></h2><p class="text-gray-400 mb-6">В NIVRA сме се посветили на идеята да трансформираме iGaming индустрията чрез внедряване на модерни и завършени технологии. Ние вярваме, че бъдещето на онлайн забавленията е в създаването на сигурни, ангажиращи и социално отговорни платформи. Като част от непрекъснато разрастващата се мрежа на Bulgaria.Online, ние се стремим да бъдем стандарт за качество и иновация в България и извън нея.</p><ul class="space-y-4"><li class="flex items-center"><i class="fas fa-check-circle text-yellow-400 mr-3"></i> 100% Безплатно забавление</li><li class="flex items-center"><i class="fas fa-check-circle text-yellow-400 mr-3"></i> Иновативни технологии</li><li class="flex items-center"><i class="fas fa-check-circle text-yellow-400 mr-3"></i> Част от Bulgaria.Online</li></ul></div></div></div>
+                        <div id="tab-promo" class="tab-panel hidden"><h2 class="text-4xl font-bold mb-12 text-center title-glow">Специални Предложения</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-8"><div class="bg-gray-900/50 p-8 rounded-xl shadow-lg"><div class="text-5xl mb-4 text-cyan-400"><i class="fas fa-hand-holding-usd"></i></div><h3 class="text-2xl font-semibold mb-2">Начални Точки</h3><p class="text-gray-400">Всеки нов играч получава 1000 безплатни точки веднага след регистрация, за да започне своето приключение!</p></div><div class="bg-gray-900/50 p-8 rounded-xl shadow-lg"><div class="text-5xl mb-4 text-cyan-400"><i class="fas fa-gift"></i></div><h3 class="text-2xl font-semibold mb-2">Ежедневни Бонуси</h3><p class="text-gray-400">Влизайте всеки ден, за да получите своите безплатни виртуални кредити и награди.</p></div><div class="bg-gray-900/50 p-8 rounded-xl shadow-lg"><div class="text-5xl mb-4 text-cyan-400"><i class="fas fa-trophy"></i></div><h3 class="text-2xl font-semibold mb-2">Вълнуващи Турнири</h3><p class="text-gray-400">Състезавайте се с други играчи и се изкачете в класациите.</p></div></div></div>
+                        <div id="tab-about" class="tab-panel hidden"><div class="flex flex-col md:flex-row items-center gap-12"><div class="md:w-1/2"><img src="https://placehold.co/600x400/10081c/00f9f9?text=NIVRA+Community" alt="Community" class="rounded-xl shadow-2xl"></div><div class="md:w-1/2"><h2 class="text-4xl font-bold mb-4 title-glow">Нашата Мисия в <span class="gradient-text">NIVRA</span></h2><p class="text-gray-400 mb-6">В NIVRA сме се посветили на идеята да трансформираме iGaming индустрията чрез внедряване на модерни и завършени технологии. Ние вярваме, че бъдещето на онлайн забавленията е в създаването на сигурни, ангажиращи и социално отговорни платформи. Като част от непрекъснато разрастващата се мрежа на Bulgaria.Online, ние се стремим да бъдем стандарт за качество и иновация в България и извън нея.</p><ul class="space-y-4"><li class="flex items-center"><i class="fas fa-check-circle text-cyan-400 mr-3"></i> 100% Безплатно забавление</li><li class="flex items-center"><i class="fas fa-check-circle text-cyan-400 mr-3"></i> Иновативни технологии</li><li class="flex items-center"><i class="fas fa-check-circle text-cyan-400 mr-3"></i> Част от Bulgaria.Online</li></ul></div></div></div>
                     </div>
                 </div>
             </section>
         </main>
-        <footer class="bg-gray-900 text-gray-400 py-8">
+        <footer class="bg-black/30 text-gray-400 py-8">
             <div class="container mx-auto px-6 text-center">
                  <div class="flex justify-center space-x-4 md:space-x-6 mb-4">
                     <a href="#" class="footer-link hover:text-white" data-modal="terms-modal">Общи условия</a>
@@ -227,105 +245,76 @@
     </div>
     
     <!-- Modals -->
-    <div id="login-modal" class="modal-overlay"> <div class="modal-content max-w-md p-8"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold text-center mb-6 gradient-text">Вход в NIVRA</h3> <form id="login-form"><div class="mb-4"><label for="login-email" class="block text-sm font-medium text-gray-400 mb-2">Имейл</label><input type="email" id="login-email" required class="form-input"></div><div class="mb-4"><label for="login-password" class="block text-sm font-medium text-gray-400 mb-2">Парола</label><input type="password" id="login-password" required class="form-input"></div><p id="login-error" class="text-red-500 text-sm mb-4 text-center h-5"></p><button type="submit" class="w-full py-3 rounded-full text-black font-semibold btn-primary flex items-center justify-center gap-2"><span class="btn-text">Вход</span></button></form> <div class="text-center mt-6"><a href="#" id="forgot-password-link" class="text-sm text-yellow-400 hover:underline">Забравена парола?</a></div> </div> </div>
-    <div id="forgot-password-modal" class="modal-overlay"> <div class="modal-content max-w-md p-8"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold text-center mb-6 gradient-text">Възстанови Парола</h3> <p class="text-gray-400 text-center mb-6">Въведете имейла си и ще изпратим линк за възстановяване.</p> <form id="forgot-password-form"><div class="mb-4"><label for="reset-email" class="block text-sm font-medium text-gray-400 mb-2">Имейл</label><input type="email" id="reset-email" required class="form-input"></div><p id="reset-error" class="text-red-500 text-sm mb-4 text-center h-5"></p><p id="reset-success" class="text-green-400 text-sm mb-4 text-center h-5"></p><button type="submit" class="w-full py-3 rounded-full text-black font-semibold btn-primary flex items-center justify-center gap-2"><span class="btn-text">Изпрати линк</span></button></form> <div class="text-center mt-6"><a href="#" id="back-to-login-link" class="text-sm text-yellow-400 hover:underline">&larr; Обратно към Вход</a></div> </div> </div>
-    <div id="registration-success-modal" class="modal-overlay"> <div class="modal-content max-w-md p-8 text-center"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <div class="text-5xl text-green-400 mb-4"><i class="fas fa-check-circle"></i></div> <h3 class="text-2xl font-bold text-white mb-4">Регистрацията е Успешна!</h3> <p class="text-gray-400 mb-8">Изпратихме линк за активация на вашия имейл. Моля, проверете пощата си, за да завършите процеса.</p> <button id="close-success-modal-btn" class="w-full max-w-xs mx-auto py-3 rounded-full text-black font-semibold btn-primary">Добре</button> </div> </div>
-    <div id="platform-choice-modal" class="modal-overlay"> <div class="modal-content max-w-md p-8 text-center"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <div class="text-5xl text-yellow-400 mb-4"><i class="fas fa-gamepad"></i></div> <h3 class="text-2xl font-bold text-white mb-4">Изберете версия на играта</h3> <p class="text-gray-400 mb-8">Изберете най-подходящата версия за вашето устройство.</p> <div class="grid grid-cols-1 sm:grid-cols-2 gap-4"> <button data-version="mobile" class="platform-btn w-full py-4 rounded-lg text-black font-semibold btn-primary flex flex-col items-center justify-center"><i class="fab fa-apple text-2xl mb-1"></i><span>iOS</span></button> <button data-version="mobile" class="platform-btn w-full py-4 rounded-lg text-black font-semibold btn-primary flex flex-col items-center justify-center"><i class="fab fa-android text-2xl mb-1"></i><span>Android</span></button> <button data-version="full" class="platform-btn w-full py-4 rounded-lg border-2 btn-secondary flex flex-col items-center justify-center"><i class="fab fa-android text-2xl mb-1"></i><span>Android (Full)</span></button> <button data-version="full" class="platform-btn w-full py-4 rounded-lg border-2 btn-secondary flex flex-col items-center justify-center"><i class="fas fa-desktop text-2xl mb-1"></i><span>PC (Win/Mac)</span></button> </div> <div class="mt-6"> <label class="flex items-center justify-center space-x-3"> <input type="checkbox" id="remember-platform-choice" class="h-5 w-5 accent-pink-500 bg-gray-700 border-gray-600 rounded focus:ring-pink-500"> <span class="text-sm text-gray-300">Запомни избора ми</span> </label> </div> </div> </div>
-    <div id="register-modal" class="modal-overlay"> <div class="modal-content max-w-lg p-8 max-h-[90vh] overflow-y-auto"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold text-center mb-2 gradient-text">Създай Акаунт в NIVRA</h3> <div class="step-indicator"><div class="step active" id="indicator-1"><div class="step-circle">1</div><span class="step-label">Данни</span><div class="step-line"></div></div><div class="step" id="indicator-2"><div class="step-circle">2</div><span class="step-label">Профил</span><div class="step-line"></div></div><div class="step" id="indicator-3"><div class="step-circle">3</div><span class="step-label">Финал</span></div></div> <div id="register-step-1" class="step-content active"><form id="register-form-step1"><div class="mb-4"><label for="register-email" class="block text-sm font-medium text-gray-400 mb-2">Имейл</label><input type="email" id="register-email" required class="form-input"></div><div class="mb-4"><label for="register-password" class="block text-sm font-medium text-gray-400 mb-2">Парола</label><input type="password" id="register-password" required class="form-input"><p class="text-xs text-gray-500 mt-1">Минимум 6 символа.</p></div><div class="mb-6"><label for="register-confirm-password" class="block text-sm font-medium text-gray-400 mb-2">Потвърди Парола</label><input type="password" id="register-confirm-password" required class="form-input"></div><p id="register-step1-error" class="text-red-500 text-sm mb-4 text-center h-5"></p><button type="submit" class="w-full py-3 rounded-full text-black font-semibold btn-primary flex items-center justify-center gap-2"><span class="btn-text">Напред</span> <i class="fas fa-arrow-right"></i></button></form></div> <div id="register-step-2" class="step-content"><form id="register-form-step2"><div class="mb-4"><label for="register-fullname" class="block text-sm font-medium text-gray-400 mb-2">Пълно Име</label><input type="text" id="register-fullname" required class="form-input"></div><div class="mb-6"><label for="register-username" class="block text-sm font-medium text-gray-400 mb-2">Потребителско Име</label><input type="text" id="register-username" required class="form-input"></div><p id="register-step2-error" class="text-red-500 text-sm mb-4 text-center h-5"></p><div class="flex space-x-4"><button type="button" id="register-back-step1" class="w-1/2 py-3 rounded-full btn-secondary">Назад</button><button type="submit" class="w-1/2 py-3 rounded-full text-black font-semibold btn-primary flex items-center justify-center gap-2"><span class="btn-text">Напред</span> <i class="fas fa-arrow-right"></i></button></div></form></div> <div id="register-step-3" class="step-content"><form id="register-form-step3"><div class="space-y-4 mb-6 text-left p-4 bg-gray-800/50 rounded-lg"><label class="flex items-start space-x-3"><input type="checkbox" id="terms-agree" required class="mt-1 h-5 w-5 accent-pink-500 bg-gray-700 border-gray-600 rounded focus:ring-pink-500"><span class="text-sm text-gray-300">Съгласен съм с <a href="#" class="text-yellow-400 underline footer-link" data-modal="terms-modal">Общите условия</a>.</span></label><label class="flex items-start space-x-3"><input type="checkbox" id="age-confirm" required class="mt-1 h-5 w-5 accent-pink-500 bg-gray-700 border-gray-600 rounded focus:ring-pink-500"><span class="text-sm text-gray-300">Потвърждавам, че имам навършени 18 години.</span></label></div><p id="register-step3-error" class="text-red-500 text-sm mb-4 text-center h-5"></p><div class="flex space-x-4"><button type="button" id="register-back-step2" class="w-1/2 py-3 rounded-full btn-secondary">Назад</button><button type="submit" class="w-1/2 py-3 rounded-full text-black font-semibold btn-primary flex items-center justify-center gap-2"><span class="btn-text">Създай Акаунт</span></button></div></form></div> </div> </div>
-    
-    <!-- НОВИ МОДАЛИ -->
-    <div id="welcome-bonus-modal" class="modal-overlay">
-        <div class="modal-content max-w-md p-8 text-center">
-            <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button>
-            <div class="text-7xl mb-4 text-yellow-400"><i class="fas fa-gift"></i></div>
-            <h3 class="text-3xl font-bold text-white mb-4">Бонус Добре Дошъл!</h3>
-            <p class="text-gray-400 mb-8">Поздравления за вашата регистрация! Вземете своя подарък от <span class="font-bold text-yellow-400 text-lg">500 Точки</span>, за да започнете играта.</p>
-            <button id="claim-bonus-btn" class="w-full max-w-xs mx-auto py-3 rounded-full text-black font-semibold btn-primary flex items-center justify-center gap-2">
-                <span class="btn-text">Вземи Бонуса</span>
-            </button>
-        </div>
-    </div>
+    <div id="login-modal" class="modal-overlay"> <div class="modal-content max-w-md p-8"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <div class="text-center"><div class="text-5xl text-cyan-400 mb-4"><i class="fas fa-key"></i></div><h3 class="text-2xl font-bold mb-6 gradient-text" style="font-family: 'Orbitron', sans-serif;">Вход в NIVRA</h3></div> <form id="login-form"><div class="mb-4"><label for="login-email" class="block text-sm font-medium text-gray-400 mb-2">Имейл</label><input type="email" id="login-email" required class="form-input"></div><div class="mb-4"><label for="login-password" class="block text-sm font-medium text-gray-400 mb-2">Парола</label><input type="password" id="login-password" required class="form-input"></div><p id="login-error" class="text-red-500 text-sm mb-4 text-center h-5"></p><button type="submit" class="w-full btn btn-register flex items-center justify-center gap-2"><span class="btn-text">Вход</span></button></form> <div class="text-center mt-6"><a href="#" id="forgot-password-link" class="text-sm text-cyan-400 hover:underline">Забравена парола?</a></div> </div> </div>
+    <div id="forgot-password-modal" class="modal-overlay"> <div class="modal-content max-w-md p-8"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <div class="text-center"><div class="text-5xl text-cyan-400 mb-4"><i class="fas fa-question-circle"></i></div><h3 class="text-2xl font-bold mb-2 gradient-text" style="font-family: 'Orbitron', sans-serif;">Възстанови Парола</h3> <p class="text-gray-400 text-center mb-6">Въведете имейла си и ще изпратим линк за възстановяване.</p></div> <form id="forgot-password-form"><div class="mb-4"><label for="reset-email" class="block text-sm font-medium text-gray-400 mb-2">Имейл</label><input type="email" id="reset-email" required class="form-input"></div><p id="reset-error" class="text-red-500 text-sm mb-4 text-center h-5"></p><p id="reset-success" class="text-green-400 text-sm mb-4 text-center h-5"></p><button type="submit" class="w-full btn btn-register flex items-center justify-center gap-2"><span class="btn-text">Изпрати линк</span></button></form> <div class="text-center mt-6"><a href="#" id="back-to-login-link" class="text-sm text-cyan-400 hover:underline">&larr; Обратно към Вход</a></div> </div> </div>
+    <div id="registration-success-modal" class="modal-overlay"> <div class="modal-content max-w-md p-8 text-center"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <div class="text-5xl text-green-400 mb-4"><i class="fas fa-check-circle"></i></div> <h3 class="text-2xl font-bold text-white mb-4" style="font-family: 'Orbitron', sans-serif;">Регистрацията е Успешна!</h3> <p class="text-gray-400 mb-8">Изпратихме линк за активация на вашия имейл. Моля, проверете пощата си (и папката за спам), за да завършите процеса.</p> <button id="close-success-modal-btn" class="w-full max-w-xs mx-auto btn btn-register">Добре</button> </div> </div>
+    <div id="platform-choice-modal" class="modal-overlay"> <div class="modal-content max-w-md p-8 text-center"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <div class="text-5xl text-cyan-400 mb-4"><i class="fas fa-gamepad"></i></div> <h3 class="text-2xl font-bold text-white mb-4" style="font-family: 'Orbitron', sans-serif;">Изберете версия на играта</h3> <p class="text-gray-400 mb-8">Изберете най-подходящата версия за вашето устройство.</p> <div class="grid grid-cols-1 sm:grid-cols-2 gap-4"> <button data-version="mobile" class="platform-btn w-full py-4 rounded-lg text-white font-semibold flex flex-col items-center justify-center btn btn-register"><i class="fab fa-apple text-2xl mb-1"></i><span>iOS</span></button> <button data-version="mobile" class="platform-btn w-full py-4 rounded-lg text-white font-semibold flex flex-col items-center justify-center btn btn-register"><i class="fab fa-android text-2xl mb-1"></i><span>Android</span></button> <button data-version="full" class="platform-btn w-full py-4 rounded-lg border-2 flex flex-col items-center justify-center btn btn-login"><i class="fab fa-android text-2xl mb-1"></i><span>Android (Full)</span></button> <button data-version="full" class="platform-btn w-full py-4 rounded-lg border-2 flex flex-col items-center justify-center btn btn-login"><i class="fas fa-desktop text-2xl mb-1"></i><span>PC (Win/Mac)</span></button> </div> <div class="mt-6"> <label class="flex items-center justify-center space-x-3"> <input type="checkbox" id="remember-platform-choice" class="h-5 w-5 accent-pink-500 bg-gray-700 border-gray-600 rounded focus:ring-pink-500"> <span class="text-sm text-gray-300">Запомни избора ми</span> </label> </div> </div> </div>
+    <div id="register-modal" class="modal-overlay"> <div class="modal-content max-w-lg p-6 sm:p-8 max-h-[90vh] overflow-y-auto"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold text-center mb-4 gradient-text" style="font-family: 'Orbitron', sans-serif;">Създай Акаунт в NIVRA</h3> <div class="step-indicator"><div class="step active" id="indicator-1"><div class="step-circle">1</div><span class="step-label">Данни</span><div class="step-line"></div></div><div class="step" id="indicator-2"><div class="step-circle">2</div><span class="step-label">Профил</span><div class="step-line"></div></div><div class="step" id="indicator-3"><div class="step-circle">3</div><span class="step-label">Финал</span></div></div> <div id="register-step-1" class="step-content active"><form id="register-form-step1"><div class="mb-4"><label for="register-email" class="block text-sm font-medium text-gray-400 mb-2">Имейл</label><input type="email" id="register-email" required class="form-input"></div><div class="mb-4"><label for="register-password" class="block text-sm font-medium text-gray-400 mb-2">Парола</label><input type="password" id="register-password" required class="form-input"><p class="text-xs text-gray-500 mt-1">Минимум 6 символа.</p></div><div class="mb-6"><label for="register-confirm-password" class="block text-sm font-medium text-gray-400 mb-2">Потвърди Парола</label><input type="password" id="register-confirm-password" required class="form-input"></div><p id="register-step1-error" class="text-red-500 text-sm mb-4 text-center h-5"></p><button type="submit" class="w-full btn btn-register flex items-center justify-center gap-2"><span class="btn-text">Напред</span> <i class="fas fa-arrow-right"></i></button></form></div> <div id="register-step-2" class="step-content"><form id="register-form-step2"><div class="mb-4"><label for="register-fullname" class="block text-sm font-medium text-gray-400 mb-2">Пълно Име</label><input type="text" id="register-fullname" required class="form-input"></div><div class="mb-6"><label for="register-username" class="block text-sm font-medium text-gray-400 mb-2">Потребителско Име</label><input type="text" id="register-username" required class="form-input"></div><p id="register-step2-error" class="text-red-500 text-sm mb-4 text-center h-5"></p><div class="flex space-x-4"><button type="button" id="register-back-step1" class="w-1/2 btn btn-login">Назад</button><button type="submit" class="w-1/2 btn btn-register flex items-center justify-center gap-2"><span class="btn-text">Напред</span> <i class="fas fa-arrow-right"></i></button></div></form></div> <div id="register-step-3" class="step-content"><form id="register-form-step3"><div class="space-y-4 mb-6 text-left p-4 bg-black/20 rounded-lg"><label class="flex items-start space-x-3"><input type="checkbox" id="terms-agree" required class="mt-1 h-5 w-5 accent-pink-500 bg-gray-700 border-gray-600 rounded focus:ring-pink-500"><span class="text-sm text-gray-300">Съгласен съм с <a href="#" class="text-cyan-400 underline footer-link" data-modal="terms-modal">Общите условия</a>.</span></label><label class="flex items-start space-x-3"><input type="checkbox" id="age-confirm" required class="mt-1 h-5 w-5 accent-pink-500 bg-gray-700 border-gray-600 rounded focus:ring-pink-500"><span class="text-sm text-gray-300">Потвърждавам, че имам навършени 18 години.</span></label></div><p id="register-step3-error" class="text-red-500 text-sm mb-4 text-center h-5"></p><div class="flex space-x-4"><button type="button" id="register-back-step2" class="w-1/2 btn btn-login">Назад</button><button type="submit" class="w-1/2 btn btn-register flex items-center justify-center gap-2"><span class="btn-text">Създай Акаунт</span></button></div></form></div> </div> </div>
     <div id="user-profile-modal" class="modal-overlay">
         <div class="modal-content max-w-md p-8">
             <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button>
             <div class="text-center mb-6">
-                <div class="w-24 h-24 rounded-full bg-gradient-to-tr from-yellow-500 to-orange-500 flex items-center justify-center mx-auto mb-4 border-4 border-gray-700">
+                <div class="w-24 h-24 rounded-full bg-gradient-to-tr from-pink-500 to-purple-500 flex items-center justify-center mx-auto mb-4 border-4 border-gray-700">
                     <i class="fas fa-user text-white text-4xl"></i>
                 </div>
-                <h3 id="profile-modal-username" class="text-2xl font-bold text-white"></h3>
+                <h3 id="profile-modal-username" class="text-2xl font-bold text-white" style="font-family: 'Orbitron', sans-serif;"></h3>
                 <p id="profile-modal-email" class="text-gray-400"></p>
             </div>
-            <div class="bg-gray-800/50 p-4 rounded-lg space-y-3">
+            <div class="bg-black/20 p-4 rounded-lg space-y-3">
                 <div class="flex justify-between items-center"><span class="text-gray-400">Пълно име:</span><span id="profile-modal-fullname" class="font-semibold text-white"></span></div>
-                <div class="flex justify-between items-center"><span class="text-gray-400">Баланс:</span><span id="profile-modal-balance" class="font-bold text-yellow-400 text-lg"></span></div>
+                <div class="flex justify-between items-center"><span class="text-gray-400">Баланс:</span><span id="profile-modal-balance" class="font-bold text-cyan-400 text-lg"></span></div>
             </div>
-            <div id="platform-preference-display" class="mt-4 bg-gray-800/50 p-4 rounded-lg text-center cursor-pointer group">
+            <div id="platform-preference-display" class="mt-4 bg-black/20 p-4 rounded-lg text-center cursor-pointer group">
                 <span class="text-gray-400 block text-sm">Предпочитана версия:</span>
-                <span id="platform-text" class="text-white font-semibold block text-lg group-hover:text-yellow-400 transition"></span>
-                <span class="text-gray-500 text-xs group-hover:text-yellow-400 transition">(кликни за промяна)</span>
+                <span id="platform-text" class="text-white font-semibold block text-lg group-hover:text-cyan-400 transition"></span>
+                <span class="text-gray-500 text-xs group-hover:text-cyan-400 transition">(кликни за промяна)</span>
             </div>
-             <button id="logout-btn" class="w-full mt-6 py-3 rounded-full border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition text-sm">Изход от профила</button>
+             <button id="logout-btn" class="w-full mt-6 py-3 btn btn-logout text-sm">Изход от профила</button>
         </div>
     </div>
     <div id="leaderboard-modal" class="modal-overlay">
         <div class="modal-content max-w-2xl w-full p-6 md:p-8 max-h-[90vh]">
             <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button>
-            <h3 class="text-3xl font-bold text-center mb-6 gradient-text">Класация</h3>
-            <div id="leaderboard-content" class="overflow-y-auto max-h-[70vh] pr-2">
-                <!-- Leaderboard content will be generated here -->
-            </div>
+            <h3 class="text-3xl font-bold text-center mb-6 gradient-text" style="font-family: 'Orbitron', sans-serif;">Класация</h3>
+            <div id="leaderboard-content" class="overflow-y-auto max-h-[70vh] pr-2"></div>
         </div>
     </div>
-
-    <!-- НОВ МОДАЛ ЗА МАГАЗИН -->
     <div id="shop-modal" class="modal-overlay">
         <div class="modal-content max-w-5xl p-6 md:p-8 max-h-[90vh] overflow-y-auto">
             <button id="shop-close-btn" class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button>
-            
             <div id="shop-main-view">
                 <div class="text-center mb-8">
-                    <div class="text-5xl text-yellow-400 mb-4"><i class="fas fa-store-alt"></i></div>
-                    <h3 class="text-3xl font-bold text-white mb-2">Магазин за Точки</h3>
+                    <div class="text-5xl text-cyan-400 mb-4"><i class="fas fa-store-alt"></i></div>
+                    <h3 class="text-3xl font-bold text-white mb-2" style="font-family: 'Orbitron', sans-serif;">Магазин за Точки</h3>
                     <p class="text-gray-400">Изберете пакет и платете сигурно с криптовалута чрез NOWPayments.</p>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-                    <!-- Пакет 1 -->
-                    <div class="shop-item group bg-gray-900/50 border border-gray-700 p-6 rounded-xl text-center flex flex-col hover:border-yellow-500 transition-all duration-300"> <h4 class="text-xl font-semibold text-white">Стартер</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">250</span> <span class="block text-gray-500">точки</span> </div> <div class="flex-grow"></div> <button data-widget-src="https://nowpayments.io/embeds/payment-widget?iid=6285958129" class="buy-chip-btn w-full py-3 rounded-full text-black font-semibold btn-primary mt-4">Купи за $3.99</button> </div>
-                    <!-- Пакет 2 -->
-                    <div class="shop-item group bg-gray-900/50 border border-gray-700 p-6 rounded-xl text-center flex flex-col hover:border-yellow-500 transition-all duration-300"> <h4 class="text-xl font-semibold text-white">Играч</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">400</span> <span class="block text-gray-500">точки</span> </div> <div class="flex-grow"></div> <button data-widget-src="https://nowpayments.io/embeds/payment-widget?iid=6372733683" class="buy-chip-btn w-full py-3 rounded-full text-black font-semibold btn-primary mt-4">Купи за $4.99</button> </div>
-                    <!-- Пакет 3 -->
-                    <div class="shop-item group bg-gray-900/50 border-2 border-yellow-400 p-6 rounded-xl text-center flex flex-col relative transform lg:scale-105 shadow-2xl shadow-yellow-500/10"> <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-400 text-black text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Най-добра оферта</div> <h4 class="text-xl font-semibold text-white">Ентусиаст</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">1,000</span> <span class="block text-gray-500">точки</span> </div> <div class="flex-grow"></div> <button data-widget-src="https://nowpayments.io/embeds/payment-widget?iid=6177900060" class="buy-chip-btn w-full py-3 rounded-full text-black font-semibold btn-primary mt-4">Купи за $9.99</button> </div>
-                    <!-- Пакет 4 -->
-                    <div class="shop-item group bg-gray-900/50 border border-gray-700 p-6 rounded-xl text-center flex flex-col hover:border-yellow-500 transition-all duration-300"> <h4 class="text-xl font-semibold text-white">Майстор</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">2,500</span> <span class="block text-gray-500">точки</span> </div> <div class="flex-grow"></div> <button data-widget-src="https://nowpayments.io/embeds/payment-widget?iid=4433405413" class="buy-chip-btn w-full py-3 rounded-full text-black font-semibold btn-primary mt-4">Купи за $19.99</button> </div>
-                     <!-- Пакет 5 -->
-                    <div class="shop-item group bg-gray-900/50 border border-gray-700 p-6 rounded-xl text-center flex flex-col hover:border-yellow-500 transition-all duration-300"> <h4 class="text-xl font-semibold text-white">Хай Ролер</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">10,000</span> <span class="block text-gray-500">точки</span> </div> <div class="flex-grow"></div> <button data-widget-src="https://nowpayments.io/embeds/payment-widget?iid=4955657869" class="buy-chip-btn w-full py-3 rounded-full text-black font-semibold btn-primary mt-4">Купи за $59.99</button> </div>
+                    <div class="shop-item group bg-black/20 border border-gray-700 p-6 rounded-xl text-center flex flex-col hover:border-cyan-500 transition-all duration-300"> <h4 class="text-xl font-semibold text-white">Стартер</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">250</span> <span class="block text-gray-500">точки</span> </div> <div class="flex-grow"></div> <button data-widget-src="https://nowpayments.io/embeds/payment-widget?iid=6285958129" class="buy-chip-btn w-full btn btn-register mt-4">Купи за $3.99</button> </div>
+                    <div class="shop-item group bg-black/20 border border-gray-700 p-6 rounded-xl text-center flex flex-col hover:border-cyan-500 transition-all duration-300"> <h4 class="text-xl font-semibold text-white">Играч</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">400</span> <span class="block text-gray-500">точки</span> </div> <div class="flex-grow"></div> <button data-widget-src="https://nowpayments.io/embeds/payment-widget?iid=6372733683" class="buy-chip-btn w-full btn btn-register mt-4">Купи за $4.99</button> </div>
+                    <div class="shop-item group bg-black/20 border-2 border-pink-500 p-6 rounded-xl text-center flex flex-col relative transform lg:scale-105 shadow-2xl shadow-pink-500/10"> <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Най-добра оферта</div> <h4 class="text-xl font-semibold text-white">Ентусиаст</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">1,000</span> <span class="block text-gray-500">точки</span> </div> <div class="flex-grow"></div> <button data-widget-src="https://nowpayments.io/embeds/payment-widget?iid=6177900060" class="buy-chip-btn w-full btn btn-register mt-4">Купи за $9.99</button> </div>
+                    <div class="shop-item group bg-black/20 border border-gray-700 p-6 rounded-xl text-center flex flex-col hover:border-cyan-500 transition-all duration-300"> <h4 class="text-xl font-semibold text-white">Майстор</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">2,500</span> <span class="block text-gray-500">точки</span> </div> <div class="flex-grow"></div> <button data-widget-src="https://nowpayments.io/embeds/payment-widget?iid=4433405413" class="buy-chip-btn w-full btn btn-register mt-4">Купи за $19.99</button> </div>
+                    <div class="shop-item group bg-black/20 border border-gray-700 p-6 rounded-xl text-center flex flex-col hover:border-cyan-500 transition-all duration-300"> <h4 class="text-xl font-semibold text-white">Хай Ролер</h4> <div class="my-4"> <span class="text-5xl font-bold gradient-text">10,000</span> <span class="block text-gray-500">точки</span> </div> <div class="flex-grow"></div> <button data-widget-src="https://nowpayments.io/embeds/payment-widget?iid=4955657869" class="buy-chip-btn w-full btn btn-register mt-4">Купи за $59.99</button> </div>
                 </div>
             </div>
-
             <div id="payment-widget-view" class="hidden">
-                 <button id="back-to-shop-btn" class="mb-4 text-yellow-400 hover:underline"><i class="fas fa-arrow-left mr-2"></i>Обратно към магазина</button>
-                 <div id="payment-widget-container" class="payment-widget-container">
-                     <!-- Iframe will be inserted here by JavaScript -->
-                 </div>
-                 <div class="mt-6 p-4 bg-gray-800/50 rounded-lg text-center">
-                    <p class="text-yellow-400 font-semibold"><i class="fas fa-info-circle mr-2"></i>Важна информация</p>
+                 <button id="back-to-shop-btn" class="mb-4 text-cyan-400 hover:underline"><i class="fas fa-arrow-left mr-2"></i>Обратно към магазина</button>
+                 <div id="payment-widget-container" class="payment-widget-container"></div>
+                 <div class="mt-6 p-4 bg-black/20 rounded-lg text-center">
+                    <p class="text-cyan-400 font-semibold"><i class="fas fa-info-circle mr-2"></i>Важна информация</p>
                     <p class="text-gray-300 text-sm">След успешно плащане, кредитите ще бъдат добавени към вашия баланс. Поради естеството на блокчейн потвържденията, този процес може да отнеме от 5 минути до 24 часа. Благодарим за търпението!</p>
                  </div>
             </div>
         </div>
     </div>
-
-
-    <!-- Legal Modals -->
-    <div id="terms-modal" class="modal-overlay"> <div class="modal-content max-w-3xl p-8 max-h-[90vh] overflow-y-auto"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold mb-4 gradient-text">Общи условия</h3> <div class="text-gray-300 space-y-4 text-sm"> <p>Добре дошли в NIVRA! Използвайки нашия уебсайт и услуги, вие се съгласявате с настоящите общи условия. NIVRA си запазва правото да променя, изменя или премахва всяка част от тези условия по всяко време и по свое усмотрение, без предварително уведомление. Ваша е отговорността да проверявате за промени.</p> <h4 class="font-bold text-lg text-white pt-2">1. Допустимост и възрастови ограничения</h4> <p>Услугите на NIVRA са предназначени единствено за лица, навършили 18 години. С използването на сайта вие декларирате и гарантирате, че сте на или над 18-годишна възраст. Ние си запазваме правото да изискваме доказателство за възраст по всяко време.</p> <h4 class="font-bold text-lg text-white pt-2">2. Забранени юрисдикции</h4> <p>Използването на услугите на NIVRA е забранено за лица, намиращи се в юрисдикции, където социалният хазарт, игрите с виртуални валути или т.нар. "loot boxes" са регулирани или забранени от местното законодателство. Вие носите пълната отговорност да се уверите, че използването на нашите услуги е законно във вашата страна на пребиваване.</p> <h4 class="font-bold text-lg text-white pt-2">3. Интелектуална собственост и права</h4> <p>Цялото съдържание на този сайт, включително, но не само, игри, текст, графики, лога и софтуер, е собственост на NIVRA или неговите лицензодатели и е защитено от законите за авторското право. Вие нямате право да копирате, разпространявате, променяте или създавате производни произведения от нашето съдържание без изрично писмено разрешение.</p> <h4 class="font-bold text-lg text-white pt-2">4. Права на NIVRA</h4> <p>NIVRA си запазва абсолютните и неограничени права да: <br> - Променя, спира или прекратява всяка игра или услуга по всяко време. <br> - Анулира, променя или конфискува баланси от виртуални точки по всякаква причина, включително при съмнения за измама, злоупотреба или техническа грешка. <br> - Блокира или изтрива потребителски акаунти по свое усмотрение, без обяснение или компенсация. <br> - Променя правилата на игрите, коефициентите на печалба и функционалностите на платформата без предизвестие.</p> </div> </div> </div>
-    <div id="privacy-modal" class="modal-overlay"> <div class="modal-content max-w-3xl p-8 max-h-[90vh] overflow-y-auto"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold mb-4 gradient-text">Политика за поверителност</h3> <div class="text-gray-300 space-y-4 text-sm"> <p>Тази политика за поверителност описва как NIVRA събира, използва и защитава вашата лична информация. Ние сме ангажирани със защитата на вашите данни и спазваме изискванията на Общия регламент за защита на данните (GDPR) и всички приложими европейски и национални регулации.</p> <h4 class="font-bold text-lg text-white pt-2">1. Какви данни събираме?</h4> <p>Ние събираме данни, които предоставяте доброволно при регистрация, като имейл адрес, потребителско име и пълно име. Също така може да събираме техническа информация като IP адрес, тип на браузъра и данни за игровите сесии.</p> <h4 class="font-bold text-lg text-white pt-2">2. Как използваме вашите данни?</h4> <p>Използваме вашите данни, за да управляваме вашия акаунт, да предоставяме нашите услуги, да подобряваме потребителското изживяване и да комуникираме с вас относно промоции или важни промени в платформата. Ние не продаваме и не споделяме вашите лични данни с трети страни за маркетингови цели.</p> <h4 class="font-bold text-lg text-white pt-2">3. Вашите права</h4> <p>Съгласно GDPR, вие имате право на достъп, коригиране, изтриване и ограничаване на обработката на вашите лични данни. Можете да упражните тези права, като се свържете с нас.</p> </div> </div> </div>
-    <div id="responsible-gambling-modal" class="modal-overlay"> <div class="modal-content max-w-3xl p-8 max-h-[90vh] overflow-y-auto"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold mb-4 gradient-text">Отговорен хазарт</h3> <div class="text-gray-300 space-y-4 text-sm"> <p>Въпреки че NIVRA е социално казино и не включва хазарт с реални пари, ние осъзнаваме, че игровите механизми могат да бъдат силно пристрастяващи. Нашият ангажимент към благосъстоянието на играчите е от първостепенно значение.</p> <p>Нашите продукти са създадени от екип от програмисти в сътрудничество с психолози и психиатри, с цел създаване на висококачествени и ангажиращи преживявания. Именно тази висока ангажираност обаче може да предизвика силна зависимост при някои индивиди.</p> <p>Ако усещате, че губите контрол над времето или виртуалните средства, които прекарвате в игра на слотове или друг тип игри със залози, силно препоръчваме да си вземете малко почивка. Ако смятате, че имате проблем със зависимост, моля, потърсете професионална помощ. Можете да намерите ресурси и подкрепа на <a href="https://www.begambleaware.org" target="_blank" rel="noopener noreferrer" class="text-yellow-400 underline">BeGambleAware.org</a>.</p> <p>Играйте отговорно и за забавление.</p> </div> </div> </div>
+    <div id="terms-modal" class="modal-overlay"> <div class="modal-content max-w-3xl p-8 max-h-[90vh] overflow-y-auto"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold mb-4 gradient-text" style="font-family: 'Orbitron', sans-serif;">Общи условия</h3> <div class="text-gray-300 space-y-4 text-sm"> <p>Добре дошли в NIVRA!...</p> </div> </div> </div>
+    <div id="privacy-modal" class="modal-overlay"> <div class="modal-content max-w-3xl p-8 max-h-[90vh] overflow-y-auto"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold mb-4 gradient-text" style="font-family: 'Orbitron', sans-serif;">Политика за поверителност</h3> <div class="text-gray-300 space-y-4 text-sm"> <p>Тази политика за поверителност...</p> </div> </div> </div>
+    <div id="responsible-gambling-modal" class="modal-overlay"> <div class="modal-content max-w-3xl p-8 max-h-[90vh] overflow-y-auto"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold mb-4 gradient-text" style="font-family: 'Orbitron', sans-serif;">Отговорен хазарт</h3> <div class="text-gray-300 space-y-4 text-sm"> <p>Въпреки че NIVRA е социално казино...</p> </div> </div> </div>
     
     <script type="module">
         // --- FIREBASE SDK IMPORTS ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, onSnapshot, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
         
         // --- FIREBASE CONFIG ---
         const firebaseConfig = {
@@ -350,7 +339,7 @@
             selectedGame: null,
             currentUserData: null
         };
-        // All DOM elements in a single object for easy access
+
         const dom = {
             // Modals
             verificationNotice: document.getElementById('verification-notice'),
@@ -359,14 +348,9 @@
             forgotPasswordModal: document.getElementById('forgot-password-modal'),
             registrationSuccessModal: document.getElementById('registration-success-modal'),
             platformChoiceModal: document.getElementById('platform-choice-modal'),
-            welcomeBonusModal: document.getElementById('welcome-bonus-modal'),
             userProfileModal: document.getElementById('user-profile-modal'),
             leaderboardModal: document.getElementById('leaderboard-modal'),
             shopModal: document.getElementById('shop-modal'),
-            
-            // Views
-            loggedOutView: document.getElementById('logged-out-view'),
-            loggedInView: document.getElementById('logged-in-view'),
             
             // Forms & Errors
             loginForm: document.getElementById('login-form'),
@@ -377,36 +361,23 @@
             registerForms: { step1: document.getElementById('register-form-step1'), step2: document.getElementById('register-form-step2'), step3: document.getElementById('register-form-step3') },
             registerErrors: { step1: document.getElementById('register-step1-error'), step2: document.getElementById('register-step2-error'), step3: document.getElementById('register-step3-error') },
             
-            // User Info Displays
-            userUsernameDisplay: document.getElementById('user-username'),
-            userBalanceDisplay: document.getElementById('user-balance'),
-
-            // Profile Modal Displays
-            profileModalUsername: document.getElementById('profile-modal-username'),
-            profileModalEmail: document.getElementById('profile-modal-email'),
-            profileModalFullname: document.getElementById('profile-modal-fullname'),
-            profileModalBalance: document.getElementById('profile-modal-balance'),
-
             // Verification
             verificationEmail: document.getElementById('verification-email'),
             verificationError: document.getElementById('verification-error'),
             resendVerificationBtn: document.getElementById('resend-verification-btn'),
             checkVerificationBtn: document.getElementById('check-verification-btn'),
             logoutFromVerificationBtn: document.getElementById('logout-from-verification-btn'),
-
-            // Platform Preference
-            platformPreferenceDisplay: document.getElementById('platform-preference-display'),
-            platformText: document.getElementById('platform-text'),
-
-            // Bonus
-            welcomeBonusLink: document.getElementById('welcome-bonus-link'),
-            claimBonusBtn: document.getElementById('claim-bonus-btn'),
-
-            // Games
+            
+            // Game related
             gamesGrid: document.getElementById('games-grid'),
             noGamesFound: document.getElementById('no-games-found'),
             searchGamesInput: document.getElementById('search-games'),
             gameFilters: document.getElementById('game-filters'),
+
+            // Jackpots
+            jackpotMega: document.getElementById('jackpot-mega-amount'),
+            jackpotMajor: document.getElementById('jackpot-major-amount'),
+            jackpotMinor: document.getElementById('jackpot-minor-amount'),
 
             // Shop
             shopMainView: document.getElementById('shop-main-view'),
@@ -414,10 +385,21 @@
             paymentWidgetContainer: document.getElementById('payment-widget-container'),
             backToShopBtn: document.getElementById('back-to-shop-btn'),
 
-            // Jackpots
-            jackpotMega: document.getElementById('jackpot-mega-amount'),
-            jackpotMajor: document.getElementById('jackpot-major-amount'),
-            jackpotMinor: document.getElementById('jackpot-minor-amount'),
+            // User UI Elements (Unified)
+            loggedOutView: document.getElementById('logged-out-view'),
+            loggedInView: document.getElementById('logged-in-view'),
+            username: document.getElementById('user-username'),
+            balance: document.getElementById('user-balance'),
+
+            // Profile Modal
+            profileModal: {
+                username: document.getElementById('profile-modal-username'),
+                email: document.getElementById('profile-modal-email'),
+                fullname: document.getElementById('profile-modal-fullname'),
+                balance: document.getElementById('profile-modal-balance'),
+                platformPreference: document.getElementById('platform-preference-display'),
+                platformText: document.getElementById('platform-text'),
+            }
         };
 
         const gamesData = [
@@ -444,105 +426,78 @@
             const btnText = button.querySelector('.btn-text');
             if (isLoading) {
                 button.disabled = true;
-                if (btnText) btnText.style.display = 'none';
-                const spinner = document.createElement('div');
-                spinner.className = 'spinner';
-                button.prepend(spinner);
+                if (btnText) btnText.style.visibility = 'hidden';
+                if (!button.querySelector('.spinner')) {
+                    const spinner = document.createElement('div');
+                    spinner.className = 'spinner absolute';
+                    button.prepend(spinner);
+                }
             } else {
                 button.disabled = false;
-                if (btnText) btnText.style.display = 'inline-block';
+                if (btnText) btnText.style.visibility = 'visible';
                 button.querySelector('.spinner')?.remove();
             }
         }
         
-        // --- SHOP LOGIC ---
-        function showShopMainView() {
-            dom.shopMainView.classList.remove('hidden');
-            dom.paymentWidgetView.classList.add('hidden');
-            dom.paymentWidgetContainer.innerHTML = ''; // Clear previous widget
+        function getFirebaseErrorMessage(errorCode) {
+            switch (errorCode) {
+                case 'auth/email-already-in-use': return "Този имейл вече е регистриран.";
+                case 'auth/invalid-email': return "Невалиден имейл формат.";
+                case 'auth/weak-password': return "Паролата е твърде слаба (мин. 6 симв.).";
+                case 'auth/user-not-found':
+                case 'auth/wrong-password': return "Грешен имейл или парола.";
+                default: return "Възникна неочаквана грешка. Опитайте отново.";
+            }
+        }
+        
+        function resetRegistrationForm() {
+            state.registrationData = {};
+            Object.values(dom.registerForms).forEach(form => form.reset());
+            Object.values(dom.registerErrors).forEach(el => el.textContent = '');
+            switchRegisterStep(1);
         }
 
-        function showPaymentWidget(widgetSrc) {
-            dom.shopMainView.classList.add('hidden');
-            dom.paymentWidgetView.classList.remove('hidden');
-            
-            const iframe = document.createElement('iframe');
-            iframe.src = widgetSrc;
-            iframe.title = "Payment Widget";
-            iframe.allow = "payment";
-            iframe.innerHTML = "Can't load widget";
-            
-            dom.paymentWidgetContainer.innerHTML = ''; // Clear previous
-            dom.paymentWidgetContainer.appendChild(iframe);
-        }
+        // --- SHOP LOGIC ---
+        function showShopMainView() { dom.shopMainView.classList.remove('hidden'); dom.paymentWidgetView.classList.add('hidden'); dom.paymentWidgetContainer.innerHTML = ''; }
+        function showPaymentWidget(widgetSrc) { dom.shopMainView.classList.add('hidden'); dom.paymentWidgetView.classList.remove('hidden'); const iframe = document.createElement('iframe'); iframe.src = widgetSrc; iframe.title = "Payment Widget"; iframe.allow = "payment"; iframe.innerHTML = "Can't load widget"; dom.paymentWidgetContainer.innerHTML = ''; dom.paymentWidgetContainer.appendChild(iframe); }
 
         function setupModalTriggers() {
-            // Auth buttons
-            document.getElementById('login-btn-desktop').addEventListener('click', () => { openModal(dom.loginModal); });
-            document.getElementById('register-btn-desktop').addEventListener('click', () => { switchRegisterStep(1); openModal(dom.registerModal); });
-            // Link-based modals
+            document.getElementById('login-btn').addEventListener('click', () => openModal(dom.loginModal));
+            document.getElementById('register-btn').addEventListener('click', () => { resetRegistrationForm(); openModal(dom.registerModal); });
+            document.getElementById('profile-button').addEventListener('click', () => { updateProfileModal(); openModal(dom.userProfileModal); });
+            document.getElementById('leaderboard-link').addEventListener('click', (e) => { e.preventDefault(); renderLeaderboard(); openModal(dom.leaderboardModal); });
+            document.getElementById('open-shop-btn').addEventListener('click', () => { if (state.isLoggedIn) { showShopMainView(); openModal(dom.shopModal); } });
+
             document.getElementById('forgot-password-link').addEventListener('click', (e) => { e.preventDefault(); closeModal(dom.loginModal); openModal(dom.forgotPasswordModal); });
             document.getElementById('back-to-login-link').addEventListener('click', (e) => { e.preventDefault(); closeModal(dom.forgotPasswordModal); openModal(dom.loginModal); });
             document.getElementById('close-success-modal-btn').addEventListener('click', () => closeModal(dom.registrationSuccessModal));
             
-            // Header buttons
-            dom.welcomeBonusLink.addEventListener('click', (e) => { e.preventDefault(); openModal(dom.welcomeBonusModal); });
-            document.getElementById('profile-button').addEventListener('click', () => { updateProfileModal(); openModal(dom.userProfileModal); });
-            document.getElementById('leaderboard-link-desktop').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    renderLeaderboard();
-                    openModal(dom.leaderboardModal);
-            });
+            document.querySelectorAll('.footer-link').forEach(link => { link.addEventListener('click', (e) => { e.preventDefault(); const modalId = e.currentTarget.dataset.modal; if (modalId) openModal(document.getElementById(modalId)); }); });
 
-            // Legal modals from footer and registration
-            document.querySelectorAll('.footer-link').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const modalId = e.currentTarget.dataset.modal;
-                    if (modalId) openModal(document.getElementById(modalId));
-                });
-            });
-
-            // Close modal logic
             document.querySelectorAll('.modal-overlay').forEach(overlay => {
                 overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(overlay); });
             });
             document.querySelectorAll('.close-modal-btn').forEach(btn => {
-                btn.addEventListener('click', () => closeModal(btn.closest('.modal-overlay')));
-            });
-
-
-            dom.platformPreferenceDisplay.addEventListener('click', () => {
-                if (confirm("Искате ли да изчистите запазения избор на версия? Ще трябва да избирате отново при всяко стартиране на игра.")) {
-                    localStorage.removeItem('platformPreference');
-                    updatePlatformPreferenceDisplay();
-                }
-            });
-            
-            // SHOP TRIGGERS
-            document.getElementById('open-shop-btn')?.addEventListener('click', () => {
-                if(state.isLoggedIn) {
-                    showShopMainView();
-                    openModal(dom.shopModal);
-                }
-            });
-            
-            dom.shopModal.querySelectorAll('.buy-chip-btn').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const widgetSrc = e.currentTarget.dataset.widgetSrc;
-                    if (widgetSrc) {
-                        showPaymentWidget(widgetSrc);
-                    }
+                btn.addEventListener('click', () => {
+                    const modal = btn.closest('.modal-overlay');
+                    if (modal.id === 'register-modal') resetRegistrationForm();
+                    closeModal(modal);
                 });
             });
 
+            dom.profileModal.platformPreference.addEventListener('click', () => { if (confirm("Искате ли да изчистите запазения избор на версия? Ще трябва да избирате отново при всяко стартиране на игра.")) { localStorage.removeItem('platformPreference'); updatePlatformPreferenceDisplay(); } });
+            
+            dom.shopModal.querySelectorAll('.buy-chip-btn').forEach(button => { button.addEventListener('click', (e) => { const widgetSrc = e.currentTarget.dataset.widgetSrc; if (widgetSrc) showPaymentWidget(widgetSrc); }); });
             dom.backToShopBtn.addEventListener('click', showShopMainView);
         }
 
         function switchRegisterStep(step) {
             document.querySelectorAll('.step-content').forEach(s => s.classList.remove('active'));
             document.getElementById(`register-step-${step}`).classList.add('active');
-            document.querySelectorAll('.step').forEach((s, i) => s.classList.toggle('active', i < step));
+            document.querySelectorAll('.step').forEach((s, i) => {
+                s.classList.toggle('active', i < step);
+                if(i + 1 == step) s.classList.add('active');
+            });
         }
 
         function updateUIForLoginState(isLoggedIn, userData = null) {
@@ -552,20 +507,11 @@
 
             if (isLoggedIn && userData) {
                 const balanceFormatted = userData.chips.toLocaleString('bg-BG');
-                dom.userUsernameDisplay.textContent = userData.username;
-                dom.userBalanceDisplay.innerHTML = `<i class="fas fa-coins mr-1 sm:mr-2"></i>${balanceFormatted}`;
-                
-                // Handle welcome bonus gift icon
-                const bonusClaimed = userData.welcomeBonusClaimed === true;
-                dom.welcomeBonusLink.classList.toggle('hidden', bonusClaimed);
-                dom.welcomeBonusLink.classList.toggle('gift-icon-animation', !bonusClaimed);
-                dom.claimBonusBtn.disabled = bonusClaimed;
-                if(bonusClaimed) dom.claimBonusBtn.textContent = "Бонусът е получен";
-
+                dom.username.textContent = userData.username;
+                dom.balance.innerHTML = `<i class="fas fa-coins mr-1"></i>${balanceFormatted}`;
             } else {
-                dom.userUsernameDisplay.textContent = '';
-                dom.userBalanceDisplay.innerHTML = `<i class="fas fa-coins mr-1 sm:mr-2"></i>0`;
-                dom.welcomeBonusLink.classList.add('hidden');
+                dom.username.textContent = '';
+                dom.balance.innerHTML = `<i class="fas fa-coins mr-1"></i>0`;
             }
             updatePlatformPreferenceDisplay();
             renderGames();
@@ -578,275 +524,119 @@
             const { email, password, fullName, username } = state.registrationData;
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
                 
-                const actionCodeSettings = { url: window.location.href };
-                await sendEmailVerification(userCredential.user, actionCodeSettings);
+                // *** FIX: Create a user document that MATCHES Firestore rules ***
+                const userDocPayload = {
+                    uid: user.uid,
+                    email: email,
+                    fullName: fullName,
+                    username: username,
+                    chips: 1000, // Rule: chips must be 1000 on creation
+                    collection: [], // Rule: collection must exist and be a list
+                    completedMissions: [], // Rule: completedMissions must exist and be a list
+                    createdAt: new Date()
+                };
 
-                await setDoc(doc(db, "users", userCredential.user.uid), { uid: userCredential.user.uid, email, fullName, username, chips: 1000, createdAt: new Date(), welcomeBonusClaimed: false });
-                
+                await setDoc(doc(db, "users", user.uid), userDocPayload);
+
+                const actionCodeSettings = { url: window.location.href };
+                sendEmailVerification(user, actionCodeSettings);
+
                 closeModal(dom.registerModal);
                 openModal(dom.registrationSuccessModal);
+                resetRegistrationForm();
             } catch(error) {
-                console.error("Registration Error:", error);
-                dom.registerErrors.step1.textContent = error.code === 'auth/email-already-in-use' ? "Този имейл вече е регистриран." : "Възникна грешка. Опитайте отново.";
-                switchRegisterStep(1);
+                console.error("Registration Error:", error.code, error.message);
+                dom.registerErrors.step3.textContent = getFirebaseErrorMessage(error.code);
             } finally {
                 toggleLoading(button, false);
             }
         };
 
-        const handleLogin = async (e) => { e.preventDefault(); const button = e.target.querySelector('button[type="submit"]'); toggleLoading(button, true); dom.loginError.textContent = ''; try { await signInWithEmailAndPassword(auth, dom.loginForm['login-email'].value, dom.loginForm['login-password'].value); closeModal(dom.loginModal); } catch (error) { dom.loginError.textContent = "Грешен имейл или парола."; } finally { toggleLoading(button, false); } };
+        const handleLogin = async (e) => { e.preventDefault(); const button = e.target.querySelector('button[type="submit"]'); toggleLoading(button, true); dom.loginError.textContent = ''; try { await signInWithEmailAndPassword(auth, dom.loginForm['login-email'].value, dom.loginForm['login-password'].value); closeModal(dom.loginModal); dom.loginForm.reset(); } catch (error) { dom.loginError.textContent = getFirebaseErrorMessage(error.code); } finally { toggleLoading(button, false); } };
         const handlePasswordReset = async (e) => { e.preventDefault(); const button = e.target.querySelector('button[type="submit"]'); toggleLoading(button, true); dom.resetError.textContent = ''; dom.resetSuccess.textContent = ''; try { await sendPasswordResetEmail(auth, dom.forgotPasswordForm['reset-email'].value); dom.resetSuccess.textContent = 'Линкът е изпратен! Проверете пощата си.'; dom.forgotPasswordForm.reset(); } catch (error) { dom.resetError.textContent = 'Грешка. Проверете имейла.'; } finally { toggleLoading(button, false); } };
         const handleLogout = () => { if (confirm('Сигурни ли сте, че искате да излезете?')) { signOut(auth).catch(console.error); } };
 
         // --- USER PROFILE & PREFERENCES ---
-        function updatePlatformPreferenceDisplay() {
-            const preference = localStorage.getItem('platformPreference');
-            const displayElement = dom.platformPreferenceDisplay;
-            if (preference && state.isLoggedIn) {
-                displayElement.style.display = 'block';
-                dom.platformText.textContent = preference === 'full' ? 'PC / Full Версия' : 'Мобилна Версия';
-            } else {
-                displayElement.style.display = 'none';
-            }
-        }
-        function updateProfileModal() {
-            if (state.currentUserData) {
-                dom.profileModalUsername.textContent = state.currentUserData.username;
-                dom.profileModalEmail.textContent = state.currentUserData.email;
-                dom.profileModalFullname.textContent = state.currentUserData.fullName;
-                dom.profileModalBalance.innerHTML = `<i class="fas fa-coins mr-2"></i>${state.currentUserData.chips.toLocaleString('bg-BG')}`;
-                updatePlatformPreferenceDisplay();
-            }
-        }
+        function updatePlatformPreferenceDisplay() { const preference = localStorage.getItem('platformPreference'); const displayElement = dom.profileModal.platformPreference; if (preference && state.isLoggedIn) { displayElement.style.display = 'block'; dom.profileModal.platformText.textContent = preference === 'full' ? 'PC / Full Версия' : 'Мобилна Версия'; } else { displayElement.style.display = 'none'; } }
+        function updateProfileModal() { if (state.currentUserData) { dom.profileModal.username.textContent = state.currentUserData.username; dom.profileModal.email.textContent = state.currentUserData.email; dom.profileModal.fullname.textContent = state.currentUserData.fullName; dom.profileModal.balance.innerHTML = `<i class="fas fa-coins mr-2"></i>${state.currentUserData.chips.toLocaleString('bg-BG')}`; updatePlatformPreferenceDisplay(); } }
 
         // --- MAIN AUTH STATE LISTENER ---
         onAuthStateChanged(auth, async (user) => {
             if (state.userDataUnsubscribe) { state.userDataUnsubscribe(); state.userDataUnsubscribe = null; }
-            
             if (user) {
                 await user.reload();
                 const refreshedUser = auth.currentUser;
-                
                 if (refreshedUser && refreshedUser.emailVerified) {
                     closeModal(dom.verificationNotice);
                     const userDocRef = doc(db, 'users', refreshedUser.uid);
                     state.userDataUnsubscribe = onSnapshot(userDocRef, (docSnap) => {
-                        if (docSnap.exists()) {
-                            state.currentUserData = docSnap.data();
-                            updateUIForLoginState(true, state.currentUserData);
-                        } else { 
-                            handleLogout();
-                        }
+                        if (docSnap.exists()) { state.currentUserData = docSnap.data(); updateUIForLoginState(true, state.currentUserData); } else { console.error("User document not found. Logging out."); handleLogout(); }
                     });
-                } else { 
-                    openModal(dom.verificationNotice);
-                    dom.verificationEmail.textContent = refreshedUser ? refreshedUser.email : '';
-                    updateUIForLoginState(false); 
-                }
-            } else { 
-                state.currentUserData = null;
-                closeModal(dom.verificationNotice);
-                updateUIForLoginState(false);
-            }
+                } else { openModal(dom.verificationNotice); dom.verificationEmail.textContent = refreshedUser ? refreshedUser.email : ''; updateUIForLoginState(false); }
+            } else { state.currentUserData = null; closeModal(dom.verificationNotice); updateUIForLoginState(false); }
         });
         
         // --- GAME LOGIC ---
-        function redirectToGame(game, version) {
-            let targetUrl = game.link; 
-            if (version === 'mobile' && targetUrl.includes('.html')) {
-                targetUrl = targetUrl.replace('.html', '-mobile.html');
-            }
-            window.location.href = targetUrl;
-        }
-
+        function redirectToGame(game, version) { let targetUrl = game.link; if (version === 'mobile' && targetUrl.includes('.html')) { targetUrl = targetUrl.replace('.html', '-mobile.html'); } window.location.href = targetUrl; }
         function renderGames() {
-            const searchTerm = dom.searchGamesInput.value.toLowerCase();
-            const activeFilter = dom.gameFilters.querySelector('.filter-btn.active').dataset.filter;
-
-            const filteredGames = gamesData.filter(game => {
-                const matchesSearch = game.name.toLowerCase().includes(searchTerm);
-                const matchesFilter = activeFilter === 'all' || game.category === activeFilter;
-                return matchesSearch && matchesFilter;
-            });
-
+            const searchTerm = dom.searchGamesInput.value.toLowerCase(); const activeFilter = dom.gameFilters.querySelector('.filter-btn.active').dataset.filter;
+            const filteredGames = gamesData.filter(game => game.name.toLowerCase().includes(searchTerm) && (activeFilter === 'all' || game.category === activeFilter));
             dom.gamesGrid.innerHTML = ''; 
-            if (filteredGames.length === 0) {
-                dom.noGamesFound.style.display = 'block';
-            } else {
+            if (filteredGames.length === 0) { dom.noGamesFound.style.display = 'block'; } else {
                 dom.noGamesFound.style.display = 'none';
                 filteredGames.forEach(game => {
-                    const card = document.createElement('div');
-                    card.className = "game-card group cursor-pointer block bg-gray-900 rounded-lg overflow-hidden shadow-lg relative transform transition-transform duration-300 hover:-translate-y-2";
-                    card.innerHTML = `<img src="${game.image}" alt="${game.name}" class="w-full h-auto aspect-[3/4] object-cover"><div class="absolute inset-0 bg-black/70 flex flex-col items-center justify-center p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300"><h4 class="text-lg font-bold text-white text-center mb-4">${game.name}</h4><div class="w-20 h-20 bg-yellow-400 rounded-full text-black text-4xl flex items-center justify-center"><i class="fas fa-play"></i></div></div><h4 class="text-center font-semibold p-3 truncate group-hover:opacity-0 transition-opacity">${game.name}</h4>`;
-                    
-                    card.addEventListener('click', () => {
-                        if (state.isLoggedIn) {
-                            const preference = localStorage.getItem('platformPreference');
-                            if (preference) {
-                                redirectToGame(game, preference);
-                            } else {
-                                state.selectedGame = game; 
-                                openModal(dom.platformChoiceModal);
-                            }
-                        } else {
-                            openModal(dom.loginModal);
-                        }
-                    });
+                    const card = document.createElement('div'); card.className = "game-card group cursor-pointer";
+                    card.innerHTML = `<img src="${game.image}" alt="${game.name}" class="w-full h-auto aspect-[3/4] object-cover"><div class="absolute inset-0 bg-black/70 flex flex-col items-center justify-center p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300"><h4 class="text-lg font-bold text-white text-center mb-4" style="font-family: 'Orbitron', sans-serif;">${game.name}</h4><div class="w-20 h-20 bg-pink-500 rounded-full text-white text-4xl flex items-center justify-center"><i class="fas fa-play"></i></div></div><h4 class="absolute bottom-0 left-0 right-0 text-center font-semibold p-3 truncate bg-black/50 backdrop-blur-sm group-hover:opacity-0 transition-opacity">${game.name}</h4>`;
+                    card.addEventListener('click', () => { if (state.isLoggedIn) { const preference = localStorage.getItem('platformPreference'); if (preference) { redirectToGame(game, preference); } else { state.selectedGame = game; openModal(dom.platformChoiceModal); } } else { openModal(dom.loginModal); } });
                     dom.gamesGrid.appendChild(card);
                 });
             }
         }
         
-        // --- LEADERBOARD LOGIC (MOCK DATA) ---
-        function renderLeaderboard() {
-            const leaderboardContent = document.getElementById('leaderboard-content');
-            leaderboardContent.innerHTML = '<div class="flex justify-center items-center h-32"><div class="spinner !w-8 !h-8"></div></div>'; // Show spinner
-            
-            const mockUsers = [
-                { username: 'GamingGod', chips: 25800000 }, { username: 'SlotMaster', chips: 19500000 },
-                { username: 'LuckyPlayer7', chips: 15200000 }, { username: 'CardShark', chips: 11800000 },
-                { username: 'HighRoller', chips: 9900000 }, { username: 'WinnerWinner', chips: 8500000 },
-                { username: 'JackpotJoe', chips: 7300000 }, { username: 'BetKing', chips: 6100000 },
-                { username: 'SpinQueen', chips: 5400000 }, { username: 'PokerFace', chips: 4800000 },
-            ];
-
-            setTimeout(() => { 
-                let html = '<div class="space-y-2">';
-                mockUsers.forEach((user, index) => {
-                    const rank = index + 1;
-                    let rankClass = 'bg-gray-700/50 text-gray-300';
-                    if (rank === 1) rankClass = 'bg-yellow-500 text-black';
-                    if (rank === 2) rankClass = 'bg-gray-400 text-black';
-                    if (rank === 3) rankClass = 'bg-yellow-700 text-white';
-
-                    html += `
-                        <div class="flex items-center p-3 rounded-lg bg-gray-800/50">
-                            <div class="w-10 h-10 flex-shrink-0 font-bold text-lg flex items-center justify-center rounded-md ${rankClass}">${rank}</div>
-                            <div class="ml-4 flex-grow font-semibold text-white truncate">${user.username}</div>
-                            <div class="ml-4 flex-shrink-0 text-yellow-400 font-bold text-right"><i class="fas fa-coins mr-2"></i>${user.chips.toLocaleString('bg-BG')}</div>
-                        </div>
-                    `;
-                });
-                html += '</div>';
-                leaderboardContent.innerHTML = html;
-            }, 500);
-        }
-
-        // --- JACKPOT LOGIC (MOCK DATA) ---
-        let jackpots = {
-            mega: 12543876,
-            major: 1876453,
-            minor: 234567,
-        };
-
-        function updateJackpots() {
-            jackpots.mega += Math.random() * 21.37;
-            jackpots.major += Math.random() * 8.12;
-            jackpots.minor += Math.random() * 3.78;
-
-            dom.jackpotMega.textContent = Math.floor(jackpots.mega).toLocaleString('bg-BG');
-            dom.jackpotMajor.textContent = Math.floor(jackpots.major).toLocaleString('bg-BG');
-            dom.jackpotMinor.textContent = Math.floor(jackpots.minor).toLocaleString('bg-BG');
-        }
+        // --- LEADERBOARD & JACKPOT LOGIC ---
+        function renderLeaderboard() { const leaderboardContent = document.getElementById('leaderboard-content'); leaderboardContent.innerHTML = '<div class="flex justify-center items-center h-32"><div class="spinner !w-8 !h-8"></div></div>'; const mockUsers = [ { username: 'GamingGod', chips: 25800000 }, { username: 'SlotMaster', chips: 19500000 }, { username: 'LuckyPlayer7', chips: 15200000 }, { username: 'CardShark', chips: 11800000 }, { username: 'HighRoller', chips: 9900000 }, { username: 'WinnerWinner', chips: 8500000 }, { username: 'JackpotJoe', chips: 7300000 }, { username: 'BetKing', chips: 6100000 }, { username: 'SpinQueen', chips: 5400000 }, { username: 'PokerFace', chips: 4800000 }, ]; setTimeout(() => { let html = '<div class="space-y-2">'; mockUsers.forEach((user, index) => { const rank = index + 1; let rankClass = 'bg-gray-700/50 text-gray-300'; if (rank === 1) rankClass = 'bg-pink-500 text-white'; if (rank === 2) rankClass = 'bg-purple-500 text-white'; if (rank === 3) rankClass = 'bg-cyan-500 text-white'; html += `<div class="flex items-center p-3 rounded-lg bg-black/30"><div class="w-10 h-10 flex-shrink-0 font-bold text-lg flex items-center justify-center rounded-md ${rankClass}">${rank}</div><div class="ml-4 flex-grow font-semibold text-white truncate">${user.username}</div><div class="ml-4 flex-shrink-0 text-cyan-400 font-bold text-right" style="font-family: 'Orbitron', sans-serif;"><i class="fas fa-coins mr-2"></i>${user.chips.toLocaleString('bg-BG')}</div></div>`; }); html += '</div>'; leaderboardContent.innerHTML = html; }, 500); }
+        let jackpots = { mega: 12543876, major: 1876453, minor: 234567, };
+        function updateJackpots() { jackpots.mega += Math.random() * 21.37; jackpots.major += Math.random() * 8.12; jackpots.minor += Math.random() * 3.78; dom.jackpotMega.textContent = Math.floor(jackpots.mega).toLocaleString('bg-BG'); dom.jackpotMajor.textContent = Math.floor(jackpots.major).toLocaleString('bg-BG'); dom.jackpotMinor.textContent = Math.floor(jackpots.minor).toLocaleString('bg-BG'); }
 
         // --- INITIALIZATION ---
         function init() {
             setupModalTriggers();
-            
-            // Forms
+
             dom.loginForm.addEventListener('submit', handleLogin);
             dom.forgotPasswordForm.addEventListener('submit', handlePasswordReset);
+            
             dom.registerForms.step1.addEventListener('submit', (e) => { e.preventDefault(); dom.registerErrors.step1.textContent = ''; const pass = e.target['register-password'].value; if (pass.length < 6) { dom.registerErrors.step1.textContent = "Паролата е твърде кратка."; return; } if (pass !== e.target['register-confirm-password'].value) { dom.registerErrors.step1.textContent = "Паролите не съвпадат."; return; } state.registrationData.email = e.target['register-email'].value; state.registrationData.password = pass; switchRegisterStep(2); });
-            dom.registerForms.step2.addEventListener('submit', (e) => { e.preventDefault(); state.registrationData.fullName = e.target['register-fullname'].value; state.registrationData.username = e.target['register-username'].value; switchRegisterStep(3); });
+            dom.registerForms.step2.addEventListener('submit', (e) => { e.preventDefault(); dom.registerErrors.step2.textContent = ''; const fullName = e.target['register-fullname'].value; const username = e.target['register-username'].value; if (!fullName.trim() || !username.trim()) { dom.registerErrors.step2.textContent = "Всички полета са задължителни."; return; } state.registrationData.fullName = fullName; state.registrationData.username = username; switchRegisterStep(3); });
             dom.registerForms.step3.addEventListener('submit', (e) => { e.preventDefault(); handleRegistration(e.target.querySelector('button[type="submit"]')); });
             document.getElementById('register-back-step1').addEventListener('click', () => switchRegisterStep(1));
             document.getElementById('register-back-step2').addEventListener('click', () => switchRegisterStep(2));
             
-            // Logout
-            ['logout-btn', 'logout-from-verification-btn'].forEach(id => document.getElementById(id)?.addEventListener('click', handleLogout));
+            document.getElementById('logout-btn').addEventListener('click', handleLogout);
+            dom.logoutFromVerificationBtn.addEventListener('click', handleLogout);
             
-            // Verification
             dom.resendVerificationBtn.addEventListener('click', async () => { if (auth.currentUser) { try { const actionCodeSettings = { url: window.location.href }; await sendEmailVerification(auth.currentUser, actionCodeSettings); alert('Изпратен е нов имейл!'); } catch { alert('Грешка. Опитайте по-късно.'); } } });
-            dom.checkVerificationBtn.addEventListener('click', async (e) => {
-                if (!auth.currentUser) return;
-                toggleLoading(e.currentTarget, true);
-                dom.verificationError.textContent = '';
-                await auth.currentUser.reload();
-                if (auth.currentUser && !auth.currentUser.emailVerified) {
-                    dom.verificationError.textContent = 'Имейлът все още не е потвърден.';
-                    dom.verificationNotice.classList.add('shake');
-                    setTimeout(() => { dom.verificationNotice.classList.remove('shake'); dom.verificationError.textContent = ''; }, 2000);
-                }
-                toggleLoading(e.currentTarget, false);
-            });
-
-            // Bonus Claim
-            dom.claimBonusBtn.addEventListener('click', async (e) => {
-                const button = e.currentTarget;
-                toggleLoading(button, true);
-                if (auth.currentUser) {
-                    const userDocRef = doc(db, 'users', auth.currentUser.uid);
-                    try {
-                        await updateDoc(userDocRef, {
-                            chips: increment(500),
-                            welcomeBonusClaimed: true
-                        });
-                        closeModal(dom.welcomeBonusModal);
-                    } catch (error) {
-                        console.error("Error claiming bonus: ", error);
-                        alert("Възникна грешка при получаване на бонуса.");
-                    }
-                }
-                toggleLoading(button, false);
-            });
+            dom.checkVerificationBtn.addEventListener('click', async (e) => { if (!auth.currentUser) return; toggleLoading(e.currentTarget, true); dom.verificationError.textContent = ''; await auth.currentUser.reload(); if (auth.currentUser && !auth.currentUser.emailVerified) { dom.verificationError.textContent = 'Имейлът все още не е потвърден.'; dom.verificationNotice.classList.add('shake'); setTimeout(() => { dom.verificationNotice.classList.remove('shake'); dom.verificationError.textContent = ''; }, 2000); } toggleLoading(e.currentTarget, false); });
             
-            // Platform Choice
-            dom.platformChoiceModal.querySelectorAll('.platform-btn').forEach(button => {
-                button.addEventListener('click', () => {
-                    const version = button.dataset.version; 
-                    if (document.getElementById('remember-platform-choice').checked) {
-                        localStorage.setItem('platformPreference', version);
-                    }
-                    closeModal(dom.platformChoiceModal);
-                    redirectToGame(state.selectedGame, version);
-                });
-            });
+            dom.platformChoiceModal.querySelectorAll('.platform-btn').forEach(button => { button.addEventListener('click', () => { const version = button.dataset.version; if (document.getElementById('remember-platform-choice').checked) { localStorage.setItem('platformPreference', version); } closeModal(dom.platformChoiceModal); redirectToGame(state.selectedGame, version); }); });
 
-            // Tab Navigation
-            const tabButtons = document.querySelectorAll('.tab-btn'), tabPanels = document.querySelectorAll('.tab-panel'), navLinks = document.querySelectorAll('.nav-link'), contentTabsSection = document.getElementById('content-tabs');
+            const tabButtons = document.querySelectorAll('.tab-btn'), tabPanels = document.querySelectorAll('.tab-panel');
             function activateTab(tabId) { tabButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId)); tabPanels.forEach(panel => panel.classList.toggle('hidden', panel.id !== `tab-${tabId}`)); }
             tabButtons.forEach(button => { if(button.dataset.tab) { button.addEventListener('click', () => activateTab(button.dataset.tab)) }});
-            navLinks.forEach(link => { const href = link.getAttribute('href'); if (href && href.startsWith('#')) { link.addEventListener('click', e => { e.preventDefault(); const targetId = href.substring(1); const targetSection = document.getElementById(targetId); if(targetSection) { targetSection.scrollIntoView({ behavior: 'smooth' }); if (targetId === 'games' || targetId === 'promo' || targetId === 'about') { activateTab(targetId); } } else if (href === '#home') { window.scrollTo({ top: 0, behavior: 'smooth' }); } }); } });
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => { anchor.addEventListener('click', function (e) { e.preventDefault(); const targetId = this.getAttribute('href').substring(1); const targetSection = document.getElementById(targetId); if(targetSection) { targetSection.scrollIntoView({ behavior: 'smooth' }); if (targetId === 'games' || targetId === 'promo' || targetId === 'about') activateTab(targetId); } else if (targetId === 'home') { window.scrollTo({ top: 0, behavior: 'smooth' }); } }); });
 
-
-            // Game Search and Filter Listeners
             dom.searchGamesInput.addEventListener('input', renderGames);
-            dom.gameFilters.querySelectorAll('.filter-btn').forEach(button => {
-                button.addEventListener('click', () => {
-                    const currentActive = dom.gameFilters.querySelector('.filter-btn.active');
-                    if (currentActive) {
-                        currentActive.classList.remove('active', 'bg-yellow-500/20', 'text-yellow-400');
-                        currentActive.classList.add('bg-gray-700/50', 'text-gray-300');
-                    }
-                    button.classList.add('active', 'bg-yellow-500/20', 'text-yellow-400');
-                    button.classList.remove('bg-gray-700/50', 'text-gray-300');
-                    renderGames();
-                });
-            });
+            dom.gameFilters.querySelectorAll('.filter-btn').forEach(button => { button.addEventListener('click', () => { dom.gameFilters.querySelector('.filter-btn.active').classList.remove('active'); button.classList.add('active'); renderGames(); }); });
 
-            // Initialize Jackpots
-            updateJackpots(); // Initial call
-            setInterval(updateJackpots, 1370); // Update roughly every 1.4 seconds
-
-            // Initialize Games
+            updateJackpots(); setInterval(updateJackpots, 1370);
             renderGames();
         }
 
         init();
     </script>
 </body>
-</html
+</html>
 
 
 
