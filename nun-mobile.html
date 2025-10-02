@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-    <title>Nun</title>
+    <title>Milky criminal</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root {
-            --glow-color: #76ff7a; /* Променено на светло зелено */
+            --glow-color: #76ff7a; 
             --secondary-glow: #c8ff00;
             --win-glow-color: #ff00ff;
-            --anticipation-glow-color: #00a2ff;
+            --anticipation-glow-color: #ff0000;
             --scatter-glow-color: #62bbc7;
             --font-main: 'Poppins', sans-serif;
             --font-title: 'Orbitron', sans-serif;
@@ -32,8 +32,8 @@
         }
 
         body {
-            /* Променено на светло розов градиент */
-            background: radial-gradient(ellipse at bottom, #ffdde1 0%, #ee9ca7 100%);
+            /* ПРОМЕНЕНО: Неонов розов/маджента градиент за по-силен контраст */
+            background: radial-gradient(ellipse at bottom, #ff00ff 0%, #3a0057 100%);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -181,7 +181,7 @@
             border-radius: 10px;
             gap: 10px;
             height: calc(var(--symbol-size) * 3 + 20px);
-            box-shadow: 0 0 15px var(--glow-color), inset 0 0 10px rgba(118, 255, 122, 0.5); /* Променено за съвместимост с новия glow-color */
+            box-shadow: 0 0 15px var(--glow-color), inset 0 0 10px rgba(118, 255, 122, 0.5);
             margin-bottom: 20px;
             backdrop-filter: blur(8px);
         }
@@ -190,7 +190,7 @@
             height: calc(var(--symbol-size) * 3);
             overflow: hidden;
             position: relative;
-            background: linear-gradient(135deg, rgba(238, 156, 167, 0.1), rgba(118, 255, 122, 0.1)); /* Променено за съвместимост с новите цветове */
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.1), rgba(118, 255, 122, 0.1));
             border-radius: 5px;
             box-shadow: inset 0 0 10px #000;
         }
@@ -302,7 +302,7 @@
         }
          .bet-select-btn:hover {
             border-color: var(--glow-color);
-            background: rgba(118, 255, 122, 0.2); /* Променено за съвместимост */
+            background: rgba(118, 255, 122, 0.2);
         }
         .bet-select-btn.active {
             background: var(--glow-color);
@@ -1223,3 +1223,4 @@
     </script>
 </body>
 </html>
+
