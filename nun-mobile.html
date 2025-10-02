@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-    <title>Milky criminal</title>
+    <title>Nun</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root {
-            --glow-color: #0aefff;
+            --glow-color: #76ff7a; /* Променено на светло зелено */
             --secondary-glow: #c8ff00;
             --win-glow-color: #ff00ff;
-            --anticipation-glow-color: #ff0000;
+            --anticipation-glow-color: #00a2ff;
             --scatter-glow-color: #62bbc7;
             --font-main: 'Poppins', sans-serif;
             --font-title: 'Orbitron', sans-serif;
@@ -32,7 +32,8 @@
         }
 
         body {
-            background: radial-gradient(ellipse at bottom, #0c9174 0%, #c207b2 100%);
+            /* Променено на светло розов градиент */
+            background: radial-gradient(ellipse at bottom, #ffdde1 0%, #ee9ca7 100%);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -117,7 +118,7 @@
             width: 100%;
             height: 100%;
             max-width: 450px;
-            background: rgba(0, 0, 0, 4);
+            background: rgba(0, 0, 0, 0.4);
             padding: 10px 15px;
             box-sizing: border-box;
             display: none;
@@ -180,7 +181,7 @@
             border-radius: 10px;
             gap: 10px;
             height: calc(var(--symbol-size) * 3 + 20px);
-            box-shadow: 0 0 15px var(--glow-color), inset 0 0 10px rgba(0, 255, 195, 0.5);
+            box-shadow: 0 0 15px var(--glow-color), inset 0 0 10px rgba(118, 255, 122, 0.5); /* Променено за съвместимост с новия glow-color */
             margin-bottom: 20px;
             backdrop-filter: blur(8px);
         }
@@ -189,7 +190,7 @@
             height: calc(var(--symbol-size) * 3);
             overflow: hidden;
             position: relative;
-            background: linear-gradient(135deg, rgba(249, 0, 255, 0.1), rgba(0, 255, 195, 0.1));
+            background: linear-gradient(135deg, rgba(238, 156, 167, 0.1), rgba(118, 255, 122, 0.1)); /* Променено за съвместимост с новите цветове */
             border-radius: 5px;
             box-shadow: inset 0 0 10px #000;
         }
@@ -232,7 +233,7 @@
         .symbol.expanding { position: absolute; left: 0; width: 100%; z-index: 50; animation: expand-symbol 0.7s forwards; }
         @keyframes expand-symbol { 0% { transform: scale(0.8); opacity: 0; } 60% { transform: scale(1.1); opacity: 1; filter: drop-shadow(0 0 35px var(--win-glow-color)); } 100% { transform: scale(1); opacity: 1; } }
         .slot-machine.anticipation-glow { animation: anticipation-pulse 1.2s infinite; }
-        @keyframes anticipation-pulse { 0%, 100% { box-shadow: 0 0 3vmin var(--glow-color), inset 0 0 2vmin rgba(0, 255, 195, 0.5); } 50% { box-shadow: 0 0 8vmin var(--anticipation-glow-color), inset 0 0 4vmin var(--anticipation-glow-color); } }
+        @keyframes anticipation-pulse { 0%, 100% { box-shadow: 0 0 3vmin var(--glow-color), inset 0 0 2vmin rgba(118, 255, 122, 0.5); } 50% { box-shadow: 0 0 8vmin var(--anticipation-glow-color), inset 0 0 4vmin var(--anticipation-glow-color); } }
 
         #ui-panel {
             display: flex;
@@ -301,7 +302,7 @@
         }
          .bet-select-btn:hover {
             border-color: var(--glow-color);
-            background: rgba(41, 204, 166, 0.2);
+            background: rgba(118, 255, 122, 0.2); /* Променено за съвместимост */
         }
         .bet-select-btn.active {
             background: var(--glow-color);
@@ -340,7 +341,7 @@
             border: 2px solid var(--secondary-glow);
         }
         #autoSpinButton {
-            background: linear-gradient(45deg, #00ff2a, #00e0ff);
+            background: linear-gradient(45deg, #00ff2a, #76ff7a);
             box-shadow: 0 0 15px var(--glow-color);
             border: 2px solid var(--glow-color);
         }
@@ -351,7 +352,7 @@
             height: clamp(90px, 25vw, 120px);
             border: 2px solid var(--glow-color);
             border-radius: 50%;
-            background: rgba(0, 255, 195, 0.15);
+            background: rgba(118, 255, 122, 0.15);
             color: #fff;
             cursor: pointer;
             transition: all 0.2s;
@@ -492,7 +493,6 @@
         const progressBar = document.getElementById('progress-bar');
         const loadingPercentage = document.getElementById('loading-percentage');
         
-        // --- MODIFICATION: Added videoSrc property for win animations ---
         const SYMBOLS = {
             'n1': { weight: 20, src: 'n1.png', videoSrc: 'n1_v1.webm', payout: { '3': 5,  '4': 10,  '5': 20  }},
             'n2': { weight: 18, src: 'n2.png', videoSrc: 'n2_v1.webm', payout: { '3': 10, '4': 20,  '5': 40  }},
@@ -504,7 +504,7 @@
             'n8': { weight: 4,  src: 'n8.png', videoSrc: 'n8_v1.webm', payout: { '3': 200,'4': 400, '5': 800 }},
             'n9': { weight: 3,  src: 'n9.png', videoSrc: 'n9_v1.webm', payout: { '3': 220,'4': 450, '5': 900 }},
             'wild':      { weight: 2,  src: 'wild.png',      videoSrc: 'wild.webm', isWild: true, payout: { '3': 250, '4': 500, '5': 1000 }},
-            'scatter':   { weight: 5,  src: 'scatter7.png', spins: 10, isScatter: true } // No video for scatter by design
+            'scatter':   { weight: 5,  src: 'scatter7.png', spins: 10, isScatter: true }
         };
 
         async function updateBalanceInFirestore(newBalance) {
@@ -555,7 +555,6 @@
             const assetsToLoad = [];
             Object.values(SYMBOLS).forEach(symbol => {
                 assetsToLoad.push({type: 'image', src: symbol.src});
-                // Also preload videos
                 if (symbol.videoSrc) {
                     assetsToLoad.push({type: 'video', src: symbol.videoSrc});
                 }
@@ -897,7 +896,6 @@
                 betSelectionBar.style.pointerEvents = disabled ? 'none' : 'auto';
             }
 
-            // --- MODIFICATION: Simplified to remove delays, as we now await video animations ---
             function handleNextAction(bonusTriggered) {
                 if (bonusTriggered) { return; }
 
@@ -976,7 +974,6 @@
                             for (let i = 0; i < matchCount; i++) {
                                 lineCoords.push({reel: i, row: line[i]});
                             }
-                            // --- MODIFICATION: Store paying symbol with line coordinates ---
                             winningLines.push({coords: lineCoords, payingSymbol: payingSymbolKey});
                         }
                     }
@@ -1032,7 +1029,6 @@
                         winSound.play().catch(e => {});
                     }
                     
-                    // --- MODIFICATION: Call the new video animation function ---
                     await playWinAnimations(winningLines, finalIndexes);
                 }
                 
@@ -1100,7 +1096,6 @@
                 return stripElement ? stripElement.children[stripIndex] || null : null;
             }
 
-            // --- NEW FUNCTION: Plays win videos on symbols ---
             async function playWinAnimations(winningLines, finalIndexes) {
                 const videoPromises = [];
                 const playedPositions = new Set(); 
@@ -1120,7 +1115,7 @@
                             const videoPromise = new Promise(resolve => {
                                 const imgElement = symbolElement.querySelector('img');
                                 imgElement.style.transition = 'opacity 0.2s';
-                                imgElement.style.opacity = '0'; // Despawn
+                                imgElement.style.opacity = '0';
 
                                 const video = document.createElement('video');
                                 video.src = SYMBOLS[payingSymbolKey].videoSrc;
@@ -1139,10 +1134,10 @@
 
                                 video.onended = () => {
                                     symbolElement.removeChild(video);
-                                    imgElement.style.opacity = '1'; // Respawn
+                                    imgElement.style.opacity = '1';
                                     resolve();
                                 };
-                                video.onerror = () => { // Fallback if video fails
+                                video.onerror = () => {
                                     if(symbolElement.contains(video)) symbolElement.removeChild(video);
                                     imgElement.style.opacity = '1';
                                     resolve();
