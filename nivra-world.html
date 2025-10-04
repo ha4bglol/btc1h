@@ -2,200 +2,190 @@
 <html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NIVRA World - Вашето място за забавления</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NIVRA World - Вашата ексклузивна колекция</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
+        * { -webkit-tap-highlight-color: transparent; }
+        
         :root {
-            --bg-primary: #100a1c;
-            --bg-secondary: rgba(16, 10, 28, 0.6);
-            --glow-color-1: #00ffc3;
-            --nivra-gold: #f7b733;
-            --nivra-orange: #fc4a1a;
-            --nivra-gradient: linear-gradient(90deg, var(--nivra-gold), var(--nivra-orange));
-            --text-primary: #e0e0e0;
-            --text-secondary: #a0a0b0;
-            --accent-text-color: #100a1c;
-            --border-color: rgba(247, 183, 51, 0.2);
-            --font-display: 'Orbitron', sans-serif;
-            --font-body: 'Poppins', sans-serif;
+            --neon-pink: #f9009a;
+            --neon-cyan: #00f9f9;
+            --neon-purple: #9d00f9;
+            --dark-bg: #10081c;
+            --border-color: rgba(0, 249, 249, 0.2);
         }
+
         html, body {
             height: 100%; width: 100%; margin: 0; padding: 0;
-            overflow-x: hidden; font-family: var(--font-body); color: var(--text-primary);
+            overflow: hidden; /* Prevent scroll on main body */
         }
-        body {
-            background: linear-gradient(135deg, #f900ff, #00ffc3, #2e005e, #100a1c);
-            background-size: 400% 400%;
-            animation: color-shift 20s ease-in-out infinite;
+
+        body { 
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--dark-bg);
+            background-image: 
+                radial-gradient(circle at 1% 1%, rgba(157, 0, 249, 0.3), transparent 30%),
+                radial-gradient(circle at 99% 99%, rgba(0, 249, 249, 0.2), transparent 30%);
+            color: #e0e0e0;
+            -webkit-font-smoothing: antialiased;
         }
-        @keyframes color-shift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        .gradient-text {
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
         
         /* --- General UI Elements --- */
-        .btn {
-            font-family: var(--font-display); font-weight: 700; padding: 0.8rem 1.5rem; border-radius: 50px;
-            cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;
-            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; border: none;
-        }
-        .btn-primary {
-            background: var(--nivra-gradient); color: var(--accent-text-color);
-            box-shadow: 0 0 15px rgba(247, 183, 51, 0.3), 0 0 30px rgba(252, 74, 26, 0.2);
-        }
-        .btn-primary:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 0 25px rgba(247, 183, 51, 0.5), 0 0 50px rgba(252, 74, 26, 0.3); }
-        .btn-primary:disabled, .btn-secondary:disabled { background: #4a4a6a; color: #8f8f8f; cursor: not-allowed; opacity: 0.7; transform: none; box-shadow: none; border-color: #4a4a6a;}
-        .btn-secondary {
-            background: transparent; color: var(--nivra-gold); border: 2px solid var(--nivra-gold);
-        }
-        .btn-secondary:hover:not(:disabled) { background: var(--nivra-gold); color: var(--bg-primary); }
-        .gradient-text { background: var(--nivra-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .btn { padding: 0.6rem 1.5rem; border-radius: 9999px; font-weight: 700; font-family: 'Orbitron', sans-serif; text-transform: uppercase; transition: all 0.3s ease; border: 2px solid transparent; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;}
+        .btn-primary { background: linear-gradient(90deg, var(--neon-pink), var(--neon-purple)); color: white; box-shadow: 0 0 15px var(--neon-pink); }
+        .btn-primary:hover:not(:disabled) { box-shadow: 0 0 25px var(--neon-pink); transform: scale(1.05); }
+        .btn-primary:disabled { background: #4a4a6a; color: #8f8f8f; cursor: not-allowed; opacity: 0.7; transform: none; box-shadow: none; border-color: transparent; }
+        .btn-secondary { background: transparent; border-color: var(--neon-cyan); color: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan), inset 0 0 10px var(--neon-cyan); }
+        .btn-secondary:hover:not(:disabled) { background: var(--neon-cyan); color: var(--dark-bg); box-shadow: 0 0 20px var(--neon-cyan); }
         .spinner { border: 2px solid rgba(255, 255, 255, 0.3); border-top-color: #fff; border-radius: 50%; width: 16px; height: 16px; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
         /* --- Main Layout --- */
-        #app-container { display: none; flex-direction: column; width: 100%; min-height: 100%; position: relative; }
+        #app-container { display: none; flex-direction: column; width: 100%; height: 100%; position: relative; }
         #app-header {
-            display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem;
-            background: rgba(16, 10, 28, 0.7); backdrop-filter: blur(10px); z-index: 10;
+            display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1.5rem;
+            background: rgba(16, 8, 28, 0.8); backdrop-filter: blur(12px); z-index: 10;
             border-bottom: 1px solid var(--border-color); flex-shrink: 0;
         }
-        .logo { font-family: var(--font-display); font-size: 2rem; font-weight: 900; }
-        #user-info { display: flex; align-items: center; gap: 1.5rem; }
-        #user-balance { font-size: 1.2rem; font-weight: 600; color: var(--nivra-gold); display: flex; align-items: center; gap: 0.5rem; }
-        #user-balance .fas { animation: coin-pulse 2s infinite; }
-        @keyframes coin-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+        .logo { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; font-weight: 900; }
+        #user-info { display: flex; align-items: center; gap: 1rem; }
+        #user-balance { font-size: 1.1rem; font-weight: 600; font-family: 'Orbitron', sans-serif; color: var(--neon-cyan); display: flex; align-items: center; gap: 0.5rem; }
+        #user-balance .fa-coins { animation: coin-pulse 2s infinite; color: var(--neon-cyan); }
+        @keyframes coin-pulse { 0%, 100% { transform: scale(1); text-shadow: 0 0 5px var(--neon-cyan); } 50% { transform: scale(1.15); text-shadow: 0 0 15px var(--neon-cyan);} }
         #main-content { flex-grow: 1; display: flex; overflow: hidden; }
+
+        /* --- Tabs --- */
         #tab-nav {
-            display: flex; flex-direction: column; gap: 0.5rem; padding: 2rem 1rem;
-            background: rgba(16, 10, 28, 0.7); border-right: 1px solid var(--border-color); flex-shrink: 0;
+            display: flex; flex-direction: column; gap: 0.5rem; padding: 1.5rem 1rem;
+            background: rgba(16, 8, 28, 0.7); border-right: 1px solid var(--border-color); flex-shrink: 0;
         }
         .tab-btn {
-            font-family: var(--font-display); font-size: 1.1rem; padding: 1rem; border-radius: 10px;
-            color: var(--text-secondary); cursor: pointer; text-align: left; white-space: nowrap;
+            font-family: 'Orbitron', sans-serif; font-size: 1rem; padding: 0.75rem 1.25rem; border-radius: 8px;
+            color: #a0a0b0; cursor: pointer; text-align: left; white-space: nowrap;
             border-left: 4px solid transparent; transition: all 0.3s ease; background: none; border-right: none; border-top: none; border-bottom: none;
         }
-        .tab-btn:hover { background: rgba(247, 183, 51, 0.1); color: var(--nivra-gold); }
+        .tab-btn:hover { background: rgba(0, 249, 249, 0.1); color: var(--neon-cyan); }
         .tab-btn.active {
-            background: rgba(247, 183, 51, 0.15); color: #fff;
-            border-left-color: var(--nivra-gold); text-shadow: 0 0 10px var(--nivra-gold);
+            background: rgba(249, 0, 154, 0.15); color: #fff;
+            border-left-color: var(--neon-pink); text-shadow: 0 0 10px var(--neon-pink);
         }
-        #content-area { flex-grow: 1; padding: 2rem; overflow-y: auto; display: flex; flex-direction: column; }
+        #content-area { flex-grow: 1; padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; }
         .tab-panel { display: none; animation: fadeIn 0.5s; }
         .tab-panel.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- Screens & Modals --- */
+        /* --- Full Screen Overlays (Loading/Login) --- */
         .full-screen-overlay {
-            position: fixed; inset: 0; background-color: var(--bg-primary); z-index: 10000;
+            position: fixed; inset: 0; background-color: var(--dark-bg); z-index: 10000;
             display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2rem;
             transition: opacity 0.5s ease-out; text-align: center; padding: 1rem;
         }
+        
+        /* --- Marketplace & Collection Styles --- */
+        #market-container { display: flex; gap: 1.5rem; }
+        #market-grid, #collection-grid { flex-grow: 1; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+        .market-item {
+            background: rgba(16, 8, 28, 0.7); backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden;
+            position: relative; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+            display: flex; flex-direction: column; box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        .market-item:hover:not(.owned) { transform: translateY(-5px); border-color: var(--neon-pink); box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px var(--neon-pink); }
+        .market-item.selected { border-color: var(--neon-cyan); box-shadow: 0 0 15px var(--neon-cyan); }
+        .item-thumbnail { width: 100%; height: auto; aspect-ratio: 1/1; object-fit: cover; display: block; }
+        .item-info { padding: 0.75rem; text-align: left; flex-grow: 1; display: flex; flex-direction: column; }
+        .item-name { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; margin-bottom: 0.25rem; }
+        .item-description { font-size: 0.85rem; color: #a0a0b0; margin-bottom: 0.5rem; flex-grow: 1; line-height: 1.3; }
+        .item-price { font-size: 1.2rem; font-weight: bold; color: var(--neon-cyan); text-align: right; font-family: 'Orbitron', sans-serif; }
+        .item-owned-overlay {
+            position: absolute; inset: 0; background: rgba(0, 249, 249, 0.6); backdrop-filter: blur(2px);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; color: var(--dark-bg);
+            font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 900; text-align: center;
+            opacity: 0; transition: opacity 0.3s; pointer-events: none;
+        }
+        .market-item.owned .item-owned-overlay { opacity: 1; }
+        .market-item.owned { cursor: default; }
+
+        #cart-sidebar {
+            width: 320px; flex-shrink: 0; background: rgba(16, 8, 28, 0.9); padding: 1.25rem;
+            border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column;
+        }
+        #cart-items { flex-grow: 1; display: flex; flex-direction: column; }
+        #empty-cart-msg { color: #a0a0b0; text-align: center; margin: auto 0; }
+        #cart-summary { border-top: 1px solid rgba(255,255,255,0.2); margin-top: 1rem; padding-top: 1rem; }
+        #cart-summary div { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+        #cart-total { font-size: 1.4rem; font-weight: bold; color: var(--neon-cyan); font-family: 'Orbitron', sans-serif; }
+        
+        /* --- Missions --- */
+        .mission {
+            background: rgba(16, 8, 28, 0.7); padding: 1rem 1.25rem; border-radius: 10px; margin-bottom: 1rem;
+            display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.25rem;
+            border-left: 4px solid #4a4a6a; transition: all 0.3s ease;
+        }
+        .mission.claimable { border-left-color: var(--neon-pink); box-shadow: 0 0 15px rgba(249, 0, 154, 0.3); }
+        .mission.claimed { border-left-color: var(--neon-cyan); opacity: 0.6; }
+        .mission-icon { font-size: 1.8rem; width: 40px; text-align: center; }
+        .mission.claimable .mission-icon { color: var(--neon-pink); }
+        .mission.claimed .mission-icon { color: var(--neon-cyan); }
+        .mission-info p { margin: 0; color: #a0a0b0; font-size: 0.9rem; }
+        .mission-action .reward { font-weight: bold; color: var(--neon-cyan); display: block; text-align: right; margin-bottom: 0.5rem; font-family: 'Orbitron', sans-serif;}
+
+        /* --- Modals & Lightbox --- */
         .modal-overlay {
-            position: fixed; inset: 0; background-color: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px);
             z-index: 9000; display: none; justify-content: center; align-items: center; padding: 1rem;
         }
         .modal-overlay.active { display: flex; }
         .modal-content {
-            background: radial-gradient(circle at top, #2a2a40, #1a1a2e);
-            border: 2px solid var(--nivra-gold); border-radius: 1rem; padding: 2rem;
-            max-width: 90vw; width: 500px; box-shadow: 0 0 50px rgba(247, 183, 51, 0.3);
-            text-align: center; position: relative;
+            background: linear-gradient(145deg, #1c102f, #10081c); border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px; box-shadow: 0 0 50px rgba(0,0,0,0.5); padding: 2rem;
+            max-width: 90vw; width: 500px; text-align: center; position: relative;
         }
-        .modal-close-btn { position: absolute; top: 0.5rem; right: 0.5rem; font-size: 1.5rem; color: var(--text-secondary); cursor: pointer; background: none; border: none; padding: 0.5rem; /* MOBILE OPTIMIZATION: Bigger tap area */ }
-        
-        /* --- Toast Notification --- */
-        #toast-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 10001; display: flex; flex-direction: column-reverse; gap: 10px; }
-        .toast {
-            background: var(--nivra-gradient); color: var(--accent-text-color); padding: 1rem 1.5rem; border-radius: 10px;
-            font-family: var(--font-display); font-weight: 700; box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-            animation: slideUp 0.5s forwards, fadeOutToast 0.5s 4.5s forwards;
-        }
-        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes fadeOutToast { from { opacity: 1; } to { opacity: 0; transform: translateY(100%); } }
-
-        /* --- Marketplace & Collection Styles --- */
-        #market-container { display: flex; gap: 2rem; }
-        #market-grid, #collection-grid { flex-grow: 1; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; }
-        .market-item {
-            background: var(--bg-secondary); backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden;
-            position: relative; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;
-            display: flex; flex-direction: column;
-        }
-        .market-item:hover:not(.owned) { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.4), 0 0 20px var(--glow-color-1); }
-        .market-item.selected { border-color: var(--nivra-gold); box-shadow: 0 0 15px var(--nivra-gold); }
-        .item-thumbnail { width: 100%; height: auto; aspect-ratio: 1/1; object-fit: cover; display: block; }
-        .item-info { padding: 1rem; text-align: left; flex-grow: 1; display: flex; flex-direction: column; }
-        .item-name { font-family: var(--font-display); font-size: 1.2rem; margin-bottom: 0.5rem; }
-        .item-description { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem; flex-grow: 1; }
-        .item-price { font-size: 1.3rem; font-weight: bold; color: var(--nivra-gold); text-align: right; }
-        .item-owned-overlay {
-            position: absolute; inset: 0; background: rgba(0, 255, 195, 0.6); backdrop-filter: blur(2px);
-            display: flex; flex-direction: column; justify-content: center; align-items: center; color: var(--bg-primary);
-            font-family: var(--font-display); font-size: 1.5rem; font-weight: 900; text-align: center;
-            opacity: 0; transition: opacity 0.3s; pointer-events: none;
-        }
-        .market-item.owned .item-owned-overlay { opacity: 1; }
-        .market-item.owned { cursor: default; } /* Make owned items not appear clickable */
-
-        #cart-sidebar {
-            width: 350px; flex-shrink: 0; background: var(--bg-secondary); padding: 1.5rem;
-            border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column;
-        }
-        #cart-items { flex-grow: 1; display: flex; flex-direction: column; }
-        #empty-cart-msg { color: var(--text-secondary); text-align: center; margin: auto 0; }
-        #cart-summary { border-top: 1px solid rgba(255,255,255,0.2); margin-top: 1rem; padding-top: 1rem; }
-        #cart-summary div { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
-        #cart-total { font-size: 1.5rem; font-weight: bold; color: var(--nivra-gold); }
-        
-        /* --- Missions --- */
-        .mission {
-            background: var(--bg-secondary); padding: 1rem 1.5rem; border-radius: 10px; margin-bottom: 1rem;
-            display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.5rem;
-            border-left: 4px solid var(--text-secondary); transition: all 0.3s ease;
-        }
-        .mission.claimable { border-left-color: var(--nivra-gold); box-shadow: 0 0 15px rgba(247, 183, 51, 0.3); }
-        .mission.claimed { border-left-color: var(--glow-color-1); opacity: 0.6; }
-        .mission-icon { font-size: 2rem; width: 50px; text-align: center; }
-        .mission.claimable .mission-icon { color: var(--nivra-gold); }
-        .mission.claimed .mission-icon { color: var(--glow-color-1); }
-        .mission-info p { margin: 0; color: var(--text-secondary); font-size: 0.9rem; }
-        .mission-action .reward { font-weight: bold; color: var(--nivra-gold); display: block; text-align: right; margin-bottom: 0.5rem; }
-
-        /* --- Fullscreen Lightbox for Media --- */
-        #lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 10000; display: none; justify-content: center; align-items: center; cursor: pointer; }
-        #lightbox.active { display: flex; }
-        #lightbox img, #lightbox video { max-width: 90vw; max-height: 90vh; cursor: default; }
+        .modal-close-btn { position: absolute; top: 0.5rem; right: 0.5rem; font-size: 1.5rem; color: #a0a0b0; cursor: pointer; background: none; border: none; padding: 0.5rem; z-index: 10;}
+        #lightbox-content { max-width: 90vw; max-height: 90vh; cursor: default; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.5rem; overflow-y: auto; padding: 1rem; background: rgba(0,0,0,0.5); border-radius: 12px;}
+        #lightbox-content img, #lightbox-content video { width: 100%; height: auto; border-radius: 8px; }
 
         /* --- Responsive Design --- */
         @media (max-width: 1024px) {
-            #market-container { flex-direction: column; }
-            #cart-sidebar { width: 100%; margin-top: 2rem; max-width: none; }
-            #main-content { flex-direction: column; overflow-y: auto; }
+            #main-content { flex-direction: column; }
             #tab-nav { 
                 flex-direction: row; border-right: none; border-bottom: 1px solid var(--border-color); 
-                justify-content: flex-start; overflow-x: auto; padding: 0.5rem 1rem;
+                justify-content: flex-start; overflow-x: auto; padding: 0.5rem;
                 -ms-overflow-style: none; scrollbar-width: none;
             }
             #tab-nav::-webkit-scrollbar { display: none; }
             .tab-btn { border-left: none; border-bottom: 4px solid transparent; flex-shrink: 0; text-align: center; }
-            .tab-btn.active { border-left-color: transparent; border-bottom-color: var(--nivra-gold); }
+            .tab-btn.active { border-left-color: transparent; border-bottom-color: var(--neon-pink); }
+            #market-container { flex-direction: column; }
+            #cart-sidebar { width: 100%; margin-top: 1.5rem; max-width: none; }
         }
 
         @media (max-width: 767px) {
-            #app-header { flex-direction: column; gap: 1rem; padding: 1rem; }
-            .logo { font-size: 1.8rem; }
+            body { font-size: 14px; }
+            #app-header { flex-direction: column; gap: 0.75rem; padding: 0.75rem; }
+            .logo { font-size: 1.5rem; }
             #user-info { width: 100%; justify-content: space-between; }
-            .tab-btn { font-size: 0.9rem; padding: 0.8rem; }
+            .btn { padding: 0.5rem 1.2rem; font-size: 0.8rem; }
+            .tab-btn { font-size: 0.8rem; padding: 0.6rem 0.8rem; }
             #content-area { padding: 1rem; }
-            #market-grid, #collection-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
-            .item-name { font-size: 1rem; }
+            #market-grid, #collection-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.75rem; }
+            .item-name { font-size: 0.9rem; }
             .item-description { display: none; }
-            .item-price { font-size: 1.1rem; }
-            .modal-content { width: 90vw; }
-            .mission { grid-template-columns: 1fr; text-align: center; gap: 1rem; }
+            .item-price { font-size: 1rem; }
+            .modal-content { width: 90vw; padding: 1.5rem; }
+            .mission { grid-template-columns: 1fr; text-align: center; gap: 0.75rem; padding: 0.75rem; }
             .mission-icon { margin: 0 auto; }
             .mission-action .reward { text-align: center; }
         }
@@ -203,7 +193,7 @@
 </head>
 <body>
     <div id="loading-screen" class="full-screen-overlay">
-        <h1 class="logo gradient-text" style="font-size: 4rem;">NIVRA World</h1>
+        <h1 class="logo gradient-text" style="font-size: 3rem;">NIVRA World</h1>
         <p>Зареждане на вселената...</p>
     </div>
     <div id="login-required-screen" class="full-screen-overlay" style="display: none;">
@@ -217,15 +207,15 @@
             <a href="index.html" style="text-decoration: none;"><h1 class="logo gradient-text">NIVRA World</h1></a>
             <div id="user-info">
                 <div id="user-balance"><i class="fas fa-coins"></i> <span id="balance-amount">0</span></div>
-                <button id="logout-btn" class="btn btn-secondary">Изход</button>
+                <button id="logout-btn" class="btn btn-secondary !py-1.5 !px-3 !text-sm">Изход</button>
             </div>
         </header>
 
         <main id="main-content">
             <nav id="tab-nav">
-                <button class="tab-btn active" data-tab="tab-market"><i class="fas fa-store"></i> Магазин</button>
-                <button class="tab-btn" data-tab="tab-missions"><i class="fas fa-tasks"></i> Мисии</button>
-                <button class="tab-btn" data-tab="tab-collection"><i class="fas fa-photo-video"></i> Моята Колекция</button>
+                <button class="tab-btn active" data-tab="tab-market"><i class="fas fa-store mr-2"></i>Магазин</button>
+                <button class="tab-btn" data-tab="tab-missions"><i class="fas fa-tasks mr-2"></i>Мисии</button>
+                <button class="tab-btn" data-tab="tab-collection"><i class="fas fa-photo-video mr-2"></i>Колекция</button>
             </nav>
 
             <div id="content-area">
@@ -234,14 +224,14 @@
                     <div id="market-container">
                         <div id="market-grid"></div>
                         <aside id="cart-sidebar">
-                            <h2><i class="fas fa-shopping-cart"></i> Количка</h2>
-                            <div id="cart-items" style="list-style: none; padding: 0; margin: 1rem 0; min-height: 100px;">
+                            <h2 class="text-xl font-bold font-['Orbitron']"><i class="fas fa-shopping-cart text-cyan-400"></i> Количка</h2>
+                            <div id="cart-items" class="my-4 min-h-[100px]">
                                 <p id="empty-cart-msg">Количката е празна.</p>
                             </div>
                             <div id="cart-summary">
-                                <div><strong style="font-size: 1.2rem;">Общо:</strong> <span id="cart-total">0</span></div>
+                                <div><strong class="text-lg">Общо:</strong> <span id="cart-total">0</span></div>
                             </div>
-                            <button id="buy-btn" class="btn btn-primary" style="width: 100%; margin-top: 1.5rem;" disabled>
+                            <button id="buy-btn" class="btn btn-primary w-full mt-6" disabled>
                                 <span class="btn-text">Купи Сега</span>
                             </button>
                         </aside>
@@ -250,15 +240,15 @@
 
                 <!-- Missions Tab -->
                 <div id="tab-missions" class="tab-panel">
-                    <h2>Активни Мисии</h2>
-                    <div id="missions-list" style="margin-top: 1.5rem;"></div>
+                    <h2 class="text-2xl font-bold font-['Orbitron'] mb-6">Активни Мисии</h2>
+                    <div id="missions-list"></div>
                 </div>
 
                 <!-- Collection Tab -->
                 <div id="tab-collection" class="tab-panel">
-                    <h2>Моята Колекция</h2>
-                    <div id="collection-grid" style="margin-top: 1.5rem;">
-                        <p id="empty-collection-msg" style="color: var(--text-secondary);">Все още нямате закупени колекции.</p>
+                    <h2 class="text-2xl font-bold font-['Orbitron'] mb-6">Моята Колекция</h2>
+                    <div id="collection-grid">
+                        <p id="empty-collection-msg" class="text-gray-400 col-span-full text-center">Все още нямате закупени колекции.</p>
                     </div>
                 </div>
             </div>
@@ -269,60 +259,75 @@
     <div id="purchase-success-modal" class="modal-overlay">
         <div class="modal-content">
              <button class="modal-close-btn" onclick="closeModal(this.closest('.modal-overlay'))"><i class="fas fa-times"></i></button>
-             <div style="font-size: 4rem; color: var(--nivra-gold); margin-bottom: 1rem;"><i class="fas fa-check-circle"></i></div>
-             <h2 class="gradient-text" style="font-family: var(--font-display);">Покупката е успешна!</h2>
-             <p style="margin: 1rem 0;">Вашите нови колекции са добавени в "Моята Колекция".</p>
-             <button class="btn btn-primary" style="position: static; margin-top: 1rem;" onclick="closeModal(this.closest('.modal-overlay'))">Супер!</button>
+             <div class="text-6xl text-cyan-400 mb-4"><i class="fas fa-check-circle"></i></div>
+             <h2 class="gradient-text text-2xl font-bold font-['Orbitron']">Покупката е успешна!</h2>
+             <p class="my-4 text-gray-400">Вашите нови съкровища са добавени в "Колекция".</p>
+             <button class="btn btn-primary mt-4" onclick="closeModal(this.closest('.modal-overlay'))">Разгледай</button>
         </div>
     </div>
     
     <div id="lightbox" class="modal-overlay" onclick="closeModal(this)">
-         <button class="modal-close-btn"><i class="fas fa-times"></i></button>
+        <button class="modal-close-btn"><i class="fas fa-times"></i></button>
         <div id="lightbox-content" onclick="event.stopPropagation()"></div>
     </div>
     
-    <div id="toast-container"></div>
-
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, onSnapshot, updateDoc, arrayUnion, runTransaction, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, runTransaction, arrayUnion, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // =================================================================================
-        // == ДАННИ ЗА МАГАЗИНА И МИСИИТЕ (ЛЕСНО ЗА РЕДАКЦИЯ) ==
-        // =================================================================================
-        
         const MEDIA_PATH = ''; 
 
         const MARKET_ITEMS = [
-            { id: 'angel_1', name: 'Angel Vol. 1', price: 250, thumb: `${MEDIA_PATH}angel1.png`, type: 'collection', description: 'Съдържа 1 ексклузивно изображение и 6 уникални видеоклипа.', contents: { images: [`${MEDIA_PATH}angel1.png`], videos: [`${MEDIA_PATH}angel1_v1.webm`, `${MEDIA_PATH}angel1_v2.webm`, `${MEDIA_PATH}angel1_v3.webm`, `${MEDIA_PATH}angel1_v4.webm`, `${MEDIA_PATH}angel1_v5.webm`, `${MEDIA_PATH}angel1_v6.webm`] } },
-            { id: 'angel_2', name: 'Angel Vol. 2', price: 250, thumb: `${MEDIA_PATH}angel2.png`, type: 'collection', description: 'Съдържа 1 ексклузивно изображение и 6 уникални видеоклипа.', contents: { images: [`${MEDIA_PATH}angel2.png`], videos: [`${MEDIA_PATH}angel2_v1.webm`, `${MEDIA_PATH}angel2_v2.webm`, `${MEDIA_PATH}angel2_v3.webm`, `${MEDIA_PATH}angel2_v4.webm`, `${MEDIA_PATH}angel2_v5.webm`, `${MEDIA_PATH}angel2_v6.webm`] } },
-            { id: 'angel_3', name: 'Angel Vol. 3', price: 250, thumb: `${MEDIA_PATH}angel3.png`, type: 'collection', description: 'Съдържа 1 ексклузивно изображение и 6 уникални видеоклипа.', contents: { images: [`${MEDIA_PATH}angel3.png`], videos: [`${MEDIA_PATH}angel3_v1.webm`, `${MEDIA_PATH}angel3_v2.webm`, `${MEDIA_PATH}angel3_v3.webm`, `${MEDIA_PATH}angel3_v4.webm`, `${MEDIA_PATH}angel3_v5.webm`, `${MEDIA_PATH}angel3_v6.webm`] } },
-            { id: 'az_pack', name: 'AZ Колекция', price: 400, thumb: `${MEDIA_PATH}az1.png`, type: 'image_pack', description: 'Пълен пакет, съдържащ 9 ексклузивни изображения.', contents: { images: [`${MEDIA_PATH}az1.png`, `${MEDIA_PATH}az2.png`, `${MEDIA_PATH}az3.png`, `${MEDIA_PATH}az4.png`, `${MEDIA_PATH}az5.png`, `${MEDIA_PATH}az6.png`, `${MEDIA_PATH}az7.png`, `${MEDIA_PATH}az8.png`, `${MEDIA_PATH}az9.png`], videos: [] } },
-            { id: 'bandit_pack', name: 'Bandit Колекция', price: 400, thumb: `${MEDIA_PATH}bandit1.png`, type: 'image_pack', description: 'Пълен пакет, съдържащ 9 ексклузивни изображения.', contents: { images: [`${MEDIA_PATH}bandit1.png`, `${MEDIA_PATH}bandit2.png`, `${MEDIA_PATH}bandit3.png`, `${MEDIA_PATH}bandit4.png`, `${MEDIA_PATH}bandit5.png`, `${MEDIA_PATH}bandit6.png`, `${MEDIA_PATH}bandit7.png`, `${MEDIA_PATH}bandit8.png`, `${MEDIA_PATH}bandit9.png`], videos: [] } },
-            { id: 'criminal_pack', name: 'Criminal Колекция', price: 400, thumb: `${MEDIA_PATH}criminal1.png`, type: 'image_pack', description: 'Пълен пакет, съдържащ 9 ексклузивни изображения.', contents: { images: [`${MEDIA_PATH}criminal1.png`, `${MEDIA_PATH}criminal2.png`, `${MEDIA_PATH}criminal3.png`, `${MEDIA_PATH}criminal4.png`, `${MEDIA_PATH}criminal5.png`, `${MEDIA_PATH}criminal6.png`, `${MEDIA_PATH}criminal7.png`, `${MEDIA_PATH}criminal8.png`, `${MEDIA_PATH}criminal9.png`], videos: [] } },
-            { id: 'guz_pack', name: 'Guz Колекция', price: 400, thumb: `${MEDIA_PATH}guz1.png`, type: 'image_pack', description: 'Пълен пакет, съдържащ 9 ексклузивни изображения.', contents: { images: [`${MEDIA_PATH}guz1.png`, `${MEDIA_PATH}guz2.png`, `${MEDIA_PATH}guz3.png`, `${MEDIA_PATH}guz4.png`, `${MEDIA_PATH}guz5.png`, `${MEDIA_PATH}guz6.png`, `${MEDIA_PATH}guz7.png`, `${MEDIA_PATH}guz8.png`, `${MEDIA_PATH}guz9.png`], videos: [] } },
-            { id: 'kur_pack', name: 'Kur Колекция', price: 400, thumb: `${MEDIA_PATH}kur1.png`, type: 'image_pack', description: 'Пълен пакет, съдържащ 9 ексклузивни изображения.', contents: { images: [`${MEDIA_PATH}kur1.png`, `${MEDIA_PATH}kur2.png`, `${MEDIA_PATH}kur3.png`, `${MEDIA_PATH}kur4.png`, `${MEDIA_PATH}kur5.png`, `${MEDIA_PATH}kur6.png`, `${MEDIA_PATH}kur7.png`, `${MEDIA_PATH}kur8.png`, `${MEDIA_PATH}kur9.png`], videos: [] } },
+            // ANGEL Packs
+            { id: 'angel_1', name: 'Ангелски Шепот', price: 250, thumb: `${MEDIA_PATH}angel1.png`, description: 'Разкрий първата тайна. Съдържа 1 изображение и 6 видеа.', contents: { images: [`${MEDIA_PATH}angel1.png`], videos: [`${MEDIA_PATH}angel1_v1.webm`,`${MEDIA_PATH}angel1_v2.webm`,`${MEDIA_PATH}angel1_v3.webm`,`${MEDIA_PATH}angel1_v4.webm`,`${MEDIA_PATH}angel1_v5.webm`,`${MEDIA_PATH}angel1_v6.webm`] } },
+            { id: 'angel_2', name: 'Небесна Искра', price: 250, thumb: `${MEDIA_PATH}angel2.png`, description: 'Докосни се до светлината. Съдържа 1 изображение и 6 видеа.', contents: { images: [`${MEDIA_PATH}angel2.png`], videos: [`${MEDIA_PATH}angel2_v1.webm`,`${MEDIA_PATH}angel2_v2.webm`,`${MEDIA_PATH}angel2_v3.webm`,`${MEDIA_PATH}angel2_v4.webm`,`${MEDIA_PATH}angel2_v5.webm`,`${MEDIA_PATH}angel2_v6.webm`] } },
+            { id: 'angel_3', name: 'Паднали Пера', price: 250, thumb: `${MEDIA_PATH}angel3.png`, description: 'Открий забраненото. Съдържа 1 изображение и 6 видеа.', contents: { images: [`${MEDIA_PATH}angel3.png`], videos: [`${MEDIA_PATH}angel3_v1.webm`,`${MEDIA_PATH}angel3_v2.webm`,`${MEDIA_PATH}angel3_v3.webm`,`${MEDIA_PATH}angel3_v4.webm`,`${MEDIA_PATH}angel3_v5.webm`,`${MEDIA_PATH}angel3_v6.webm`] } },
+            { id: 'angel_4', name: 'Звезден Прах', price: 250, thumb: `${MEDIA_PATH}angel4.png`, description: 'Погледни отвъд воала. Съдържа 1 изображение и 6 видеа.', contents: { images: [`${MEDIA_PATH}angel4.png`], videos: [`${MEDIA_PATH}angel4_v1.webm`,`${MEDIA_PATH}angel4_v2.webm`,`${MEDIA_PATH}angel4_v3.webm`,`${MEDIA_PATH}angel4_v4.webm`,`${MEDIA_PATH}angel4_v5.webm`,`${MEDIA_PATH}angel4_v6.webm`] } },
+            { id: 'angel_5', name: 'Лунна Сянка', price: 250, thumb: `${MEDIA_PATH}angel5.png`, description: 'Танцувай с мрака. Съдържа 1 изображение и 6 видеа.', contents: { images: [`${MEDIA_PATH}angel5.png`], videos: [`${MEDIA_PATH}angel5_v1.webm`,`${MEDIA_PATH}angel5_v2.webm`,`${MEDIA_PATH}angel5_v3.webm`,`${MEDIA_PATH}angel5_v4.webm`,`${MEDIA_PATH}angel5_v5.webm`,`${MEDIA_PATH}angel5_v6.webm`] } },
+            { id: 'angel_6', name: 'Слънчев Лъч', price: 250, thumb: `${MEDIA_PATH}angel6.png`, description: 'Усети топлината. Съдържа 1 изображение и 6 видеа.', contents: { images: [`${MEDIA_PATH}angel6.png`], videos: [`${MEDIA_PATH}angel6_v1.webm`,`${MEDIA_PATH}angel6_v2.webm`,`${MEDIA_PATH}angel6_v3.webm`,`${MEDIA_PATH}angel6_v4.webm`,`${MEDIA_PATH}angel6_v5.webm`,`${MEDIA_PATH}angel6_v6.webm`] } },
+            { id: 'angel_7', name: 'Галактическо Ехо', price: 250, thumb: `${MEDIA_PATH}angel7.png`, description: 'Чуй песента на космоса. Съдържа 1 изображение и 6 видеа.', contents: { images: [`${MEDIA_PATH}angel7.png`], videos: [`${MEDIA_PATH}angel7_v1.webm`,`${MEDIA_PATH}angel7_v2.webm`,`${MEDIA_PATH}angel7_v3.webm`,`${MEDIA_PATH}angel7_v4.webm`,`${MEDIA_PATH}angel7_v5.webm`,`${MEDIA_PATH}angel7_v6.webm`] } },
+            { id: 'angel_8', name: 'Кристална Сълза', price: 250, thumb: `${MEDIA_PATH}angel8.png`, description: 'Виж чистата емоция. Съдържа 1 изображение и 2 видеа.', contents: { images: [`${MEDIA_PATH}angel8.png`], videos: [`${MEDIA_PATH}angel8_v1.webm`,`${MEDIA_PATH}angel8_v2.webm`] } },
+            { id: 'angel_9', name: 'Огнен Порив', price: 250, thumb: `${MEDIA_PATH}angel9.png`, description: 'Изживей страстта. Съдържа 1 изображение и 5 видеа.', contents: { images: [`${MEDIA_PATH}angel9.png`], videos: [`${MEDIA_PATH}angel9_v1.webm`,`${MEDIA_PATH}angel9_v2.webm`,`${MEDIA_PATH}angel9_v3.webm`,`${MEDIA_PATH}angel9_v4.webm`,`${MEDIA_PATH}angel9_v5.webm`] } },
+            
+            // AZ Pack
+            { id: 'az_pack', name: 'Лазурен Пламък', price: 500, thumb: `${MEDIA_PATH}az1.png`, description: 'Колекция от 9 видеа и 9 изображения, изгарящи с мистична енергия.', contents: { images: [`${MEDIA_PATH}az1.png`,`${MEDIA_PATH}az2.png`,`${MEDIA_PATH}az3.png`,`${MEDIA_PATH}az4.png`,`${MEDIA_PATH}az5.png`,`${MEDIA_PATH}az6.png`,`${MEDIA_PATH}az7.png`,`${MEDIA_PATH}az8.png`,`${MEDIA_PATH}az9.png`], videos: [`${MEDIA_PATH}az1_v1.webm`,`${MEDIA_PATH}az2_v1.webm`,`${MEDIA_PATH}az3_v1.webm`,`${MEDIA_PATH}az4_v1.webm`,`${MEDIA_PATH}az5_v1.webm`,`${MEDIA_PATH}az6_v1.webm`,`${MEDIA_PATH}az7_v1.webm`,`${MEDIA_PATH}az8_v1.webm`,`${MEDIA_PATH}az9_v1.webm`] } },
+            
+            // Bandit Pack
+            { id: 'bandit_pack', name: 'Неонов Разбойник', price: 400, thumb: `${MEDIA_PATH}bandit1.png`, description: 'Пакет от 9 дръзки изображения от сенките на кибер-града.', contents: { images: [`${MEDIA_PATH}bandit1.png`,`${MEDIA_PATH}bandit2.png`,`${MEDIA_PATH}bandit3.png`,`${MEDIA_PATH}bandit4.png`,`${MEDIA_PATH}bandit5.png`,`${MEDIA_PATH}bandit6.png`,`${MEDIA_PATH}bandit7.png`,`${MEDIA_PATH}bandit8.png`,`${MEDIA_PATH}bandit9.png`], videos: [] } },
+            
+            // Criminal Pack
+            { id: 'criminal_pack', name: 'Пурпурен Синдикат', price: 500, thumb: `${MEDIA_PATH}criminal1.png`, description: '9 видеа и 9 изображения от тайния свят на престъпния елит.', contents: { images: [`${MEDIA_PATH}criminal1.png`,`${MEDIA_PATH}criminal2.png`,`${MEDIA_PATH}criminal3.png`,`${MEDIA_PATH}criminal4.png`,`${MEDIA_PATH}criminal5.png`,`${MEDIA_PATH}criminal6.png`,`${MEDIA_PATH}criminal7.png`,`${MEDIA_PATH}criminal8.png`,`${MEDIA_PATH}criminal9.png`], videos: [`${MEDIA_PATH}criminal1_v1.webm`,`${MEDIA_PATH}criminal2_v1.webm`,`${MEDIA_PATH}criminal3_v1.webm`,`${MEDIA_PATH}criminal4_v1.webm`,`${MEDIA_PATH}criminal5_v1.webm`,`${MEDIA_PATH}criminal6_v1.webm`,`${MEDIA_PATH}criminal7_v1.webm`,`${MEDIA_PATH}criminal8_v1.webm`,`${MEDIA_PATH}criminal9_v1.webm`] } },
+            
+            // Guz Pack
+            { id: 'guz_pack', name: 'Обсидианов Поглед', price: 400, thumb: `${MEDIA_PATH}guz1.png`, description: 'Колекция от 9 хипнотизиращи изображения, по-тъмни от нощта.', contents: { images: [`${MEDIA_PATH}guz1.png`,`${MEDIA_PATH}guz2.png`,`${MEDIA_PATH}guz3.png`,`${MEDIA_PATH}guz4.png`,`${MEDIA_PATH}guz5.png`,`${MEDIA_PATH}guz6.png`,`${MEDIA_PATH}guz7.png`,`${MEDIA_PATH}guz8.png`,`${MEDIA_PATH}guz9.png`], videos: [] } },
+            
+            // Kur Pack
+            { id: 'kur_pack', name: 'Забранена Реликва', price: 500, thumb: `${MEDIA_PATH}kur1.png`, description: 'Колекция от видеа и 9 изображения, които не е трябвало да виждаш.', contents: { images: [`${MEDIA_PATH}kur1.png`,`${MEDIA_PATH}kur2.png`,`${MEDIA_PATH}kur3.png`,`${MEDIA_PATH}kur4.png`,`${MEDIA_PATH}kur5.png`,`${MEDIA_PATH}kur6.png`,`${MEDIA_PATH}kur7.png`,`${MEDIA_PATH}kur8.png`,`${MEDIA_PATH}kur9.png`], videos: [`${MEDIA_PATH}kur1_v1.webm`,`${MEDIA_PATH}kur3_v1.webm`,`${MEDIA_PATH}kur4_v1.webm`,`${MEDIA_PATH}kur6_v1.webm`] } },
+            
+            // LOL Pack
+            { id: 'lol_pack', name: 'Призрачен Смях', price: 500, thumb: `${MEDIA_PATH}lol1.png`, description: 'Колекция от видеа и 9 изображения, които ще те накарат да се усъмниш в реалността.', contents: { images: [`${MEDIA_PATH}lol1.png`,`${MEDIA_PATH}lol2.png`,`${MEDIA_PATH}lol3.png`,`${MEDIA_PATH}lol4.png`,`${MEDIA_PATH}lol5.png`,`${MEDIA_PATH}lol6.png`,`${MEDIA_PATH}lol7.png`,`${MEDIA_PATH}lol8.png`,`${MEDIA_PATH}lol9.png`], videos: [`${MEDIA_PATH}lol1_v1.webm`,`${MEDIA_PATH}lol2_v1.webm`,`${MEDIA_PATH}lol3_v1.webm`,`${MEDIA_PATH}lol4_v1.webm`,`${MEDIA_PATH}lol5_v1.webm`,`${MEDIA_PATH}lol6_v1.webm`,`${MEDIA_PATH}lol7_v1.webm`,`${MEDIA_PATH}lol9_v1.webm`] } },
+             
+             // N Pack
+            { id: 'n_pack', name: 'Ноктюрно Девет', price: 400, thumb: `${MEDIA_PATH}n1.png`, description: 'Симфония от 9 изображения, родени в мрака.', contents: { images: [`${MEDIA_PATH}n1.png`,`${MEDIA_PATH}n2.png`,`${MEDIA_PATH}n3.png`,`${MEDIA_PATH}n4.png`,`${MEDIA_PATH}n5.png`,`${MEDIA_PATH}n6.png`,`${MEDIA_PATH}n7.png`,`${MEDIA_PATH}n8.png`,`${MEDIA_PATH}n9.png`], videos: [] } },
+
+            // RUB Pack
+            { id: 'rub_pack', name: 'Рубинен Резонанс', price: 500, thumb: `${MEDIA_PATH}rub1.png`, description: 'Вибрации в червено. Колекция от видеа и 9 изображения.', contents: { images: [`${MEDIA_PATH}rub1.png`,`${MEDIA_PATH}rub2.png`,`${MEDIA_PATH}rub3.png`,`${MEDIA_PATH}rub4.png`,`${MEDIA_PATH}rub5.png`,`${MEDIA_PATH}rub6.png`,`${MEDIA_PATH}rub7.png`,`${MEDIA_PATH}rub8.png`,`${MEDIA_PATH}rub9.png`], videos: [`${MEDIA_PATH}rub2_v1.webm`,`${MEDIA_PATH}rub3_v1.webm`,`${MEDIA_PATH}rub5_v1.webm`,`${MEDIA_PATH}rub6_v1.webm`] } },
         ];
         
         const MISSIONS = [
             { id: 'buy_first', text: 'Новобранец', description: 'Направи първата си покупка', reward: 50, condition: (owned) => owned.length > 0 },
             { id: 'buy_3', text: 'Колекционер', description: 'Купи 3+ колекции', reward: 100, condition: (owned) => owned.length >= 3 },
-            { id: 'own_all_angel', text: 'Ангелски допир', description: 'Притежавай всички "Angel" колекции', reward: 150, condition: (owned) => ['angel_1', 'angel_2', 'angel_3'].every(id => owned.includes(id))},
-            { id: 'own_5', text: 'Мания', description: 'Притежавай 5+ колекции', reward: 200, condition: (owned) => owned.length >= 5 },
+            { id: 'own_all_angel', text: 'Ангелски Допир', description: 'Притежавай всички "Angel" колекции', reward: 250, condition: (owned) => ['angel_1', 'angel_2', 'angel_3', 'angel_4', 'angel_5', 'angel_6', 'angel_7', 'angel_8', 'angel_9'].every(id => owned.includes(id))},
+            { id: 'buy_10', text: 'Мания', description: 'Притежавай 10+ колекции', reward: 300, condition: (owned) => owned.length >= 10 },
             { id: 'master_collector', text: 'Господар на Вселената', description: 'Притежавай всички колекции в магазина', reward: 1000, condition: (owned) => owned.length === MARKET_ITEMS.length }
         ];
 
-        // =================================================================================
-        // == КОД НА ПРИЛОЖЕНИЕТО ==
-        // =================================================================================
-        
         const firebaseConfig = {
           apiKey: "AIzaSyAatMUa6vFu2AAe3NCWse6j2moiXmXdl0U",
           authDomain: "nivra-casino.firebaseapp.com",
           projectId: "nivra-casino",
-          storageBucket: "nivra-casino.firebasestorage.app",
+          storageBucket: "nivra-casino.appspot.com",
           messagingSenderId: "463242246264",
           appId: "1:463242246264:web:4a6e736e5c8df3109e158d",
           measurementId: "G-2NF3P6H9GM"
@@ -345,20 +350,29 @@
             cartTotal: document.getElementById('cart-total'),
             buyBtn: document.getElementById('buy-btn'),
             missionsList: document.getElementById('missions-list'),
-            toastContainer: document.getElementById('toast-container'),
         };
         
-        onAuthStateChanged(auth, (user) => {
-            if (user && user.emailVerified) {
-                state.user = user;
-                state.userDocRef = doc(db, 'users', user.uid);
-                setupUserListener();
-                initApp();
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                await user.reload(); // Always get the latest user state
+                const refreshedUser = auth.currentUser;
+                if (refreshedUser && refreshedUser.emailVerified) {
+                    state.user = refreshedUser;
+                    state.userDocRef = doc(db, 'users', refreshedUser.uid);
+                    setupUserListener();
+                    initApp();
+                } else {
+                    showLoginRequired();
+                }
             } else {
-                dom.loadingScreen.style.display = 'none';
-                dom.loginRequiredScreen.style.display = 'flex';
+                showLoginRequired();
             }
         });
+
+        function showLoginRequired() {
+            dom.loadingScreen.style.display = 'none';
+            dom.loginRequiredScreen.style.display = 'flex';
+        }
 
         function setupUserListener() {
             onSnapshot(state.userDocRef, (docSnap) => {
@@ -383,19 +397,11 @@
         }
 
         function updateUI() {
-            dom.balanceAmount.textContent = state.balance.toLocaleString();
+            dom.balanceAmount.textContent = state.balance.toLocaleString('bg-BG');
             updateAllItemStates();
             renderCollection();
             updateCart();
             renderMissions();
-        }
-        
-        function showToast(message) {
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.innerHTML = `<i class="fas fa-star"></i> ${message}`;
-            dom.toastContainer.appendChild(toast);
-            setTimeout(() => toast.remove(), 5000);
         }
 
         function renderMarket() {
@@ -418,16 +424,18 @@
         }
         
         function renderCollection() {
-            dom.collectionGrid.innerHTML = '';
             const ownedFullItems = MARKET_ITEMS.filter(item => state.ownedItems.includes(item.id));
             dom.emptyCollectionMsg.style.display = ownedFullItems.length === 0 ? 'block' : 'none';
-            ownedFullItems.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'market-item';
-                card.innerHTML = `<img src="${item.thumb}" alt="${item.name}" class="item-thumbnail"><div class="item-info"><div class="item-name">${item.name}</div></div>`;
-                card.addEventListener('click', () => showLightbox(item));
-                dom.collectionGrid.appendChild(card);
-            });
+            if (ownedFullItems.length > 0) {
+                 dom.collectionGrid.innerHTML = '';
+                 ownedFullItems.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'market-item !cursor-pointer'; // Add !cursor-pointer to override owned style
+                    card.innerHTML = `<img src="${item.thumb}" alt="${item.name}" class="item-thumbnail"><div class="item-info"><div class="item-name">${item.name}</div></div>`;
+                    card.addEventListener('click', () => showLightbox(item));
+                    dom.collectionGrid.appendChild(card);
+                });
+            }
         }
 
         function renderMissions() {
@@ -442,13 +450,13 @@
                     actionHtml = `<button class="btn btn-secondary" disabled><i class="fas fa-check"></i> Прибрано</button>`;
                 } else if (canComplete) {
                     statusClass = 'claimable';
-                    actionHtml = `<button class="btn btn-primary claim-btn"><span class="btn-text">Прибери ${mission.reward}</span></button>`;
+                    actionHtml = `<button class="btn btn-primary claim-btn"><span class="btn-text">Прибери</span></button>`;
                 }
                 const missionEl = document.createElement('div');
                 missionEl.className = `mission ${statusClass}`;
                 missionEl.dataset.missionId = mission.id;
                 missionEl.innerHTML = `
-                    <div class="mission-icon"><i class="fas ${isCompleted ? 'fa-check-double' : 'fa-tasks'}"></i></div>
+                    <div class="mission-icon"><i class="fas ${isCompleted ? 'fa-check-double' : 'fa-trophy'}"></i></div>
                     <div class="mission-info"><strong>${mission.text}</strong><p>${mission.description}</p></div>
                     <div class="mission-action">${actionHtml}</div>`;
                 dom.missionsList.appendChild(missionEl);
@@ -460,13 +468,21 @@
             if (!mission || state.completedMissions.includes(missionId) || !mission.condition(state.ownedItems)) return;
             toggleLoading(button, true);
             try {
-                await updateDoc(state.userDocRef, {
-                    chips: increment(mission.reward),
-                    completedMissions: arrayUnion(missionId)
+                // Using runTransaction for claiming missions is safer
+                await runTransaction(db, async (transaction) => {
+                    const userDoc = await transaction.get(state.userDocRef);
+                    if (!userDoc.exists()) throw "User not found";
+                    
+                    const completed = userDoc.data().completedMissions || [];
+                    if (completed.includes(missionId)) return; // Already claimed
+
+                    transaction.update(state.userDocRef, {
+                        chips: increment(mission.reward),
+                        completedMissions: arrayUnion(missionId)
+                    });
                 });
-                showToast(`Мисия изпълнена! +${mission.reward} точки!`);
             } catch (error) {
-                console.error("Грешка при събиране на награда:", error);
+                console.error("Error claiming mission:", error);
                 alert("Възникна грешка. Моля, опитайте отново.");
                 toggleLoading(button, false);
             }
@@ -493,62 +509,49 @@
         }
 
         function updateCart() {
-            dom.cartItems.innerHTML = '';
             if (state.cart.length === 0) {
                 dom.cartItems.innerHTML = '<p id="empty-cart-msg">Количката е празна.</p>';
                 dom.cartTotal.textContent = '0';
                 dom.buyBtn.disabled = true;
-                return;
+            } else {
+                dom.cartItems.innerHTML = state.cart.map(item => 
+                    `<div class="flex justify-between items-center mb-2 text-sm">
+                        <span>${item.name}</span> 
+                        <strong class="font-['Orbitron'] text-cyan-400">${item.price}</strong>
+                    </div>`
+                ).join('');
             }
-            state.cart.forEach(item => {
-                const li = document.createElement('li');
-                li.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;';
-                li.innerHTML = `<span>${item.name}</span> <strong>${item.price}</strong>`;
-                dom.cartItems.appendChild(li);
-            });
             const total = state.cart.reduce((acc, item) => acc + item.price, 0);
-            dom.cartTotal.textContent = total.toLocaleString();
-            dom.buyBtn.disabled = state.balance < total;
+            dom.cartTotal.textContent = total.toLocaleString('bg-BG');
+            dom.buyBtn.disabled = state.balance < total || total === 0;
         }
 
         async function handlePurchase() {
             const total = state.cart.reduce((acc, item) => acc + item.price, 0);
             if (state.balance < total || state.cart.length === 0) return;
             toggleLoading(dom.buyBtn, true);
-
             try {
                 await runTransaction(db, async (transaction) => {
                     const userDoc = await transaction.get(state.userDocRef);
-                    if (!userDoc.exists()) {
-                        throw new Error("User document not found.");
-                    }
-                    const serverChips = userDoc.data().chips || 0;
-                    if (serverChips < total) {
-                        throw new Error("Insufficient funds on server.");
-                    }
+                    if (!userDoc.exists()) throw "User document does not exist!";
+                    
+                    const newBalance = userDoc.data().chips - total;
+                    if (newBalance < 0) throw "Insufficient funds!";
+                    
                     const itemsToBuy = state.cart.map(item => item.id);
                     transaction.update(state.userDocRef, { 
-                        chips: increment(-total),
+                        chips: newBalance,
                         collection: arrayUnion(...itemsToBuy)
                     });
                 });
                 state.cart = [];
                 openModal(document.getElementById('purchase-success-modal'));
             } catch (error) {
-                // *** FIX: Подобрена обработка на грешки ***
-                console.error("Грешка при транзакция:", error);
-                let userMessage = "Възникна сървърна грешка при покупката. Моля, опитайте отново.";
-                if (error.message && error.message.includes("Insufficient funds")) {
-                    userMessage = "Недостатъчен баланс! Транзакцията беше отказана от сървъра.";
-                } else if (error.code === 'permission-denied') {
-                    userMessage = "Грешка: Нямате права да извършите тази операция. Проблем с правилата за сигурност (Security Rules).";
-                } else if (error.message && error.message.toLowerCase().includes('arrayunion')) {
-                    userMessage = "Грешка в типа данни. Полето 'collection' в базата данни вероятно не е масив. Свържете се с администратор.";
-                }
-                alert(userMessage + "\n\n(Вижте конзолата (F12) за технически детайли)");
+                console.error("Purchase Transaction failed: ", error);
+                alert(`Грешка при покупка: ${error}. Моля, опитайте отново.`);
             } finally {
                 toggleLoading(dom.buyBtn, false);
-                // UI ще се обнови автоматично от onSnapshot
+                // UI will be updated by the onSnapshot listener automatically
             }
         }
         
@@ -579,15 +582,14 @@
         function showLightbox(item) {
             const lightbox = document.getElementById('lightbox');
             const contentContainer = document.getElementById('lightbox-content');
-            const hasVideos = item.contents?.videos?.length > 0;
-            const hasImages = item.contents?.images?.length > 0;
-            if (hasVideos) {
-                contentContainer.innerHTML = `<video src="${item.contents.videos[0]}" controls autoplay loop></video>`;
-            } else if (hasImages) {
-                contentContainer.innerHTML = `<img src="${item.contents.images[0]}" alt="${item.name}">`;
-            } else {
-                contentContainer.innerHTML = `<img src="${item.thumb}" alt="${item.name}">`;
-            }
+            contentContainer.innerHTML = '';
+            
+            item.contents.images.forEach(src => {
+                contentContainer.innerHTML += `<img src="${src}" alt="image content">`;
+            });
+            item.contents.videos.forEach(src => {
+                contentContainer.innerHTML += `<video src="${src}" controls loop playsinline></video>`;
+            });
             openModal(lightbox);
         }
 
@@ -595,8 +597,10 @@
         window.closeModal = (modal) => { 
             if(!modal) return;
             modal.classList.remove('active');
-            const video = modal.querySelector('video');
-            if (video) { video.pause(); video.src = ''; }
+            modal.querySelectorAll('video').forEach(video => {
+                video.pause();
+                video.src = '';
+            });
         }
 
         function toggleLoading(button, isLoading) {
@@ -612,11 +616,9 @@
             } else {
                 button.disabled = false;
                 if (btnText) btnText.style.display = 'inline-block';
-                const spinner = button.querySelector('.spinner');
-                if (spinner) spinner.remove();
+                button.querySelector('.spinner')?.remove();
             }
         }
     </script>
 </body>
 </html>
-
