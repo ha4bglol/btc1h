@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NIVRA - Помощ и Отговорна игра</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        * { -webkit-tap-highlight-color: transparent; }
+        
+        :root {
+            --neon-pink: #f9009a;
+            --neon-cyan: #00f9f9;
+            --neon-purple: #9d00f9;
+            --neon-red: #ff1b1b;
+            --dark-bg: #10081c;
+        }
+
+        body { 
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--dark-bg);
+            background-image: 
+                radial-gradient(circle at 1% 1%, rgba(157, 0, 249, 0.3), transparent 30%),
+                radial-gradient(circle at 99% 99%, rgba(0, 249, 249, 0.2), transparent 30%);
+            color: #e0e0e0;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        
+        .title-glow {
+            font-family: 'Orbitron', sans-serif;
+            color: #fff;
+            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--neon-pink), 0 0 30px var(--neon-pink), 0 0 40px var(--neon-pink);
+        }
+
+        /* --- Buttons --- */
+        .btn { padding: 0.6rem 1.5rem; border-radius: 9999px; font-weight: 700; font-family: 'Orbitron', sans-serif; text-transform: uppercase; transition: all 0.3s ease; border: 2px solid transparent; }
+        .btn-login { background: transparent; border-color: var(--neon-cyan); color: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan), inset 0 0 10px var(--neon-cyan); }
+        .btn-login:hover:not(:disabled) { background: var(--neon-cyan); color: var(--dark-bg); box-shadow: 0 0 20px var(--neon-cyan); transform: scale(1.05); }
+        .btn-register { background: linear-gradient(90deg, var(--neon-pink), var(--neon-purple)); color: white; box-shadow: 0 0 15px var(--neon-pink); }
+        .btn-register:hover:not(:disabled) { box-shadow: 0 0 25px var(--neon-pink); transform: scale(1.05); }
+        .btn-logout { background-color: transparent; border-color: var(--neon-red); color: var(--neon-red); box-shadow: 0 0 10px var(--neon-red), inset 0 0 10px var(--neon-red); }
+        .btn-logout:hover { background-color: var(--neon-red); color: white; }
+        
+        /* --- Help Page Specific Buttons --- */
+        .help-btn {
+            background: rgba(16, 8, 28, 0.7);
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(5px);
+            padding: 1.25rem;
+            width: 100%;
+            text-align: left;
+            font-size: 1.125rem;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .help-btn:hover {
+            transform: scale(1.03);
+            border-color: var(--neon-pink);
+            color: var(--neon-pink);
+        }
+
+        /* --- Modals --- */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); z-index: 50; opacity: 0; transition: opacity 0.3s ease; align-items: center; justify-content: center; padding: 1rem; }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-content { background: linear-gradient(145deg, #1c102f, #10081c); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; box-shadow: 0 0 50px rgba(0,0,0,0.5); width: 100%; position: relative; transform: scale(0.95); transition: transform 0.3s ease-in-out; }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+        
+        /* --- Header & Navigation --- */
+        header { background: rgba(16, 8, 28, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .nav-link { font-family: 'Orbitron', sans-serif; font-weight: 500; border-bottom: 2px solid transparent; transition: all 0.3s ease; color: #a0a0b0; white-space: nowrap; }
+        .nav-link:hover { color: var(--neon-pink); }
+        .pomosht-link { color: #ff4b4b !important; text-shadow: 0 0 10px var(--neon-red); border-bottom-color: var(--neon-red) !important; }
+        
+        /* --- Loading Screen --- */
+        #loading-screen {
+            position: fixed;
+            inset: 0;
+            background-color: var(--dark-bg);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+        #progress-bar-container {
+            width: 80%;
+            max-width: 400px;
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 2rem;
+        }
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
+            border-radius: 4px;
+            transition: width 0.1s linear;
+        }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- ЕКРАН ЗА ЗАРЕЖДАНЕ -->
+    <div id="loading-screen">
+        <h1 class="text-5xl md:text-7xl font-bold gradient-text" style="font-family: 'Orbitron', sans-serif;">NIVRA</h1>
+        <p id="loading-subtitle" class="text-gray-400 mt-4 text-lg">винаги социално отговорни</p>
+        <div id="progress-bar-container">
+            <div id="progress-bar"></div>
+        </div>
+        <p id="progress-text" class="text-white mt-3 font-bold text-xl" style="font-family: 'Orbitron', sans-serif;">0%</p>
+    </div>
+
+    <!-- КОНТЕЙНЕР ЗА ГЛАВНОТО СЪДЪРЖАНИЕ (СКРИТ ПЪРВОНАЧАЛНО) -->
+    <div id="main-content" class="hidden" style="animation: fadeIn 0.8s;">
+        <header class="sticky top-0 z-40 shadow-lg">
+            <nav class="container mx-auto px-2 sm:px-4 py-2 flex justify-between items-center">
+                <!-- Logo -->
+                <a href="index.html" class="text-2xl sm:text-3xl font-bold gradient-text flex-shrink-0" style="font-family: 'Orbitron', sans-serif;">NIVRA</a>
+                
+                <!-- Responsive Navigation -->
+                <div class="flex-grow flex justify-center items-center overflow-x-auto scrollbar-hide mx-2">
+                    <div class="flex items-center space-x-2 md:space-x-4">
+                        <a href="index.html#home" class="nav-link text-xs sm:text-sm py-2 px-2 md:px-3">Начало</a>
+                        <a href="index.html#games" class="nav-link text-xs sm:text-sm py-2 px-2 md:px-3">Игри</a>
+                        <a href="index.html#promo" class="nav-link text-xs sm:text-sm py-2 px-2 md:px-3">Промоции</a>
+                        <a href="nivra-world.html" class="nav-link text-xs sm:text-sm py-2 px-2 md:px-3">Nivra World</a>
+                        <a href="pomosht.html" class="nav-link pomosht-link text-xs sm:text-sm py-2 px-2 md:px-3">Помощ</a>
+                        <a href="index.html#leaderboard" class="nav-link text-xs sm:text-sm py-2 px-2 md:px-3">Класация</a>
+                        <a href="index.html#about" class="nav-link text-xs sm:text-sm py-2 px-2 md:px-3">За нас</a>
+                    </div>
+                </div>
+
+                <!-- User Area -->
+                <div class="flex items-center space-x-2 flex-shrink-0">
+                    <div id="logged-in-view" class="flex items-center space-x-2">
+                         <div id="profile-button" class="flex items-center space-x-2 cursor-pointer group">
+                             <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-tr from-pink-500 to-purple-500 flex items-center justify-center">
+                                <i class="fas fa-user text-white text-base md:text-lg"></i>
+                            </div>
+                            <div class="hidden sm:block">
+                                <span id="user-username" class="text-white font-semibold block text-xs md:text-sm leading-tight group-hover:text-cyan-400 transition"></span>
+                                <span id="user-balance" class="text-cyan-400 font-bold text-xs md:text-sm" style="font-family: 'Orbitron', sans-serif;"><i class="fas fa-coins mr-1"></i>0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <main class="container mx-auto px-4 sm:px-6 py-12 md:py-20">
+            <div class="text-center max-w-4xl mx-auto">
+                <h2 class="text-3xl md:text-5xl font-bold title-glow mb-4">Хазартът не е просто игра</h2>
+                <p class="text-lg md:text-xl text-gray-300">Играй отговорно в контролирана среда на <span class="gradient-text font-bold">NIVRA</span>.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12 md:mt-16 max-w-6xl mx-auto">
+                <button class="help-btn" data-modal="modal-threat"><span>Защо хазартът е скрита заплаха за теб</span> <i class="fas fa-chevron-right text-gray-500"></i></button>
+                <button class="help-btn" data-modal="modal-disease"><span>Хазартът като болест</span> <i class="fas fa-chevron-right text-gray-500"></i></button>
+                <button class="help-btn" data-modal="modal-kids"><span>Как децата се промъкват в реалните казина</span> <i class="fas fa-chevron-right text-gray-500"></i></button>
+                <button class="help-btn" data-modal="modal-kyc"><span>Сравнение с борсите: KYC стандарт</span> <i class="fas fa-chevron-right text-gray-500"></i></button>
+                <button class="help-btn" data-modal="modal-triggers"><span>Психологически тригъри</span> <i class="fas fa-chevron-right text-gray-500"></i></button>
+                <button class="help-btn" data-modal="modal-tips"><span>Практически съвети за зависими</span> <i class="fas fa-chevron-right text-gray-500"></i></button>
+                <button class="help-btn" data-modal="modal-microtransactions"><span>Защо микротранзакциите са част от Nivra</span> <i class="fas fa-chevron-right text-gray-500"></i></button>
+                <button class="help-btn" data-modal="modal-promise"><span>ОБЕЩАЙ СИ</span> <i class="fas fa-chevron-right text-gray-500"></i></button>
+                <button class="help-btn" data-modal="modal-again"><span>За пореден път ли се отказваш?</span> <i class="fas fa-chevron-right text-gray-500"></i></button>
+                <button class="help-btn" data-modal="modal-win"><span>Не оставяй казината да те победят</span> <i class="fas fa-chevron-right text-gray-500"></i></button>
+            </div>
+        </main>
+        
+        <footer class="bg-black/30 text-gray-400 py-8 mt-16">
+            <div class="container mx-auto px-6 text-center">
+                 <p class="text-xs text-gray-500">&copy; 2024 NIVRA. Всички права запазени.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- МОДАЛНИ ПРОЗОРЦИ -->
+    
+    <!-- Модал за потребителски профил -->
+    <div id="user-profile-modal" class="modal-overlay">
+        <div class="modal-content max-w-md p-8">
+            <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button>
+            <div class="text-center mb-6">
+                <div class="w-24 h-24 rounded-full bg-gradient-to-tr from-pink-500 to-purple-500 flex items-center justify-center mx-auto mb-4 border-4 border-gray-700">
+                    <i class="fas fa-user text-white text-4xl"></i>
+                </div>
+                <h3 id="profile-modal-username" class="text-2xl font-bold text-white" style="font-family: 'Orbitron', sans-serif;"></h3>
+                <p id="profile-modal-email" class="text-gray-400"></p>
+            </div>
+            <div class="bg-black/20 p-4 rounded-lg space-y-3">
+                <div class="flex justify-between items-center"><span class="text-gray-400">Пълно име:</span><span id="profile-modal-fullname" class="font-semibold text-white"></span></div>
+                <div class="flex justify-between items-center"><span class="text-gray-400">Баланс:</span><span id="profile-modal-balance" class="font-bold text-cyan-400 text-lg"></span></div>
+            </div>
+             <button id="logout-btn" class="w-full mt-6 py-3 btn btn-logout text-sm">Изход от профила</button>
+        </div>
+    </div>
+
+    <!-- Шаблон за модален прозорец (използва се от всички бутони) -->
+    <div class="modal-templates hidden">
+        <div id="modal-threat" class="modal-overlay"> <div class="modal-content max-w-3xl p-8 max-h-[90vh] overflow-y-auto"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold mb-4 gradient-text" style="font-family: 'Orbitron', sans-serif;">Защо хазартът е скрита заплаха за теб</h3> <div class="text-gray-300 space-y-4 text-sm"> <!-- ТУК ПОСТАВЕТЕ ВАШИЯ ТЕКСТ --> <p>...</p> </div> </div> </div>
+        <div id="modal-disease" class="modal-overlay"> <div class="modal-content max-w-3xl p-8 max-h-[90vh] overflow-y-auto"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold mb-4 gradient-text" style="font-family: 'Orbitron', sans-serif;">Хазартът като болест</h3> <div class="text-gray-300 space-y-4 text-sm"> <!-- ТУК ПОСТАВЕТЕ ВАШИЯ ТЕКСТ --> <p>...</p> </div> </div> </div>
+        <div id="modal-kids" class="modal-overlay"> <div class="modal-content max-w-3xl p-8 max-h-[90vh] overflow-y-auto"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold mb-4 gradient-text" style="font-family: 'Orbitron', sans-serif;">Как децата се промъкват в реалните казина</h3> <div class="text-gray-300 space-y-4 text-sm"> <!-- ТУК ПОСТАВЕТЕ ВАШИЯ ТЕКСТ --> <p>...</p> </div> </div> </div>
+        <div id="modal-kyc" class="modal-overlay"> <div class="modal-content max-w-3xl p-8 max-h-[90vh] overflow-y-auto"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold mb-4 gradient-text" style="font-family: 'Orbitron', sans-serif;">Сравнение с борсите: защо там KYC е „златен стандарт“, а в хазарта – рядкост</h3> <div class="text-gray-300 space-y-4 text-sm"> <!-- ТУК ПОСТАВЕТЕ ВАШИЯ ТЕКСТ --> <p>...</p> </div> </div> </div>
+        <div id="modal-triggers" class="modal-overlay"> <div class="modal-content max-w-3xl p-8 max-h-[90vh] overflow-y-auto"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold mb-4 gradient-text" style="font-family: 'Orbitron', sans-serif;">Психологическите тригъри, които те правят да се почувстваш победител</h3> <div class="text-gray-300 space-y-4 text-sm"> <!-- ТУК ПОСТАВЕТЕ ВАШИЯ ТЕКСТ --> <p>...</p> </div> </div> </div>
+        <div id="modal-tips" class="modal-overlay"> <div class="modal-content max-w-3xl p-8 max-h-[90vh] overflow-y-auto"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold mb-4 gradient-text" style="font-family: 'Orbitron', sans-serif;">Практически съвети за хазартно зависими</h3> <div class="text-gray-300 space-y-4 text-sm"> <!-- ТУК ПОСТАВЕТЕ ВАШИЯ ТЕКСТ --> <p>...</p> </div> </div> </div>
+        <div id="modal-microtransactions" class="modal-overlay"> <div class="modal-content max-w-3xl p-8 max-h-[90vh] overflow-y-auto"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold mb-4 gradient-text" style="font-family: 'Orbitron', sans-serif;">Защо микротранзакциите са част от Nivra и как те ни помагат да продължим да ви радваме</h3> <div class="text-gray-300 space-y-4 text-sm"> <!-- ТУК ПОСТАВЕТЕ ВАШИЯ ТЕКСТ --> <p>...</p> </div> </div> </div>
+        <div id="modal-promise" class="modal-overlay"> <div class="modal-content max-w-3xl p-8 max-h-[90vh] overflow-y-auto"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold mb-4 gradient-text" style="font-family: 'Orbitron', sans-serif;">ОБЕЩАЙ СИ</h3> <div class="text-gray-300 space-y-4 text-sm"> <!-- ТУК ПОСТАВЕТЕ ВАШИЯ ТЕКСТ --> <p>...</p> </div> </div> </div>
+        <div id="modal-again" class="modal-overlay"> <div class="modal-content max-w-3xl p-8 max-h-[90vh] overflow-y-auto"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold mb-4 gradient-text" style="font-family: 'Orbitron', sans-serif;">За пореден път ли се отказваш?</h3> <div class="text-gray-300 space-y-4 text-sm"> <!-- ТУК ПОСТАВЕТЕ ВАШИЯ ТЕКСТ --> <p>...</p> </div> </div> </div>
+        <div id="modal-win" class="modal-overlay"> <div class="modal-content max-w-3xl p-8 max-h-[90vh] overflow-y-auto"> <button class="close-modal-btn absolute top-4 right-4 text-2xl text-gray-500 hover:text-white transition">&times;</button> <h3 class="text-2xl font-bold mb-4 gradient-text" style="font-family: 'Orbitron', sans-serif;">Не оставяй казината да те победят</h3> <div class="text-gray-300 space-y-4 text-sm"> <!-- ТУК ПОСТАВЕТЕ ВАШИЯ ТЕКСТ --> <p>...</p> </div> </div> </div>
+    </div>
+
+
+    <script type="module">
+        // --- FIREBASE SDK IMPORTS ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        
+        // --- FIREBASE CONFIG ---
+        const firebaseConfig = {
+          apiKey: "AIzaSyAatMUa6vFu2AAe3NCWse6j2moiXmXdl0U",
+          authDomain: "nivra-casino.firebaseapp.com",
+          projectId: "nivra-casino",
+          storageBucket: "nivra-casino.appspot.com",
+          messagingSenderId: "463242246264",
+          appId: "1:463242246264:web:4a6e736e5c8df3109e158d",
+          measurementId: "G-2NF3P6H9GM"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- DOM Elements ---
+        const dom = {
+            loadingScreen: document.getElementById('loading-screen'),
+            loadingSubtitle: document.getElementById('loading-subtitle'),
+            progressBar: document.getElementById('progress-bar'),
+            progressText: document.getElementById('progress-text'),
+            mainContent: document.getElementById('main-content'),
+            loggedInView: document.getElementById('logged-in-view'),
+            username: document.getElementById('user-username'),
+            balance: document.getElementById('user-balance'),
+            profileButton: document.getElementById('profile-button'),
+            userProfileModal: document.getElementById('user-profile-modal'),
+            logoutBtn: document.getElementById('logout-btn'),
+            profileModal: {
+                username: document.getElementById('profile-modal-username'),
+                email: document.getElementById('profile-modal-email'),
+                fullname: document.getElementById('profile-modal-fullname'),
+                balance: document.getElementById('profile-modal-balance'),
+            }
+        };
+
+        let userDataUnsubscribe = null;
+        let currentUserData = null;
+
+        // --- Loading Screen Logic ---
+        let progress = 0;
+        const loadingInterval = setInterval(() => {
+            if (progress < 90) { // Artificially stop before 100% to wait for auth
+                progress += Math.floor(Math.random() * 3) + 1;
+                progress = Math.min(progress, 90);
+                dom.progressBar.style.width = `${progress}%`;
+                dom.progressText.textContent = `${progress}%`;
+            }
+        }, 100);
+
+        // --- Auth State Logic ---
+        onAuthStateChanged(auth, async (user) => {
+            if (userDataUnsubscribe) {
+                userDataUnsubscribe();
+                userDataUnsubscribe = null;
+            }
+
+            if (user && user.emailVerified) {
+                // User is logged in and verified
+                clearInterval(loadingInterval);
+                dom.progressBar.style.width = '100%';
+                dom.progressText.textContent = '100%';
+
+                const userDocRef = doc(db, 'users', user.uid);
+                userDataUnsubscribe = onSnapshot(userDocRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        currentUserData = docSnap.data();
+                        updateUI(currentUserData);
+                    } else {
+                        console.error("User document not found. Logging out.");
+                        handleLogout();
+                    }
+                });
+
+                // Show main content after a short delay
+                setTimeout(() => {
+                    dom.loadingScreen.style.opacity = '0';
+                    setTimeout(() => {
+                        dom.loadingScreen.style.display = 'none';
+                        dom.mainContent.classList.remove('hidden');
+                    }, 500);
+                }, 500);
+            } else {
+                // User is not logged in or not verified
+                clearInterval(loadingInterval);
+                dom.progressBar.style.width = '100%';
+                dom.progressText.textContent = '100%';
+                dom.loadingSubtitle.textContent = "Трябва да сте вписани, за да видите тази страница.";
+                dom.loadingSubtitle.classList.add('text-red-500');
+
+                setTimeout(() => {
+                    window.location.href = 'index.html'; // Redirect to home page
+                }, 2500);
+            }
+        });
+
+        // --- UI Update Functions ---
+        function updateUI(userData) {
+            if (userData) {
+                const balanceFormatted = userData.chips.toLocaleString('bg-BG');
+                dom.username.textContent = userData.username;
+                dom.balance.innerHTML = `<i class="fas fa-coins mr-1"></i>${balanceFormatted}`;
+            }
+        }
+        
+        function updateProfileModal() {
+            if (currentUserData) {
+                dom.profileModal.username.textContent = currentUserData.username;
+                dom.profileModal.email.textContent = currentUserData.email;
+                dom.profileModal.fullname.textContent = currentUserData.fullName;
+                dom.profileModal.balance.innerHTML = `<i class="fas fa-coins mr-2"></i>${currentUserData.chips.toLocaleString('bg-BG')}`;
+            }
+        }
+        
+        const handleLogout = () => {
+             signOut(auth).catch(console.error);
+        };
+        
+        // --- Modal Logic ---
+        function setupModals() {
+            // Move modals from template to body for them to work
+            const modalTemplates = document.querySelector('.modal-templates');
+            document.body.append(...modalTemplates.children);
+            modalTemplates.remove();
+            
+            const openModal = (modal) => modal.classList.add('active');
+            const closeModal = (modal) => modal.classList.remove('active');
+
+            document.querySelectorAll('[data-modal]').forEach(button => {
+                button.addEventListener('click', () => {
+                    const modalId = button.dataset.modal;
+                    const modal = document.getElementById(modalId);
+                    if (modal) openModal(modal);
+                });
+            });
+
+            document.querySelectorAll('.modal-overlay').forEach(overlay => {
+                overlay.addEventListener('click', (e) => {
+                    if (e.target === overlay) closeModal(overlay);
+                });
+            });
+
+            document.querySelectorAll('.close-modal-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    closeModal(btn.closest('.modal-overlay'));
+                });
+            });
+
+            // Profile modal specific triggers
+            dom.profileButton.addEventListener('click', () => {
+                updateProfileModal();
+                openModal(dom.userProfileModal);
+            });
+            dom.logoutBtn.addEventListener('click', () => {
+                if(confirm('Сигурни ли сте, че искате да излезете?')) {
+                    handleLogout();
+                }
+            });
+        }
+
+        // --- Initialization ---
+        function init() {
+            setupModals();
+        }
+
+        init();
+    </script>
+</body>
+</html>
