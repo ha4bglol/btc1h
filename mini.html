@@ -97,7 +97,6 @@
              <div class="flex flex-row items-stretch justify-center gap-4 lg:gap-8">
                 
                 <div class="hidden lg:block w-1/5 video-container">
-                    <!-- Атрибутите playsinline и loop са добавени за по-добра съвместимост -->
                     <video id="left-video-player" autoplay muted playsinline loop></video>
                 </div>
 
@@ -174,26 +173,12 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        let userDocRef = null;
         const gameLayout = document.getElementById('game-and-videos-layout');
         const loginRequiredContainer = document.getElementById('login-required-container');
-        let unsubscribeUser;
+        let unsubscribeUserListener; // Преименувана за по-голяма яснота
 
-        onAuthStateChanged(auth, async (user) => {
-            if (unsubscribeUser) unsubscribeUser(); 
-
-            if (user && user.emailVerified) {
-                gameLayout.classList.remove('hidden');
-                loginRequiredContainer.classList.add('hidden');
-                userDocRef = doc(db, 'users', user.uid);
-                initializeMinesGame(userDocRef);
-                initializeVideoPlayers(); 
-            } else {
-                gameLayout.classList.add('hidden');
-                loginRequiredContainer.classList.remove('hidden');
-            }
-        });
-        
+        // --- КОРЕКЦИЯ 2: Пускаме видеата веднага при зареждане на страницата ---
+        // Тази функция вече не зависи от статуса на потребителя.
         function initializeVideoPlayers() {
             const leftVideo = document.getElementById('left-video-player');
             const rightVideo = document.getElementById('right-video-player');
@@ -202,26 +187,51 @@
             function playRandomVideo() {
                 const randomVideoSrc = `videos/${videoFiles[Math.floor(Math.random() * videoFiles.length)]}`;
                 
-                leftVideo.src = randomVideoSrc;
-                rightVideo.src = randomVideoSrc;
-                
+                if (leftVideo) leftVideo.src = randomVideoSrc;
+                if (rightVideo) rightVideo.src = randomVideoSrc;
+
                 // .play() връща Promise. С .catch() можем да видим в конзолата, ако има проблем с autoplay.
-                const playPromiseLeft = leftVideo.play();
-                if (playPromiseLeft !== undefined) {
-                    playPromiseLeft.catch(error => console.error("Грешка при пускане на ляво видео (проверете Content-Type на сървъра):", error));
+                // Браузърите изискват видеото да е 'muted' за да позволят autoplay.
+                if (leftVideo) {
+                    const playPromiseLeft = leftVideo.play();
+                    if (playPromiseLeft !== undefined) {
+                        playPromiseLeft.catch(error => console.error("Грешка при пускане на ляво видео (проверете Content-Type на сървъра):", error));
+                    }
                 }
-                const playPromiseRight = rightVideo.play();
-                if (playPromiseRight !== undefined) {
-                    playPromiseRight.catch(error => console.error("Грешка при пускане на дясно видео (проверете Content-Type на сървъра):", error));
+                if (rightVideo) {
+                    const playPromiseRight = rightVideo.play();
+                    if (playPromiseRight !== undefined) {
+                        playPromiseRight.catch(error => console.error("Грешка при пускане на дясно видео:", error));
+                    }
                 }
             }
             
-            // Когато едното видео свърши, сменяме и двете. Атрибутът 'loop' в HTML-а е резервен вариант, ако този event listener не се задейства.
-            leftVideo.addEventListener('ended', playRandomVideo);
-            playRandomVideo();
+            if (leftVideo) {
+                leftVideo.addEventListener('ended', playRandomVideo);
+            }
+            playRandomVideo(); // Пускаме веднага
         }
+        
+        // Извикваме функцията за видеата веднага, без да чакаме потребител
+        initializeVideoPlayers();
 
-        function initializeMinesGame(docRef) {
+        onAuthStateChanged(auth, (user) => {
+            // Ако вече имаме активен слушател за потребителски данни, прекратяваме го,
+            // за да избегнем дублиране при смяна на потребител.
+            if (unsubscribeUserListener) unsubscribeUserListener(); 
+
+            if (user && user.emailVerified) {
+                gameLayout.classList.remove('hidden');
+                loginRequiredContainer.classList.add('hidden');
+                const userDocRef = doc(db, 'users', user.uid);
+                initializeMinesGame(userDocRef);
+            } else {
+                gameLayout.classList.add('hidden');
+                loginRequiredContainer.classList.remove('hidden');
+            }
+        });
+        
+        function initializeMinesGame(userDocRef) {
             const minesGrid = document.getElementById('mines-grid');
             const playBtn = document.getElementById('play-btn');
             const betAmountInput = document.getElementById('bet-amount');
@@ -231,31 +241,34 @@
             const nextMultiplierDisplay = document.getElementById('next-multiplier-display');
             
             const TILE_COUNT = 25;
-            let balance = 0; 
+            let currentBalance = 0; // Локална променлива, която се синхронизира от Firestore
             let isGameActive = false;
             let currentBet = 0;
             let mineLocations = [];
             let openedTilesCount = 0;
 
-            // Този слушател е ЕДИНСТВЕНИЯТ източник на истина за баланса.
-            // Когато нещо се промени в базата данни, този код се изпълнява
-            // и актуализира локалната променлива 'balance' и текста на екрана.
-            unsubscribeUser = onSnapshot(docRef, (docSnap) => {
+            // --- КОРЕКЦИЯ 1: Динамично обновяване на баланса ---
+            // onSnapshot е "слушател" в реално време. Всеки път, когато данните за потребителя
+            // се променят в базата данни (напр. след залог или печалба), този код се изпълнява
+            // автоматично и обновява интерфейса. Това е единственият "източник на истина" за баланса.
+            unsubscribeUserListener = onSnapshot(userDocRef, (docSnap) => {
                 if (docSnap.exists()) {
-                    balance = docSnap.data().chips;
-                    balanceDisplay.textContent = balance.toFixed(2);
+                    currentBalance = docSnap.data().chips;
+                    balanceDisplay.textContent = currentBalance.toFixed(2);
                 } else {
                     console.error("User document not found!");
                 }
             });
 
+            // Тази функция само изпраща заявка към базата данни.
+            // Тя НЕ променя директно баланса на екрана. onSnapshot ще направи това.
             async function updateBalanceInFirestore(newBalance) {
-                if (!docRef) return;
+                if (!userDocRef) return;
                 try {
-                    // Изпращаме към базата данни пълното число, без закръгляне.
-                    await updateDoc(docRef, { chips: newBalance });
+                    await updateDoc(userDocRef, { chips: newBalance });
                 } catch (error) {
                     console.error("Error updating balance:", error);
+                    // Може да добавите съобщение към потребителя тук
                 }
             }
 
@@ -278,9 +291,9 @@
                 if (isGameActive) { cashOut(); } else { startGame(); }
             }
             
-            function startGame() {
+            async function startGame() {
                 const bet = parseFloat(betAmountInput.value);
-                if (isNaN(bet) || bet <= 0 || bet > balance) {
+                if (isNaN(bet) || bet <= 0 || bet > currentBalance) {
                     flashInputBorder(betAmountInput);
                     return;
                 }
@@ -288,8 +301,9 @@
                 resetBoard(true);
                 currentBet = bet;
                 
-                // Изпращаме заявка за обновяване. Слушателят onSnapshot ще свърши останалото.
-                updateBalanceInFirestore(balance - currentBet);
+                // Изчисляваме новия баланс и изпращаме заявка за обновяване.
+                // onSnapshot ще се погрижи да актуализира UI-а, когато промяната е успешна.
+                await updateBalanceInFirestore(currentBalance - currentBet);
 
                 isGameActive = true;
                 openedTilesCount = 0;
@@ -316,7 +330,7 @@
                 if (tile.disabled) return;
 
                 if (mineLocations.includes(index)) {
-                    endGame(false);
+                    endGame(false); // Загуба, балансът вече е намален, не правим нищо повече
                 } else {
                     playBtn.disabled = false;
                     tile.innerHTML = '<i class="fas fa-gem"></i>';
@@ -336,10 +350,13 @@
                 }
             }
             
-            function cashOut() {
+            async function cashOut() {
                 if (!isGameActive || openedTilesCount === 0) return;
                 const winnings = currentBet * calculateMultiplier();
-                updateBalanceInFirestore(balance + winnings); 
+
+                // ВАЖНО: Тук използваме `currentBalance`, който е актуализиран от onSnapshot 
+                // след приспадането на залога. Към него добавяме пълната спечелена сума.
+                await updateBalanceInFirestore(currentBalance + winnings); 
                 endGame(true);
             }
 
@@ -352,7 +369,10 @@
                     if (mineLocations.includes(i)) {
                         tile.innerHTML = '<i class="fas fa-bomb"></i>'; tile.classList.add('mine');
                     } else if (!tile.classList.contains('safe')) {
-                        tile.innerHTML = '<i class="fas fa-gem text-gray-600"></i>';
+                        // Показваме къде са били останалите кристали само ако не е имало печалба
+                        if (!isWin) {
+                           tile.innerHTML = '<i class="fas fa-gem text-gray-600"></i>';
+                        }
                     }
                 }
                 
@@ -383,18 +403,28 @@
                 
                 const totalCombinations = combinations(TILE_COUNT, tilesToOpen);
                 const safeCombinations = combinations(safeTilesCount, tilesToOpen);
-                return 0.99 * (totalCombinations / safeCombinations);
+                return 0.99 * (totalCombinations / safeCombinations); // 1% house edge
             }
 
             function updateNextMultiplierDisplay() {
-                const nextTilesOpened = isGameActive ? openedTilesCount + 1 : 1;
-                const nextMultiplier = calculateMultiplier(nextTilesOpened);
-                nextMultiplierDisplay.textContent = nextMultiplier > 0 ? `${nextMultiplier.toFixed(2)}x` : 'MAX';
+                if (isGameActive) {
+                    const nextTilesOpened = openedTilesCount + 1;
+                    const nextMultiplier = calculateMultiplier(nextTilesOpened);
+                    nextMultiplierDisplay.textContent = nextMultiplier > 0 ? `${nextMultiplier.toFixed(2)}x` : 'MAX';
+                } else {
+                    // Когато играта не е активна, показваме множителя за първото отваряне
+                    const nextMultiplier = calculateMultiplier(1);
+                    nextMultiplierDisplay.textContent = `${nextMultiplier.toFixed(2)}x`;
+                }
             }
             
             function flashInputBorder(inputElement) {
-                inputElement.classList.add('border-red-500', 'ring-red-500');
-                setTimeout(() => { inputElement.classList.remove('border-red-500', 'ring-red-500'); }, 1000);
+                inputElement.style.borderColor = 'var(--neon-pink)';
+                inputElement.style.boxShadow = '0 0 10px var(--neon-pink)';
+                setTimeout(() => { 
+                    inputElement.style.borderColor = '';
+                    inputElement.style.boxShadow = '';
+                }, 1500);
             }
 
             initGame();
@@ -402,4 +432,5 @@
     </script>
 </body>
 </html>
+
 
