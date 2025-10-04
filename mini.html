@@ -104,7 +104,6 @@
              <div class="flex flex-row items-stretch justify-center gap-4 lg:gap-8">
                 
                 <div class="hidden lg:block w-1/5 video-container">
-                    <!-- Два плейъра за лявата колона за безшевен loop -->
                     <video id="left-video-1" class="video-player" autoplay muted playsinline></video>
                     <video id="left-video-2" class="video-player" muted playsinline></video>
                 </div>
@@ -150,7 +149,6 @@
                 </section>
 
                 <div class="hidden lg:block w-1/5 video-container">
-                    <!-- Два плейъра за дясната колона за безшевен loop -->
                     <video id="right-video-1" class="video-player" autoplay muted playsinline></video>
                     <video id="right-video-2" class="video-player" muted playsinline></video>
                 </div>
@@ -188,59 +186,55 @@
         const loginRequiredContainer = document.getElementById('login-required-container');
         let unsubscribeUserListener;
 
-        // --- НОВА ЛОГИКА ЗА ВИДЕАТА ---
+        // --- ЛОГИКА ЗА ВИДЕАТА С ИЗРИЧНО ИЗБРОЕНИ ФАЙЛОВЕ ---
         function initializeVideoPlayers() {
-            const videoFiles = Array.from({ length: 8 }, (_, i) => `videos/kote${i + 1}_v1.webm`);
+            // КОНКРЕТЕН СПИСЪК С ВИДЕО ФАЙЛОВЕ, КАКТО ПОИСКА
+            const videoFiles = [
+                "kote1_v1.webm",
+                "kote2_v1.webm",
+                "kote3_v1.webm",
+                "kote4_v1.webm",
+                "kote5_v1.webm",
+                "kote6_v1.webm",
+                "kote7_v1.webm",
+                "kote8_v1.webm"
+            ];
 
-            // Помощна функция, която управлява една двойка видео плейъри
             function setupSeamlessLoop(video1, video2) {
-                // В началото скриваме и двата, за да избегнем премигване
                 video1.style.opacity = 0;
                 video2.style.opacity = 0;
 
                 let activeVideo = video1;
                 let nextVideo = video2;
 
-                // Функция за зареждане на произволно видео
                 const getRandomVideoSrc = () => videoFiles[Math.floor(Math.random() * videoFiles.length)];
 
-                // Зареждаме първоначалните видеа
                 activeVideo.src = getRandomVideoSrc();
                 nextVideo.src = getRandomVideoSrc();
 
-                // Показваме плавно първото видео, когато е готово за пускане
                 activeVideo.addEventListener('canplay', () => {
                     activeVideo.style.opacity = 1;
                 }, { once: true });
 
-                // Основна функция за безшевно повторение
                 const handleTimeUpdate = () => {
-                    // Проверяваме дали е време за смяна (напр. 0.5 сек преди края)
                     if (activeVideo.duration && activeVideo.currentTime > activeVideo.duration - 0.5) {
-                        // 1. Пускаме скритото (следващото) видео
-                        nextVideo.play().catch(e => console.error("Грешка при пускане на видео:", e));
-                        
-                        // 2. Разменяме видимостта им плавно
+                        nextVideo.play().catch(e => console.error("Video play error:", e));
                         activeVideo.style.opacity = 0;
                         nextVideo.style.opacity = 1;
                         
-                        // 3. Разменяме ролите им за следващия цикъл
                         const oldActive = activeVideo;
                         activeVideo = nextVideo;
                         nextVideo = oldActive;
                         
-                        // 4. Връщаме свършилото видео в началото и му зареждаме НОВ произволен клип
                         nextVideo.currentTime = 0;
                         nextVideo.src = getRandomVideoSrc();
                     }
                 };
                 
-                // Следим времето и на двата плейъра
                 video1.addEventListener('timeupdate', handleTimeUpdate);
                 video2.addEventListener('timeupdate', handleTimeUpdate);
             }
 
-            // Инициализираме логиката и за двете колони
             setupSeamlessLoop(
                 document.getElementById('left-video-1'), 
                 document.getElementById('left-video-2')
@@ -454,5 +448,3 @@
     </script>
 </body>
 </html>
-
-
