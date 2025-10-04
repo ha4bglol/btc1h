@@ -5,15 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NIVRA - Мини</title>
     
-    <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts from index.html -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
@@ -21,10 +16,8 @@
             --neon-pink: #f9009a;
             --neon-cyan: #00f9f9;
             --neon-purple: #9d00f9;
-            --neon-red: #ff1b1b;
             --dark-bg: #10081c;
         }
-
         body {
             font-family: 'Rajdhani', sans-serif;
             background-color: var(--dark-bg);
@@ -34,12 +27,10 @@
             color: #e0e0e0;
             overflow-x: hidden;
         }
-        
         .gradient-text {
             background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
-
         .btn-action {
             padding: 0.75rem 1.5rem; border-radius: 9999px; font-weight: 700; font-family: 'Orbitron', sans-serif; text-transform: uppercase; transition: all 0.3s ease;
             background: linear-gradient(90deg, var(--neon-pink), var(--neon-purple)); color: white; box-shadow: 0 0 15px var(--neon-pink); border: none;
@@ -50,14 +41,12 @@
         .btn-action:disabled {
             background: #4a4a6a; color: #8f8f8f; cursor: not-allowed; opacity: 0.7; transform: none; box-shadow: none;
         }
-
         .form-input { 
             background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255,255,255,0.2); color: #fff; border-radius: 12px; padding: 0.8rem 1rem; width: 100%; transition: all 0.3s ease;
         }
         .form-input:focus { 
             outline: none; border-color: var(--neon-cyan); background: rgba(0, 0, 0, 0.3); box-shadow: 0 0 15px rgba(0, 249, 249, 0.2); 
         }
-
         .mines-tile {
             background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); transition: all 0.15s ease; aspect-ratio: 1 / 1;
         }
@@ -73,7 +62,6 @@
         .mines-tile:disabled { cursor: not-allowed; }
         input[type="number"] { -moz-appearance: textfield; }
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-
         .video-container {
             border: 2px solid; border-image-slice: 1; border-image-source: linear-gradient(to bottom, var(--neon-cyan), var(--neon-pink));
             box-shadow: 0 0 20px rgba(0, 249, 249, 0.3), 0 0 20px rgba(249, 0, 154, 0.3);
@@ -109,6 +97,7 @@
              <div class="flex flex-row items-stretch justify-center gap-4 lg:gap-8">
                 
                 <div class="hidden lg:block w-1/5 video-container">
+                    <!-- Атрибутите playsinline и loop са добавени за по-добра съвместимост -->
                     <video id="left-video-player" autoplay muted playsinline loop></video>
                 </div>
 
@@ -123,19 +112,16 @@
                                     <span id="balance-display" style="font-family: 'Orbitron', sans-serif;">0.00</span>
                                 </div>
                             </div>
-
                             <div class="mb-4">
                                 <label for="bet-amount" class="block text-sm font-medium text-gray-400 mb-2">Залог</label>
                                 <input type="number" id="bet-amount" value="10" class="form-input">
                             </div>
-
                             <div class="mb-6">
                                 <label for="mines-count" class="block text-sm font-medium text-gray-400 mb-2">Брой мини</label>
                                 <select id="mines-count" class="form-input">
                                     <option value="3">3</option><option value="5" selected>5</option><option value="7">7</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="24">24 (Екстремно)</option>
                                 </select>
                             </div>
-                            
                             <div class="rounded-lg p-4 mb-6 space-y-4 text-center" style="background: rgba(0,0,0,0.3);">
                                 <div>
                                     <p class="text-sm text-gray-400 uppercase tracking-wider">Следващ Множител</p>
@@ -146,7 +132,6 @@
                                     <p id="profit-display" class="text-2xl font-bold" style="color: #27ae60; font-family: 'Orbitron', sans-serif;">0.00</p>
                                 </div>
                             </div>
-
                             <button id="play-btn" class="w-full py-4 text-xl btn-action mt-auto">Играй</button>
                         </div>
 
@@ -194,27 +179,21 @@
         const loginRequiredContainer = document.getElementById('login-required-container');
         let unsubscribeUser;
 
-        // --- Auth state checking ---
         onAuthStateChanged(auth, async (user) => {
-            if (unsubscribeUser) unsubscribeUser(); // Unsubscribe from previous listener if exists
+            if (unsubscribeUser) unsubscribeUser(); 
 
             if (user && user.emailVerified) {
                 gameLayout.classList.remove('hidden');
                 loginRequiredContainer.classList.add('hidden');
-                
                 userDocRef = doc(db, 'users', user.uid);
-                
-                // Pass the user document to the game initialization
                 initializeMinesGame(userDocRef);
                 initializeVideoPlayers(); 
-
             } else {
                 gameLayout.classList.add('hidden');
                 loginRequiredContainer.classList.remove('hidden');
             }
         });
         
-        // ======================= VIDEO PLAYER LOGIC =======================
         function initializeVideoPlayers() {
             const leftVideo = document.getElementById('left-video-player');
             const rightVideo = document.getElementById('right-video-player');
@@ -226,22 +205,22 @@
                 leftVideo.src = randomVideoSrc;
                 rightVideo.src = randomVideoSrc;
                 
-                // Play returns a promise, we can catch errors here
+                // .play() връща Promise. С .catch() можем да видим в конзолата, ако има проблем с autoplay.
                 const playPromiseLeft = leftVideo.play();
                 if (playPromiseLeft !== undefined) {
-                    playPromiseLeft.catch(error => console.error("Autoplay Error (Left Video):", error));
+                    playPromiseLeft.catch(error => console.error("Грешка при пускане на ляво видео (проверете Content-Type на сървъра):", error));
                 }
                 const playPromiseRight = rightVideo.play();
                 if (playPromiseRight !== undefined) {
-                    playPromiseRight.catch(error => console.error("Autoplay Error (Right Video):", error));
+                    playPromiseRight.catch(error => console.error("Грешка при пускане на дясно видео (проверете Content-Type на сървъра):", error));
                 }
             }
             
+            // Когато едното видео свърши, сменяме и двете. Атрибутът 'loop' в HTML-а е резервен вариант, ако този event listener не се задейства.
             leftVideo.addEventListener('ended', playRandomVideo);
             playRandomVideo();
         }
 
-        // ======================= MINES GAME LOGIC =======================
         function initializeMinesGame(docRef) {
             const minesGrid = document.getElementById('mines-grid');
             const playBtn = document.getElementById('play-btn');
@@ -252,27 +231,28 @@
             const nextMultiplierDisplay = document.getElementById('next-multiplier-display');
             
             const TILE_COUNT = 25;
-            let balance = 0; // Will be set by Firestore listener
+            let balance = 0; 
             let isGameActive = false;
             let currentBet = 0;
             let mineLocations = [];
             let openedTilesCount = 0;
 
-            // --- START OF BALANCE FIX ---
-            // This listener is now the SINGLE SOURCE OF TRUTH for the balance
+            // Този слушател е ЕДИНСТВЕНИЯТ източник на истина за баланса.
+            // Когато нещо се промени в базата данни, този код се изпълнява
+            // и актуализира локалната променлива 'balance' и текста на екрана.
             unsubscribeUser = onSnapshot(docRef, (docSnap) => {
                 if (docSnap.exists()) {
-                    balance = docSnap.data().chips; // Always update the local balance
+                    balance = docSnap.data().chips;
                     balanceDisplay.textContent = balance.toFixed(2);
                 } else {
-                    console.error("User document gone! Logging out might be necessary.");
+                    console.error("User document not found!");
                 }
             });
-            // --- END OF BALANCE FIX ---
 
             async function updateBalanceInFirestore(newBalance) {
                 if (!docRef) return;
                 try {
+                    // Изпращаме към базата данни пълното число, без закръгляне.
                     await updateDoc(docRef, { chips: newBalance });
                 } catch (error) {
                     console.error("Error updating balance:", error);
@@ -308,8 +288,7 @@
                 resetBoard(true);
                 currentBet = bet;
                 
-                // --- BALANCE FIX ---
-                // Only request the update. The listener will handle the local state change.
+                // Изпращаме заявка за обновяване. Слушателят onSnapshot ще свърши останалото.
                 updateBalanceInFirestore(balance - currentBet);
 
                 isGameActive = true;
@@ -348,7 +327,8 @@
                     const currentProfit = currentBet * calculateMultiplier() - currentBet;
                     profitDisplay.textContent = currentProfit.toFixed(2);
                     
-                    playBtn.innerHTML = `Кеш аут <span class="text-sm block font-normal">${(currentBet + currentProfit).toFixed(2)}</span>`;
+                    const totalCashout = currentBet + currentProfit;
+                    playBtn.innerHTML = `Кеш аут <span class="text-sm block font-normal">${totalCashout.toFixed(2)}</span>`;
                     updateNextMultiplierDisplay();
 
                     const safeTilesCount = TILE_COUNT - parseInt(minesCountSelect.value);
@@ -359,12 +339,7 @@
             function cashOut() {
                 if (!isGameActive || openedTilesCount === 0) return;
                 const winnings = currentBet * calculateMultiplier();
-
-                // --- BALANCE FIX ---
-                // Read the CURRENT balance (which was updated by the listener)
-                // and request the addition. The listener will update the final value.
                 updateBalanceInFirestore(balance + winnings); 
-
                 endGame(true);
             }
 
@@ -408,8 +383,7 @@
                 
                 const totalCombinations = combinations(TILE_COUNT, tilesToOpen);
                 const safeCombinations = combinations(safeTilesCount, tilesToOpen);
-                const multiplier = 0.99 * (totalCombinations / safeCombinations);
-                return multiplier;
+                return 0.99 * (totalCombinations / safeCombinations);
             }
 
             function updateNextMultiplierDisplay() {
@@ -428,3 +402,4 @@
     </script>
 </body>
 </html>
+
