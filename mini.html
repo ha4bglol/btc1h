@@ -8,207 +8,278 @@
     <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Google Fonts -->
+    <!-- Google Fonts from index.html -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
     
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
+    <!-- START OF STYLE CHANGE (Copied and adapted from index.html) -->
     <style>
-        /* Custom styles for the game */
+        :root {
+            --neon-pink: #f9009a;
+            --neon-cyan: #00f9f9;
+            --neon-purple: #9d00f9;
+            --neon-red: #ff1b1b;
+            --dark-bg: #10081c;
+        }
+
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #1a1a2e;
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--dark-bg);
+            background-image: 
+                radial-gradient(circle at 1% 1%, rgba(157, 0, 249, 0.3), transparent 30%),
+                radial-gradient(circle at 99% 99%, rgba(0, 249, 249, 0.2), transparent 30%);
             color: #e0e0e0;
-        }
-        .gradient-text {
-            background: linear-gradient(90deg, #f7b733, #fc4a1a);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .btn-primary {
-            background: linear-gradient(90deg, #f7b733, #fc4a1a);
-            transition: all 0.2s ease-out;
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(247, 183, 51, 0.2);
-        }
-        .btn-primary:active {
-            transform: translateY(0) scale(0.98);
-            box-shadow: none;
-        }
-        .btn-primary:disabled {
-            background: #4a4a6a;
-            cursor: not-allowed;
-            transform: translateY(0);
-            box-shadow: none;
+            overflow-x: hidden;
         }
         
+        .gradient-text {
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+
+        /* --- Buttons --- */
+        .btn-action {
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            background: linear-gradient(90deg, var(--neon-pink), var(--neon-purple));
+            color: white;
+            box-shadow: 0 0 15px var(--neon-pink);
+            border: none;
+        }
+        .btn-action:hover:not(:disabled) {
+            box-shadow: 0 0 25px var(--neon-pink), 0 0 40px var(--neon-purple);
+            transform: translateY(-2px) scale(1.05);
+        }
+        .btn-action:disabled {
+            background: #4a4a6a;
+            color: #8f8f8f;
+            cursor: not-allowed;
+            opacity: 0.7;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* --- Forms --- */
+        .form-input { 
+            background: rgba(0, 0, 0, 0.2); 
+            border: 1px solid rgba(255,255,255,0.2); 
+            color: #fff; border-radius: 12px; 
+            padding: 0.8rem 1rem; 
+            width: 100%; 
+            transition: all 0.3s ease;
+        }
+        .form-input:focus { 
+            outline: none; 
+            border-color: var(--neon-cyan); 
+            background: rgba(0, 0, 0, 0.3); 
+            box-shadow: 0 0 15px rgba(0, 249, 249, 0.2); 
+        }
+
         /* Styles for Mines Game */
         .mines-tile {
-            background-color: #2c2c44;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.15);
             transition: all 0.15s ease;
             aspect-ratio: 1 / 1;
         }
         .mines-tile:not(:disabled):hover {
-            background-color: #3a3a5a;
+            background: rgba(0,0,0,0.5);
+            border-color: var(--neon-cyan);
             transform: scale(1.05);
         }
         .mines-tile.safe {
-            background-color: #27ae60;
-            color: white;
+            background: var(--neon-cyan);
+            color: var(--dark-bg);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 15px var(--neon-cyan), inset 0 0 10px rgba(255,255,255,0.5);
             transform: scale(1.05);
             font-size: 1.5rem;
         }
         .mines-tile.mine {
-            background-color: #c0392b;
+            background: var(--neon-pink);
             color: white;
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 15px var(--neon-pink), inset 0 0 10px rgba(255,255,255,0.5);
             transform: scale(1.05);
             font-size: 1.5rem;
         }
         .mines-tile:disabled {
             cursor: not-allowed;
-            opacity: 0.9;
         }
-        input[type="number"] {
-             -moz-appearance: textfield;
+        input[type="number"] { -moz-appearance: textfield; }
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+        /* Video container styles */
+        .video-container {
+            border: 2px solid;
+            border-image-slice: 1;
+            border-image-source: linear-gradient(to bottom, var(--neon-cyan), var(--neon-pink));
+            box-shadow: 0 0 20px rgba(0, 249, 249, 0.3), 0 0 20px rgba(249, 0, 154, 0.3);
+            overflow: hidden;
+            border-radius: 1rem;
         }
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
+
     </style>
+    <!-- END OF STYLE CHANGE -->
 </head>
 <body class="antialiased">
 
-    <!-- Simple Header -->
-    <header class="bg-gray-900 shadow-lg">
-        <nav class="container mx-auto px-6 py-4 flex justify-center md:justify-start">
-            <!-- START OF CHANGE -->
-            <a href="index.html" class="text-2xl font-bold text-gray-300 hover:text-yellow-400 transition">
-                <i class="fas fa-arrow-left mr-2"></i> Обратно към лобито
+    <!-- Header styled like index.html -->
+    <header class="sticky top-0 z-40 shadow-lg" style="background: rgba(16, 8, 28, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+        <nav class="container mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-bold gradient-text flex-shrink-0" style="font-family: 'Orbitron', sans-serif;">NIVRA</a>
+            <a href="index.html" class="text-gray-300 hover:text-cyan-400 transition text-lg font-semibold flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i>
+                <span class="hidden sm:inline">Обратно към лобито</span>
             </a>
-            <!-- END OF CHANGE -->
         </nav>
     </header>
 
     <main class="min-h-[calc(100vh-160px)] flex items-center justify-center py-12 px-4">
-        <!-- Mines Game Section - Hidden by default -->
-        <section id="mines-game-container" class="w-full max-w-5xl hidden">
-            <div class="bg-gray-900 rounded-2xl shadow-2xl p-6 md:p-8 flex flex-col md:flex-row gap-8">
-                
-                <!-- Left Panel - Controls -->
-                <div class="w-full md:w-1/3 lg:w-1/4 bg-gray-800 p-6 rounded-xl flex flex-col">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-2xl font-bold">Мини</h3>
-                        <div class="text-lg font-semibold">
-                            <i class="fas fa-wallet text-yellow-400"></i>
-                            <span id="balance-display">0.00</span>
-                        </div>
-                    </div>
-
-                    <!-- Bet Amount -->
-                    <div class="mb-4">
-                        <label for="bet-amount" class="block text-sm font-medium text-gray-400 mb-1">Залог</label>
-                        <input type="number" id="bet-amount" value="10" class="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all">
-                    </div>
-
-                    <!-- Number of Mines -->
-                    <div class="mb-6">
-                         <label for="mines-count" class="block text-sm font-medium text-gray-400 mb-1">Брой мини</label>
-                        <select id="mines-count" class="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500">
-                            <option value="3">3</option>
-                            <option value="5" selected>5</option>
-                            <option value="7">7</option>
-                            <option value="10">10</option>
-                            <option value="15">15</option>
-                            <option value="20">20</option>
-                            <option value="24">24 (Екстремно)</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Game Info -->
-                    <div class="bg-gray-700 rounded-lg p-4 mb-6 space-y-3 text-center">
-                        <div>
-                            <p class="text-sm text-gray-400">Следващ Множител</p>
-                            <p id="next-multiplier-display" class="text-2xl font-bold text-yellow-400">1.24x</p>
-                        </div>
-                         <div>
-                            <p class="text-sm text-gray-400">Обща Печалба</p>
-                            <p id="profit-display" class="text-2xl font-bold text-green-400">0.00</p>
-                        </div>
-                    </div>
-
-                    <!-- Action Button -->
-                    <button id="play-btn" class="w-full py-4 rounded-lg text-black font-bold text-xl btn-primary mt-auto">
-                        Играй
-                    </button>
-                </div>
-
-                <!-- Right Panel - Game Board -->
-                <div class="w-full md:w-2/3 lg:w-3/4 flex items-center justify-center relative">
-                    <div id="mines-grid" class="grid grid-cols-5 gap-2 md:gap-3 w-full max-w-lg">
-                        <!-- Tiles will be generated by JS -->
-                    </div>
-                </div>
-            </div>
-        </section>
-
+        
         <!-- Login Required Message - Hidden by default -->
         <section id="login-required-container" class="w-full max-w-2xl hidden">
-            <div class="bg-gray-900 rounded-2xl shadow-2xl p-8 text-center flex flex-col items-center gap-6">
-                <i class="fas fa-lock text-7xl text-yellow-400"></i>
-                <h2 class="text-4xl font-bold gradient-text">Достъпът е ограничен</h2>
+            <div class="p-8 text-center flex flex-col items-center gap-6" style="background: linear-gradient(145deg, #1c102f, #10081c); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; box-shadow: 0 0 50px rgba(0,0,0,0.5);">
+                <i class="fas fa-lock text-7xl text-cyan-400"></i>
+                <h2 class="text-4xl font-bold gradient-text" style="font-family: 'Orbitron', sans-serif;">Достъпът е ограничен</h2>
                 <p class="text-gray-300 text-lg max-w-md">
                     Трябва да сте влезли в профила си и да имате потвърден имейл, за да играете Мини.
                 </p>
-                <a href="index.html" class="mt-4 px-8 py-4 rounded-lg text-black font-bold text-xl btn-primary inline-block">
+                <a href="index.html" class="mt-4 px-8 py-3 rounded-full text-xl btn-action inline-block">
                     Към лобито / Вход
                 </a>
             </div>
         </section>
+
+        <!-- Main Game Layout with Videos -->
+        <div id="game-and-videos-layout" class="container mx-auto hidden">
+             <div class="flex flex-row items-stretch justify-center gap-4 lg:gap-8">
+                
+                <!-- Left Video Player (visible on large screens) -->
+                <div class="hidden lg:block w-1/5 video-container">
+                    <video id="left-video-player" autoplay muted playsinline></video>
+                </div>
+
+                <!-- Mines Game Section (The original container) -->
+                <section id="mines-game-container" class="w-full max-w-5xl">
+                    <div class="flex flex-col md:flex-row gap-8 p-6 md:p-8 rounded-2xl" style="background: rgba(16, 8, 28, 0.7); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(5px);">
+                        
+                        <!-- Left Panel - Controls -->
+                        <div class="w-full md:w-1/3 lg:w-1/4 p-6 rounded-xl flex flex-col" style="background: rgba(16, 8, 28, 0.9); border: 1px solid rgba(255,255,255,0.1);">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-3xl font-bold" style="font-family: 'Orbitron', sans-serif;">Мини</h3>
+                                <div class="text-lg font-semibold flex items-center gap-2 text-cyan-400">
+                                    <i class="fas fa-coins"></i>
+                                    <span id="balance-display" style="font-family: 'Orbitron', sans-serif;">0.00</span>
+                                </div>
+                            </div>
+
+                            <!-- Bet Amount -->
+                            <div class="mb-4">
+                                <label for="bet-amount" class="block text-sm font-medium text-gray-400 mb-2">Залог</label>
+                                <input type="number" id="bet-amount" value="10" class="form-input">
+                            </div>
+
+                            <!-- Number of Mines -->
+                            <div class="mb-6">
+                                <label for="mines-count" class="block text-sm font-medium text-gray-400 mb-2">Брой мини</label>
+                                <select id="mines-count" class="form-input">
+                                    <option value="3">3</option>
+                                    <option value="5" selected>5</option>
+                                    <option value="7">7</option>
+                                    <option value="10">10</option>
+                                    <option value="15">15</option>
+                                    <option value="20">20</option>
+                                    <option value="24">24 (Екстремно)</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Game Info -->
+                            <div class="rounded-lg p-4 mb-6 space-y-4 text-center" style="background: rgba(0,0,0,0.3);">
+                                <div>
+                                    <p class="text-sm text-gray-400 uppercase tracking-wider">Следващ Множител</p>
+                                    <p id="next-multiplier-display" class="text-2xl font-bold text-cyan-400" style="font-family: 'Orbitron', sans-serif;">1.24x</p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-400 uppercase tracking-wider">Обща Печалба</p>
+                                    <p id="profit-display" class="text-2xl font-bold" style="color: #27ae60; font-family: 'Orbitron', sans-serif;">0.00</p>
+                                </div>
+                            </div>
+
+                            <!-- Action Button -->
+                            <button id="play-btn" class="w-full py-4 text-xl btn-action mt-auto">
+                                Играй
+                            </button>
+                        </div>
+
+                        <!-- Right Panel - Game Board -->
+                        <div class="w-full md:w-2/3 lg:w-3/4 flex items-center justify-center relative">
+                            <div id="mines-grid" class="grid grid-cols-5 gap-2 md:gap-3 w-full max-w-lg">
+                                <!-- Tiles will be generated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Right Video Player (visible on large screens) -->
+                <div class="hidden lg:block w-1/5 video-container">
+                    <video id="right-video-player" autoplay muted playsinline></video>
+                </div>
+             </div>
+        </div>
+
     </main>
 
-    <!-- Simple Footer -->
-    <footer class="bg-gray-900 text-gray-500 text-center py-6">
-        <p class="text-xs">Играта е предназначена само за забавление за лица над 18 години. Използват се виртуални кредити без реална стойност.</p>
-        <p class="text-sm mt-2">&copy; 2024 NIVRA. Всички права запазени.</p>
+    <!-- Footer styled like index.html -->
+    <footer class="bg-black/30 text-gray-400 py-6">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-xs text-gray-500">Играта е предназначена само за забавление за лица над 18 години. Използват се виртуални кредити без реална стойност.</p>
+            <p class="text-sm mt-2">&copy; 2024 NIVRA. Всички права запазени.</p>
+        </div>
     </footer>
 
-    <!-- START OF SCRIPT CHANGE -->
     <script type="module">
         // --- FIREBASE SDK IMPORTS ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // --- ВАШИЯТ FIREBASE CONFIG ОБЕКТ ---
+        // --- FIREBASE CONFIG ---
         const firebaseConfig = {
           apiKey: "AIzaSyAatMUa6vFu2AAe3NCWse6j2moiXmXdl0U",
           authDomain: "nivra-casino.firebaseapp.com",
           projectId: "nivra-casino",
-          storageBucket: "nivra-casino.firebasestorage.app",
+          storageBucket: "nivra-casino.appspot.com",
           messagingSenderId: "463242246264",
           appId: "1:463242246264:web:4a6e736e5c8df3109e158d",
           measurementId: "G-2NF3P6H9GM"
         };
 
-        // --- ИНИЦИАЛИЗАЦИЯ НА FIREBASE ---
+        // --- FIREBASE INITIALIZATION ---
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // --- Глобални променливи ---
+        // --- Global variables ---
         let currentUser = null;
         let userDocRef = null;
-        const gameContainer = document.getElementById('mines-game-container');
+        const gameLayout = document.getElementById('game-and-videos-layout');
         const loginRequiredContainer = document.getElementById('login-required-container');
 
-        // --- Функция за обновяване на баланса в Firestore ---
+        // --- Balance update function ---
         async function updateBalanceInFirestore(newBalance) {
             if (!userDocRef) return;
             try {
@@ -218,13 +289,13 @@
             }
         }
         
-        // --- Проверка на състоянието на аутентикация ---
+        // --- Auth state checking ---
         let isGameInitialized = false;
         let updateExternalBalanceChange = null;
 
         onAuthStateChanged(auth, async (user) => {
             if (user && user.emailVerified) {
-                gameContainer.classList.remove('hidden');
+                gameLayout.classList.remove('hidden');
                 loginRequiredContainer.classList.add('hidden');
                 
                 currentUser = user;
@@ -237,31 +308,61 @@
                         if (!isGameInitialized) {
                             updateExternalBalanceChange = initializeMinesGame(newBalance);
                             isGameInitialized = true;
+                            initializeVideoPlayers(); // Start videos when game is shown
                         } else if (updateExternalBalanceChange) {
                             updateExternalBalanceChange(newBalance);
                         }
                     } else {
                         console.error("Не е намерен документ за потребителя!");
                         loginRequiredContainer.querySelector('p').textContent = "Възникна грешка с профила ви.";
-                        gameContainer.classList.add('hidden');
+                        gameLayout.classList.add('hidden');
                         loginRequiredContainer.classList.remove('hidden');
                     }
                 }, (error) => {
                     console.error("Грешка при зареждане на потребителски данни:", error);
                     loginRequiredContainer.querySelector('p').textContent = "Не можахме да заредим данните ви.";
-                    gameContainer.classList.add('hidden');
+                    gameLayout.classList.add('hidden');
                     loginRequiredContainer.classList.remove('hidden');
                 });
             } else {
-                gameContainer.classList.add('hidden');
+                gameLayout.classList.add('hidden');
                 loginRequiredContainer.classList.remove('hidden');
             }
         });
 
+        // ======================= VIDEO PLAYER LOGIC =======================
+        function initializeVideoPlayers() {
+            const leftVideo = document.getElementById('left-video-player');
+            const rightVideo = document.getElementById('right-video-player');
+            
+            // START OF CHANGE
+            // Generate video filenames from 1 to 8
+            const videoFiles = Array.from({ length: 8 }, (_, i) => `kote${i + 1}_v1.webm`);
+            // END OF CHANGE
+            
+            function playRandomVideo() {
+                // Select a random video source
+                const randomVideoSrc = `videos/${videoFiles[Math.floor(Math.random() * videoFiles.length)]}`;
+                
+                // Set the source for both players
+                leftVideo.src = randomVideoSrc;
+                rightVideo.src = randomVideoSrc;
 
-        // --- Логиката на играта, обвита във функция ---
+                // Play the videos
+                leftVideo.play().catch(e => console.error("Video autoplay error:", e));
+                rightVideo.play().catch(e => console.error("Video autoplay error:", e));
+            }
+            
+            // When a video ends, play a new random one
+            leftVideo.addEventListener('ended', playRandomVideo);
+            
+            // Start the first video
+            playRandomVideo();
+        }
+
+        // --- Game logic wrapped in a function ---
         function initializeMinesGame(initialBalance) {
-            // ======================= MINES GAME LOGIC =======================
+            // ======================= MINES GAME LOGIC (Unchanged from original) =======================
             const minesGrid = document.getElementById('mines-grid');
             const playBtn = document.getElementById('play-btn');
             const betAmountInput = document.getElementById('bet-amount');
@@ -271,7 +372,7 @@
             const nextMultiplierDisplay = document.getElementById('next-multiplier-display');
             
             const TILE_COUNT = 25;
-            let balance = initialBalance; // ПРОМЯНА: Използваме подадения баланс
+            let balance = initialBalance;
             let isGameActive = false;
             let currentBet = 0;
             let mineLocations = [];
@@ -289,7 +390,7 @@
                 }
                 playBtn.addEventListener('click', toggleGameState);
                 minesCountSelect.addEventListener('change', updateNextMultiplierDisplay);
-                updateBalanceDisplay(); // ПРОМЯНА: Показваме началния баланс
+                updateBalanceDisplay();
                 updateNextMultiplierDisplay();
             }
 
@@ -313,7 +414,7 @@
                 currentBet = bet;
                 balance -= currentBet;
                 updateBalanceDisplay();
-                updateBalanceInFirestore(balance); // ПРОМЯНА: Обновяваме в DB
+                updateBalanceInFirestore(balance);
 
                 isGameActive = true;
                 openedTilesCount = 0;
@@ -366,7 +467,7 @@
                 if (!isGameActive || openedTilesCount === 0) return;
                 const winnings = currentBet * calculateMultiplier();
                 balance += winnings;
-                updateBalanceInFirestore(balance); // ПРОМЯНА: Обновяваме в DB
+                updateBalanceInFirestore(balance);
                 endGame(true);
             }
 
@@ -447,7 +548,6 @@
 
             initGame();
 
-            // ПРОМЯНА: Връщаме функция за външно обновяване на баланса
             return function(newBalance) {
                 if (!isGameActive) {
                     balance = newBalance;
@@ -458,7 +558,5 @@
             };
         }
     </script>
-    <!-- END OF SCRIPT CHANGE -->
 </body>
-
 </html>
