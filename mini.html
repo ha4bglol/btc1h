@@ -174,7 +174,7 @@
           projectId: "nivra-casino",
           storageBucket: "nivra-casino.appspot.com",
           messagingSenderId: "463242246264",
-          appId: "1:463242246264:web:4a6e736e5c8df3109e158d",
+          appId: "1:463242246264:web:4a6e36e5c8df3109e158d",
           measurementId: "G-2NF3P6H9GM"
         };
 
@@ -186,63 +186,79 @@
         const loginRequiredContainer = document.getElementById('login-required-container');
         let unsubscribeUserListener;
 
-        // --- ЛОГИКА ЗА ВИДЕАТА С ИЗРИЧНО ИЗБРОЕНИ ФАЙЛОВЕ ---
+        // --- НОВА, ОПРОСТЕНА И СТАБИЛНА ЛОГИКА ЗА СИНХРОННИ ВИДЕА ---
         function initializeVideoPlayers() {
-            // КОНКРЕТЕН СПИСЪК С ВИДЕО ФАЙЛОВЕ, КАКТО ПОИСКА
+            // 1. Списък с имената на файловете
             const videoFiles = [
-                "kote1_v1.webm",
-                "kote2_v1.webm",
-                "kote3_v1.webm",
-                "kote4_v1.webm",
-                "kote5_v1.webm",
-                "kote6_v1.webm",
-                "kote7_v1.webm",
-                "kote8_v1.webm"
+                "kote1_v1.webm", "kote2_v1.webm", "kote3_v1.webm", "kote4_v1.webm",
+                "kote5_v1.webm", "kote6_v1.webm", "kote7_v1.webm", "kote8_v1.webm"
             ];
+            
+            // 2. Взимаме всички плейъри
+            const left1 = document.getElementById('left-video-1');
+            const left2 = document.getElementById('left-video-2');
+            const right1 = document.getElementById('right-video-1');
+            const right2 = document.getElementById('right-video-2');
 
-            function setupSeamlessLoop(video1, video2) {
-                video1.style.opacity = 0;
-                video2.style.opacity = 0;
+            // 3. Групираме ги за лесно управление
+            let activePlayers = [left1, right1];
+            let nextPlayers = [left2, right2];
+            
+            // 4. Скриваме ги всички в началото, за да няма премигване
+            [...activePlayers, ...nextPlayers].forEach(v => v.style.opacity = 0);
 
-                let activeVideo = video1;
-                let nextVideo = video2;
+            const getRandomVideoSrc = () => videoFiles[Math.floor(Math.random() * videoFiles.length)];
 
-                const getRandomVideoSrc = () => videoFiles[Math.floor(Math.random() * videoFiles.length)];
+            // 5. Зареждаме едно и също видео на активните плейъри
+            const initialSrc = getRandomVideoSrc();
+            activePlayers.forEach(v => { v.src = initialSrc; });
+            
+            // 6. Зареждаме едно и също СЛЕДВАЩО видео на чакащите
+            let nextSrc = getRandomVideoSrc();
+            nextPlayers.forEach(v => { v.src = nextSrc; });
+            
+            // 7. Показваме активните плейъри, чак когато са готови
+            activePlayers[0].addEventListener('canplay', () => {
+                activePlayers.forEach(v => v.style.opacity = 1);
+            }, { once: true });
 
-                activeVideo.src = getRandomVideoSrc();
-                nextVideo.src = getRandomVideoSrc();
-
-                activeVideo.addEventListener('canplay', () => {
-                    activeVideo.style.opacity = 1;
-                }, { once: true });
-
-                const handleTimeUpdate = () => {
-                    if (activeVideo.duration && activeVideo.currentTime > activeVideo.duration - 0.5) {
-                        nextVideo.play().catch(e => console.error("Video play error:", e));
-                        activeVideo.style.opacity = 0;
-                        nextVideo.style.opacity = 1;
-                        
-                        const oldActive = activeVideo;
-                        activeVideo = nextVideo;
-                        nextVideo = oldActive;
-                        
-                        nextVideo.currentTime = 0;
-                        nextVideo.src = getRandomVideoSrc();
-                    }
-                };
+            // 8. Основна функция за смяна - тя прави всичко
+            function switchVideos() {
+                // Пускаме следващите плейъри синхронно
+                nextPlayers.forEach(p => p.play().catch(e => console.error("Video play failed", e)));
                 
-                video1.addEventListener('timeupdate', handleTimeUpdate);
-                video2.addEventListener('timeupdate', handleTimeUpdate);
-            }
+                // Сменяме видимостта
+                activePlayers.forEach(p => p.style.opacity = 0);
+                nextPlayers.forEach(p => p.style.opacity = 1);
 
-            setupSeamlessLoop(
-                document.getElementById('left-video-1'), 
-                document.getElementById('left-video-2')
-            );
-            setupSeamlessLoop(
-                document.getElementById('right-video-1'),
-                document.getElementById('right-video-2')
-            );
+                // Разменяме ролите им
+                const temp = activePlayers;
+                activePlayers = nextPlayers;
+                nextPlayers = temp;
+
+                // Зареждаме ново произволно видео в "старите" плейъри, които вече са скрити
+                nextSrc = getRandomVideoSrc();
+                nextPlayers.forEach(p => {
+                    p.currentTime = 0;
+                    p.src = nextSrc;
+                });
+            }
+            
+            // 9. Създаваме един единствен "часовник", който следи водещото видео
+            function checkTimeLoop() {
+                const masterVideo = activePlayers[0]; // Винаги следим първото ляво видео от активната група
+                
+                // Проверяваме дали е време за смяна
+                if (masterVideo.duration && masterVideo.currentTime > masterVideo.duration - 0.4) {
+                    switchVideos();
+                }
+                
+                // Продължаваме цикъла
+                requestAnimationFrame(checkTimeLoop);
+            }
+            
+            // 10. Стартираме цикъла
+            checkTimeLoop();
         }
         
         initializeVideoPlayers();
@@ -260,7 +276,6 @@
             }
         });
         
-        // --- ЛОГИКАТА НА ИГРАТА (БЕЗ ПРОМЯНА) ---
         function initializeMinesGame(userDocRef) {
             const minesGrid = document.getElementById('mines-grid');
             const playBtn = document.getElementById('play-btn');
@@ -448,3 +463,4 @@
     </script>
 </body>
 </html>
+
