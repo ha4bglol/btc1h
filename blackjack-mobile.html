@@ -5,252 +5,278 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NIVRA - Блекджек</title>
     
-    <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome for icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #1a1a2e; color: #e0e0e0; }
-        .gradient-text { background: linear-gradient(90deg, #f7b733, #fc4a1a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .btn-primary { background: linear-gradient(90deg, #f7b733, #fc4a1a); transition: all 0.2s ease-out; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(247, 183, 51, 0.2); }
-        .btn-primary:active { transform: translateY(0) scale(0.98); box-shadow: none; }
-        .btn-primary:disabled { background: #4a4a6a; cursor: not-allowed; transform: translateY(0); box-shadow: none; }
-        .btn-secondary { background-color: #4a4a6a; transition: all 0.2s ease-out; }
-        .btn-secondary:hover:not(:disabled) { background-color: #5a5a7a; transform: translateY(-2px); }
-        .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
-        .game-board { background-color: #064e3b; background-image: radial-gradient(ellipse at center, #108a44 0%, #064e3b 80%); border: 1px solid #f7b733; position: relative; overflow: hidden; }
+        :root {
+            --neon-pink: #f9009a;
+            --neon-cyan: #00f9f9;
+            --neon-purple: #9d00f9;
+            --neon-green: #39ff14;
+            --dark-bg: #10081c;
+        }
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--dark-bg);
+            background-image: 
+                radial-gradient(circle at 1% 1%, rgba(157, 0, 249, 0.3), transparent 30%),
+                radial-gradient(circle at 99% 99%, rgba(0, 249, 249, 0.2), transparent 30%);
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .btn-action {
+            padding: 0.75rem 1.5rem; border-radius: 9999px; font-weight: 700; font-family: 'Orbitron', sans-serif; text-transform: uppercase; transition: all 0.3s ease;
+            background: linear-gradient(90deg, var(--neon-pink), var(--neon-purple)); color: white; box-shadow: 0 0 15px var(--neon-pink); border: none;
+        }
+        .btn-action:hover:not(:disabled) {
+            box-shadow: 0 0 25px var(--neon-pink), 0 0 40px var(--neon-purple); transform: translateY(-2px) scale(1.05);
+        }
+        .btn-action:disabled {
+            background: #4a4a6a; color: #8f8f8f; cursor: not-allowed; opacity: 0.7; transform: none; box-shadow: none;
+        }
+        .btn-secondary {
+            padding: 0.75rem 1.5rem; border-radius: 9999px; font-weight: 700; font-family: 'Orbitron', sans-serif; text-transform: uppercase; transition: all 0.3s ease;
+            background: transparent; color: var(--neon-cyan); box-shadow: 0 0 15px var(--neon-cyan); border: 2px solid var(--neon-cyan);
+        }
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--neon-cyan); color: var(--dark-bg); transform: translateY(-2px) scale(1.05);
+        }
+        .btn-secondary:disabled {
+            background: transparent; border-color: #4a4a6a; color: #8f8f8f; cursor: not-allowed; opacity: 0.5; transform: none; box-shadow: none;
+        }
+        .form-input { 
+            background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255,255,255,0.2); color: #fff; border-radius: 12px; padding: 0.8rem 1rem; width: 100%; transition: all 0.3s ease;
+        }
+        .form-input:focus { 
+            outline: none; border-color: var(--neon-cyan); background: rgba(0, 0, 0, 0.3); box-shadow: 0 0 15px rgba(0, 249, 249, 0.2); 
+        }
+        .video-container {
+            border: 2px solid; border-image-slice: 1; border-image-source: linear-gradient(to bottom, var(--neon-cyan), var(--neon-pink));
+            box-shadow: 0 0 20px rgba(0, 249, 249, 0.3), 0 0 20px rgba(249, 0, 154, 0.3);
+            overflow: hidden; border-radius: 1rem; position: relative;
+        }
+        .video-container .video-player {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity 0.5s ease-in-out;
+        }
+        .game-board {
+            background-color: rgba(6, 78, 59, 0.2);
+            background-image: radial-gradient(ellipse at center, rgba(16, 138, 68, 0.3) 0%, transparent 70%);
+            border: 1px solid var(--neon-green);
+            box-shadow: 0 0 30px rgba(57, 255, 20, 0.2);
+            position: relative; overflow: hidden; z-index: 1;
+        }
         .game-board::before { 
-            content: 'NIVRA'; 
-            position: absolute; 
-            top: 50%; 
-            left: 50%; 
-            transform: translate(-50%, -50%); 
-            font-weight: 700; 
-            color: rgba(255, 255, 255, 0.05); 
-            pointer-events: none; 
-            z-index: 0;
-            /* START OF CHANGE: Responsive font size for watermark */
-            font-size: 6rem;
+            content: 'NIVRA'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: 'Orbitron', sans-serif;
+            font-size: clamp(6rem, 20vw, 10rem); font-weight: 900; color: rgba(57, 255, 20, 0.05); pointer-events: none; z-index: -1; 
         }
-        @media (min-width: 640px) {
-            .game-board::before { font-size: 9rem; }
+        .card {
+            width: 110px; height: 160px;
+            background: rgba(16, 8, 28, 0.7); backdrop-filter: blur(5px);
+            border: 1px solid var(--neon-purple);
+            box-shadow: 0 0 10px var(--neon-purple), inset 0 0 5px rgba(157, 0, 249, 0.5);
+            color: #e0e0e0; border-radius: 10px; padding: 10px; 
+            display: flex; flex-direction: column; justify-content: space-between; font-weight: 600; position: relative;
+            transform: scale(0); animation: deal-card 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
-        @media (min-width: 1024px) {
-            .game-board::before { font-size: 12rem; }
-        }
-        /* END OF CHANGE */
-
-        /* --- START OF CHANGE: Card styles are now mostly handled by Tailwind classes in JS. --- */
-        /* Only animation and base card structure remains */
-        .card { 
-            position: relative; 
-            transform: scale(0); 
-            animation-name: deal-card; 
-            animation-duration: 0.5s; 
-            animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            animation-fill-mode: forwards; 
-        }
-        @keyframes deal-card { 
-            from { opacity: 0; transform: translateY(60px) rotateX(-30deg) rotateZ(15deg) scale(0.7); } 
-            to { opacity: 1; transform: translateY(0) rotateX(0) rotateZ(0) scale(1); } 
-        }
-        .card.red { color: #c0392b; }
+        @keyframes deal-card { from { opacity: 0; transform: translateY(60px) rotateX(-30deg) rotateZ(15deg) scale(0.7); } to { opacity: 1; transform: translateY(0) rotateX(0) rotateZ(0) scale(1); } }
+        .card.red .card-suit, .card.red .card-rank { color: var(--neon-pink); text-shadow: 0 0 8px var(--neon-pink); }
+        .card.black .card-suit, .card.black .card-rank { color: var(--neon-cyan); text-shadow: 0 0 8px var(--neon-cyan); }
+        .card-rank { font-size: 1.75rem; font-weight: 700; font-family: 'Orbitron', sans-serif; }
+        .card-suit { font-size: 1.5rem; }
+        .card-suit-center { font-size: 3.5rem; }
         .card .top-left { position: absolute; top: 8px; left: 10px; text-align: center; line-height: 1; }
         .card .bottom-right { position: absolute; bottom: 8px; right: 10px; transform: rotate(180deg); text-align: center; line-height: 1; }
-        .card.facedown { background: linear-gradient(135deg, #fc4a1a, #f7b733); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
-        .card.facedown::before { content: 'NIVRA'; font-family: 'Poppins', sans-serif; font-weight: 700; color: rgba(255, 255, 255, 0.85); transform: rotate(-45deg); text-shadow: 1px 1px 3px rgba(0,0,0,0.5); font-size: 1.25rem; }
-        @media (min-width: 640px) { .card.facedown::before { font-size: 1.5rem; } }
-        @media (min-width: 768px) { .card.facedown::before { font-size: 1.8rem; } }
+        .card.facedown {
+            background: linear-gradient(145deg, var(--dark-bg), #2a144a);
+            border-image-slice: 1; border-image-source: linear-gradient(to bottom right, var(--neon-cyan), var(--neon-pink));
+            display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;
+        }
+        .card.facedown::before {
+            content: 'NIVRA'; font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 1.8rem;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            transform: rotate(-30deg); text-shadow: 0 0 15px var(--neon-purple);
+        }
         .card.facedown > div { display: none; }
-        /* --- END OF CHANGE --- */
-
         input[type="number"] { -moz-appearance: textfield; }
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     </style>
 </head>
 <body class="antialiased">
 
-    <!-- Simple Header -->
-    <header class="bg-gray-900 shadow-lg">
-        <nav class="container mx-auto px-4 sm:px-6 py-4 flex justify-center md:justify-start">
-            <a href="index.html" class="text-xl md:text-2xl font-bold text-gray-300 hover:text-yellow-400 transition">
-                <i class="fas fa-arrow-left mr-2"></i> Обратно към лобито
+    <header class="sticky top-0 z-40 shadow-lg" style="background: rgba(16, 8, 28, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+        <nav class="container mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-bold gradient-text flex-shrink-0" style="font-family: 'Orbitron', sans-serif;">NIVRA</a>
+            <a href="index.html" class="text-gray-300 hover:text-cyan-400 transition text-lg font-semibold flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i>
+                <span class="hidden sm:inline">Обратно към лобито</span>
             </a>
         </nav>
     </header>
 
-    <main class="min-h-[calc(100vh-160px)] flex items-center justify-center py-8 px-2 sm:px-4">
+    <main class="min-h-[calc(100vh-160px)] flex items-center justify-center py-12 px-4">
         
-        <!-- Blackjack Game Section -->
-        <section id="blackjack-game-container" class="w-full max-w-6xl hidden">
-            <!-- START OF CHANGE: Adjusted padding and gaps for responsiveness -->
-            <div class="bg-gray-900 rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8">
-            <!-- END OF CHANGE -->
-                
-                <!-- Left Panel - Controls -->
-                <div class="w-full md:w-1/3 lg:w-1/4 bg-gray-800 p-4 sm:p-6 rounded-xl flex flex-col z-10">
-                    <div class="flex justify-between items-center mb-4 sm:mb-6">
-                        <!-- START OF CHANGE: Responsive font size -->
-                        <h3 class="text-xl md:text-2xl font-bold">Блекджек</h3>
-                        <!-- END OF CHANGE -->
-                        <div class="text-base sm:text-lg font-semibold">
-                            <i class="fas fa-wallet text-yellow-400"></i>
-                            <span id="balance-display">0.00</span>
-                        </div>
-                    </div>
-                    <div class="mb-4">
-                        <label for="bet-amount" class="block text-sm font-medium text-gray-400 mb-1">Залог</label>
-                        <input type="number" id="bet-amount" value="10" class="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all">
-                    </div>
-                    <!-- START OF CHANGE: Adjusted height and font size -->
-                    <div class="bg-gray-700 rounded-lg p-4 mb-4 sm:mb-6 text-center h-20 sm:h-24 flex items-center justify-center">
-                        <p id="game-status-display" class="text-lg sm:text-xl font-bold text-yellow-400">Направете залог</p>
-                    </div>
-                    <!-- END OF CHANGE -->
-                    <div class="mt-auto space-y-3">
-                        <button id="deal-btn" class="w-full py-3 sm:py-4 rounded-lg text-black font-bold text-lg sm:text-xl btn-primary">
-                            Раздай
-                        </button>
-                        <div id="player-actions" class="grid grid-cols-2 gap-3 hidden">
-                             <button id="hit-btn" class="w-full py-3 rounded-lg text-white font-bold text-base sm:text-lg btn-secondary">Удари</button>
-                             <button id="stand-btn" class="w-full py-3 rounded-lg text-white font-bold text-base sm:text-lg btn-secondary">Пасувай</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Panel - Game Board -->
-                <div class="w-full md:w-2/3 lg:w-3/4 flex items-center justify-center">
-                    <div class="game-board w-full rounded-xl p-3 sm:p-4 md:p-6 flex flex-col justify-between gap-6 md:gap-8 min-h-[400px] sm:min-h-[450px]">
-                        <div>
-                            <div class="flex justify-between items-center mb-2 sm:mb-4">
-                                <h4 class="text-base sm:text-xl font-semibold">Ръка на Дилъра</h4>
-                                <p class="text-xl sm:text-2xl font-bold bg-black bg-opacity-30 px-3 py-1 rounded-md" id="dealer-score"></p>
-                            </div>
-                            <!-- START OF CHANGE: Adjusted gap and min-height for cards -->
-                            <div id="dealer-cards" class="flex flex-wrap justify-center items-center gap-2 sm:gap-4 min-h-[120px] sm:min-h-[150px] md:min-h-[180px]"></div>
-                            <!-- END OF CHANGE -->
-                        </div>
-                        <div>
-                            <!-- START OF CHANGE: Adjusted gap and min-height for cards -->
-                            <div id="player-cards" class="flex flex-wrap justify-center items-center gap-2 sm:gap-4 min-h-[120px] sm:min-h-[150px] md:min-h-[180px] mb-2 sm:mb-4"></div>
-                            <!-- END OF CHANGE -->
-                             <div class="flex justify-between items-center">
-                                <h4 class="text-base sm:text-xl font-semibold">Твоята Ръка</h4>
-                                <p class="text-xl sm:text-2xl font-bold bg-black bg-opacity-30 px-3 py-1 rounded-md" id="player-score"></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Login Required Message -->
         <section id="login-required-container" class="w-full max-w-2xl hidden">
-            <!-- START OF CHANGE: Adjusted padding and responsive text/icon sizes -->
-            <div class="bg-gray-900 rounded-2xl shadow-2xl p-6 sm:p-8 text-center flex flex-col items-center gap-4 sm:gap-6">
-                <i class="fas fa-lock text-5xl md:text-7xl text-yellow-400"></i>
-                <h2 class="text-3xl md:text-4xl font-bold gradient-text">Достъпът е ограничен</h2>
-                <p class="text-gray-300 text-base sm:text-lg max-w-md">
-                    Трябва да сте влезли в профила си и да имате потвърден имейл, за да играете Блекджек.
-                </p>
-                <a href="index.html" class="mt-4 px-6 py-3 sm:px-8 sm:py-4 rounded-lg text-black font-bold text-lg md:text-xl btn-primary inline-block">
-                    Към лобито / Вход
-                </a>
+            <div class="p-8 text-center flex flex-col items-center gap-6" style="background: linear-gradient(145deg, #1c102f, #10081c); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; box-shadow: 0 0 50px rgba(0,0,0,0.5);">
+                <i class="fas fa-lock text-7xl text-cyan-400"></i>
+                <h2 class="text-4xl font-bold gradient-text" style="font-family: 'Orbitron', sans-serif;">Достъпът е ограничен</h2>
+                <p class="text-gray-300 text-lg max-w-md">Трябва да сте влезли в профила си и да имате потвърден имейл, за да играете Блекджек.</p>
+                <a href="index.html" class="mt-4 px-8 py-3 rounded-full text-xl btn-action inline-block">Към лобито / Вход</a>
             </div>
-            <!-- END OF CHANGE -->
         </section>
 
+        <div id="game-and-videos-layout" class="container mx-auto hidden">
+             <div class="flex flex-row items-stretch justify-center gap-4 lg:gap-8">
+                
+                <div class="hidden lg:block w-1/5 video-container">
+                    <video id="left-video-1" class="video-player" autoplay muted playsinline></video>
+                    <video id="left-video-2" class="video-player" muted playsinline></video>
+                </div>
+
+                <section id="blackjack-game-container" class="w-full max-w-6xl">
+                    <div class="flex flex-col md:flex-row gap-8 p-6 md:p-8 rounded-2xl" style="background: rgba(16, 8, 28, 0.7); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(5px);">
+                        
+                        <div class="w-full md:w-1/3 lg:w-1/4 p-6 rounded-xl flex flex-col" style="background: rgba(16, 8, 28, 0.9); border: 1px solid rgba(255,255,255,0.1);">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-3xl font-bold" style="font-family: 'Orbitron', sans-serif;">Блекджек</h3>
+                                <div class="text-lg font-semibold flex items-center gap-2 text-cyan-400">
+                                    <i class="fas fa-coins"></i>
+                                    <span id="balance-display" style="font-family: 'Orbitron', sans-serif;">0.00</span>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label for="bet-amount" class="block text-sm font-medium text-gray-400 mb-2">Залог</label>
+                                <input type="number" id="bet-amount" value="10" class="form-input">
+                            </div>
+                            <div class="rounded-lg p-4 mb-6 text-center h-24 flex items-center justify-center" style="background: rgba(0,0,0,0.3);">
+                                <p id="game-status-display" class="text-xl font-bold text-cyan-400" style="font-family: 'Orbitron', sans-serif;">Направете залог</p>
+                            </div>
+                            <div class="mt-auto space-y-3">
+                                <button id="deal-btn" class="w-full py-4 text-xl btn-action">Раздай</button>
+                                <div id="player-actions" class="grid grid-cols-2 gap-3 hidden">
+                                     <button id="hit-btn" class="w-full py-3 btn-secondary">Удари</button>
+                                     <button id="stand-btn" class="w-full py-3 btn-secondary">Пасувай</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="w-full md:w-2/3 lg:w-3/4 flex items-center justify-center">
+                            <div class="game-board w-full rounded-xl p-4 md:p-6 flex flex-col justify-between gap-8 min-h-[450px]">
+                                <div>
+                                    <div class="flex justify-between items-center mb-4">
+                                        <h4 class="text-xl font-semibold">Ръка на Дилъра</h4>
+                                        <p class="text-2xl font-bold bg-black bg-opacity-40 px-3 py-1 rounded-md" id="dealer-score" style="font-family: 'Orbitron', sans-serif;"></p>
+                                    </div>
+                                    <div id="dealer-cards" class="flex justify-center items-center gap-4 min-h-[180px]"></div>
+                                </div>
+                                <div>
+                                    <div id="player-cards" class="flex justify-center items-center gap-4 min-h-[180px] mb-4"></div>
+                                     <div class="flex justify-between items-center">
+                                        <h4 class="text-xl font-semibold">Твоята Ръка</h4>
+                                        <p class="text-2xl font-bold bg-black bg-opacity-40 px-3 py-1 rounded-md" id="player-score" style="font-family: 'Orbitron', sans-serif;"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="hidden lg:block w-1/5 video-container">
+                    <video id="right-video-1" class="video-player" autoplay muted playsinline></video>
+                    <video id="right-video-2" class="video-player" muted playsinline></video>
+                </div>
+             </div>
+        </div>
     </main>
 
-    <!-- Simple Footer -->
-    <footer class="bg-gray-900 text-gray-500 text-center py-6 px-4">
-        <p class="text-xs">Играта е предназначена само за забавление за лица над 18 години. Използват се виртуални кредити без реална стойност.</p>
-        <p class="text-sm mt-2">&copy; 2024 NIVRA. Всички права запазени.</p>
+    <footer class="bg-black/30 text-gray-400 py-6">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-xs text-gray-500">Играта е предназначена само за забавление за лица над 18 години. Използват се виртуални кредити без реална стойност.</p>
+            <p class="text-sm mt-2">&copy; 2024 NIVRA. Всички права запазени.</p>
+        </div>
     </footer>
 
     <script type="module">
-        // --- FIREBASE SDK IMPORTS ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // --- ВАШИЯТ FIREBASE CONFIG ОБЕКТ ---
         const firebaseConfig = {
           apiKey: "AIzaSyAatMUa6vFu2AAe3NCWse6j2moiXmXdl0U",
           authDomain: "nivra-casino.firebaseapp.com",
           projectId: "nivra-casino",
-          storageBucket: "nivra-casino.firebasestorage.app",
+          storageBucket: "nivra-casino.appspot.com",
           messagingSenderId: "463242246264",
-          appId: "1:463242246264:web:4a6e736e5c8df3109e158d",
+          appId: "1:463242246264:web:4a6e36e5c8df3109e158d",
           measurementId: "G-2NF3P6H9GM"
         };
 
-        // --- ИНИЦИАЛИЗАЦИЯ НА FIREBASE ---
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // --- Глобални променливи за потребителя ---
-        let currentUser = null;
-        let userDocRef = null;
-
-        const gameContainer = document.getElementById('blackjack-game-container');
+        const gameLayout = document.getElementById('game-and-videos-layout');
         const loginRequiredContainer = document.getElementById('login-required-container');
+        const blackjackGameContainer = document.getElementById('blackjack-game-container');
+        let unsubscribeUserListener;
 
-        // --- Функция за обновяване на баланса в Firestore ---
-        async function updateBalanceInFirestore(newBalance) {
-            if (!userDocRef) return;
-            try {
-                await updateDoc(userDocRef, { chips: newBalance });
-            } catch (error) {
-                console.error("Грешка при обновяване на баланса:", error);
+        function initializeVideoPlayers() {
+            const videoFiles = [ "blackgirl1_v1.webm", "blackgirl2_v1.webm", "blackgirl3_v1.webm", "blackgirl4_v1.webm", "blackgirl5_v1.webm", "blackgirl6_v1.webm" ];
+            const left1 = document.getElementById('left-video-1'), left2 = document.getElementById('left-video-2');
+            const right1 = document.getElementById('right-video-1'), right2 = document.getElementById('right-video-2');
+
+            let activePlayers = [left1, right1], nextPlayers = [left2, right2];
+            [...activePlayers, ...nextPlayers].forEach(v => v.style.opacity = 0);
+            const getRandomVideoSrc = () => videoFiles[Math.floor(Math.random() * videoFiles.length)];
+
+            const initialSrc = getRandomVideoSrc();
+            activePlayers.forEach(v => { v.src = initialSrc; });
+            let nextSrc = getRandomVideoSrc();
+            nextPlayers.forEach(v => { v.src = nextSrc; });
+            
+            activePlayers[0].addEventListener('canplay', () => { activePlayers.forEach(v => v.style.opacity = 1); }, { once: true });
+
+            function switchVideos() {
+                nextPlayers.forEach(p => p.play().catch(e => console.error("Video play failed", e)));
+                activePlayers.forEach(p => p.style.opacity = 0);
+                nextPlayers.forEach(p => p.style.opacity = 1);
+                const temp = activePlayers; activePlayers = nextPlayers; nextPlayers = temp;
+                nextSrc = getRandomVideoSrc();
+                nextPlayers.forEach(p => { p.currentTime = 0; p.src = nextSrc; });
             }
+            
+            function checkTimeLoop() {
+                const masterVideo = activePlayers[0];
+                if (masterVideo.duration && masterVideo.currentTime > masterVideo.duration - 0.4) { switchVideos(); }
+                requestAnimationFrame(checkTimeLoop);
+            }
+            checkTimeLoop();
         }
         
-        // --- Проверка на състоянието на аутентикация ---
-        onAuthStateChanged(auth, async (user) => {
-            if (user && user.emailVerified) {
-                gameContainer.classList.remove('hidden');
-                loginRequiredContainer.classList.add('hidden');
-                
-                currentUser = user;
-                userDocRef = doc(db, 'users', user.uid);
+        initializeVideoPlayers();
 
-                try {
-                    const docSnap = await getDoc(userDocRef);
-                    if (docSnap.exists()) {
-                        const initialBalance = docSnap.data().chips;
-                        initializeBlackjackGame(initialBalance);
-                    } else {
-                        console.error("Не е намерен документ за потребителя!");
-                        loginRequiredContainer.querySelector('p').textContent = "Възникна грешка с профила ви. Моля, върнете се в лобито.";
-                        gameContainer.classList.add('hidden');
-                        loginRequiredContainer.classList.remove('hidden');
-                    }
-                } catch (error) {
-                    console.error("Грешка при зареждане на потребителски данни:", error);
-                    loginRequiredContainer.querySelector('p').textContent = "Не можахме да заредим данните ви. Опитайте отново по-късно.";
-                    gameContainer.classList.add('hidden');
-                    loginRequiredContainer.classList.remove('hidden');
-                }
+        onAuthStateChanged(auth, (user) => {
+            if (unsubscribeUserListener) unsubscribeUserListener(); 
+            if (user && user.emailVerified) {
+                gameLayout.classList.remove('hidden');
+                loginRequiredContainer.classList.add('hidden');
+                const userDocRef = doc(db, 'users', user.uid);
+                initializeBlackjackGame(userDocRef);
             } else {
-                gameContainer.classList.add('hidden');
+                gameLayout.classList.add('hidden');
                 loginRequiredContainer.classList.remove('hidden');
             }
         });
-
-        // --- Логиката на играта, обвита във функция ---
-        function initializeBlackjackGame(initialBalance) {
-            // ======================= BLACKJACK GAME LOGIC (UNCHANGED) =======================
-            
+        
+        function initializeBlackjackGame(userDocRef) {
             // DOM Elements
             const balanceDisplay = document.getElementById('balance-display');
             const betAmountInput = document.getElementById('bet-amount');
@@ -265,12 +291,24 @@
             const playerCardsContainer = document.getElementById('player-cards');
             
             // Game State
-            let balance = initialBalance;
+            let currentBalance = 0;
             let deck = [];
             let playerHand = [], dealerHand = [];
             let playerScore = 0, dealerScore = 0;
 
-            // --- Game Setup ---
+            unsubscribeUserListener = onSnapshot(userDocRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    currentBalance = docSnap.data().chips;
+                    balanceDisplay.textContent = currentBalance.toFixed(2);
+                } else { console.error("User document not found!"); }
+            });
+
+            async function updateBalanceInFirestore(newBalance) {
+                if (!userDocRef) return;
+                try { await updateDoc(userDocRef, { chips: newBalance }); }
+                catch (error) { console.error("Error updating balance:", error); }
+            }
+            
             function createDeck() {
                 const suits = ['♥', '♦', '♣', '♠'];
                 const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
@@ -288,84 +326,49 @@
                 return newDeck;
             }
 
-            // --- UI Functions ---
-            function updateBalanceDisplay() {
-                balanceDisplay.textContent = balance.toFixed(2);
-            }
-
-            // --- START OF MAJOR CHANGE: renderCard function now uses Tailwind for responsiveness ---
             function renderCard(card, container, delay, isFaceDown = false) {
                 const cardEl = document.createElement('div');
+                cardEl.classList.add('card');
                 cardEl.style.animationDelay = `${delay}ms`;
 
                 if (isFaceDown) {
-                    // Responsive classes for the facedown card
-                    cardEl.className = 'card facedown w-[80px] h-[112px] sm:w-[90px] sm:h-[126px] md:w-[110px] md:h-[160px] bg-white rounded-lg shadow-lg border border-gray-300';
+                    cardEl.classList.add('facedown');
                 } else {
-                    // A long string of Tailwind classes for a fully responsive card
-                    cardEl.className = `
-                        card 
-                        w-[80px] h-[112px] sm:w-[90px] sm:h-[126px] md:w-[110px] md:h-[160px] 
-                        bg-fuchsia-50 text-gray-800 rounded-lg p-2 
-                        flex flex-col justify-between font-semibold 
-                        shadow-lg border border-gray-300
-                    `;
-                    
-                    // Responsive inner HTML with Tailwind font sizes
                     cardEl.innerHTML = `
-                        <div class="top-left">
-                            <div class="card-rank text-xl sm:text-2xl md:text-3xl font-bold">${card.rank}</div>
-                            <div class="card-suit text-lg sm:text-xl md:text-2xl">${card.suit}</div>
-                        </div>
-                        <div class="card-suit-center flex-grow flex items-center justify-center text-4xl sm:text-5xl md:text-6xl">${card.suit}</div>
-                        <div class="bottom-right">
-                            <div class="card-rank text-xl sm:text-2xl md:text-3xl font-bold">${card.rank}</div>
-                            <div class="card-suit text-lg sm:text-xl md:text-2xl">${card.suit}</div>
-                        </div>
+                        <div class="top-left"><div class="card-rank">${card.rank}</div><div class="card-suit">${card.suit}</div></div>
+                        <div class="card-suit-center flex-grow flex items-center justify-center card-suit">${card.suit}</div>
+                        <div class="bottom-right"><div class="card-rank">${card.rank}</div><div class="card-suit">${card.suit}</div></div>
                     `;
-
-                    if (['♥', '♦'].includes(card.suit)) {
-                        cardEl.classList.add('red');
-                    }
+                    if (['♥', '♦'].includes(card.suit)) cardEl.classList.add('red');
+                    else cardEl.classList.add('black');
                 }
                 container.appendChild(cardEl);
-                return cardEl;
             }
-            // --- END OF MAJOR CHANGE ---
             
+            function calculateScore(hand) {
+                let score = hand.reduce((sum, card) => sum + card.value, 0);
+                let aceCount = hand.filter(card => card.rank === 'A').length;
+                while (score > 21 && aceCount > 0) { score -= 10; aceCount--; }
+                return score;
+            }
+
             function updateScores() {
                 playerScore = calculateScore(playerHand);
                 dealerScore = calculateScore(dealerHand.slice(0, 1)); 
-                
                 playerScoreDisplay.textContent = playerScore;
-                dealerScoreDisplay.textContent = dealerScore > 0 ? `${dealerScore} + ?` : '';
+                dealerScoreDisplay.textContent = dealerHand.length > 1 ? `${dealerScore} + ?` : '';
             }
             
-            function setStatus(message, colorClass = 'text-yellow-400') {
+            function setStatus(message, colorClass = 'text-cyan-400') {
                 gameStatusDisplay.textContent = message;
-                gameStatusDisplay.className = `text-lg sm:text-xl font-bold transition-colors duration-300 ${colorClass}`;
+                gameStatusDisplay.className = `text-xl font-bold transition-colors duration-300 ${colorClass}`;
+                gameStatusDisplay.style.fontFamily = "'Orbitron', sans-serif";
             }
 
             function setUiState(state) {
                 betAmountInput.disabled = (state !== 'pre-game');
                 dealBtn.classList.toggle('hidden', state !== 'pre-game');
                 playerActions.classList.toggle('hidden', state !== 'player-turn');
-            }
-
-            function flashInputBorder(inputElement) {
-                inputElement.classList.add('border-red-500', 'ring-red-500');
-                setTimeout(() => inputElement.classList.remove('border-red-500', 'ring-red-500'), 1000);
-            }
-            
-            // --- Game Logic Functions (UNCHANGED) ---
-            function calculateScore(hand) {
-                let score = hand.reduce((sum, card) => sum + card.value, 0);
-                let aceCount = hand.filter(card => card.rank === 'A').length;
-                while (score > 21 && aceCount > 0) {
-                    score -= 10;
-                    aceCount--;
-                }
-                return score;
             }
 
             function dealCard(hand, container, isFaceDown = false) {
@@ -375,23 +378,15 @@
                 renderCard(card, container, delay, isFaceDown);
             }
 
-            function startGame() {
+            async function startGame() {
                 const bet = parseFloat(betAmountInput.value);
-                if (isNaN(bet) || bet <= 0 || bet > balance) {
-                    flashInputBorder(betAmountInput);
-                    setStatus('Невалиден залог!', 'text-red-400');
-                    return;
+                if (isNaN(bet) || bet <= 0 || bet > currentBalance) {
+                    setStatus('Невалиден залог!', 'text-red-500'); return;
                 }
 
-                balance -= bet;
-                updateBalanceDisplay();
-                updateBalanceInFirestore(balance);
-
-                playerCardsContainer.innerHTML = '';
-                dealerCardsContainer.innerHTML = '';
-                playerHand = [];
-                dealerHand = [];
-                deck = createDeck();
+                await updateBalanceInFirestore(currentBalance - bet);
+                playerCardsContainer.innerHTML = ''; dealerCardsContainer.innerHTML = '';
+                playerHand = []; dealerHand = []; deck = createDeck();
                 
                 setStatus('Раздаване...', 'text-white');
                 setUiState('dealing'); 
@@ -410,15 +405,14 @@
                         setStatus('Твой ред...', 'text-white');
                         setUiState('player-turn');
                     }
-                }, 800);
+                }, 1000);
             }
 
             function playerHit() {
                 dealCard(playerHand, playerCardsContainer);
                 updateScores();
-                
                 if (playerScore > 21) {
-                    setStatus('Бюст!', 'text-red-400');
+                    setStatus('Бюст!', 'text-red-500');
                     endGame(0);
                 }
             }
@@ -430,14 +424,12 @@
             }
 
             function dealerTurn(playerHasBlackjack) {
-                // Reveal the hidden card
                 dealerCardsContainer.children[1].remove();
                 renderCard(dealerHand[1], dealerCardsContainer, 0);
                 
                 const drawLoop = setInterval(() => {
                     let currentDealerScore = calculateScore(dealerHand);
                     dealerScoreDisplay.textContent = currentDealerScore;
-
                     if (currentDealerScore >= 17) {
                         clearInterval(drawLoop);
                         determineWinner(playerHasBlackjack);
@@ -452,50 +444,32 @@
                 const finalDealerScore = calculateScore(dealerHand);
 
                 if (playerHasBlackjack && finalDealerScore !== 21) {
-                    setStatus('Блекджек! 3:2', 'text-green-400');
-                    endGame(2.5);
+                    setStatus('Блекджек! 3:2', 'text-green-400'); endGame(2.5);
                 } else if (finalPlayerScore > 21) {
-                    setStatus('Дилърът печели!', 'text-red-400');
-                    endGame(0);
+                    setStatus('Дилърът печели!', 'text-red-500'); endGame(0);
                 } else if (finalDealerScore > 21 || finalPlayerScore > finalDealerScore) {
-                    setStatus('Ти печелиш!', 'text-green-400');
-                    endGame(2);
+                    setStatus('Ти печелиш!', 'text-green-400'); endGame(2);
                 } else if (finalDealerScore > finalPlayerScore) {
-                    setStatus('Дилърът печели!', 'text-red-400');
-                    endGame(0);
+                    setStatus('Дилърът печели!', 'text-red-500'); endGame(0);
                 } else {
-                    setStatus('Равенство', 'text-gray-400');
-                    endGame(1);
+                    setStatus('Равенство', 'text-gray-400'); endGame(1);
                 }
             }
             
-            function endGame(payoutMultiplier) {
+            async function endGame(payoutMultiplier) {
                 const bet = parseFloat(betAmountInput.value);
                 const winnings = bet * payoutMultiplier;
                 if (winnings > 0) {
-                    balance += winnings;
-                    updateBalanceDisplay();
-                    updateBalanceInFirestore(balance);
+                   await updateBalanceInFirestore(currentBalance + winnings);
                 }
-                // Small delay to let player see the result before enabling deal button
-                setTimeout(() => {
-                    if(calculateScore(playerHand) <= 21) { // Only reset status if not a bust
-                       setStatus('Направете залог', 'text-yellow-400');
-                    }
-                    setUiState('pre-game');
-                }, 1500);
+                setUiState('pre-game');
             }
 
-            // --- Initial Setup ---
-            function init() {
-                updateBalanceDisplay();
-                dealBtn.addEventListener('click', startGame);
-                hitBtn.addEventListener('click', playerHit);
-                standBtn.addEventListener('click', () => playerStand(false));
-            }
-
-            init();
+            dealBtn.addEventListener('click', startGame);
+            hitBtn.addEventListener('click', playerHit);
+            standBtn.addEventListener('click', () => playerStand(false));
         }
     </script>
 </body>
+</html>
 </html>
