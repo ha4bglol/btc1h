@@ -134,14 +134,17 @@
         </section>
 
         <div id="game-and-videos-layout" class="container mx-auto hidden">
-             <div class="flex flex-row items-stretch justify-center gap-4 lg:gap-8">
+             <!-- PC LAYOUT FIX: On large screens, this flex container holds the 3 columns -->
+             <div class="flex flex-col lg:flex-row items-stretch justify-center gap-4 lg:gap-8">
                 
-                <div class="hidden lg:block w-1/5 video-container">
+                <!-- PC LAYOUT FIX: width is set to lg:w-1/5 -->
+                <div class="hidden lg:block lg:w-1/5 video-container">
                     <video id="left-video-1" class="video-player" autoplay muted playsinline></video>
                     <video id="left-video-2" class="video-player" muted playsinline></video>
                 </div>
 
-                <section id="blackjack-game-container" class="w-full max-w-6xl">
+                <!-- PC LAYOUT FIX: width is set to w-full on mobile and lg:w-3/5 on large screens -->
+                <section id="blackjack-game-container" class="w-full lg:w-3/5 max-w-6xl">
                     <div class="flex flex-col md:flex-row gap-8 p-6 md:p-8 rounded-2xl" style="background: rgba(16, 8, 28, 0.7); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(5px);">
                         
                         <div class="w-full md:w-1/3 lg:w-1/4 p-6 rounded-xl flex flex-col" style="background: rgba(16, 8, 28, 0.9); border: 1px solid rgba(255,255,255,0.1);">
@@ -189,7 +192,8 @@
                     </div>
                 </section>
 
-                <div class="hidden lg:block w-1/5 video-container">
+                <!-- PC LAYOUT FIX: width is set to lg:w-1/5 -->
+                <div class="hidden lg:block lg:w-1/5 video-container">
                     <video id="right-video-1" class="video-player" autoplay muted playsinline></video>
                     <video id="right-video-2" class="video-player" muted playsinline></video>
                 </div>
@@ -225,39 +229,71 @@
 
         const gameLayout = document.getElementById('game-and-videos-layout');
         const loginRequiredContainer = document.getElementById('login-required-container');
-        const blackjackGameContainer = document.getElementById('blackjack-game-container');
         let unsubscribeUserListener;
 
         function initializeVideoPlayers() {
+            // Списък с наличните видеа
             const videoFiles = [ "blackgirl1_v1.webm", "blackgirl2_v1.webm", "blackgirl3_v1.webm", "blackgirl4_v1.webm", "blackgirl5_v1.webm", "blackgirl6_v1.webm" ];
+            
+            // Взимаме всички видео плейъри
             const left1 = document.getElementById('left-video-1'), left2 = document.getElementById('left-video-2');
             const right1 = document.getElementById('right-video-1'), right2 = document.getElementById('right-video-2');
 
+            // Групираме ги за лесно управление: "активни" (които се виждат) и "следващи" (които се зареждат скрито)
             let activePlayers = [left1, right1], nextPlayers = [left2, right2];
+            
+            // Скриваме всички в началото, за да няма премигване
             [...activePlayers, ...nextPlayers].forEach(v => v.style.opacity = 0);
+            
+            // Функция, която връща пътя до СЛУЧАЕН видео файл от списъка
             const getRandomVideoSrc = () => videoFiles[Math.floor(Math.random() * videoFiles.length)];
 
+            // 1. Зареждаме едно и също СЛУЧАЙНО видео на активните плейъри
             const initialSrc = getRandomVideoSrc();
             activePlayers.forEach(v => { v.src = initialSrc; });
+
+            // 2. Зареждаме едно и също СЛЕДВАЩО СЛУЧАЙНО видео на чакащите
             let nextSrc = getRandomVideoSrc();
             nextPlayers.forEach(v => { v.src = nextSrc; });
             
+            // Показваме активните плейъри, чак когато са готови за пускане
             activePlayers[0].addEventListener('canplay', () => { activePlayers.forEach(v => v.style.opacity = 1); }, { once: true });
 
+            // Тази функция прави цялата магия
             function switchVideos() {
+                // Пускаме следващите плейъри синхронно
                 nextPlayers.forEach(p => p.play().catch(e => console.error("Video play failed", e)));
+                
+                // Сменяме видимостта с плавен преход
                 activePlayers.forEach(p => p.style.opacity = 0);
                 nextPlayers.forEach(p => p.style.opacity = 1);
-                const temp = activePlayers; activePlayers = nextPlayers; nextPlayers = temp;
+
+                // Разменяме ролите им: "следващите" стават "активни", а "активните" стават "следващи"
+                const temp = activePlayers; 
+                activePlayers = nextPlayers; 
+                nextPlayers = temp;
+
+                // 3. Зареждаме ново СЛУЧАЙНО видео в "старите" плейъри, които вече са скрити и чакат своя ред
                 nextSrc = getRandomVideoSrc();
-                nextPlayers.forEach(p => { p.currentTime = 0; p.src = nextSrc; });
+                nextPlayers.forEach(p => {
+                    p.currentTime = 0;
+                    p.src = nextSrc;
+                });
             }
             
+            // Един единствен цикъл, който следи водещото видео и решава кога да смени
             function checkTimeLoop() {
-                const masterVideo = activePlayers[0];
-                if (masterVideo.duration && masterVideo.currentTime > masterVideo.duration - 0.4) { switchVideos(); }
+                const masterVideo = activePlayers[0]; // Следим само едно от активните видеа
+                
+                // Проверяваме дали е време за смяна (малко преди края)
+                if (masterVideo.duration && masterVideo.currentTime > masterVideo.duration - 0.5) {
+                    switchVideos();
+                }
+                
+                // Продължаваме цикъла с оптималната за браузъра честота
                 requestAnimationFrame(checkTimeLoop);
             }
+
             checkTimeLoop();
         }
         
@@ -372,6 +408,7 @@
             }
 
             function dealCard(hand, container, isFaceDown = false) {
+                if (deck.length === 0) deck = createDeck();
                 const card = deck.pop();
                 hand.push(card);
                 const delay = (hand.length - 1) * 150 + (container === dealerCardsContainer ? 50 : 0);
@@ -427,14 +464,17 @@
                 dealerCardsContainer.children[1].remove();
                 renderCard(dealerHand[1], dealerCardsContainer, 0);
                 
+                let currentDealerScore = calculateScore(dealerHand);
+                dealerScoreDisplay.textContent = currentDealerScore;
+
                 const drawLoop = setInterval(() => {
-                    let currentDealerScore = calculateScore(dealerHand);
-                    dealerScoreDisplay.textContent = currentDealerScore;
                     if (currentDealerScore >= 17) {
                         clearInterval(drawLoop);
                         determineWinner(playerHasBlackjack);
                     } else {
                         dealCard(dealerHand, dealerCardsContainer);
+                        currentDealerScore = calculateScore(dealerHand);
+                        dealerScoreDisplay.textContent = currentDealerScore;
                     }
                 }, 800);
             }
@@ -458,9 +498,13 @@
             
             async function endGame(payoutMultiplier) {
                 const bet = parseFloat(betAmountInput.value);
+                if (isNaN(bet)) return; 
+                
                 const winnings = bet * payoutMultiplier;
                 if (winnings > 0) {
-                   await updateBalanceInFirestore(currentBalance + winnings);
+                   // Балансът се обновява чрез onSnapshot, но тук изпращаме командата за промяна
+                   // Тъй като вече сме извадили залога, трябва да добавим обратно залога + печалбата
+                   await updateBalanceInFirestore(currentBalance - bet + winnings);
                 }
                 setUiState('pre-game');
             }
@@ -472,5 +516,5 @@
     </script>
 </body>
 </html>
-</html>
+
 
