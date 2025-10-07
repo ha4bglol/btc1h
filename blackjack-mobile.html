@@ -134,14 +134,14 @@
         </section>
 
         <div id="game-and-videos-layout" class="container mx-auto hidden">
-             <div class="flex flex-row items-stretch justify-center gap-4 lg:gap-8">
+             <div class="flex flex-col lg:flex-row items-stretch justify-center gap-4 lg:gap-8">
                 
-                <div class="hidden lg:block w-1/5 video-container">
+                <div class="hidden lg:block lg:w-1/5 video-container">
                     <video id="left-video-1" class="video-player" autoplay muted playsinline></video>
                     <video id="left-video-2" class="video-player" muted playsinline></video>
                 </div>
 
-                <section id="blackjack-game-container" class="w-full max-w-6xl">
+                <section id="blackjack-game-container" class="w-full lg:w-3/5 max-w-6xl">
                     <div class="flex flex-col md:flex-row gap-8 p-6 md:p-8 rounded-2xl" style="background: rgba(16, 8, 28, 0.7); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(5px);">
                         
                         <div class="w-full md:w-1/3 lg:w-1/4 p-6 rounded-xl flex flex-col" style="background: rgba(16, 8, 28, 0.9); border: 1px solid rgba(255,255,255,0.1);">
@@ -189,7 +189,7 @@
                     </div>
                 </section>
 
-                <div class="hidden lg:block w-1/5 video-container">
+                <div class="hidden lg:block lg:w-1/5 video-container">
                     <video id="right-video-1" class="video-player" autoplay muted playsinline></video>
                     <video id="right-video-2" class="video-player" muted playsinline></video>
                 </div>
@@ -225,39 +225,58 @@
 
         const gameLayout = document.getElementById('game-and-videos-layout');
         const loginRequiredContainer = document.getElementById('login-required-container');
-        const blackjackGameContainer = document.getElementById('blackjack-game-container');
         let unsubscribeUserListener;
 
         function initializeVideoPlayers() {
             const videoFiles = [ "blackgirl1_v1.webm", "blackgirl2_v1.webm", "blackgirl3_v1.webm", "blackgirl4_v1.webm", "blackgirl5_v1.webm", "blackgirl6_v1.webm" ];
+            let currentVideoIndex = 0;
+
             const left1 = document.getElementById('left-video-1'), left2 = document.getElementById('left-video-2');
             const right1 = document.getElementById('right-video-1'), right2 = document.getElementById('right-video-2');
 
             let activePlayers = [left1, right1], nextPlayers = [left2, right2];
+            
             [...activePlayers, ...nextPlayers].forEach(v => v.style.opacity = 0);
-            const getRandomVideoSrc = () => videoFiles[Math.floor(Math.random() * videoFiles.length)];
+            
+            function getNextSequentialVideoSrc() {
+                const src = videoFiles[currentVideoIndex];
+                currentVideoIndex = (currentVideoIndex + 1) % videoFiles.length;
+                return src;
+            }
 
-            const initialSrc = getRandomVideoSrc();
+            const initialSrc = getNextSequentialVideoSrc();
             activePlayers.forEach(v => { v.src = initialSrc; });
-            let nextSrc = getRandomVideoSrc();
+
+            const nextSrc = getNextSequentialVideoSrc();
             nextPlayers.forEach(v => { v.src = nextSrc; });
             
             activePlayers[0].addEventListener('canplay', () => { activePlayers.forEach(v => v.style.opacity = 1); }, { once: true });
 
             function switchVideos() {
                 nextPlayers.forEach(p => p.play().catch(e => console.error("Video play failed", e)));
+                
                 activePlayers.forEach(p => p.style.opacity = 0);
                 nextPlayers.forEach(p => p.style.opacity = 1);
-                const temp = activePlayers; activePlayers = nextPlayers; nextPlayers = temp;
-                nextSrc = getRandomVideoSrc();
-                nextPlayers.forEach(p => { p.currentTime = 0; p.src = nextSrc; });
+
+                const temp = activePlayers; 
+                activePlayers = nextPlayers; 
+                nextPlayers = temp;
+                
+                const newNextSrc = getNextSequentialVideoSrc(); 
+                nextPlayers.forEach(p => {
+                    p.currentTime = 0;
+                    p.src = newNextSrc;
+                });
             }
             
             function checkTimeLoop() {
                 const masterVideo = activePlayers[0];
-                if (masterVideo.duration && masterVideo.currentTime > masterVideo.duration - 0.4) { switchVideos(); }
+                if (masterVideo.duration && masterVideo.currentTime > masterVideo.duration - 0.5) {
+                    switchVideos();
+                }
                 requestAnimationFrame(checkTimeLoop);
             }
+
             checkTimeLoop();
         }
         
@@ -372,6 +391,7 @@
             }
 
             function dealCard(hand, container, isFaceDown = false) {
+                if (deck.length === 0) deck = createDeck();
                 const card = deck.pop();
                 hand.push(card);
                 const delay = (hand.length - 1) * 150 + (container === dealerCardsContainer ? 50 : 0);
@@ -427,14 +447,17 @@
                 dealerCardsContainer.children[1].remove();
                 renderCard(dealerHand[1], dealerCardsContainer, 0);
                 
+                let currentDealerScore = calculateScore(dealerHand);
+                dealerScoreDisplay.textContent = currentDealerScore;
+
                 const drawLoop = setInterval(() => {
-                    let currentDealerScore = calculateScore(dealerHand);
-                    dealerScoreDisplay.textContent = currentDealerScore;
                     if (currentDealerScore >= 17) {
                         clearInterval(drawLoop);
                         determineWinner(playerHasBlackjack);
                     } else {
                         dealCard(dealerHand, dealerCardsContainer);
+                        currentDealerScore = calculateScore(dealerHand);
+                        dealerScoreDisplay.textContent = currentDealerScore;
                     }
                 }, 800);
             }
@@ -458,8 +481,12 @@
             
             async function endGame(payoutMultiplier) {
                 const bet = parseFloat(betAmountInput.value);
+                if (isNaN(bet)) return; 
+                
                 const winnings = bet * payoutMultiplier;
                 if (winnings > 0) {
+                   // *** FIX: The bet was already subtracted at the start of the game.
+                   // We only need to add the winnings to the current balance.
                    await updateBalanceInFirestore(currentBalance + winnings);
                 }
                 setUiState('pre-game');
@@ -471,5 +498,4 @@
         }
     </script>
 </body>
-</html>
 </html>
