@@ -228,10 +228,7 @@
         let unsubscribeUserListener;
 
         function initializeVideoPlayers() {
-            // Списък с видеата в реда, в който ще се показват
             const videoFiles = [ "blackgirl1_v1.webm", "blackgirl2_v1.webm", "blackgirl3_v1.webm", "blackgirl4_v1.webm", "blackgirl5_v1.webm", "blackgirl6_v1.webm" ];
-            
-            // Променлива, която пази индекса на СЛЕДВАЩОТО видео, което трябва да се зареди
             let currentVideoIndex = 0;
 
             const left1 = document.getElementById('left-video-1'), left2 = document.getElementById('left-video-2');
@@ -241,20 +238,16 @@
             
             [...activePlayers, ...nextPlayers].forEach(v => v.style.opacity = 0);
             
-            // *** ПРОМЯНА: Нова функция за последователен избор ***
-            // Тази функция взима видеото от текущия индекс и увеличава индекса за следващия път.
-            // Използва оператор %, за да се върне на 0, когато стигне края на списъка.
             function getNextSequentialVideoSrc() {
                 const src = videoFiles[currentVideoIndex];
-                currentVideoIndex = (currentVideoIndex + 1) % videoFiles.length; // 0, 1, 2, 3, 4, 5, 0, 1...
+                currentVideoIndex = (currentVideoIndex + 1) % videoFiles.length;
                 return src;
             }
 
-            // Първоначално зареждане
-            const initialSrc = getNextSequentialVideoSrc(); // Взима видео 0, подготвя индекс 1
+            const initialSrc = getNextSequentialVideoSrc();
             activePlayers.forEach(v => { v.src = initialSrc; });
 
-            const nextSrc = getNextSequentialVideoSrc(); // Взима видео 1, подготвя индекс 2
+            const nextSrc = getNextSequentialVideoSrc();
             nextPlayers.forEach(v => { v.src = nextSrc; });
             
             activePlayers[0].addEventListener('canplay', () => { activePlayers.forEach(v => v.style.opacity = 1); }, { once: true });
@@ -268,8 +261,7 @@
                 const temp = activePlayers; 
                 activePlayers = nextPlayers; 
                 nextPlayers = temp;
-
-                // *** ПРОМЯНА: Използваме новата функция, за да заредим следващото видео от поредицата ***
+                
                 const newNextSrc = getNextSequentialVideoSrc(); 
                 nextPlayers.forEach(p => {
                     p.currentTime = 0;
@@ -493,7 +485,9 @@
                 
                 const winnings = bet * payoutMultiplier;
                 if (winnings > 0) {
-                   await updateBalanceInFirestore(currentBalance - bet + winnings);
+                   // *** FIX: The bet was already subtracted at the start of the game.
+                   // We only need to add the winnings to the current balance.
+                   await updateBalanceInFirestore(currentBalance + winnings);
                 }
                 setUiState('pre-game');
             }
