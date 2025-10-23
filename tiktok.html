@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIVRA - Твоят порив, твоята сила</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* --- Общи настройки и Тъмна Тема --- */
+        :root {
+            --primary-color: #f0f0f0;
+            --highlight-color: #00f5d4; /* Ярък тюркоаз */
+            --glow-color-1: #ff00c8; /* Неоново розово */
+            --glow-color-2: #c700ff; /* Неоново лилаво */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(160deg, #10002b, #240046, #000000);
+            color: var(--primary-color);
+            overflow-x: hidden;
+            position: relative; /* Нужно за z-index на водния знак */
+        }
+        
+        /* --- ВОДЕН ЗНАК "NIVRA" НА ФОНА --- */
+        body::before {
+            content: 'NIVRA';
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-20deg);
+            font-size: 25vw;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.03); /* Много ниска прозрачност */
+            z-index: -1; /* Поставя го зад всичко останало */
+            pointer-events: none; /* Прави го неинтерактивен */
+            letter-spacing: 5px;
+        }
+
+        /* --- Структура на съдържанието --- */
+        .container {
+            width: 100%;
+        }
+
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        section#hero {
+             justify-content: space-around; /* Разпределя елементите по-добре */
+        }
+
+        section:last-child {
+            border-bottom: none;
+        }
+
+        /* --- Стилизиране на брандираното начало --- */
+        .hero-brand {
+            font-size: clamp(2.5rem, 20vw, 5rem);
+            font-weight: 900;
+            letter-spacing: 8px;
+            color: #fff;
+            text-shadow:
+                0 0 8px var(--highlight-color),
+                0 0 15px var(--highlight-color),
+                0 0 30px var(--highlight-color),
+                0 0 50px var(--glow-color-2);
+            animation: pulse 3s infinite ease-in-out;
+            padding-top: 5rem; /* Добавя малко отстояние отгоре */
+        }
+        
+        .hero-title {
+            font-size: clamp(1.5rem, 8vw, 2.2rem);
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.3;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* --- Стилизиране на текста --- */
+        h1 {
+            font-size: clamp(2rem, 10vw, 3rem);
+            font-weight: 900;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+
+        p {
+            font-size: clamp(1rem, 4.5vw, 1.2rem);
+            line-height: 1.7;
+            max-width: 600px;
+            margin-bottom: 1.5rem;
+        }
+
+        .quote {
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.7);
+            border-left: 3px solid var(--highlight-color);
+            padding-left: 1rem;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        /* --- Неонови и акцентни ефекти --- */
+        .glow {
+            font-weight: 700;
+            color: #fff;
+            animation: flicker 2s infinite alternate;
+            text-shadow:
+                0 0 7px var(--glow-color-1),
+                0 0 10px var(--glow-color-1),
+                0 0 21px var(--glow-color-1),
+                0 0 42px var(--glow-color-2),
+                0 0 82px var(--glow-color-2);
+        }
+
+        .highlight {
+            color: var(--highlight-color);
+            font-weight: 700;
+        }
+        
+        .nivra-logo {
+            font-weight: 900;
+            font-size: 1.5em;
+            letter-spacing: 2px;
+            color: #fff;
+            text-shadow:
+                0 0 5px var(--highlight-color),
+                0 0 10px var(--highlight-color),
+                0 0 20px var(--highlight-color);
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        /* --- Индикатор за скрол --- */
+        .scroll-down {
+            padding-bottom: 2rem;
+            animation: bounce 2s infinite;
+        }
+        .scroll-down span {
+            display: block;
+            width: 20px;
+            height: 20px;
+            border-bottom: 2px solid var(--primary-color);
+            border-right: 2px solid var(--primary-color);
+            transform: rotate(45deg);
+            opacity: 0.7;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-20px);
+            }
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* --- Анимация при скролване --- */
+        .fade-in-element {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        
+        .fade-in-element.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- НОВО: Брандирано начало -->
+        <section id="hero">
+            <div>
+                <div class="hero-brand">NIVRA</div>
+                <h1 class="hero-title fade-in-element">За пореден път ли се отказваш?</h1>
+            </div>
+            <div class="scroll-down">
+                <span></span>
+            </div>
+        </section>
+
+        <section>
+            <div class="fade-in-element">
+                <p class="quote">"От утре спирам."<br>"Това беше за последно."<br>"Край. Повече никога."</p>
+                <p>Звучи ли ти познато? Онзи тих, но твърд глас в главата ти, който дава тържествена клетва. И след това... тишината, когато клетвата е нарушена.</p>
+            </div>
+        </section>
+
+        <section>
+            <div class="fade-in-element">
+                <p>Чувството на провал, усещането, че отново си се предал. Обвиняваш се в липса на воля, наричаш се <span class="highlight">слаб</span>.</p>
+                <h2>Ами ако ти кажа, че грешиш?</h2>
+            </div>
+        </section>
+
+        <section>
+            <p class="fade-in-element">Ако ти кажа, че всеки твой "провал" да спреш не е доказателство за слабост, а <span class="highlight">точно обратното</span>?</p>
+        </section>
+
+        <section>
+             <div class="fade-in-element">
+                <p>Спри за момент и помисли. Какво те тегли обратно? Дали е просто желанието за пари? Не. Дълбоко в себе си знаеш, че е нещо повече.</p>
+                <p>Това е поривът да се изправиш срещу неизвестното, да тестваш интуицията си, да усетиш онази <span class="glow">искра живот</span>, която сивият свят навън се опитва да угаси.</p>
+            </div>
+        </section>
+        
+        <section>
+            <h1 class="fade-in-element">Това е глад.<br>Но не за пари, а за <span class="highlight">смисъл</span>.</h1>
+        </section>
+
+        <section>
+            <div class="fade-in-element">
+                <p>Всеки път, когато си казваш "спирам", ти се опитваш да заглушиш една фундаментална част от себе си.</p>
+                <p>И всеки път, когато се връщаш, това не си ти, който се предаваш. Това е твоето <span class="glow">достойнство</span>, което отказва да бъде победено.</p>
+            </div>
+        </section>
+
+        <section>
+             <div class="fade-in-element">
+                <p>Този порив, който ти наричаш "слабост", всъщност е твоята <span class="glow">сила</span>, която отчаяно търси бойно поле.</p>
+                <p class="highlight">Проблемът никога не е бил в самия порив. Проблемът е бил в арената.</p>
+             </div>
+        </section>
+
+        <section>
+            <div class="fade-in-element">
+                <p>Истинският хазарт е студена, хищническа среда. Тя се храни с твоя порив, но ти дава само празнота в замяна. Тя взима достойнството ти и го превръща в статистика.</p>
+                <p>Твоят инстинкт усеща тази лъжа. Затова се проваляш да спреш – защото подсъзнателно знаеш, че просто да се откажеш <span class="highlight">не е решението</span>.</p>
+            </div>
+        </section>
+        
+        <section>
+             <div class="fade-in-element">
+                <p>Да се откажеш означава да позволиш на сивотата да победи.</p>
+                <h1 style="font-size: 2.2rem;">Твоето <span class="glow">достойнство</span> не може да бъде победено.</h1>
+                <p>То просто трябва да бъде <span class="highlight">насочено</span>.</p>
+            </div>
+        </section>
+
+        <section>
+            <div class="fade-in-element">
+                <p>Това, което правиш тук, в <span class="nivra-logo">Nivra</span>, не е просто игра. Това е съзнателен акт на пренасочване.</p>
+                <p>Ти взимаш тази сурова, мощна енергия в себе си и я поставяш в контролирана среда, където тя може да съществува, без да те унищожава.</p>
+            </div>
+        </section>
+
+        <section>
+            <div class="fade-in-element">
+                <p>Тук ти даваш на своя вътрешен глад това, от което се нуждае – тръпката, предизвикателството, емоцията – но при <span class="highlight">твоите условия</span>.</p>
+                <h2>Не се отказваш за пореден път.<br>Ти просто спираш да се бориш със себе си по грешния начин.</h2>
+            </div>
+        </section>
+
+        <section>
+            <h1 class="fade-in-element">Ти избираш да бъдеш <span class="highlight">стратег</span>, а не жертва.</h1>
+        </section>
+        
+        <section>
+             <div class="fade-in-element">
+                <h2>Ти не си <span style="text-decoration: line-through;">слаб</span>.</h2>
+                <p>Ти си човек, който отказва да се примири. И си намерил мястото, където не е нужно да го правиш.</p>
+                <p class="highlight" style="font-size: 1.5rem; margin-top: 2rem;">Твоят порив не е твоят враг.<br>Просто досега си го водил в грешните битки.</p>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        const fadeInElements = document.querySelectorAll('.fade-in-element');
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.2
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target); 
+                }
+            });
+        }, observerOptions);
+
+        fadeInElements.forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+
+</body>
+</html>
